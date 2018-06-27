@@ -1,0 +1,82 @@
+<?php
+
+/*
+ *
+ * (c) Yaroslav Honcharuk <yaroslav.xs@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace NeonLight\SecureLinksBundle\CacheWarmer;
+
+use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
+use NeonLight\SecureLinksBundle\Security\AccessMap;
+
+/**
+ * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
+ */
+class RouteCacheWarmer implements CacheWarmerInterface
+{
+    /**
+     * @var AccessMap
+     */
+    private $accessMap;
+
+    /**
+     * @var string
+     */
+    private $cacheDir;
+
+    /**
+     * RouteCacheWarmer constructor.
+     *
+     * @param AccessMap $accessMap
+     * @param string    $cacheDir
+     */
+    public function __construct(AccessMap $accessMap, $cacheDir = null)
+    {
+        $this->accessMap = $accessMap;
+        $this->cacheDir = $cacheDir;
+    }
+
+    /**
+     * @return false
+     */
+    public function isOptional()
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function warmUp($cacheDir)
+    {
+        $cacheDir = $this->createCacheDir($cacheDir);
+
+        $this->accessMap->build();
+    }
+
+    /**
+     * @param string $baseDir
+     *
+     * @return string $cacheDir
+     *
+     * @throws \RuntimeException
+     */
+    private function createCacheDir($baseDir)
+    {
+        $cacheDir = $baseDir.DIRECTORY_SEPARATOR.$this->cacheDir;
+
+        if (!is_dir($cacheDir)) {
+            if (false === @mkdir($cacheDir, 0777, true)) {
+                throw new \RuntimeException(sprintf('Unable to create the Secure Links Bundle cache directory "%s".', $cacheDir));
+            }
+        } elseif (!is_writable($cacheDir)) {
+            throw new \RuntimeException(sprintf('The Secure Links Bundle cache directory "%s" is not writable for the current system user.', $cacheDir));
+        }
+
+        return $cacheDir;
+    }
+}

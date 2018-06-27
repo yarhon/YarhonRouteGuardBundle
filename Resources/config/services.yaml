@@ -1,0 +1,38 @@
+services:
+
+    _defaults:
+        public: false
+
+    NeonLight\SecureLinksBundle\Annotations\Parser:
+        arguments:
+            - '@annotation_reader'
+
+    NeonLight\SecureLinksBundle\Security\Provider\SymfonyAccessControlProvider: ~
+
+    NeonLight\SecureLinksBundle\Security\Provider\SensioSecurityProvider:
+        arguments:
+            - '@NeonLight\SecureLinksBundle\Annotations\Parser'
+
+    NeonLight\SecureLinksBundle\Security\AccessMap:
+        arguments:
+            - '@router.default'
+            - '@kernel'
+
+    NeonLight\SecureLinksBundle\Security\Authorization\AuthorizationManager:
+        arguments:
+            - '@NeonLight\SecureLinksBundle\Security\AccessMap'
+            - '@security.authorization_checker'
+
+    NeonLight\SecureLinksBundle\CacheWarmer\RouteCacheWarmer:
+        arguments:
+            - '@NeonLight\SecureLinksBundle\Security\AccessMap'
+            - null
+        tags: ['kernel.cache_warmer']
+
+    NeonLight\SecureLinksBundle\DependencyInjection\Compiler\UrlGeneratorConfigurator:
+        arguments:
+            - '@NeonLight\SecureLinksBundle\Security\Authorization\AuthorizationManager'
+            - null
+
+    NeonLight\SecureLinksBundle\Twig\Extension\SecureLinksExtension:
+        tags: ['twig.extension']
