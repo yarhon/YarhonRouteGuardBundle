@@ -34,5 +34,9 @@ services:
             - '@NeonLight\SecureLinksBundle\Security\Authorization\AuthorizationManager'
             - null
 
-    NeonLight\SecureLinksBundle\Twig\Extension\SecureLinksExtension:
+    NeonLight\SecureLinksBundle\Twig\Extension\RoutingExtension:
         tags: ['twig.extension']
+
+    NeonLight\SecureLinksBundle\Twig\RoutingRuntime:
+        arguments:
+            # services should go here

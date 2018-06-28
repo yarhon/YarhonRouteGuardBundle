@@ -13,13 +13,14 @@ namespace NeonLight\SecureLinksBundle\Twig\Extension;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 use NeonLight\SecureLinksBundle\Twig\TokenParser\IfRouteGrantedTokenParser;
-use NeonLight\SecureLinksBundle\Twig\NodeVisitor\RoutingFunctionNodeVisitor;
+use NeonLight\SecureLinksBundle\Twig\NodeVisitor\DiscoverRoutingFunctionNodeVisitor;
+use NeonLight\SecureLinksBundle\Twig\RoutingRuntime;
 
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SecureLinksExtension extends AbstractExtension
+class RoutingExtension extends AbstractExtension
 {
     /**
      * {@inheritdoc}
@@ -31,21 +32,13 @@ class SecureLinksExtension extends AbstractExtension
         ];
     }
 
-    public function getOperators()
-    {
-        /**
-         * Returns a list of operators to add to the existing list.
-         *
-         * @return array<array> First array of unary operators, second array of binary operators
-         */
-
-        return array();
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function getNodeVisitors()
     {
         return [
-            new RoutingFunctionNodeVisitor(),
+            new DiscoverRoutingFunctionNodeVisitor(),
         ];
     }
 
@@ -55,12 +48,9 @@ class SecureLinksExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('is_route_granted', [$this, 'isRouteGranted']),
+            new TwigFunction('is_route_granted', [RoutingRuntime::class, 'isRouteGranted']),
+            new TwigFunction('url_if_granted', [RoutingRuntime::class, 'urlIfGranted']),
+            new TwigFunction('path_if_granted', [RoutingRuntime::class, 'pathIfGranted']),
         ];
-    }
-
-    public function isRouteGranted()
-    {
-        return true;
     }
 }

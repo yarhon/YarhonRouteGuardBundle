@@ -18,6 +18,8 @@ use Twig_Node as Node;
 use Twig_Environment as Environment;
 use Twig\Node\Expression\FunctionExpression;
 use Twig\Error\SyntaxError;
+use Twig\Node\Expression\ConstantExpression;
+use Twig\Node\Expression\NameExpression;
 use NeonLight\SecureLinksBundle\Twig\Node\IfRouteGrantedNode;
 
 /**
@@ -26,7 +28,7 @@ use NeonLight\SecureLinksBundle\Twig\Node\IfRouteGrantedNode;
  * TODO: check if we need to use \Twig\NodeVisitor\AbstractNodeVisitor for compatibility with Twig 1.x
  * TODO: find a way to set source context for thrown exceptions (see \Twig_Parser::parse)
  */
-class RoutingFunctionNodeVisitor implements NodeVisitorInterface
+class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
 {
     private $scope;
 
@@ -44,14 +46,15 @@ class RoutingFunctionNodeVisitor implements NodeVisitorInterface
      */
     public function enterNode(Node $node, Environment $env)
     {
-        if ($node instanceof IfRouteGrantedNode) {
+        if ($this->isTargetNode($node)) {
             $this->scope = $this->scope->enter();
             $this->scope->set('insideTargetNode', true);
 
             return $node;
         }
 
-        if ($this->scope->get('insideTargetNode') && $this->isRoutingFunction($node)) {
+        /*
+        if ($this->scope->get('insideTargetNode') && $this->isRoutingFunctionNode($node)) {
 
             if ($this->scope->has('routingFunction')) {
                 throw new SyntaxError(
@@ -61,9 +64,8 @@ class RoutingFunctionNodeVisitor implements NodeVisitorInterface
             }
 
             $this->scope->set('routingFunction', $node);
-
-            return false;
         }
+        */
 
         return $node;
     }
@@ -75,7 +77,7 @@ class RoutingFunctionNodeVisitor implements NodeVisitorInterface
      */
     public function leaveNode(Node $node, Environment $env)
     {
-        if ($node instanceof IfRouteGrantedNode) {
+        if ($this->isTargetNode($node)) {
 
             if (!$this->scope->has('routingFunction')) {
                 throw new SyntaxError(
@@ -84,11 +86,33 @@ class RoutingFunctionNodeVisitor implements NodeVisitorInterface
                 );
             }
 
-            // !!!! fix this
-            //$node->setAttribute('routingFunction', $this->scope->get('routingFunction'));
+            $routingFunction = $this->scope->get('routingFunction');
+            $this->transformRoutingFunction($routingFunction);
+
+            $node->setNode('isGrantedExpression', $this->scope->get('routingFunction'));
 
             $this->scope->set('insideTargetNode', false);
             $this->scope = $this->scope->leave();
+
+            return $node;
+        }
+
+        if ($this->scope->get('insideTargetNode') && $this->isRoutingFunctionNode($node)) {
+
+            if ($this->scope->has('routingFunction')) {
+                throw new SyntaxError(
+                    '"ifRouteGranted" tag with auto discovery must contain only one url() or path() call.',
+                    $node->getTemplateLine()
+                );
+            }
+
+            $this->scope->set('routingFunction', $node);
+
+            $varName = 'generatedUrl';
+            $newNode = new NameExpression($varName, $node->getTemplateLine());
+            $newNode->setAttribute('always_defined', true);
+
+            return $newNode;
         }
 
         return $node;
@@ -99,8 +123,33 @@ class RoutingFunctionNodeVisitor implements NodeVisitorInterface
         return 0;
     }
 
-    private function isRoutingFunction(Node $node)
+    private function isTargetNode(Node $node)
+    {
+        return $node instanceof IfRouteGrantedNode && $node->getAttribute('discover');
+    }
+
+    private function isRoutingFunctionNode(Node $node)
     {
         return $node instanceof FunctionExpression && in_array($node->getAttribute('name'), $this->routingFunctions);
+    }
+
+    private function transformRoutingFunction(FunctionExpression $node)
+    {
+        $originalName = $node->getAttribute('name');
+        $node->setAttribute('name', 'is_route_granted');
+
+        /*
+        $arguments = [];
+        $argumentNodes = [];
+
+        foreach ($arguments as $argument) {
+            $argumentNodes[] = new ConstantExpression($argument, $line);
+        }
+
+        $argumentNode = new Node($argumentNodes);
+        $node = new FunctionExpression($name, $argumentNode, $line);
+
+        return $node;
+        */
     }
 }

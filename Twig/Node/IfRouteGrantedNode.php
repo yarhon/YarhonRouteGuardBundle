@@ -13,36 +13,43 @@ namespace NeonLight\SecureLinksBundle\Twig\Node;
 use Twig\Node\Node;
 // use Twig\Compiler; // PhpStorm doesn't recognise this in type hints
 use Twig_Compiler as Compiler;
+use Twig\Error\SyntaxError;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class IfRouteGrantedNode extends Node
 {
-    public function __construct(Node $isGrantedExpressionNode, Node $bodyNode, Node $ifExpressionNode = null, Node $elseNode = null, $line, $tag = null)
+    public function __construct(Node $bodyNode, $line = 0, $tag = null)
     {
         $nodes = [
             'body' => $bodyNode,
-            'isGrantedExpression' => $isGrantedExpressionNode,
         ];
-
-        if (null !== $elseNode) {
-            $nodes['else'] = $elseNode;
-        }
 
         parent::__construct($nodes, [], $line, $tag);
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * @throws SyntaxError
+     */
     public function compile(Compiler $compiler)
     {
+        // TODO: check if $varName is not already defined in context
+
         $compiler->addDebugInfo($this);
 
-        $compiler->write('if (');
+        if (!$this->hasNode('isGrantedExpression')) {
+            throw new SyntaxError('isGrantedExpression node is required.', $this->getTemplateLine());
+        }
 
-        $compiler->subcompile($this->getNode('isGrantedExpression'));
+        $varName = 'generatedUrl';
 
         $compiler
-            ->raw(") {\n")
+            ->write(sprintf('if (false !== ($context["%s"] = ', $varName))
+            ->subcompile($this->getNode('isGrantedExpression'))
+            ->write(")) {\n")
             ->indent()
             ->subcompile($this->getNode('body'))
         ;

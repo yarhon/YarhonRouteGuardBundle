@@ -11,39 +11,103 @@
 namespace NeonLight\SecureLinksBundle\Tests\Twig\TokenParser;
 
 use PHPUnit\Framework\TestCase;
-
 use Twig\Environment;
+use Twig\Parser;
+use Twig\Source;
+use Twig\Compiler;
+
+use Twig\Node\Node;
+use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\Expression\ArrayExpression;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\NameExpression;
-use Twig\Parser;
-use Twig\Source;
-use NeonLight\SecureLinksBundle\Twig\TokenParser\IfRouteGrantedTokenParser;
+use Twig\Node\TextNode;
+use Twig\Node\PrintNode;
 
-class FormThemeTokenParserTest extends TestCase
+use NeonLight\SecureLinksBundle\Twig\Extension\RoutingExtension;
+use NeonLight\SecureLinksBundle\Twig\Node\IfRouteGrantedNode;
+
+class IfRouteGrantedTokenParserTest extends TestCase
 {
     /**
-     * @1dataProvider getTestsForFormTheme
+     * @var Environment
      */
-    public function testCompile($source, $expected)
-    {
-        $this->assertEquals(1, 1);
-        /*
-        $env = new Environment($this->getMockBuilder('Twig\Loader\LoaderInterface')->getMock(), array('cache' => false, 'autoescape' => false, 'optimizations' => 0));
-        $env->addTokenParser(new FormThemeTokenParser());
-        $stream = $env->tokenize(new Source($source, ''));
-        $parser = new Parser($env);
+    private $environment;
 
-        $this->assertEquals($expected, $parser->parse($stream)->getNode('body')->getNode(0));
+    public function setUp()
+    {
+        $loader = $this->getMockBuilder('Twig\Loader\LoaderInterface')->getMock();
+
+        $this->environment = new Environment($loader, ['cache' => false, 'autoescape' => false, 'optimizations' => 0]);
+        $this->environment->addExtension(new RoutingExtension());
+
+        /*
+        $routingExtension = $this->getMockBuilder(RoutingExtension::class)
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $this->environment->addExtension($routingExtension);
+        */
+
+        $twigRoutingExtension = $this->getMockBuilder('Symfony\Bridge\Twig\Extension\RoutingExtension')
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $this->environment->addExtension($twigRoutingExtension);
+
+        /*
+        $this->environment->addFunction(
+            new TwigFunction(
+                'url',
+                function ($name, $parameters = array(), $schemeRelative = false) {
+                    return null;
+                }
+            )
+        );
         */
     }
 
-    public function getTestsForFormTheme()
+    /**
+     * @dataProvider getTestsForParse
+     */
+    public function testParse($source, $expected)
     {
-        return array(
-            array(
-                '{% form_theme form "tpl1" %}',
-                new FormThemeNode(
+
+        $source = new Source($source, '');
+        $stream = $this->environment->tokenize($source);
+        $parser = new Parser($this->environment);
+
+        $node = $parser->parse($stream);
+        $targetNode = $node->getNode('body')->getNode(0);
+
+        //var_dump((string) $targetNode);
+        $this->compile($targetNode);
+
+        die();
+
+        $this->assertEquals($expected, $targetNode);
+    }
+
+    public function compile($node)
+    {
+        $compiler = new Compiler($this->environment);
+        $compiler->compile($node);
+        $source = $compiler->getSource();
+
+        var_dump($source);
+    }
+
+    public function getTestsForParse()
+    {
+        return [
+            [
+                '{% ifroutegranted url ["secure2", { page: 10 }, false, "GET"] %}<a href="{{ generatedUrl }}">Test tag</a>{% else %}Not granted{% endifroutegranted %}',
+
+            new IfRouteGrantedNode(
+                new Node()
+                /*
                     new NameExpression('form', 1),
                     new ArrayExpression(array(
                         new ConstantExpression(0, 1),
@@ -51,8 +115,11 @@ class FormThemeTokenParserTest extends TestCase
                     ), 1),
                     1,
                     'form_theme'
+                */
                 ),
-            ),
+            ],
+
+            /*
             array(
                 '{% form_theme form "tpl1" "tpl2" %}',
                 new FormThemeNode(
@@ -117,6 +184,7 @@ class FormThemeTokenParserTest extends TestCase
                     true
                 ),
             ),
-        );
+            */
+        ];
     }
 }

@@ -17,6 +17,8 @@ use Twig\Error\SyntaxError;
 use Twig\Node\Expression\AbstractExpression;
 use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\Expression\ConstantExpression;
+use Twig\Node\Expression\AssignNameExpression;
+use Twig\Node\SetNode;
 use Twig\Node\Node;
 use Twig\Parser;
 use NeonLight\SecureLinksBundle\Twig\Node\IfRouteGrantedNode;
@@ -34,15 +36,23 @@ class IfRouteGrantedTokenParser extends AbstractTokenParser
     {
         // $stream->expect(Token::OPERATOR_TYPE, '=');
 
-        $line = $token->getLine();
+        $subNodes = [];
 
         $parser = $this->parser;
         $stream = $parser->getStream();
 
-        $ifExpressionNode = null;
-        if ($stream->nextIf(Token::NAME_TYPE, 'if')) {
-            $ifExpressionNode = $this->parser->getExpressionParser()->parseExpression();
+        $discoverRoutingFunction = (bool) $stream->nextIf('discover');
+
+        if (!$discoverRoutingFunction) {
+            $routingFunction = $this->parser->getExpressionParser()->parseArrayExpression();
+            var_dump((string) $routingFunction);
         }
+
+        /*
+        if ($stream->nextIf('if')) {
+            $subNodes['ifExpression'] = $this->parser->getExpressionParser()->parseExpression();
+        }
+        */
 
         $stream->expect(Token::BLOCK_END_TYPE);
 
@@ -62,22 +72,27 @@ class IfRouteGrantedTokenParser extends AbstractTokenParser
              * $stream->expect(self::END_TAG_NAME).
              * We use second option to be able to allow / disallow nested tags in future.
              */
-            $elseNode = $parser->subparse(function(Token $token) {
+            $subNodes['else'] = $parser->subparse(function(Token $token) {
                 return $token->test([self::END_TAG_NAME]);
             });
 
             // $this->testForNestedTag($stream); + add self::TAG_NAME to subparse stop condition
 
             $stream->expect(self::END_TAG_NAME);
-        } else {
-            $elseNode = null;
         }
 
         $stream->expect(Token::BLOCK_END_TYPE);
 
-        $isGrantedExpressionNode = $this->createFunctionExpressionNode('is_route_granted', ['ROLE_TEST_2'], $line);
+        //$subNodes['isGrantedExpression'] = $this->createFunctionExpressionNode('is_route_granted', ['ROLE_TEST_2'], $token->getLine());
 
-        return new IfRouteGrantedNode($isGrantedExpressionNode, $bodyNode, $ifExpressionNode, $elseNode, $token->getLine(), $this->getTag());
+        $node = new IfRouteGrantedNode($bodyNode, $token->getLine(), $this->getTag());
+        $node->setAttribute('discover', $discoverRoutingFunction);
+
+        foreach ($subNodes as $name => $subNode) {
+            $node->setNode($name, $subNode);
+        }
+
+        return $node;
     }
 
     public function getTag()
@@ -96,18 +111,4 @@ class IfRouteGrantedTokenParser extends AbstractTokenParser
         }
     }
     */
-
-    private function createFunctionExpressionNode($name, array $arguments, $line)
-    {
-        $argumentNodes = [];
-
-        foreach ($arguments as $argument) {
-            $argumentNodes[] = new ConstantExpression($argument, $line);
-        }
-
-        $argumentNode = new Node($argumentNodes);
-        $node = new FunctionExpression($name, $argumentNode, $line);
-
-        return $node;
-    }
 }
