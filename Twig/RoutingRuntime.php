@@ -26,28 +26,7 @@ class RoutingRuntime
         // path:    $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH
         //                      '../parent-file'                       '/dir/file'
 
-        /*
-        url_if_granted($name, $parameters, $relative, $method)
-
-        path_if granted()
-
-        {% urlifgranted discover %}
-
-        {% urlifgranted path("secure2", { page: 10 }) %}
-
-        {% ifroutegranted 'post' %}
-
-        {% ifroutegranted {'path', 'secure2', { page: 10 }, isRelative, 'POST'} %}
-
-        {% ifroutegranted 'secure2', { page: 10 } as path relative %}
-
-        {% ifroutegranted 'secure2', { page: 10 } generate path relative %}
-
-        in place of a link - {{ generated(path, relative) }}
-        */
-
-
-    public function routeIfGranted($name, $parameters = [], $method = 'GET', $type = 'url', $relative = false)
+    protected function routeIfGranted($name, $parameters = [], $method = 'GET', $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
         // TODO: implement this
         return true;
@@ -55,11 +34,15 @@ class RoutingRuntime
 
     public function urlIfGranted($name, $parameters = [], $method = 'GET', $relative = false)
     {
-        return $this->routeIfGranted($name, $parameters, $method, 'url', $relative);
+        $referenceType = $relative ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL;
+
+        return $this->routeIfGranted($name, $parameters, $method, $referenceType);
     }
 
     public function pathIfGranted($name, $parameters = [], $method = 'GET', $relative = false)
     {
-        return $this->routeIfGranted($name, $parameters, $method, 'path', $relative);
+        $referenceType = $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH;
+
+        return $this->routeIfGranted($name, $parameters, $method, $referenceType);
     }
 }

@@ -35,6 +35,8 @@ services:
             - null
 
     NeonLight\SecureLinksBundle\Twig\Extension\RoutingExtension:
+        arguments:
+            - { referenceVarName: route_reference }
         tags: ['twig.extension']
 
     NeonLight\SecureLinksBundle\Twig\RoutingRuntime:

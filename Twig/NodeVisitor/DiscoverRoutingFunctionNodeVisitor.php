@@ -16,9 +16,8 @@ use Twig\NodeVisitor\NodeVisitorInterface;
 use Twig_Node as Node;
 //use Twig\Environment; // PhpStorm doesn't recognise this in type hints
 use Twig_Environment as Environment;
-use Twig\Node\Expression\FunctionExpression;
 use Twig\Error\SyntaxError;
-use Twig\Node\Expression\ConstantExpression;
+use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\Expression\NameExpression;
 use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedNode;
 
@@ -105,8 +104,8 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
 
             $this->scope->set('routingFunction', $node);
 
-            $varName = 'generatedUrl';
-            $newNode = new NameExpression($varName, $node->getTemplateLine());
+            $referenceVarName = RouteIfGrantedNode::getReferenceVarName();
+            $newNode = new NameExpression($referenceVarName, $node->getTemplateLine());
             $newNode->setAttribute('always_defined', true);
 
             return $newNode;

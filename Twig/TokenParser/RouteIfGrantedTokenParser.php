@@ -30,7 +30,7 @@ class RouteIfGrantedTokenParser extends AbstractTokenParser
     {
         $subNodes = [];
         $discoverRoutingFunction = false;
-        $generateAs = ['url', 'absolute'];
+        $generateAs = ['path', 'absolute'];
 
         $parser = $this->parser;
         $stream = $parser->getStream();
@@ -114,7 +114,7 @@ class RouteIfGrantedTokenParser extends AbstractTokenParser
     }
 
     /**
-     * Workaround for twig bug inside \Twig_TokenStream::expect.
+     * Workaround for bug inside \Twig_TokenStream::expect.
      * In case of invalid template syntax, when exception is thrown, if type and/or value argument is an array,
      * an "Array to string conversion" error happens:
      * - for type because of:  Twig_Token::typeToEnglish($type)

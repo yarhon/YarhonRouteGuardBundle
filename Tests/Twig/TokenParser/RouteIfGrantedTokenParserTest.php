@@ -39,6 +39,7 @@ class RouteIfGrantedTokenParserTest extends TestCase
         $loader = $this->getMockBuilder('Twig\Loader\LoaderInterface')->getMock();
 
         $this->environment = new Environment($loader, ['cache' => false, 'autoescape' => false, 'optimizations' => 0]);
+        // TODO: get extension as a service, like in normal flow
         $this->environment->addExtension(new RoutingExtension());
 
         /*
@@ -74,20 +75,29 @@ class RouteIfGrantedTokenParserTest extends TestCase
      */
     public function testParse($source, $expected)
     {
-
-        $source = new Source($source, '');
+        /*
+         * Note: "name" (template name) parameter as null is significant for the private $name variable
+         * of parsed Node instances to be propagated with null value.
+         * Then properties of this instances would be strictly equal to properties
+         * of Node instances provided by @dataProvider.
+         */
+        $source = new Source($source, null);
         $stream = $this->environment->tokenize($source);
         $parser = new Parser($this->environment);
 
         $node = $parser->parse($stream);
-        $targetNode = $node->getNode('body')->getNode(0);
+        $node = $node->getNode('body')->getNode(0);
 
-        $source = $this->compile($targetNode);
+        $target = $node->getNode('body');
+        var_dump($expected == $target);
+        $this->assertEquals($expected, $target);
 
-        var_dump((string) $targetNode);
-        var_dump($source);
+        //$source = $this->compile($targetNode);
 
-        // $this->assertEquals($expected, $targetNode);
+        //var_dump((string) $targetNode);
+        //var_dump($source);
+
+
     }
 
     public function compile($node)
@@ -101,94 +111,23 @@ class RouteIfGrantedTokenParserTest extends TestCase
 
     public function getTestsForParse()
     {
+        //'{% routeifgranted url ["secure2", { page: 10 }, false, "GET"] %}<a href="{{ route_reference }}">Test tag</a>{% else %}Not granted{% endrouteifgranted %}',
+        //'{% routeifgranted ["secure2", { page: 10 }, "GET"] as path %}<a href="{{ generatedUrl }}">Test tag</a>{% else %}Not granted{% endrouteifgranted %}',
+        // '{% routeifgranted discover %}<a href="{{ url("a1", { page: 10 }) }}">Test tag</a>{% else %}Not granted{% endrouteifgranted %}',
+
         return [
             [
-                '{% routeifgranted discover %}<a href="{{ url("a1", { page: 10 }) }}">Test tag</a>{% else %}Not granted{% endrouteifgranted %}',
-
-                //'{% routeifgranted url ["secure2", { page: 10 }, false, "GET"] %}<a href="{{ generatedUrl }}">Test tag</a>{% else %}Not granted{% endrouteifgranted %}',
-
-                //'{% routeifgranted ["secure2", { page: 10 }, "GET"] as path %}<a href="{{ generatedUrl }}">Test tag</a>{% else %}Not granted{% endrouteifgranted %}',
-
-                new RouteIfGrantedNode(
-                new Node()
-                /*
-                    new NameExpression('form', 1),
-                    new ArrayExpression(array(
-                        new ConstantExpression(0, 1),
-                        new ConstantExpression('tpl1', 1),
-                    ), 1),
-                    1,
-                    'form_theme'
-                */
-                ),
+                '{% routeifgranted ["secure1"] %}<a href="{{ route_reference }}">Link</a>{% endrouteifgranted %}',
+                //new RouteIfGrantedNode(
+                    new Node([
+                        new TextNode('<a href="', 1),
+                        new PrintNode(new NameExpression('route_reference', 1), 1),
+                        new TextNode('">Link</a>', 1)
+                    ], [], 1)
+                //)
             ],
 
-            /*
-            array(
-                '{% form_theme form "tpl1" "tpl2" %}',
-                new FormThemeNode(
-                    new NameExpression('form', 1),
-                    new ArrayExpression(array(
-                        new ConstantExpression(0, 1),
-                        new ConstantExpression('tpl1', 1),
-                        new ConstantExpression(1, 1),
-                        new ConstantExpression('tpl2', 1),
-                    ), 1),
-                    1,
-                    'form_theme'
-                ),
-            ),
-            array(
-                '{% form_theme form with "tpl1" %}',
-                new FormThemeNode(
-                    new NameExpression('form', 1),
-                    new ConstantExpression('tpl1', 1),
-                    1,
-                    'form_theme'
-                ),
-            ),
-            array(
-                '{% form_theme form with ["tpl1"] %}',
-                new FormThemeNode(
-                    new NameExpression('form', 1),
-                    new ArrayExpression(array(
-                        new ConstantExpression(0, 1),
-                        new ConstantExpression('tpl1', 1),
-                    ), 1),
-                    1,
-                    'form_theme'
-                ),
-            ),
-            array(
-                '{% form_theme form with ["tpl1", "tpl2"] %}',
-                new FormThemeNode(
-                    new NameExpression('form', 1),
-                    new ArrayExpression(array(
-                        new ConstantExpression(0, 1),
-                        new ConstantExpression('tpl1', 1),
-                        new ConstantExpression(1, 1),
-                        new ConstantExpression('tpl2', 1),
-                    ), 1),
-                    1,
-                    'form_theme'
-                ),
-            ),
-            array(
-                '{% form_theme form with ["tpl1", "tpl2"] only %}',
-                new FormThemeNode(
-                    new NameExpression('form', 1),
-                    new ArrayExpression(array(
-                        new ConstantExpression(0, 1),
-                        new ConstantExpression('tpl1', 1),
-                        new ConstantExpression(1, 1),
-                        new ConstantExpression('tpl2', 1),
-                    ), 1),
-                    1,
-                    'form_theme',
-                    true
-                ),
-            ),
-            */
+
         ];
     }
 }

@@ -19,12 +19,15 @@ use Twig\Node\Expression\AbstractExpression;
 use Twig\Node\Expression\ArrayExpression;
 use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\Expression\ConstantExpression;
+use Twig\Node\Expression\AssignNameExpression;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class RouteIfGrantedNode extends Node
 {
+    private static $referenceVarName;
+
     public function __construct(Node $bodyNode, $line = 0, $tag = null)
     {
         $nodes = [
@@ -41,7 +44,7 @@ class RouteIfGrantedNode extends Node
      */
     public function compile(Compiler $compiler)
     {
-        // TODO: check if $varName is not already defined in context
+        // TODO: check if $referenceVarName is not already defined in context
 
         $compiler->addDebugInfo($this);
 
@@ -49,10 +52,12 @@ class RouteIfGrantedNode extends Node
             throw new SyntaxError('mainExpression node is required.', $this->getTemplateLine());
         }
 
-        $varName = 'generatedUrl';
+        $referenceVar = new AssignNameExpression(self::getReferenceVarName(), 0);
 
         $compiler
-            ->write(sprintf('if (false !== ($context["%s"] = ', $varName))
+            ->write('if (false !== (')
+            ->subcompile($referenceVar)
+            ->write(' = ')
             ->subcompile($this->getNode('mainExpression'))
             ->write(")) {\n")
             ->indent()
@@ -89,6 +94,22 @@ class RouteIfGrantedNode extends Node
         $this->setNode('mainExpression', $function);
     }
 
+    public static function setReferenceVarName($referenceVarName)
+    {
+        self::$referenceVarName = $referenceVarName;
+    }
+
+    public static function getReferenceVarName()
+    {
+        if (!self::$referenceVarName) {
+            throw new \InvalidArgumentException(
+                sprintf('%s::referenceVarName is not set. setReferenceVarName() method should be called first.', __CLASS__)
+            );
+        }
+
+        return self::$referenceVarName;
+    }
+
     private function createFunctionFromArgumentsArray(ArrayExpression $argumentsArray, array $generateAs)
     {
         $line = $argumentsArray->getTemplateLine();
@@ -119,6 +140,8 @@ class RouteIfGrantedNode extends Node
 
     private function createFunction(Node $arguments, array $generateAs)
     {
+        // TODO: validate $generateAs
+
         $functionName = $generateAs[0] == 'url' ? 'url_if_granted' : 'path_if_granted';
         $relative = $generateAs[1];
         if (!($relative instanceof AbstractExpression)) {
