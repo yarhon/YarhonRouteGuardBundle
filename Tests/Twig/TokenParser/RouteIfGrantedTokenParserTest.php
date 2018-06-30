@@ -25,9 +25,9 @@ use Twig\Node\TextNode;
 use Twig\Node\PrintNode;
 
 use NeonLight\SecureLinksBundle\Twig\Extension\RoutingExtension;
-use NeonLight\SecureLinksBundle\Twig\Node\IfRouteGrantedNode;
+use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedNode;
 
-class IfRouteGrantedTokenParserTest extends TestCase
+class RouteIfGrantedTokenParserTest extends TestCase
 {
     /**
      * @var Environment
@@ -82,12 +82,12 @@ class IfRouteGrantedTokenParserTest extends TestCase
         $node = $parser->parse($stream);
         $targetNode = $node->getNode('body')->getNode(0);
 
-        //var_dump((string) $targetNode);
-        $this->compile($targetNode);
+        $source = $this->compile($targetNode);
 
-        die();
+        var_dump((string) $targetNode);
+        var_dump($source);
 
-        $this->assertEquals($expected, $targetNode);
+        // $this->assertEquals($expected, $targetNode);
     }
 
     public function compile($node)
@@ -96,16 +96,20 @@ class IfRouteGrantedTokenParserTest extends TestCase
         $compiler->compile($node);
         $source = $compiler->getSource();
 
-        var_dump($source);
+        return $source;
     }
 
     public function getTestsForParse()
     {
         return [
             [
-                '{% ifroutegranted url ["secure2", { page: 10 }, false, "GET"] %}<a href="{{ generatedUrl }}">Test tag</a>{% else %}Not granted{% endifroutegranted %}',
+                '{% routeifgranted discover %}<a href="{{ url("a1", { page: 10 }) }}">Test tag</a>{% else %}Not granted{% endrouteifgranted %}',
 
-            new IfRouteGrantedNode(
+                //'{% routeifgranted url ["secure2", { page: 10 }, false, "GET"] %}<a href="{{ generatedUrl }}">Test tag</a>{% else %}Not granted{% endrouteifgranted %}',
+
+                //'{% routeifgranted ["secure2", { page: 10 }, "GET"] as path %}<a href="{{ generatedUrl }}">Test tag</a>{% else %}Not granted{% endrouteifgranted %}',
+
+                new RouteIfGrantedNode(
                 new Node()
                 /*
                     new NameExpression('form', 1),

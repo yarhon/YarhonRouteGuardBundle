@@ -19,8 +19,6 @@ class RoutingRuntime
 {
     // TODO: check \Symfony\Bridge\Twig\Extension\RoutingExtension::isUrlGenerationSafe
 
-    public function isRouteGranted($name, $parameters = [], $relative = false)
-    {
         // url:     $relative ? UrlGeneratorInterface::NETWORK_PATH  : UrlGeneratorInterface::ABSOLUTE_URL
         //                      '//example.com/dir/file'               'http://example.com/dir/file'
         // difference in scheme
@@ -46,10 +44,22 @@ class RoutingRuntime
         {% ifroutegranted 'secure2', { page: 10 } generate path relative %}
 
         in place of a link - {{ generated(path, relative) }}
-
-
         */
 
+
+    public function routeIfGranted($name, $parameters = [], $method = 'GET', $type = 'url', $relative = false)
+    {
+        // TODO: implement this
         return true;
+    }
+
+    public function urlIfGranted($name, $parameters = [], $method = 'GET', $relative = false)
+    {
+        return $this->routeIfGranted($name, $parameters, $method, 'url', $relative);
+    }
+
+    public function pathIfGranted($name, $parameters = [], $method = 'GET', $relative = false)
+    {
+        return $this->routeIfGranted($name, $parameters, $method, 'path', $relative);
     }
 }

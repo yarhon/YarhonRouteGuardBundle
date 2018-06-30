@@ -20,7 +20,7 @@ use Twig\Node\Expression\FunctionExpression;
 use Twig\Error\SyntaxError;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\NameExpression;
-use NeonLight\SecureLinksBundle\Twig\Node\IfRouteGrantedNode;
+use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedNode;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -58,7 +58,7 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
 
             if ($this->scope->has('routingFunction')) {
                 throw new SyntaxError(
-                    '"ifRouteGranted" tag with auto discovery must contain only one url() or path() call.',
+                    '"routeifgranted" tag with auto discovery must contain only one url() or path() call.',
                     $node->getTemplateLine()
                 );
             }
@@ -81,15 +81,12 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
 
             if (!$this->scope->has('routingFunction')) {
                 throw new SyntaxError(
-                    '"ifRouteGranted" tag with auto discovery must contain one url() or path() call.',
+                    '"routeifgranted" tag with auto discovery must contain one url() or path() call.',
                     $node->getTemplateLine()
                 );
             }
 
-            $routingFunction = $this->scope->get('routingFunction');
-            $this->transformRoutingFunction($routingFunction);
-
-            $node->setNode('isGrantedExpression', $this->scope->get('routingFunction'));
+            $node->setMainExpression($this->scope->get('routingFunction'));
 
             $this->scope->set('insideTargetNode', false);
             $this->scope = $this->scope->leave();
@@ -101,7 +98,7 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
 
             if ($this->scope->has('routingFunction')) {
                 throw new SyntaxError(
-                    '"ifRouteGranted" tag with auto discovery must contain only one url() or path() call.',
+                    '"routeifgranted" tag with auto discovery must contain only one url() or path() call.',
                     $node->getTemplateLine()
                 );
             }
@@ -125,31 +122,11 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
 
     private function isTargetNode(Node $node)
     {
-        return $node instanceof IfRouteGrantedNode && $node->getAttribute('discover');
+        return $node instanceof RouteIfGrantedNode && $node->hasAttribute('discover');
     }
 
     private function isRoutingFunctionNode(Node $node)
     {
         return $node instanceof FunctionExpression && in_array($node->getAttribute('name'), $this->routingFunctions);
-    }
-
-    private function transformRoutingFunction(FunctionExpression $node)
-    {
-        $originalName = $node->getAttribute('name');
-        $node->setAttribute('name', 'is_route_granted');
-
-        /*
-        $arguments = [];
-        $argumentNodes = [];
-
-        foreach ($arguments as $argument) {
-            $argumentNodes[] = new ConstantExpression($argument, $line);
-        }
-
-        $argumentNode = new Node($argumentNodes);
-        $node = new FunctionExpression($name, $argumentNode, $line);
-
-        return $node;
-        */
     }
 }

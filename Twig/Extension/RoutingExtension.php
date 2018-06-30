@@ -12,7 +12,7 @@ namespace NeonLight\SecureLinksBundle\Twig\Extension;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-use NeonLight\SecureLinksBundle\Twig\TokenParser\IfRouteGrantedTokenParser;
+use NeonLight\SecureLinksBundle\Twig\TokenParser\RouteIfGrantedTokenParser;
 use NeonLight\SecureLinksBundle\Twig\NodeVisitor\DiscoverRoutingFunctionNodeVisitor;
 use NeonLight\SecureLinksBundle\Twig\RoutingRuntime;
 
@@ -28,7 +28,7 @@ class RoutingExtension extends AbstractExtension
     public function getTokenParsers()
     {
         return [
-            new IfRouteGrantedTokenParser(),
+            new RouteIfGrantedTokenParser(),
         ];
     }
 
@@ -48,7 +48,7 @@ class RoutingExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('is_route_granted', [RoutingRuntime::class, 'isRouteGranted']),
+            new TwigFunction('route_if_granted', [RoutingRuntime::class, 'routeIfGranted']),
             new TwigFunction('url_if_granted', [RoutingRuntime::class, 'urlIfGranted']),
             new TwigFunction('path_if_granted', [RoutingRuntime::class, 'pathIfGranted']),
         ];
