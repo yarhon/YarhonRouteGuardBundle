@@ -21,6 +21,8 @@ use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\AssignNameExpression;
 
+use NeonLight\SecureLinksBundle\Twig\TokenParser\RouteIfGrantedTokenParser;
+
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
@@ -28,11 +30,21 @@ class RouteIfGrantedNode extends Node
 {
     private static $referenceVarName;
 
-    public function __construct(Node $bodyNode, $line = 0, $tag = null)
+    public function __construct(RouteIfGrantedExpression $condition = null, Node $bodyNode, Node $elseNode = null, $line = 0, $tag = null)
     {
         $nodes = [
             'body' => $bodyNode,
         ];
+
+        if ($condition) {
+            $nodes['condition'] = $condition;
+        }
+
+        if ($elseNode) {
+            $nodes['else'] = $elseNode;
+        }
+
+        $tag = $tag ?: RouteIfGrantedTokenParser::TAG_NAME;
 
         parent::__construct($nodes, [], $line, $tag);
     }
@@ -48,8 +60,8 @@ class RouteIfGrantedNode extends Node
 
         $compiler->addDebugInfo($this);
 
-        if (!$this->hasNode('mainExpression')) {
-            throw new SyntaxError('mainExpression node is required.', $this->getTemplateLine());
+        if (!$this->hasNode('condition')) {
+            throw new SyntaxError('condition node is required.', $this->getTemplateLine());
         }
 
         $referenceVar = new AssignNameExpression(self::getReferenceVarName(), 0);
@@ -58,7 +70,7 @@ class RouteIfGrantedNode extends Node
             ->write('if (false !== (')
             ->subcompile($referenceVar)
             ->write(' = ')
-            ->subcompile($this->getNode('mainExpression'))
+            ->subcompile($this->getNode('condition'))
             ->write(")) {\n")
             ->indent()
             ->subcompile($this->getNode('body'))
@@ -78,20 +90,18 @@ class RouteIfGrantedNode extends Node
             ->write("}\n");
     }
 
-    public function setMainExpression(AbstractExpression $expression, array $generateAs = [])
+    public function createCondition(Node $arguments, array $generateAs)
     {
-        if ($expression instanceof ArrayExpression) {
-            $function = $this->createFunctionFromArgumentsArray($expression, $generateAs);
-        } elseif($expression instanceof FunctionExpression) {
-            $function = $this->createFunctionFromRoutingFunction($expression);
-        } else {
-            throw new SyntaxError(
-                sprintf('Invalid main expression class: %s', get_class($expression)),
-                $expression->getTemplateLine()
-            );
-        }
+        // TODO: validate $generateAs
 
-        $this->setNode('mainExpression', $function);
+        $defaults = ['path', 'absolute'];
+        $options = array_replace($defaults, $generateAs);
+        // or $options = $generateAs + $defaults;
+
+
+
+        $function = $this->createFunction($arguments, $generateAs);
+        $this->setNode('condition', $function);
     }
 
     public static function setReferenceVarName($referenceVarName)
@@ -110,38 +120,8 @@ class RouteIfGrantedNode extends Node
         return self::$referenceVarName;
     }
 
-    private function createFunctionFromArgumentsArray(ArrayExpression $argumentsArray, array $generateAs)
-    {
-        $line = $argumentsArray->getTemplateLine();
-
-        $arguments = new Node([], [], $line);
-        for ($i = 1; $i < $argumentsArray->count(); $i += 2) {
-            $arguments->setNode(floor($i / 2), $argumentsArray->getNode($i));
-        }
-
-        return $this->createFunction($arguments, $generateAs);
-    }
-
-    private function createFunctionFromRoutingFunction(FunctionExpression $routingFunction)
-    {
-        $arguments = $routingFunction->getNode('arguments');
-
-        // process "relative" parameter (defaults to false)
-        $relative = 'absolute';
-        if ($arguments->hasNode(2)) {
-            $relative = $arguments->getNode(2);
-            $arguments->removeNode(2);
-        }
-
-        $generateAs = [$routingFunction->getAttribute('name'), $relative];
-
-        return $this->createFunction($arguments, $generateAs);
-    }
-
     private function createFunction(Node $arguments, array $generateAs)
     {
-        // TODO: validate $generateAs
-
         $functionName = $generateAs[0] == 'url' ? 'url_if_granted' : 'path_if_granted';
         $relative = $generateAs[1];
         if (!($relative instanceof AbstractExpression)) {

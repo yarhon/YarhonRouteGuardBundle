@@ -12,6 +12,8 @@ namespace NeonLight\SecureLinksBundle\Tests\Twig\TokenParser;
 
 use PHPUnit\Framework\TestCase;
 use Twig\Environment;
+//use Twig\Error\SyntaxError;
+use Twig_Error_Syntax as SyntaxError;
 use Twig\Parser;
 use Twig\Source;
 use Twig\Compiler;
@@ -23,9 +25,12 @@ use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\NameExpression;
 use Twig\Node\TextNode;
 use Twig\Node\PrintNode;
+use Twig\Token;
+use Twig\TokenStream;
 
 use NeonLight\SecureLinksBundle\Twig\Extension\RoutingExtension;
 use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedNode;
+use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedExpression;
 
 class RouteIfGrantedTokenParserTest extends TestCase
 {
@@ -77,27 +82,58 @@ class RouteIfGrantedTokenParserTest extends TestCase
     {
         /*
          * Note: "name" (template name) parameter as null is significant for the private $name variable
-         * of parsed Node instances to be propagated with null value.
+         * of parsed Node instances to be propagated with null value (it's default value).
          * Then properties of this instances would be strictly equal to properties
          * of Node instances provided by @dataProvider.
          */
         $source = new Source($source, null);
         $stream = $this->environment->tokenize($source);
+
+        /*
+         * Twig lexer will set line numbers starting from 1 (and only 1 source is one-line).
+         * This sets line numbers of all tokens to 0 (default value)
+         * to allow skip non-required line number parameters in Nodes instances, created in dataProvider.
+         */
+        $this->hackLineNumbers($stream, 0);
+
         $parser = new Parser($this->environment);
 
         $node = $parser->parse($stream);
         $node = $node->getNode('body')->getNode(0);
 
-        $target = $node->getNode('body');
-        var_dump($expected == $target);
-        $this->assertEquals($expected, $target);
+        $this->assertEquals($expected, $node);
 
-        //$source = $this->compile($targetNode);
-
-        //var_dump((string) $targetNode);
+        //var_dump((string) $node);
+        //$source = $this->compile($node);
         //var_dump($source);
+    }
 
+    /**
+     * @param TokenStream $stream
+     * @param $line
+     *
+     * @throws \ReflectionException
+     */
+    private function hackLineNumbers(TokenStream $stream, $line)
+    {
+        $tokens = [];
 
+        $i = 1;
+        while (true) {
+            try {
+                $tokens[] = $stream->look($i);
+                $i++;
+            } catch (SyntaxError $e) {
+                break;
+            }
+        }
+
+        $property = new \ReflectionProperty(Token::class, 'lineno');
+        $property->setAccessible(true);
+
+        foreach ($tokens as $token) {
+            $property->setValue($token, $line);
+        }
     }
 
     public function compile($node)
@@ -109,6 +145,11 @@ class RouteIfGrantedTokenParserTest extends TestCase
         return $source;
     }
 
+    /**
+     * @return array
+     *
+     * @throws \Twig\Error\SyntaxError
+     */
     public function getTestsForParse()
     {
         //'{% routeifgranted url ["secure2", { page: 10 }, false, "GET"] %}<a href="{{ route_reference }}">Test tag</a>{% else %}Not granted{% endrouteifgranted %}',
@@ -118,16 +159,19 @@ class RouteIfGrantedTokenParserTest extends TestCase
         return [
             [
                 '{% routeifgranted ["secure1"] %}<a href="{{ route_reference }}">Link</a>{% endrouteifgranted %}',
-                //new RouteIfGrantedNode(
+                new RouteIfGrantedNode(
+                    (new RouteIfGrantedExpression(
+                        new Node([
+                            new ConstantExpression('secure1', 0)
+                        ])
+                    ))->setFunctionName('path'),
                     new Node([
-                        new TextNode('<a href="', 1),
-                        new PrintNode(new NameExpression('route_reference', 1), 1),
-                        new TextNode('">Link</a>', 1)
-                    ], [], 1)
-                //)
+                        new TextNode('<a href="', 0),
+                        new PrintNode(new NameExpression('route_reference', 0), 0),
+                        new TextNode('">Link</a>', 0)
+                    ])
+                )
             ],
-
-
         ];
     }
 }

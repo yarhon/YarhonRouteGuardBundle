@@ -15,7 +15,10 @@ use Twig\TokenParser\AbstractTokenParser;
 use Twig_Token as Token;
 use Twig\Error\SyntaxError;
 use Twig\TokenStream;
+use Twig\Node\Node;
+use Twig\Node\Expression\ArrayExpression;
 use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedNode;
+use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedExpression;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -28,39 +31,38 @@ class RouteIfGrantedTokenParser extends AbstractTokenParser
 
     public function parse(Token $token)
     {
-        $subNodes = [];
-        $discoverRoutingFunction = false;
-        $generateAs = ['path', 'absolute'];
+        $condition = null;
+        $elseNode = null;
 
         $parser = $this->parser;
         $stream = $parser->getStream();
 
         if (!$stream->test('discover')) {
             $arguments = $parser->getExpressionParser()->parseArrayExpression();
-
-            if ($arguments->count() < 1 || $arguments->count() > 3) {
-                // TODO: throw an exception
-            }
+            $arguments = $this->arrayExpressionToArguments($arguments);
+            $condition = new RouteIfGrantedExpression($arguments, $token->getLine());
 
             if ($stream->nextIf('as')) {
-                // $generateAs[0] = $stream->expect(Token::NAME_TYPE, ['url', 'path'])->getValue();
+                // $functionName = $stream->expect(Token::NAME_TYPE, ['url', 'path'])->getValue();
                 // Workaround for bug in Twig_TokenStream::expect() method. See self::streamExpect().
                 $message = '"name" expected with value "url" or "path"';
-                $generateAs[0] = $this->streamExpect($stream, Token::NAME_TYPE, ['url', 'path'], $message)->getValue();
+                $functionName = $this->streamExpect($stream, Token::NAME_TYPE, ['url', 'path'], $message)->getValue();
+
+                $condition->setFunctionName($functionName);
 
                 if ($stream->test(['absolute', 'relative'])) {
-                    $generateAs[1] = $stream->getCurrent()->getValue();
+                    $relative = $stream->getCurrent()->getValue() == 'absolute' ? false : true;
+                    $condition->setRelative($relative);
                     $stream->next();
                 }
             }
         } else {
-            $discoverRoutingFunction = true;
             $stream->next();
         }
 
         /*
         if ($stream->nextIf('if')) {
-            $subNodes['ifExpression'] = $parser->getExpressionParser()->parseExpression();
+            $parser->getExpressionParser()->parseExpression();
         }
         */
 
@@ -75,14 +77,14 @@ class RouteIfGrantedTokenParser extends AbstractTokenParser
         if ('else' == $stream->next()->getValue()) {
             $stream->expect(Token::BLOCK_END_TYPE);
 
-            /**
+            /*
              * $dropNeedle parameter is significant to call next() on the stream, that would skip the node with the end tag name.
              * For unknown reason, that node is skipped automatically if there are no any nested tags (i.e., {% else %}).
              * Same result could be achieved by the following code after subparse call:
              * $stream->expect(self::END_TAG_NAME).
              * We use second option to be able to allow / disallow nested tags in future.
              */
-            $subNodes['else'] = $parser->subparse(function(Token $token) {
+            $elseNode = $parser->subparse(function(Token $token) {
                 return $token->test([self::END_TAG_NAME]);
             });
 
@@ -93,17 +95,7 @@ class RouteIfGrantedTokenParser extends AbstractTokenParser
 
         $stream->expect(Token::BLOCK_END_TYPE);
 
-        $node = new RouteIfGrantedNode($bodyNode, $token->getLine(), $this->getTag());
-
-        if (!$discoverRoutingFunction) {
-            $node->setMainExpression($arguments, $generateAs);
-        } else {
-            $node->setAttribute('discover', true);
-        }
-
-        foreach ($subNodes as $name => $subNode) {
-            $node->setNode($name, $subNode);
-        }
+        $node = new RouteIfGrantedNode($condition, $bodyNode, $elseNode, $token->getLine(), $this->getTag());
 
         return $node;
     }
@@ -111,6 +103,18 @@ class RouteIfGrantedTokenParser extends AbstractTokenParser
     public function getTag()
     {
         return self::TAG_NAME;
+    }
+
+    private function arrayExpressionToArguments(ArrayExpression $arrayExpression)
+    {
+        $line = $arrayExpression->getTemplateLine();
+
+        $arguments = new Node([], [], $line);
+        for ($i = 1; $i < $arrayExpression->count(); $i += 2) {
+            $arguments->setNode(floor($i / 2), $arrayExpression->getNode($i));
+        }
+
+        return $arguments;
     }
 
     /**

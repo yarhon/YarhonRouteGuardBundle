@@ -20,6 +20,7 @@ use Twig\Error\SyntaxError;
 use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\Expression\NameExpression;
 use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedNode;
+use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedExpression;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -40,31 +41,13 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @throws SyntaxError If more than one routing function calls were found inside node
      */
     public function enterNode(Node $node, Environment $env)
     {
         if ($this->isTargetNode($node)) {
             $this->scope = $this->scope->enter();
             $this->scope->set('insideTargetNode', true);
-
-            return $node;
         }
-
-        /*
-        if ($this->scope->get('insideTargetNode') && $this->isRoutingFunctionNode($node)) {
-
-            if ($this->scope->has('routingFunction')) {
-                throw new SyntaxError(
-                    '"routeifgranted" tag with auto discovery must contain only one url() or path() call.',
-                    $node->getTemplateLine()
-                );
-            }
-
-            $this->scope->set('routingFunction', $node);
-        }
-        */
 
         return $node;
     }
@@ -78,6 +61,8 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
     {
         if ($this->isTargetNode($node)) {
 
+            /** @var RouteIfGrantedNode $node */
+
             if (!$this->scope->has('routingFunction')) {
                 throw new SyntaxError(
                     '"routeifgranted" tag with auto discovery must contain one url() or path() call.',
@@ -85,7 +70,8 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
                 );
             }
 
-            $node->setMainExpression($this->scope->get('routingFunction'));
+            $condition = $this->createCondition($this->scope->get('routingFunction'), $node->getTemplateLine());
+            $node->setNode('condition', $condition);
 
             $this->scope->set('insideTargetNode', false);
             $this->scope = $this->scope->leave();
@@ -121,11 +107,40 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
 
     private function isTargetNode(Node $node)
     {
-        return $node instanceof RouteIfGrantedNode && $node->hasAttribute('discover');
+        return $node instanceof RouteIfGrantedNode && !$node->hasNode('condition');
     }
 
     private function isRoutingFunctionNode(Node $node)
     {
         return $node instanceof FunctionExpression && in_array($node->getAttribute('name'), $this->routingFunctions);
+    }
+
+    /**
+     * @param FunctionExpression $function
+     * @param int $line
+     *
+     * @return RouteIfGrantedExpression
+     *
+     * @throws SyntaxError
+     */
+    private function createCondition(FunctionExpression $function, $line)
+    {
+        $functionName = $function->getAttribute('name');
+        $arguments = $function->getNode('arguments');
+        $relativeNode = null;
+
+        if ($arguments->hasNode(2)) {
+            $relativeNode = $arguments->getNode(2);
+            $arguments->removeNode(2);
+        }
+
+        $condition = new RouteIfGrantedExpression($arguments, $line);
+        $condition->setFunctionName($functionName);
+
+        if ($relativeNode) {
+            $condition->setRelative($relativeNode);
+        }
+
+        return $condition;
     }
 }
