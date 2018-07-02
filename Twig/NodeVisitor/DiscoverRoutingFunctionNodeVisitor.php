@@ -30,8 +30,14 @@ use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedExpression;
  */
 class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
 {
+    /**
+     * @var Scope
+     */
     private $scope;
 
+    /**
+     * @var array
+     */
     private $routingFunctions = ['url', 'path'];
 
     public function __construct()
@@ -100,16 +106,29 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
         return $node;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPriority()
     {
         return 0;
     }
 
+    /**
+     * @param Node $node
+     *
+     * @return bool
+     */
     private function isTargetNode(Node $node)
     {
         return $node instanceof RouteIfGrantedNode && !$node->hasNode('condition');
     }
 
+    /**
+     * @param Node $node
+     *
+     * @return bool
+     */
     private function isRoutingFunctionNode(Node $node)
     {
         return $node instanceof FunctionExpression && in_array($node->getAttribute('name'), $this->routingFunctions);
@@ -117,7 +136,7 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
 
     /**
      * @param FunctionExpression $function
-     * @param int $line
+     * @param int                $line
      *
      * @return RouteIfGrantedExpression
      *

@@ -18,10 +18,26 @@ namespace NeonLight\SecureLinksBundle\Twig\NodeVisitor;
  */
 class Scope
 {
+    /**
+     * @var self
+     */
     private $parent;
-    private $data = array();
+
+    /**
+     * @var array
+     */
+    private $data = [];
+
+    /**
+     * @var bool
+     */
     private $left = false;
 
+    /**
+     * Scope constructor.
+     *
+     * @param self|null $parent
+     */
     public function __construct(self $parent = null)
     {
         $this->parent = $parent;

@@ -26,12 +26,28 @@ class RoutingRuntime
         // path:    $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH
         //                      '../parent-file'                       '/dir/file'
 
+    /**
+     * @param string $name
+     * @param array  $parameters
+     * @param string $method
+     * @param int    $referenceType One UrlGeneratorInterface constants
+     *
+     * @return string|bool
+     */
     protected function routeIfGranted($name, $parameters = [], $method = 'GET', $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
         // TODO: implement this
         return true;
     }
 
+    /**
+     * @param string $name
+     * @param array  $parameters
+     * @param string $method
+     * @param bool   $relative
+     *
+     * @return string|bool
+     */
     public function urlIfGranted($name, $parameters = [], $method = 'GET', $relative = false)
     {
         $referenceType = $relative ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL;
@@ -39,6 +55,14 @@ class RoutingRuntime
         return $this->routeIfGranted($name, $parameters, $method, $referenceType);
     }
 
+    /**
+     * @param string $name
+     * @param array  $parameters
+     * @param string $method
+     * @param bool   $relative
+     *
+     * @return string|bool
+     */
     public function pathIfGranted($name, $parameters = [], $method = 'GET', $relative = false)
     {
         $referenceType = $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH;

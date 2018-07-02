@@ -10,10 +10,12 @@
 
 namespace NeonLight\SecureLinksBundle\Twig\TokenParser;
 
+use Twig\Node\Expression\ConstantExpression;
 use Twig\TokenParser\AbstractTokenParser;
 //use Twig\Token; // PhpStorm doesn't recognise this in type hints
 use Twig_Token as Token;
-use Twig\Error\SyntaxError;
+//use Twig\Error\SyntaxError;
+use Twig_Error_Syntax as SyntaxError;
 use Twig\TokenStream;
 use Twig\Node\Node;
 use Twig\Node\Expression\ArrayExpression;
@@ -29,6 +31,9 @@ class RouteIfGrantedTokenParser extends AbstractTokenParser
 
     const END_TAG_NAME = 'endrouteifgranted';
 
+    /**
+     * {@inheritdoc}
+     */
     public function parse(Token $token)
     {
         $condition = null;
@@ -100,18 +105,34 @@ class RouteIfGrantedTokenParser extends AbstractTokenParser
         return $node;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getTag()
     {
         return self::TAG_NAME;
     }
 
+    /**
+     * @param ArrayExpression $arrayExpression
+     *
+     * @return Node
+     *
+     * @throws SyntaxError
+     */
     private function arrayExpressionToArguments(ArrayExpression $arrayExpression)
     {
         $line = $arrayExpression->getTemplateLine();
-
         $arguments = new Node([], [], $line);
-        for ($i = 1; $i < $arrayExpression->count(); $i += 2) {
-            $arguments->setNode(floor($i / 2), $arrayExpression->getNode($i));
+
+        foreach ($arrayExpression->getKeyValuePairs() as $index => $pair) {
+            $key = $pair['key'];
+
+            if (!($key instanceof ConstantExpression) || $index !== $key->getAttribute('value')) {
+                throw new SyntaxError('Arguments must be a zero-indexed array.', $line);
+            }
+
+            $arguments->setNode($index, $pair['value']);
         }
 
         return $arguments;
@@ -124,6 +145,14 @@ class RouteIfGrantedTokenParser extends AbstractTokenParser
      * - for type because of:  Twig_Token::typeToEnglish($type)
      * - for value because of: sprintf(' with value "%s"', $value)
      *
+     * @param TokenStream       $stream
+     * @param array|int         $type
+     * @param array|string|null $values
+     * @param string|null       $message
+     *
+     * @return Token
+     *
+     * @throws SyntaxError
      */
     private function streamExpect(TokenStream $stream, $type, $values = null, $message = null)
     {
@@ -145,14 +174,16 @@ class RouteIfGrantedTokenParser extends AbstractTokenParser
     }
 
     /*
-    private function testForNestedTag($stream)
+    private function testForNestedTag(TokenStream $stream)
     {
-        if ($stream->getCurrent()->test(self::TAG_NAME)) {
-            throw new SyntaxError(
-                sprintf('Nested "%s" tags are not allowed.', $this->getTag()),
-                $stream->getCurrent()->getLine(), $stream->getSourceContext()
-            );
+        if (!$stream->getCurrent()->test(self::TAG_NAME)) {
+            return;
         }
+
+        throw new SyntaxError(
+            sprintf('Nested "%s" tags are not allowed.', $this->getTag()),
+            $stream->getCurrent()->getLine(), $stream->getSourceContext()
+        );
     }
     */
 }

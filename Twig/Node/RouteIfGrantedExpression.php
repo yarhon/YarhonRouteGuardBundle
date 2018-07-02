@@ -26,7 +26,7 @@ class RouteIfGrantedExpression extends FunctionExpression
      * RouteIfGrantedExpression constructor.
      *
      * @param Node $arguments
-     * @param int $line
+     * @param int  $line
      *
      * @throws SyntaxError
      */
@@ -42,19 +42,50 @@ class RouteIfGrantedExpression extends FunctionExpression
             throw new SyntaxError("Unrecognized extra arguments, only 3 (name, parameters, method) allowed.", $line);
         }
 
-        $this->addDefaultArguments($arguments, $line);
+        $this->addDefaultArguments($arguments);
 
         parent::__construct(null, $arguments, $line);
 
-        // Set default generate parameters.
+        // Set default generateAs parameters.
         // We call this function after parent constructor call to allow them to rely on internal structure
         // created by parent constructor (i.e., call $this->getNode('arguments'), $this->getTemplateLine()).
         $this->setFunctionName('path');
         $this->setRelative(false);
     }
 
+    /*
+     * TODO: allow to specify $generateAs as a constant (one of UrlGeneratorInterface constants).
+     * Note that $relative parameter in setRelative() method can be an instance of AbstractExpression,
+     * and it's execution result can be non-calculable at compile time.
+     */
+
     /**
-     * @param $functionName
+     * @param array $generateAs
+     *
+     * @return self
+     *
+     * @throws SyntaxError
+     */
+    public function setGenerateAs($generateAs)
+    {
+        if (is_array($generateAs)) {
+            if (!isset($generateAs[0])) {
+                throw new SyntaxError('setGenerateAs array parameter must have at least one parameter (functionName).',
+                    $this->getTemplateLine());
+            }
+
+            $this->setFunctionName($generateAs[0]);
+
+            if (isset($generateAs[1])) {
+                $this->setRelative($generateAs[1]);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $functionName
      *
      * @return self
      *
@@ -104,8 +135,13 @@ class RouteIfGrantedExpression extends FunctionExpression
         }
     }
 
-    private function addDefaultArguments(Node $arguments, $line = 0)
+    /**
+     * @param Node $arguments
+     */
+    private function addDefaultArguments(Node $arguments)
     {
+        $line = $arguments->getTemplateLine();
+
         if ($arguments->count() == 1) {
             // add a default "parameters" argument
             $arguments->setNode(1, new ArrayExpression([], $line));

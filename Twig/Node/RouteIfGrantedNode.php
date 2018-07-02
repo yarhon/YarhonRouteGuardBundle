@@ -14,13 +14,7 @@ use Twig\Node\Node;
 // use Twig\Compiler; // PhpStorm doesn't recognise this in type hints
 use Twig_Compiler as Compiler;
 use Twig\Error\SyntaxError;
-
-use Twig\Node\Expression\AbstractExpression;
-use Twig\Node\Expression\ArrayExpression;
-use Twig\Node\Expression\FunctionExpression;
-use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\AssignNameExpression;
-
 use NeonLight\SecureLinksBundle\Twig\TokenParser\RouteIfGrantedTokenParser;
 
 /**
@@ -28,8 +22,20 @@ use NeonLight\SecureLinksBundle\Twig\TokenParser\RouteIfGrantedTokenParser;
  */
 class RouteIfGrantedNode extends Node
 {
+    /**
+     * @var string
+     */
     private static $referenceVarName;
 
+    /**
+     * RouteIfGrantedNode constructor.
+     *
+     * @param RouteIfGrantedExpression|null $condition
+     * @param Node                          $bodyNode
+     * @param Node|null                     $elseNode
+     * @param int                           $line
+     * @param string|null                   $tag
+     */
     public function __construct(RouteIfGrantedExpression $condition = null, Node $bodyNode, Node $elseNode = null, $line = 0, $tag = null)
     {
         $nodes = [
@@ -61,7 +67,7 @@ class RouteIfGrantedNode extends Node
         $compiler->addDebugInfo($this);
 
         if (!$this->hasNode('condition')) {
-            throw new SyntaxError('condition node is required.', $this->getTemplateLine());
+            throw new SyntaxError('Condition node is required.', $this->getTemplateLine());
         }
 
         $referenceVar = new AssignNameExpression(self::getReferenceVarName(), 0);
@@ -90,63 +96,27 @@ class RouteIfGrantedNode extends Node
             ->write("}\n");
     }
 
-    public function createCondition(Node $arguments, array $generateAs)
-    {
-        // TODO: validate $generateAs
-
-        $defaults = ['path', 'absolute'];
-        $options = array_replace($defaults, $generateAs);
-        // or $options = $generateAs + $defaults;
-
-
-
-        $function = $this->createFunction($arguments, $generateAs);
-        $this->setNode('condition', $function);
-    }
-
+    /**
+     * @param string $referenceVarName
+     */
     public static function setReferenceVarName($referenceVarName)
     {
         self::$referenceVarName = $referenceVarName;
     }
 
+    /**
+     * @return string
+     *
+     * @throws \LogicException
+     */
     public static function getReferenceVarName()
     {
         if (!self::$referenceVarName) {
-            throw new \InvalidArgumentException(
+            throw new \LogicException(
                 sprintf('%s::referenceVarName is not set. setReferenceVarName() method should be called first.', __CLASS__)
             );
         }
 
         return self::$referenceVarName;
-    }
-
-    private function createFunction(Node $arguments, array $generateAs)
-    {
-        $functionName = $generateAs[0] == 'url' ? 'url_if_granted' : 'path_if_granted';
-        $relative = $generateAs[1];
-        if (!($relative instanceof AbstractExpression)) {
-            $relative = $relative == 'absolute' ? false : true;
-        }
-
-        $line = $arguments->getTemplateLine();
-
-        if ($arguments->count() == 1) {
-            // add a default "parameters" argument
-            $arguments->setNode(1, new ArrayExpression([], $line));
-        }
-
-        if ($arguments->count() == 2) {
-            // add a default "method" argument
-            $arguments->setNode(2, new ConstantExpression('GET', $line));
-        }
-
-        if (!($relative instanceof AbstractExpression)) {
-            $relative = new ConstantExpression($relative, $line);
-        }
-
-        // add a "relative" argument
-        $arguments->setNode(3, $relative);
-
-        return new FunctionExpression($functionName, $arguments, $line);
     }
 }

@@ -22,6 +22,11 @@ use NeonLight\SecureLinksBundle\Twig\RoutingRuntime;
  */
 class RoutingExtension extends AbstractExtension
 {
+    /**
+     * RoutingExtension constructor.
+     *
+     * @param array $options
+     */
     public function __construct(array $options = [])
     {
         $defaults = [
