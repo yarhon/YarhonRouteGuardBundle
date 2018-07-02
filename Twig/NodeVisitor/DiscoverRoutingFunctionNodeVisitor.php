@@ -10,12 +10,10 @@
 
 namespace NeonLight\SecureLinksBundle\Twig\NodeVisitor;
 
+use Twig_Node as Node;               // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Node\Node
+use Twig_Environment as Environment; // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Environment
 use Twig\NodeVisitor\AbstractNodeVisitor;
 use Twig\NodeVisitor\NodeVisitorInterface;
-// use Twig\Node\Node; // PhpStorm doesn't recognise this in type hints
-use Twig_Node as Node;
-//use Twig\Environment; // PhpStorm doesn't recognise this in type hints
-use Twig_Environment as Environment;
 use Twig\Error\SyntaxError;
 use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\Expression\NameExpression;

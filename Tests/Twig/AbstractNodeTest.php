@@ -11,16 +11,14 @@
 namespace NeonLight\SecureLinksBundle\Tests\Twig;
 
 use PHPUnit\Framework\TestCase;
+use Twig_Error_Syntax as SyntaxError;   // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
 use Twig\Environment;
-//use Twig\Error\SyntaxError;
-use Twig_Error_Syntax as SyntaxError;
 use Twig\Parser;
 use Twig\Source;
 use Twig\Compiler;
 use Twig\Node\Node;
 use Twig\Token;
 use Twig\TokenStream;
-
 use NeonLight\SecureLinksBundle\Twig\Extension\RoutingExtension;
 
 abstract class AbstractNodeTest extends TestCase

@@ -10,14 +10,12 @@
 
 namespace NeonLight\SecureLinksBundle\Twig\TokenParser;
 
-use Twig\Node\Expression\ConstantExpression;
+use Twig_Token as Token;              // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Token
+use Twig_Error_Syntax as SyntaxError; // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
 use Twig\TokenParser\AbstractTokenParser;
-//use Twig\Token; // PhpStorm doesn't recognise this in type hints
-use Twig_Token as Token;
-//use Twig\Error\SyntaxError;
-use Twig_Error_Syntax as SyntaxError;
 use Twig\TokenStream;
 use Twig\Node\Node;
+use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\ArrayExpression;
 use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedNode;
 use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedExpression;

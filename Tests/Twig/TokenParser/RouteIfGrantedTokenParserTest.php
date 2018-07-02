@@ -11,18 +11,14 @@
 namespace NeonLight\SecureLinksBundle\Tests\Twig\TokenParser;
 
 use PHPUnit\Framework\TestCase;
-
-//use Twig\Error\SyntaxError;
-use Twig_Error_Syntax as SyntaxError;
-
+use Twig_Error_Syntax as SyntaxError;   // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
 use Twig\Node\Node;
+use Twig\Node\TextNode;
+use Twig\Node\PrintNode;
 use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\Expression\ArrayExpression;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\NameExpression;
-use Twig\Node\TextNode;
-use Twig\Node\PrintNode;
-
 use NeonLight\SecureLinksBundle\Tests\Twig\AbstractNodeTest;
 use NeonLight\SecureLinksBundle\Twig\Extension\RoutingExtension;
 use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedNode;
@@ -47,7 +43,7 @@ class RouteIfGrantedTokenParserTest extends AbstractNodeTest
     /**
      * @return array
      *
-     * @throws \Twig\Error\SyntaxError
+     * @throws SyntaxError
      */
     public function getTestsForParse()
     {

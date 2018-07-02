@@ -10,9 +10,8 @@
 
 namespace NeonLight\SecureLinksBundle\Twig\Node;
 
+use Twig_Compiler as Compiler;      // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Compiler
 use Twig\Node\Node;
-// use Twig\Compiler; // PhpStorm doesn't recognise this in type hints
-use Twig_Compiler as Compiler;
 use Twig\Error\SyntaxError;
 use Twig\Node\Expression\AssignNameExpression;
 use NeonLight\SecureLinksBundle\Twig\TokenParser\RouteIfGrantedTokenParser;
