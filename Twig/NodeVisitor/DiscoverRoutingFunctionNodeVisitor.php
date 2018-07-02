@@ -69,7 +69,7 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
 
             if (!$this->scope->has('routingFunction')) {
                 throw new SyntaxError(
-                    '"routeifgranted" tag with auto discovery must contain one url() or path() call.',
+                    '"routeifgranted" tag with discover option must contain one url() or path() call.',
                     $node->getTemplateLine()
                 );
             }
@@ -87,7 +87,7 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
 
             if ($this->scope->has('routingFunction')) {
                 throw new SyntaxError(
-                    '"routeifgranted" tag with auto discovery must contain only one url() or path() call.',
+                    '"routeifgranted" tag with discover option must contain only one url() or path() call.',
                     $node->getTemplateLine()
                 );
             }

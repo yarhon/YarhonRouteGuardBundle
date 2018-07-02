@@ -112,7 +112,7 @@ class RouteIfGrantedNode extends Node
     {
         if (!self::$referenceVarName) {
             throw new \LogicException(
-                sprintf('%s::referenceVarName is not set. setReferenceVarName() method should be called first.', __CLASS__)
+                sprintf('referenceVarName is not set. setReferenceVarName() method should be called first.')
             );
         }
 

@@ -33,34 +33,37 @@ abstract class AbstractNodeTest extends TestCase
         $loader = $this->getMockBuilder('Twig\Loader\LoaderInterface')->getMock();
 
         $this->environment = new Environment($loader, ['cache' => false, 'autoescape' => false, 'optimizations' => 0]);
+
+        $this->environment->addExtension($this->getRoutingExtension());
+        $this->environment->addExtension($this->getTwigBridgeRoutingExtension());
+    }
+
+    private function getRoutingExtension()
+    {
         // TODO: get extension as a service, like in normal flow
-        $this->environment->addExtension(new RoutingExtension());
+        return new RoutingExtension();
 
         /*
+        Alternative way:
         $routingExtension = $this->getMockBuilder(RoutingExtension::class)
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
-
-        $this->environment->addExtension($routingExtension);
         */
+    }
 
-        $twigRoutingExtension = $this->getMockBuilder('Symfony\Bridge\Twig\Extension\RoutingExtension')
+    private function getTwigBridgeRoutingExtension()
+    {
+        $extension = $this->getMockBuilder('Symfony\Bridge\Twig\Extension\RoutingExtension')
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
 
-        $this->environment->addExtension($twigRoutingExtension);
+        return $extension;
 
         /*
-        $this->environment->addFunction(
-            new TwigFunction(
-                'url',
-                function ($name, $parameters = array(), $schemeRelative = false) {
-                    return null;
-                }
-            )
-        );
+        Alternative way:
+        $this->environment->addFunction(new TwigFunction('url', function() {}))
         */
     }
 

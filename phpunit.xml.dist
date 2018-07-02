@@ -18,18 +18,23 @@
     </php>
 
     <testsuites>
-        <testsuite name="Project Test Suite">
-            <directory>./Tests/</directory>
+        <testsuite name="Twig Test Suite">
+            <directory>./Tests/Twig</directory>
         </testsuite>
     </testsuites>
 
     <filter>
+        <!--<whitelist>-->
+            <!--<directory>./</directory>-->
+            <!--<exclude>-->
+                <!--<directory>./Tests</directory>-->
+                <!--<directory>./Resources</directory>-->
+                <!--<directory>./vendor</directory>-->
+            <!--</exclude>-->
+        <!--</whitelist>-->
         <whitelist>
-            <directory>./</directory>
+            <directory>./Twig</directory>
             <exclude>
-                <directory>./Tests</directory>
-                <directory>./Resources</directory>
-                <directory>./vendor</directory>
             </exclude>
         </whitelist>
     </filter>

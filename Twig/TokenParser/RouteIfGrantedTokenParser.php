@@ -115,8 +115,6 @@ class RouteIfGrantedTokenParser extends AbstractTokenParser
      * @param ArrayExpression $arrayExpression
      *
      * @return Node
-     *
-     * @throws SyntaxError
      */
     private function arrayExpressionToArguments(ArrayExpression $arrayExpression)
     {
@@ -124,11 +122,14 @@ class RouteIfGrantedTokenParser extends AbstractTokenParser
         $arguments = new Node([], [], $line);
 
         foreach ($arrayExpression->getKeyValuePairs() as $index => $pair) {
-            $key = $pair['key'];
 
+            /*
+             * This check is not needed, because \Twig_ExpressionParser::parseArrayExpression will return only zero-indexed arrays.
+            $key = $pair['key'];
             if (!($key instanceof ConstantExpression) || $index !== $key->getAttribute('value')) {
                 throw new SyntaxError('Arguments must be a zero-indexed array.', $line);
             }
+            */
 
             $arguments->setNode($index, $pair['value']);
         }

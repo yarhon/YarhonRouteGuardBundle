@@ -10,62 +10,159 @@
 
 namespace NeonLight\SecureLinksBundle\Tests\Twig\TokenParser;
 
-use PHPUnit\Framework\TestCase;
 use Twig_Error_Syntax as SyntaxError;   // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
 use Twig\Node\Node;
 use Twig\Node\TextNode;
 use Twig\Node\PrintNode;
-use Twig\Node\Expression\FunctionExpression;
-use Twig\Node\Expression\ArrayExpression;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\NameExpression;
 use NeonLight\SecureLinksBundle\Tests\Twig\AbstractNodeTest;
-use NeonLight\SecureLinksBundle\Twig\Extension\RoutingExtension;
 use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedNode;
 use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedExpression;
 
 class RouteIfGrantedTokenParserTest extends AbstractNodeTest
 {
     /**
-     * @dataProvider getTestsForParse
+     * @dataProvider parseDataProvider
      */
     public function testParse($source, $expected)
     {
         $node = $this->parse($source);
 
         $this->assertEquals($expected, $node);
-
-        //var_dump((string) $node);
-        //$source = $this->compile($node);
-        //var_dump($source);
     }
 
-    /**
-     * @return array
-     *
-     * @throws SyntaxError
-     */
-    public function getTestsForParse()
+    public function parseDataProvider()
     {
-        //'{% routeifgranted url ["secure2", { page: 10 }, false, "GET"] %}<a href="{{ route_reference }}">Test tag</a>{% else %}Not granted{% endrouteifgranted %}',
-        //'{% routeifgranted ["secure2", { page: 10 }, "GET"] as path %}<a href="{{ generatedUrl }}">Test tag</a>{% else %}Not granted{% endrouteifgranted %}',
-        // '{% routeifgranted discover %}<a href="{{ url("a1", { page: 10 }) }}">Test tag</a>{% else %}Not granted{% endrouteifgranted %}',
-
         return [
             [
+                // general test
                 '{% routeifgranted ["secure1"] %}<a href="{{ route_reference }}">Link</a>{% endrouteifgranted %}',
                 new RouteIfGrantedNode(
-                    (new RouteIfGrantedExpression(
+                    new RouteIfGrantedExpression(
                         new Node([
                             new ConstantExpression('secure1', 0)
                         ])
-                    ))->setFunctionName('path'),
+                    ),
                     new Node([
                         new TextNode('<a href="', 0),
                         new PrintNode(new NameExpression('route_reference', 0), 0),
                         new TextNode('">Link</a>', 0)
                     ])
                 )
+            ],
+
+            [
+                // else node test
+                '{% routeifgranted ["secure1"] %}{% else %}else text{% endrouteifgranted %}',
+                new RouteIfGrantedNode(
+                    new RouteIfGrantedExpression(
+                        new Node([
+                            new ConstantExpression('secure1', 0)
+                        ])
+                    ),
+                    new Node(),
+                    new TextNode('else text', 0)
+                )
+            ],
+
+            [
+                // with "as"
+                '{% routeifgranted ["secure1"] as path %}{% endrouteifgranted %}',
+                new RouteIfGrantedNode(
+                    (new RouteIfGrantedExpression(
+                        new Node([
+                            new ConstantExpression('secure1', 0)
+                        ])
+                    ))->setFunctionName('path')->setRelative(false),
+                    new Node()
+                )
+            ],
+
+            [
+                // with "as"
+                '{% routeifgranted ["secure1"] as path relative %}{% endrouteifgranted %}',
+                new RouteIfGrantedNode(
+                    (new RouteIfGrantedExpression(
+                        new Node([
+                            new ConstantExpression('secure1', 0)
+                        ])
+                    ))->setFunctionName('path')->setRelative(true),
+                    new Node()
+                )
+            ],
+
+            [
+                // with "as"
+                '{% routeifgranted ["secure1"] as path absolute %}{% endrouteifgranted %}',
+                new RouteIfGrantedNode(
+                    (new RouteIfGrantedExpression(
+                        new Node([
+                            new ConstantExpression('secure1', 0)
+                        ])
+                    ))->setFunctionName('path')->setRelative(false),
+                    new Node()
+                )
+            ],
+
+            [
+                // with "as"
+                '{% routeifgranted ["secure1"] as url %}{% endrouteifgranted %}',
+                new RouteIfGrantedNode(
+                    (new RouteIfGrantedExpression(
+                        new Node([
+                            new ConstantExpression('secure1', 0)
+                        ])
+                    ))->setFunctionName('url')->setRelative(false),
+                    new Node()
+                )
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider parseExceptionDataProvider
+     */
+    public function testParseException($source, $expected)
+    {
+        $this->expectException($expected[0]);
+        if (isset($expected[1])) {
+            $this->expectExceptionMessage($expected[1]);
+        }
+
+        $this->parse($source);
+    }
+
+    public function parseExceptionDataProvider()
+    {
+        return [
+            [
+                // without end tag
+                '{% routeifgranted ["secure1"] %}{% end %}',
+                [SyntaxError::class]
+            ],
+            [
+                // without arguments and "discover"
+                '{% routeifgranted %}{% endrouteifgranted %}',
+                [SyntaxError::class]
+            ],
+
+            [
+                // with "as" and no params
+                '{% routeifgranted ["secure1"] as %}{% endrouteifgranted %}',
+                [SyntaxError::class, '"name" expected with value "url" or "path"']
+            ],
+
+            [
+                // with "as" and invalid function name
+                '{% routeifgranted ["secure1"] as blabla %}{% endrouteifgranted %}',
+                [SyntaxError::class, '"name" expected with value "url" or "path"']
+            ],
+
+            [
+                // with "as" and invalid relative param
+                '{% routeifgranted ["secure1"] as path blabla %}{% endrouteifgranted %}',
+                [SyntaxError::class]
             ],
         ];
     }
