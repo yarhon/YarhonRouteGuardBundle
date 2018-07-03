@@ -22,6 +22,7 @@ class UrlGeneratorPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         if (!$container->has('router.default')) {
+            $container->removeDefinition(UrlGeneratorConfigurator::class);
             return;
         }
 
