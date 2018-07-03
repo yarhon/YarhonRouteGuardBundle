@@ -8,12 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Twig;
+namespace Yarhon\LinkGuardBundle\Twig;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
+ *
+ * @codeCoverageIgnore
  */
 class RoutingRuntime
 {

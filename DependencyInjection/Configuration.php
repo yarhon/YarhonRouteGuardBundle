@@ -8,13 +8,13 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\DependencyInjection;
+namespace Yarhon\LinkGuardBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
- * SecureLinksBundle configuration structure.
+ * LinkGuardBundle configuration structure.
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
@@ -31,7 +31,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('cache_dir')->defaultValue('secure-links')->end()
+                ->scalarNode('cache_dir')->defaultValue('link-guard')->end()
                 ->booleanNode('override_url_generator')->defaultValue(true)->end()
             ->end();
 

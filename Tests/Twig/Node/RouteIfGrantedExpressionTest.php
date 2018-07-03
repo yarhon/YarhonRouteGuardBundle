@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Tests\Twig\Node;
+namespace Yarhon\LinkGuardBundle\Tests\Twig\Node;
 
 use PHPUnit\Framework\TestCase;
 use Twig_Error_Syntax as SyntaxError;   // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
@@ -16,7 +16,7 @@ use Twig\Node\Node;
 use Twig\Node\Expression\ArrayExpression;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\NameExpression;
-use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedExpression;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedExpression;
 
 class RouteIfGrantedExpressionTest extends TestCase
 {

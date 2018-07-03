@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\DependencyInjection\Compiler;
+namespace Yarhon\LinkGuardBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\Routing\Router;
-use NeonLight\SecureLinksBundle\Routing\UrlGenerator;
-use NeonLight\SecureLinksBundle\Routing\AuthorizationAwareUrlGeneratorInterface;
-use NeonLight\SecureLinksBundle\Security\Authorization\AuthorizationManagerInterface;
+use Yarhon\LinkGuardBundle\Routing\UrlGenerator;
+use Yarhon\LinkGuardBundle\Routing\AuthorizationAwareUrlGeneratorInterface;
+use Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

@@ -8,13 +8,13 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Twig\Node;
+namespace Yarhon\LinkGuardBundle\Twig\Node;
 
 use Twig_Compiler as Compiler;      // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Compiler
 use Twig\Node\Node;
 use Twig\Error\SyntaxError;
 use Twig\Node\Expression\AssignNameExpression;
-use NeonLight\SecureLinksBundle\Twig\TokenParser\RouteIfGrantedTokenParser;
+use Yarhon\LinkGuardBundle\Twig\TokenParser\RouteIfGrantedTokenParser;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

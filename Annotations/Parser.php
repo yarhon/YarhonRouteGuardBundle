@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Annotations;
+namespace Yarhon\LinkGuardBundle\Annotations;
 
 use Doctrine\Common\Annotations\Reader;
 

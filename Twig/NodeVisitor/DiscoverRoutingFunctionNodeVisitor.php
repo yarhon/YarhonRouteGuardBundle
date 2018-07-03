@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Twig\NodeVisitor;
+namespace Yarhon\LinkGuardBundle\Twig\NodeVisitor;
 
 use Twig_Node as Node;               // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Node\Node
 use Twig_Environment as Environment; // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Environment
@@ -17,8 +17,8 @@ use Twig\NodeVisitor\NodeVisitorInterface;
 use Twig\Error\SyntaxError;
 use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\Expression\NameExpression;
-use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedNode;
-use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedExpression;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedNode;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedExpression;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

@@ -8,10 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\CacheWarmer;
+namespace Yarhon\LinkGuardBundle\CacheWarmer;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
-use NeonLight\SecureLinksBundle\Security\AccessMap;
+use Yarhon\LinkGuardBundle\Security\AccessMap;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -71,10 +71,10 @@ class RouteCacheWarmer implements CacheWarmerInterface
 
         if (!is_dir($cacheDir)) {
             if (false === @mkdir($cacheDir, 0777, true)) {
-                throw new \RuntimeException(sprintf('Unable to create the Secure Links Bundle cache directory "%s".', $cacheDir));
+                throw new \RuntimeException(sprintf('Unable to create the LinkGuard Bundle cache directory "%s".', $cacheDir));
             }
         } elseif (!is_writable($cacheDir)) {
-            throw new \RuntimeException(sprintf('The Secure Links Bundle cache directory "%s" is not writable for the current system user.', $cacheDir));
+            throw new \RuntimeException(sprintf('The LinkGuard Bundle cache directory "%s" is not writable for the current system user.', $cacheDir));
         }
 
         return $cacheDir;

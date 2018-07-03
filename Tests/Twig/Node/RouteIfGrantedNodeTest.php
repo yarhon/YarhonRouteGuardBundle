@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Tests\Twig\Node;
+namespace Yarhon\LinkGuardBundle\Tests\Twig\Node;
 
 use Twig_Error_Syntax as SyntaxError;   // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
 use Twig\Node\Node;
-use NeonLight\SecureLinksBundle\Tests\Twig\AbstractNodeTest;
-use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedNode;
+use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedNode;
 
 class RouteIfGrantedNodeTest extends AbstractNodeTest
 {

@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Twig\Extension;
+namespace Yarhon\LinkGuardBundle\Twig\Extension;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedNode;
-use NeonLight\SecureLinksBundle\Twig\TokenParser\RouteIfGrantedTokenParser;
-use NeonLight\SecureLinksBundle\Twig\NodeVisitor\DiscoverRoutingFunctionNodeVisitor;
-use NeonLight\SecureLinksBundle\Twig\RoutingRuntime;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedNode;
+use Yarhon\LinkGuardBundle\Twig\TokenParser\RouteIfGrantedTokenParser;
+use Yarhon\LinkGuardBundle\Twig\NodeVisitor\DiscoverRoutingFunctionNodeVisitor;
+use Yarhon\LinkGuardBundle\Twig\RoutingRuntime;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

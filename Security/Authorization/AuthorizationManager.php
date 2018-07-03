@@ -8,10 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Security\Authorization;
+namespace Yarhon\LinkGuardBundle\Security\Authorization;
 
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use NeonLight\SecureLinksBundle\Security\AccessMap;
+use Yarhon\LinkGuardBundle\Security\AccessMap;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

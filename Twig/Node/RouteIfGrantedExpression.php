@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Twig\Node;
+namespace Yarhon\LinkGuardBundle\Twig\Node;
 
 use Twig\Node\Node;
 use Twig\Error\SyntaxError;

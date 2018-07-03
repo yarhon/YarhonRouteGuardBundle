@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Twig\TokenParser;
+namespace Yarhon\LinkGuardBundle\Twig\TokenParser;
 
 use Twig_Token as Token;              // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Token
 use Twig_Error_Syntax as SyntaxError; // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
@@ -17,8 +17,8 @@ use Twig\TokenStream;
 use Twig\Node\Node;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\ArrayExpression;
-use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedNode;
-use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedExpression;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedNode;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedExpression;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

@@ -8,19 +8,19 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\DependencyInjection;
+namespace Yarhon\LinkGuardBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
-use NeonLight\SecureLinksBundle\CacheWarmer\RouteCacheWarmer;
-use NeonLight\SecureLinksBundle\DependencyInjection\Compiler\UrlGeneratorConfigurator;
+use Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer;
+use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\UrlGeneratorConfigurator;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class NeonLightSecureLinksExtension extends Extension
+class YarhonLinkGuardExtension extends Extension
 {
     /**
      * {@inheritdoc}

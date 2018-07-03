@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Tests\Twig\TokenParser;
+namespace Yarhon\LinkGuardBundle\Tests\Twig\TokenParser;
 
 use Twig_Error_Syntax as SyntaxError;   // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
 use Twig\Node\Node;
@@ -16,9 +16,9 @@ use Twig\Node\TextNode;
 use Twig\Node\PrintNode;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\NameExpression;
-use NeonLight\SecureLinksBundle\Tests\Twig\AbstractNodeTest;
-use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedNode;
-use NeonLight\SecureLinksBundle\Twig\Node\RouteIfGrantedExpression;
+use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedNode;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedExpression;
 
 class RouteIfGrantedTokenParserTest extends AbstractNodeTest
 {

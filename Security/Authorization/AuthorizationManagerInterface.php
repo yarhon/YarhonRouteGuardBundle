@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Security\Authorization;
+namespace Yarhon\LinkGuardBundle\Security\Authorization;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

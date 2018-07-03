@@ -8,13 +8,13 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\DependencyInjection\Compiler;
+namespace Yarhon\LinkGuardBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Reference;
-use NeonLight\SecureLinksBundle\Security\AccessMap;
-use NeonLight\SecureLinksBundle\Security\Provider\SensioSecurityProvider;
+use Yarhon\LinkGuardBundle\Security\AccessMap;
+use Yarhon\LinkGuardBundle\Security\Provider\SensioSecurityProvider;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

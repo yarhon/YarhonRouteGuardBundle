@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Twig\NodeVisitor;
+namespace Yarhon\LinkGuardBundle\Twig\NodeVisitor;
 
 /**
  * Modified version of \Symfony\Bridge\Twig\NodeVisitor\Scope

@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Security\Provider;
+namespace Yarhon\LinkGuardBundle\Security\Provider;
 
 use Symfony\Component\Routing\Route;
 

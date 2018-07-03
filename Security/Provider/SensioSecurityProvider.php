@@ -8,10 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Security\Provider;
+namespace Yarhon\LinkGuardBundle\Security\Provider;
 
 use Symfony\Component\Routing\Route;
-use NeonLight\SecureLinksBundle\Annotations\Parser;
+use Yarhon\LinkGuardBundle\Annotations\Parser;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 

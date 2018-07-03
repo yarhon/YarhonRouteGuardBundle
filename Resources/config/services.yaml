@@ -3,42 +3,42 @@ services:
     _defaults:
         public: false
 
-    NeonLight\SecureLinksBundle\Annotations\Parser:
+    Yarhon\LinkGuardBundle\Annotations\Parser:
         arguments:
             - '@annotation_reader'
 
-    NeonLight\SecureLinksBundle\Security\Provider\SymfonyAccessControlProvider: ~
+    Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider: ~
 
-    NeonLight\SecureLinksBundle\Security\Provider\SensioSecurityProvider:
+    Yarhon\LinkGuardBundle\Security\Provider\SensioSecurityProvider:
         arguments:
-            - '@NeonLight\SecureLinksBundle\Annotations\Parser'
+            - '@Yarhon\LinkGuardBundle\Annotations\Parser'
 
-    NeonLight\SecureLinksBundle\Security\AccessMap:
+    Yarhon\LinkGuardBundle\Security\AccessMap:
         arguments:
             - '@router.default'
             - '@kernel'
 
-    NeonLight\SecureLinksBundle\Security\Authorization\AuthorizationManager:
+    Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager:
         arguments:
-            - '@NeonLight\SecureLinksBundle\Security\AccessMap'
+            - '@Yarhon\LinkGuardBundle\Security\AccessMap'
             - '@security.authorization_checker'
 
-    NeonLight\SecureLinksBundle\CacheWarmer\RouteCacheWarmer:
+    Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer:
         arguments:
-            - '@NeonLight\SecureLinksBundle\Security\AccessMap'
+            - '@Yarhon\LinkGuardBundle\Security\AccessMap'
             - null
         tags: ['kernel.cache_warmer']
 
-    NeonLight\SecureLinksBundle\DependencyInjection\Compiler\UrlGeneratorConfigurator:
+    Yarhon\LinkGuardBundle\DependencyInjection\Compiler\UrlGeneratorConfigurator:
         arguments:
-            - '@NeonLight\SecureLinksBundle\Security\Authorization\AuthorizationManager'
+            - '@Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager'
             - null
 
-    NeonLight\SecureLinksBundle\Twig\Extension\RoutingExtension:
+    Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension:
         arguments:
             - { referenceVarName: route_reference }
         tags: ['twig.extension']
 
-    NeonLight\SecureLinksBundle\Twig\RoutingRuntime:
+    Yarhon\LinkGuardBundle\Twig\RoutingRuntime:
         arguments:
             # services should go here

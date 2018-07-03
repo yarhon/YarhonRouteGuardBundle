@@ -8,11 +8,11 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Security\Provider;
+namespace Yarhon\LinkGuardBundle\Security\Provider;
 
 use Symfony\Component\Routing\Route;
-use NeonLight\SecureLinksBundle\Security\Authorization\ArgumentBag;
-use NeonLight\SecureLinksBundle\Security\Http\RequestMatcher;
+use Yarhon\LinkGuardBundle\Security\Authorization\ArgumentBag;
+use Yarhon\LinkGuardBundle\Security\Http\RequestMatcher;
 
 /**
  * SymfonyAccessControlProvider processes access_control config of Symfony SecurityBundle.

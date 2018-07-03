@@ -1,4 +1,4 @@
-NeonLight SecureLinks Bundle
+Yarhon LinkGuard Bundle
 ==========================
 
 Limitations:

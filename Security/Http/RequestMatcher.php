@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Security\Http;
+namespace Yarhon\LinkGuardBundle\Security\Http;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\IpUtils;

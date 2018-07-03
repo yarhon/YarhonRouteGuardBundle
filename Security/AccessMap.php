@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Security;
+namespace Yarhon\LinkGuardBundle\Security;
 
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\HttpKernel\KernelInterface;
-use NeonLight\SecureLinksBundle\Security\Provider\ProviderInterface;
+use Yarhon\LinkGuardBundle\Security\Provider\ProviderInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

@@ -1,5 +1,5 @@
 {
-    "name": "neon-light/secure-links-bundle",
+    "name": "yarhon/link-guard-bundle",
     "description": "This bundle provides a way to .... !!!!!",
     "keywords": ["...."],
     "type": "symfony-bundle",
@@ -31,10 +31,10 @@
 
     },
     "autoload": {
-        "psr-4": { "NeonLight\\SecureLinksBundle\\": "" }
+        "psr-4": { "Yarhon\\LinkGuardBundle\\": "" }
     },
     "autoload-dev": {
-        "psr-4": { "NeonLight\\SecureLinksBundle\\Tests\\": "" }
+        "psr-4": { "Yarhon\\LinkGuardBundle\\Tests\\": "" }
     },
     "minimum-stability": "stable"
 }

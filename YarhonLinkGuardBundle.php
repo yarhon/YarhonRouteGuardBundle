@@ -8,19 +8,19 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle;
+namespace Yarhon\LinkGuardBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
-use NeonLight\SecureLinksBundle\DependencyInjection\Compiler\SymfonySecurityBundlePass;
-use NeonLight\SecureLinksBundle\DependencyInjection\Compiler\SensioFrameworkExtraBundlePass;
-use NeonLight\SecureLinksBundle\DependencyInjection\Compiler\UrlGeneratorPass;
+use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SymfonySecurityBundlePass;
+use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SensioFrameworkExtraBundlePass;
+use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\UrlGeneratorPass;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class NeonLightSecureLinksBundle extends Bundle
+class YarhonLinkGuardBundle extends Bundle
 {
     public function build(ContainerBuilder $container)
     {

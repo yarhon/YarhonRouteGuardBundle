@@ -8,9 +8,9 @@
  * file that was distributed with this source code.
  */
 
-namespace NeonLight\SecureLinksBundle\Routing;
+namespace Yarhon\LinkGuardBundle\Routing;
 
-use NeonLight\SecureLinksBundle\Security\Authorization\AuthorizationManagerInterface;
+use Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
