@@ -32,7 +32,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('cache_dir')->defaultValue('link-guard')->end()
-                ->booleanNode('override_url_generator')->defaultValue(true)->end()
+                ->booleanNode('override_url_generator')->defaultValue(false)->end()
             ->end();
 
         return $treeBuilder;

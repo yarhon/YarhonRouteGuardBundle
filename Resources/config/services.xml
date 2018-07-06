@@ -1,0 +1,68 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="link_guard.router_service_id">router_mock</parameter> <!-- default value is symfony/framework-bundle router service id -->
+    </parameters>
+
+    <services>
+        <defaults public="true" />
+
+        <!-- temp service -->
+        <service id="router_mock" class="Yarhon\LinkGuardBundle\Tests\Fixtures\Routing\SimpleRouter" />
+
+        <service id="Yarhon\LinkGuardBundle\Security\AccessMap">
+            <argument>null</argument> <!--route collection, set by AccessMapConfigurator -->
+            <configurator service="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapConfigurator" method="configure" />
+        </service>
+
+        <service id="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapConfigurator">
+            <argument /> <!-- router service, taken by id specified in "link_guard.router_service_id" parameter -->
+            <argument type="service" id="kernel" />
+        </service>
+
+        <!-- set "kernel" service synthetic ("kernel" is originally set synthetic inside symfony/framework-bundle, which is an optional dependency) -->
+        <service id="kernel" synthetic="true" public="true" />
+
+        <service id="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager">
+            <argument type="service" id="Yarhon\LinkGuardBundle\Security\AccessMap" />
+            <argument type="service" id="security.authorization_checker" />
+        </service>
+        <!--<service id="link_guard.authorization_manager" alias="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager" />-->
+
+        <service id="Yarhon\LinkGuardBundle\Annotations\ControllerAnnotationReader">
+        </service>
+
+        <service id="Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider">
+        </service>
+
+        <service id="Yarhon\LinkGuardBundle\Security\Provider\SensioSecurityProvider">
+            <argument type="service" id="Yarhon\LinkGuardBundle\Annotations\ControllerAnnotationReader" />
+        </service>
+
+        <service id="Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer">
+            <argument type="service" id="Yarhon\LinkGuardBundle\Security\AccessMap" />
+            <argument /><!-- cache dir -->
+            <tag name="kernel.cache_warmer" />
+        </service>
+
+        <service id="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\UrlGeneratorConfigurator">
+            <argument type="service" id="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager" />
+            <argument /><!-- override class -->
+        </service>
+
+        <service id="Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension">
+            <argument type="collection">
+                <argument key="referenceVarName">route_reference</argument>
+            </argument>
+            <tag name="twig.extension" />
+        </service>
+
+        <service id="Yarhon\LinkGuardBundle\Twig\RoutingRuntime">
+        </service>
+
+    </services>
+</container>

@@ -8,10 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\DependencyInjection\Compiler;
+namespace Yarhon\LinkGuardBundle\DependencyInjection\Configurator;
 
 use Symfony\Component\Routing\Router;
+use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Yarhon\LinkGuardBundle\Routing\UrlGenerator;
+use Yarhon\LinkGuardBundle\Routing\UrlGeneratorIAwareRouterInterface;
 use Yarhon\LinkGuardBundle\Routing\AuthorizationAwareUrlGeneratorInterface;
 use Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface;
 
@@ -29,6 +31,7 @@ class UrlGeneratorConfigurator
      * @var bool
      */
     private $overrideClass;
+
 
     /**
      * UrlGeneratorConfigurator constructor.

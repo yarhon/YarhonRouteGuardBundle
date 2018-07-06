@@ -11,7 +11,7 @@
 namespace Yarhon\LinkGuardBundle\Security\Provider;
 
 use Symfony\Component\Routing\Route;
-use Yarhon\LinkGuardBundle\Annotations\Parser;
+use Yarhon\LinkGuardBundle\Annotations\ControllerAnnotationReaderInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
@@ -25,21 +25,21 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 class SensioSecurityProvider implements ProviderInterface
 {
     /**
-     * @var Parser
+     * @var ControllerAnnotationReaderInterface
      */
-    private $parser;
+    private $reader;
 
     /**
      * SensioSecurityProvider constructor.
      *
-     * @param Parser $parser
+     * @param ControllerAnnotationReaderInterface $reader
      */
-    public function __construct(Parser $parser)
+    public function __construct(ControllerAnnotationReaderInterface $reader)
     {
-        $this->parser = $parser;
+        $this->reader = $reader;
 
-        $this->parser->addAnnotationToParse('security', Security::class);
-        $this->parser->addAnnotationToParse('isGranted', IsGranted::class);
+        $this->reader->addAnnotationToRead('security', Security::class);
+        $this->reader->addAnnotationToRead('isGranted', IsGranted::class);
     }
 
     /**

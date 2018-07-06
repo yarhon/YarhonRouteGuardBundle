@@ -11,11 +11,12 @@
 namespace Yarhon\LinkGuardBundle\Annotations;
 
 use Doctrine\Common\Annotations\Reader;
+use Doctrine\Common\Annotations\SimpleAnnotationReader;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class Parser
+class ControllerAnnotationReader implements ControllerAnnotationReaderInterface
 {
     /**
      * @var Reader
@@ -25,38 +26,33 @@ class Parser
     /**
      * @var string[]
      */
-    private $annotationsToParse;
+    private $annotationsToRead;
 
     /**
      * AnnotationParser constructor.
-     *
-     * @param Reader $reader
      */
-    public function __construct(Reader $reader)
+    public function __construct()
     {
-        $this->reader = $reader;
+        $this->reader = new SimpleAnnotationReader();
+        // TODO: use CachedReader ?
+        // TODO: use DocParser directly ?
+        // TODO: check if AnnotationReader (not simple) will only read needed annotations, without need to filter them
     }
 
     /**
-     * @param string $alias
-     * @param string $annotationClass
+     * {@inheritdoc}
      */
-    public function addAnnotationToParse($alias, $annotationClass)
+    public function addAnnotationToRead($alias, $annotationClass)
     {
-        $this->annotationsToParse[$alias] = $annotationClass;
+        $this->annotationsToRead[$alias] = $annotationClass;
     }
 
     /**
      * Note: Method annotation(s) doesn't replaces class annotation(s), but they are merged.
      *
-     * @param string $class
-     * @param string $method
-     *
-     * @return array Parsed annotations, indexed by an alias
-     *
-     * @throws \ReflectionException
+     * {@inheritdoc}
      */
-    public function parse($class, $method)
+    public function read($class, $method)
     {
         $object = new \ReflectionClass($class);
         $method = $object->getMethod($method);
@@ -79,7 +75,7 @@ class Parser
         $filtered = [];
 
         foreach ($annotations as $annotation) {
-            $alias = array_search(get_class($annotation), $this->annotationsToParse, true);
+            $alias = array_search(get_class($annotation), $this->annotationsToRead, true);
             if (null === $alias) {
                 continue;
             }

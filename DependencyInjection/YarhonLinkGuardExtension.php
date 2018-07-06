@@ -11,11 +11,11 @@
 namespace Yarhon\LinkGuardBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\Config\FileLocator;
 use Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer;
-use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\UrlGeneratorConfigurator;
+use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\UrlGeneratorConfigurator;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -27,8 +27,8 @@ class YarhonLinkGuardExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yaml');
+        $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader->load('services.xml');
 
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
@@ -38,5 +38,6 @@ class YarhonLinkGuardExtension extends Extension
 
         $definition = $container->getDefinition(UrlGeneratorConfigurator::class);
         $definition->replaceArgument(1, $config['override_url_generator']);
+
     }
 }

@@ -10,9 +10,8 @@
 
 namespace Yarhon\LinkGuardBundle\Security;
 
-use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Yarhon\LinkGuardBundle\Security\Provider\ProviderInterface;
 
 /**
@@ -26,25 +25,20 @@ class AccessMap
     private $routes;
 
     /**
-     * @var KernelInterface
-     */
-    private $kernel;
-
-    /**
      * @var ProviderInterface[]
      */
     private $providers = [];
 
     /**
      * AccessMap constructor.
-     *
-     * @param RouterInterface $router
-     * @param KernelInterface $kernel
+
+     * @param RouteCollection|null $routeCollection
      */
-    public function __construct(RouterInterface $router, KernelInterface $kernel)
+    public function __construct(RouteCollection $routeCollection = null)
     {
-        $this->routes = $router->getRouteCollection()->all();
-        $this->kernel = $kernel;
+        if ($routeCollection) {
+            $this->routes = $routeCollection->all();
+        }
     }
 
     /**
@@ -55,6 +49,14 @@ class AccessMap
         $this->providers[] = $provider;
     }
 
+    /**
+     * @param RouteCollection $routeCollection
+     */
+    public function setRouteCollection(RouteCollection $routeCollection)
+    {
+        $this->routes = $routeCollection->all();
+    }
+
     public function build()
     {
         foreach ($this->routes as $name => $route) {
@@ -63,7 +65,6 @@ class AccessMap
             }
 
             $controller = $route->getDefault('_controller');
-            $controller = $this->convertController($controller);
 
             if (null === $controller) {
                 continue;
@@ -86,45 +87,5 @@ class AccessMap
         }
 
         return $rules;
-    }
-
-    /**
-     * Converts a short notation a:b:c to a class::method.
-     *
-     * Copied (with minimal changes) from \Symfony\Bundle\FrameworkBundle\Controller\ControllerNameParser::parse
-     * to not add whole symfony/framework-bundle dependency just for the one method usage.
-     *
-     * @param string $controller A short notation controller (a:b:c)
-     *
-     * @return string|null A string in the class::method notation or null in case of error
-     */
-    private function convertController($controller)
-    {
-        $parts = explode('::', $controller);
-        if (2 === count($parts)) {
-            // Class::method notation, nothing to do.
-            return $controller;
-        }
-
-        $parts = explode(':', $controller);
-        if (3 !== count($parts) || in_array('', $parts, true)) {
-            return null;
-        }
-
-        list($bundleName, $controller, $action) = $parts;
-        $controller = str_replace('/', '\\', $controller);
-
-        try {
-            $bundle = $this->kernel->getBundle($bundleName);
-        } catch (\InvalidArgumentException $e) {
-            return null;
-        }
-
-        $try = $bundle->getNamespace().'\\Controller\\'.$controller.'Controller';
-        if (class_exists($try)) {
-            return $try.'::'.$action.'Action';
-        }
-
-        return null;
     }
 }

@@ -53,6 +53,8 @@ class RouteCacheWarmer implements CacheWarmerInterface
      */
     public function warmUp($cacheDir)
     {
+        var_dump('route cache warmer');
+
         $cacheDir = $this->createCacheDir($cacheDir);
 
         $this->accessMap->build();
