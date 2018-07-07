@@ -5,14 +5,14 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="link_guard.router_service_id">router_mock</parameter> <!-- default value is symfony/framework-bundle router service id -->
+        <parameter key="link_guard.router_service_id">router.default</parameter> <!-- default value is symfony/framework-bundle router service id -->
     </parameters>
 
     <services>
-        <defaults public="true" />
+        <defaults public="false" />
 
         <!-- temp service -->
-        <service id="router_mock" class="Yarhon\LinkGuardBundle\Tests\Fixtures\Routing\SimpleRouter" />
+        <!--<service id="router_mock" class="Yarhon\LinkGuardBundle\Tests\Fixtures\Routing\SimpleRouter" />-->
 
         <service id="Yarhon\LinkGuardBundle\Security\AccessMap">
             <argument>null</argument> <!--route collection, set by AccessMapConfigurator -->
@@ -20,7 +20,13 @@
         </service>
 
         <service id="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapConfigurator">
-            <argument /> <!-- router service, taken by id specified in "link_guard.router_service_id" parameter -->
+            <argument>null</argument> <!-- router service, taken by id specified in "link_guard.router_service_id" parameter -->
+            <call method="setControllerNameConverter">
+                <argument type="service" id="Yarhon\LinkGuardBundle\Routing\ControllerNameConverter" />
+            </call>
+        </service>
+
+        <service id="Yarhon\LinkGuardBundle\Routing\ControllerNameConverter">
             <argument type="service" id="kernel" />
         </service>
 
@@ -31,7 +37,8 @@
             <argument type="service" id="Yarhon\LinkGuardBundle\Security\AccessMap" />
             <argument type="service" id="security.authorization_checker" />
         </service>
-        <!--<service id="link_guard.authorization_manager" alias="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager" />-->
+        <service id="link_guard.authorization_manager" alias="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager" public="true"/>
+        <service id="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface" alias="link_guard.authorization_manager" />
 
         <service id="Yarhon\LinkGuardBundle\Annotations\ControllerAnnotationReader">
         </service>

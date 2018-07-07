@@ -11,9 +11,10 @@
 namespace Yarhon\LinkGuardBundle\DependencyInjection\Configurator;
 
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\HttpKernel\KernelInterface;
+
 use Symfony\Component\Routing\RouteCollection;
 use Yarhon\LinkGuardBundle\Security\AccessMap;
+use Yarhon\LinkGuardBundle\Routing\ControllerNameConverter;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -26,21 +27,18 @@ class AccessMapConfigurator
     private $router;
 
     /**
-     * @var KernelInterface
+     * @var ControllerNameConverter
      */
-    private $kernel;
+    private $controllerNameConverter;
 
     /**
      * AccessMapConfigurator constructor.
-     * TODO: think how to get rid from KernelInterface dependency
      *
      * @param RouterInterface $router
-     * @param KernelInterface $kernel
      */
-    public function __construct(RouterInterface $router, KernelInterface $kernel)
+    public function __construct(RouterInterface $router)
     {
         $this->router = $router;
-        $this->kernel = $kernel;
     }
 
     /**
@@ -55,55 +53,35 @@ class AccessMapConfigurator
     }
 
     /**
+     * @param ControllerNameConverter $controllerNameConverter
+     */
+    public function setControllerNameConverter(ControllerNameConverter $controllerNameConverter)
+    {
+        $this->controllerNameConverter = $controllerNameConverter;
+    }
+
+    /**
      * @param RouteCollection $collection
      */
     private function convertCollectionControllers(RouteCollection $collection)
     {
+        if (!$this->controllerNameConverter) {
+            return;
+        }
+
         foreach ($collection as $route) {
             $controller = $route->getDefault('_controller');
-            // TODO: what to do if convert returns null? Maybe throw an exception, as in original method?
-            $converted = $this->convertController($controller);
-            $route->setDefault('_controller', $converted);
+            if (2 == count(explode('::', $controller))) {
+                continue;
+            }
+
+            try {
+                $converted = $this->controllerNameConverter->convert($controller);
+                $route->setDefault('_controller', $converted);
+            } catch (\InvalidArgumentException $e) {
+                // TODO: what to do in case of exception
+                throw $e;
+            }
         }
-    }
-
-    /**
-     * Converts a short notation a:b:c to a class::method.
-     *
-     * Copied (with minimal changes) from \Symfony\Bundle\FrameworkBundle\Controller\ControllerNameParser::parse
-     * to not add whole symfony/framework-bundle dependency just for the one method usage.
-     *
-     * @param string $controller A short notation controller (a:b:c)
-     *
-     * @return string|null A string in the class::method notation or null in case of error
-     */
-    private function convertController($controller)
-    {
-        $parts = explode('::', $controller);
-        if (2 === count($parts)) {
-            // Class::method notation, nothing to do.
-            return $controller;
-        }
-
-        $parts = explode(':', $controller);
-        if (3 !== count($parts) || in_array('', $parts, true)) {
-            return null;
-        }
-
-        list($bundleName, $controller, $action) = $parts;
-        $controller = str_replace('/', '\\', $controller);
-
-        try {
-            $bundle = $this->kernel->getBundle($bundleName);
-        } catch (\InvalidArgumentException $e) {
-            return null;
-        }
-
-        $try = $bundle->getNamespace().'\\Controller\\'.$controller.'Controller';
-        if (class_exists($try)) {
-            return $try.'::'.$action.'Action';
-        }
-
-        return null;
     }
 }

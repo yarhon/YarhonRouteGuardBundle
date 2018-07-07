@@ -38,6 +38,5 @@ class YarhonLinkGuardExtension extends Extension
 
         $definition = $container->getDefinition(UrlGeneratorConfigurator::class);
         $definition->replaceArgument(1, $config['override_url_generator']);
-
     }
 }

@@ -12,8 +12,12 @@ namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Compiler;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
+use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\RouterPass;
-use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\UrlGeneratorConfigurator;
+use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapConfigurator;
+use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\UrlGeneratorConfigurator;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -30,31 +34,61 @@ class RouterPassTest extends TestCase
      */
     private $pass;
 
+    /**
+     * @var string
+     */
+    private $parameterName = 'link_guard.router_service_id';
+
     public function setUp()
     {
         $this->builder = new ContainerBuilder();
         $this->pass = new RouterPass();
     }
 
-    public function atestProcessWithoutRouter()
+    public function testProcessWithoutParameter()
     {
-        $this->pass->process($this->builder);
+        $this->expectException(ParameterNotFoundException::class);
 
-        $this->assertEquals(false, $this->builder->hasDefinition(UrlGeneratorConfigurator::class));
+        $this->pass->process($this->builder);
     }
 
-    public function atestProcessWithRouter()
+    public function testProcessWithoutRouter()
     {
-        $this->builder->register('router.default');
+        $this->builder->setParameter($this->parameterName, 'router.default');
+
+        $this->expectException(ServiceNotFoundException::class);
+
+        $this->pass->process($this->builder);
+    }
+
+    public function testProcessAccessMapConfigurator()
+    {
+        $this->loadBasicConfiguration();
 
         $this->pass->process($this->builder);
 
-        $configurator = $this->builder->getDefinition('router.default')->getConfigurator();
+        $definition = $this->builder->getDefinition(AccessMapConfigurator::class);
+        $arguments = $definition->getArguments();
+        $this->assertCount(1, $arguments);
+        $this->assertInstanceOf(Reference::class, $arguments[0]);
+        $this->assertEquals('router.default', (string) $arguments[0]);
+    }
 
-        $this->assertInternalType('array', $configurator);
-        $this->assertCount(2, $configurator);
+    public function testProcessUrlGeneratorConfigurator()
+    {
+        $this->markTestIncomplete('Watch UrlGeneratorConfigurator changes.');
 
-        $this->assertEquals(UrlGeneratorConfigurator::class, (string) $configurator[0]);
-        $this->assertEquals('configure', $configurator[1]);
+        $this->loadBasicConfiguration();
+
+        $this->pass->process($this->builder);
+
+        $definition = $this->builder->getDefinition('router.default');
+    }
+
+    private function loadBasicConfiguration()
+    {
+        $this->builder->setParameter($this->parameterName, 'router.default');
+        $this->builder->register('router.default');
+        $this->builder->register(AccessMapConfigurator::class)->setArgument(0, null);
     }
 }

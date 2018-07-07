@@ -18,7 +18,6 @@ use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapConfigurator;
 use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\UrlGeneratorConfigurator;
-use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\ConfiguratorChain;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -36,7 +35,7 @@ class RouterPass implements CompilerPassInterface
         $routerServiceId = $container->getParameter($parameterName);
 
         if (!$container->has($routerServiceId)) {
-            throw new ServiceNotFoundException($routerServiceId, AccessMapConfigurator::class);
+            throw new ServiceNotFoundException((string) $routerServiceId, AccessMapConfigurator::class);
         }
 
         $accessMapConfiguratorDefinition = $container->getDefinition(AccessMapConfigurator::class);
@@ -47,19 +46,7 @@ class RouterPass implements CompilerPassInterface
         $configurator = [new Reference(UrlGeneratorConfigurator::class), 'configure'];
 
         if (null !== $routerDefinition->getConfigurator()) {
-            $configuratorChainDefinition = $this->chainConfigurator($routerDefinition, $configurator);
-            $routerDefinition->setConfigurator([$configuratorChainDefinition, 'configure']);
-        } else {
-            $routerDefinition->setConfigurator([new Reference(UrlGeneratorConfigurator::class), 'configure']);
+            $routerDefinition->setConfigurator($configurator);
         }
-    }
-
-    private function chainConfigurator(Definition $definition, $configurator)
-    {
-        $chainDefinition = new Definition(ConfiguratorChain::class);
-        $chainDefinition->addMethodCall('add', [$definition->getConfigurator()]);
-        $chainDefinition->addMethodCall('add', [$configurator]);
-
-        return $chainDefinition;
     }
 }

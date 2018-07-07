@@ -20,9 +20,9 @@ use Yarhon\LinkGuardBundle\Security\Provider\ProviderInterface;
 class AccessMap
 {
     /**
-     * @var Route[]
+     * @var RouteCollection
      */
-    private $routes;
+    private $routeCollection;
 
     /**
      * @var ProviderInterface[]
@@ -36,9 +36,7 @@ class AccessMap
      */
     public function __construct(RouteCollection $routeCollection = null)
     {
-        if ($routeCollection) {
-            $this->routes = $routeCollection->all();
-        }
+        $this->routeCollection = $routeCollection;
     }
 
     /**
@@ -54,12 +52,12 @@ class AccessMap
      */
     public function setRouteCollection(RouteCollection $routeCollection)
     {
-        $this->routes = $routeCollection->all();
+        $this->routeCollection = $routeCollection;
     }
 
     public function build()
     {
-        foreach ($this->routes as $name => $route) {
+        foreach ($this->routeCollection->all() as $name => $route) {
             if ('_' == $name[0]) {
                 continue;
             }

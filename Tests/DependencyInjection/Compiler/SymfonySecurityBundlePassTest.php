@@ -12,6 +12,7 @@ namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Compiler;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SymfonySecurityBundlePass;
 use Yarhon\LinkGuardBundle\Security\AccessMap;
 use Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider;
@@ -67,6 +68,7 @@ class SymfonySecurityBundlePassTest extends TestCase
         $this->assertCount(1, $methodCalls);
         list($name, $arguments) = $methodCalls[0];
         $this->assertEquals('addProvider', $name);
+        $this->assertInstanceOf(Reference::class, $arguments[0]);
         $this->assertEquals(SymfonyAccessControlProvider::class, (string) $arguments[0]);
     }
 
