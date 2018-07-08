@@ -13,19 +13,18 @@ namespace Yarhon\LinkGuardBundle\Annotations;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface ControllerAnnotationReaderInterface
+interface ClassMethodAnnotationReaderInterface
 {
     /**
-     * @param string $alias
      * @param string $annotationClass
      */
-    public function addAnnotationToRead($alias, $annotationClass);
+    public function addAnnotationClass($annotationClass);
 
     /**
      * @param string $class
      * @param string $method
      *
-     * @return array Parsed annotations, indexed by an alias
+     * @return array Parsed annotations
      *
      * @throws \ReflectionException
      */

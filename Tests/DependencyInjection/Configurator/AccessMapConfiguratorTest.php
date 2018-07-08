@@ -65,6 +65,7 @@ class AccessMapConfiguratorTest extends TestCase
         $routeCollection = $this->createRouteCollection([
             '/path1' => 'class::method',
             '/path2' => 'bundle:controller:action',
+            '/path3' => function() { },
         ]);
 
         $this->router->method('getRouteCollection')
@@ -80,6 +81,7 @@ class AccessMapConfiguratorTest extends TestCase
         $routeCollectionConverted = $this->createRouteCollection([
             '/path1' => 'class::method',
             '/path2' => 'c_bundle:controller:action',
+            '/path3' => function() { },
         ]);
 
         // Warning: this attribute is private

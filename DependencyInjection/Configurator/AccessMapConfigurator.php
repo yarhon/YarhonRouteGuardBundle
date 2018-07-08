@@ -71,7 +71,7 @@ class AccessMapConfigurator
 
         foreach ($collection as $route) {
             $controller = $route->getDefault('_controller');
-            if (2 == count(explode('::', $controller))) {
+            if (!is_string($controller) || 2 == count(explode('::', $controller))) {
                 continue;
             }
 

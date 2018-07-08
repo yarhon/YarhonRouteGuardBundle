@@ -11,9 +11,6 @@
     <services>
         <defaults public="false" />
 
-        <!-- temp service -->
-        <!--<service id="router_mock" class="Yarhon\LinkGuardBundle\Tests\Fixtures\Routing\SimpleRouter" />-->
-
         <service id="Yarhon\LinkGuardBundle\Security\AccessMap">
             <argument>null</argument> <!--route collection, set by AccessMapConfigurator -->
             <configurator service="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapConfigurator" method="configure" />
@@ -40,14 +37,10 @@
         <service id="link_guard.authorization_manager" alias="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager" public="true"/>
         <service id="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface" alias="link_guard.authorization_manager" />
 
-        <service id="Yarhon\LinkGuardBundle\Annotations\ControllerAnnotationReader">
-        </service>
-
         <service id="Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider">
         </service>
 
         <service id="Yarhon\LinkGuardBundle\Security\Provider\SensioSecurityProvider">
-            <argument type="service" id="Yarhon\LinkGuardBundle\Annotations\ControllerAnnotationReader" />
         </service>
 
         <service id="Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer">

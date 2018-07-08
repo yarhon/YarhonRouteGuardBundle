@@ -20,8 +20,6 @@ class ConfigurationTest extends TestCase
 {
     public function testDefaults()
     {
-        $this->markTestIncomplete('Watch for config changes.');
-
         $input = [];
 
         $processor = $this->createPartialMock('Symfony\Component\Config\Definition\Processor', []);
@@ -34,5 +32,7 @@ class ConfigurationTest extends TestCase
         ];
 
         $this->assertEquals($defaults, $config);
+
+        $this->markTestIncomplete('Watch for config changes.');
     }
 }

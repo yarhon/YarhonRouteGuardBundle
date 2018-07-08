@@ -20,13 +20,14 @@
         "symfony/security": "^3.3||^4.0",
         "doctrine/annotations": "^1.3.0",
 
+        "symfony/security-bundle": "^3.3||^4.0",
         "symfony/twig-bundle": "^3.3||^4.0",
         "twig/twig": "~1.34||~2.4"
     },
     "require-dev": {
+        "sensio/framework-extra-bundle": "^5.0",
         "symfony/phpunit-bridge": "^3.3||^4.0",
-        "phpunit/phpunit": "^7.0",
-        "symfony/security-bundle": "^3.3||^4.0"
+        "phpunit/phpunit": "^7.0"
     },
     "suggest": {
 

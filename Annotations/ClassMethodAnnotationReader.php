@@ -11,40 +11,38 @@
 namespace Yarhon\LinkGuardBundle\Annotations;
 
 use Doctrine\Common\Annotations\Reader;
-use Doctrine\Common\Annotations\SimpleAnnotationReader;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class ControllerAnnotationReader implements ControllerAnnotationReaderInterface
+class ClassMethodAnnotationReader implements ClassMethodAnnotationReaderInterface
 {
     /**
      * @var Reader
      */
-    private $reader;
+    private $delegate;
 
     /**
      * @var string[]
      */
-    private $annotationsToRead;
+    private $annotationClasses;
 
     /**
      * AnnotationParser constructor.
+     *
+     * @param Reader $reader
      */
-    public function __construct()
+    public function __construct(Reader $reader)
     {
-        $this->reader = new SimpleAnnotationReader();
-        // TODO: use CachedReader ?
-        // TODO: use DocParser directly ?
-        // TODO: check if AnnotationReader (not simple) will only read needed annotations, without need to filter them
+        $this->delegate = $reader;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function addAnnotationToRead($alias, $annotationClass)
+    public function addAnnotationClass($annotationClass)
     {
-        $this->annotationsToRead[$alias] = $annotationClass;
+        $this->annotationClasses[] = $annotationClass;
     }
 
     /**
@@ -57,8 +55,8 @@ class ControllerAnnotationReader implements ControllerAnnotationReaderInterface
         $object = new \ReflectionClass($class);
         $method = $object->getMethod($method);
 
-        $classAnnotations = $this->filterAnnotations($this->reader->getClassAnnotations($object));
-        $methodAnnotations = $this->filterAnnotations($this->reader->getMethodAnnotations($method));
+        $classAnnotations = $this->filter($this->delegate->getClassAnnotations($object));
+        $methodAnnotations = $this->filter($this->delegate->getMethodAnnotations($method));
 
         $annotations = array_merge_recursive($classAnnotations, $methodAnnotations);
 
@@ -68,19 +66,18 @@ class ControllerAnnotationReader implements ControllerAnnotationReaderInterface
     /**
      * @param array $annotations
      *
-     * @return array Filtered annotations, indexed by an alias
+     * @return array Filtered annotations
      */
-    private function filterAnnotations(array $annotations)
+    private function filter(array $annotations)
     {
         $filtered = [];
 
         foreach ($annotations as $annotation) {
-            $alias = array_search(get_class($annotation), $this->annotationsToRead, true);
-            if (null === $alias) {
+            if (false === array_search(get_class($annotation), $this->annotationClasses, true)) {
                 continue;
             }
 
-            $filtered[$alias][] = $annotation;
+            $filtered[] = $annotation;
         }
 
         return $filtered;

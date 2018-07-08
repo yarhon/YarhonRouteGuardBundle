@@ -27,8 +27,9 @@ class YarhonLinkGuardExtensionTest extends TestCase
 
     public function setUp()
     {
+        $extension = new YarhonLinkGuardExtension();
         $this->builder = new ContainerBuilder(new ParameterBag([]));
-        $this->builder->registerExtension(new YarhonLinkGuardExtension());
+        $this->builder->registerExtension($extension);
         $this->builder->register('security.authorization_checker')->setSynthetic(true);
 
         $config = [
@@ -36,28 +37,33 @@ class YarhonLinkGuardExtensionTest extends TestCase
             'override_url_generator' => true,
         ];
 
-        $this->builder->loadFromExtension('yarhon_link_guard', $config);
+        $this->builder->loadFromExtension($extension->getAlias(), $config);
     }
 
     public function testConfigParametersAreSet()
     {
-        $this->markTestIncomplete('Watch config changes.');
+        $this->markTestIncomplete('Watch for config changes.');
 
         $this->builder->getCompilerPassConfig()->setOptimizationPasses([]);
         $this->builder->getCompilerPassConfig()->setRemovingPasses([]);
         $this->builder->compile();
 
         // ..................
+
+
     }
 
     public function testPrivateServices()
     {
-        $this->markTestIncomplete('Watch for service changes.');
-
         $services = [
             'Yarhon\LinkGuardBundle\Security\AccessMap',
             'Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapConfigurator',
             'Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager',
+        ];
+
+        $aliases = [
+            'link_guard.authorization_manager',
+            'Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface',
         ];
 
         $this->builder->getCompilerPassConfig()->setOptimizationPasses([]);
@@ -65,17 +71,14 @@ class YarhonLinkGuardExtensionTest extends TestCase
         $this->builder->compile();
 
         foreach ($services as $id) {
-            $this->assertTrue($this->builder->hasDefinition($id));
+            $this->assertTrue($this->builder->hasDefinition($id), $id);
         }
-
-        $aliases = [
-            'link_guard.authorization_manager',
-            'Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface',
-        ];
 
         foreach ($aliases as $id) {
-            $this->assertTrue($this->builder->hasAlias($id));
+            $this->assertTrue($this->builder->hasAlias($id), $id);
         }
+
+        $this->markTestIncomplete('Watch for service changes.');
     }
 
     public function testPublicServices()
@@ -87,7 +90,7 @@ class YarhonLinkGuardExtensionTest extends TestCase
         $this->builder->compile();
 
         foreach ($services as $id) {
-            $this->assertTrue($this->builder->hasDefinition($id));
+            $this->assertTrue($this->builder->hasDefinition($id), $id);
         }
     }
 
@@ -100,8 +103,8 @@ class YarhonLinkGuardExtensionTest extends TestCase
         $this->builder->compile();
 
         foreach ($parameters as $key => $value) {
-            $this->assertTrue($this->builder->hasParameter($key));
-            $this->assertEquals($value, $this->builder->getParameter($key));
+            $this->assertTrue($this->builder->hasParameter($key), $key);
+            $this->assertEquals($value, $this->builder->getParameter($key), $key);
         }
     }
 

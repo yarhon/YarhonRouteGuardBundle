@@ -50,7 +50,6 @@ class SymfonyAccessControlProvider implements ProviderInterface
             'ips' => $rule['ips'],
             'roles' => $rule['roles'],
             'expression' => $rule['allow_if'],
-
             'methods' => array_map('strtoupper', $rule['methods']),
         ];
     }
