@@ -8,16 +8,16 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Security\Authorization;
+namespace Yarhon\LinkGuardBundle\Security\Authorization\Test;
 
 /**
- * ArgumentBag is a "value object" class for storing arguments for AuthorizationChecker::isGranted() checks.
+ * Arguments is a "value object" class for storing arguments for AuthorizationChecker::isGranted() checks.
  *
  * @see \Symfony\Component\Security\Core\Authorization\AuthorizationChecker::isGranted
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class ArgumentBag
+class Arguments
 {
     /**
      * Indicates that subject is the name of the "context" variable (request, etc.).

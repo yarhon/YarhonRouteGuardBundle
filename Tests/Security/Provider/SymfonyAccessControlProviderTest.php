@@ -46,7 +46,7 @@ class SymfonyAccessControlProviderTest extends TestCase
                     'allow_if' => null,
                 ],
                 [
-                    
+
 
                 ],
             ],

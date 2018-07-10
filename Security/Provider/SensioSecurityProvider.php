@@ -17,10 +17,11 @@ use Symfony\Component\Routing\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
 use Yarhon\LinkGuardBundle\Annotations\ClassMethodAnnotationReader;
-use Yarhon\LinkGuardBundle\Security\Authorization\ArgumentBag;
+use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBag;
+use Yarhon\LinkGuardBundle\Security\Authorization\Test\Arguments;
 
 /**
- * SensioSecurityProvider processes @Security & @IsGranted annotations of Sensio FrameworkExtraBundle.
+ * SensioSecurityProvider processes Security & IsGranted annotations of Sensio FrameworkExtraBundle.
  *
  * @see https://symfony.com/doc/5.0/bundles/SensioFrameworkExtraBundle/annotations/security.html
  *
@@ -56,7 +57,7 @@ class SensioSecurityProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteRules(Route $route)
+    public function getTests(Route $route)
     {
         $controller = $route->getDefault('_controller');
         if (!$controller && !is_string($controller)) {
@@ -67,28 +68,29 @@ class SensioSecurityProvider implements ProviderInterface
 
         $annotations = $this->reader->read($class, $method);
 
-        $rules = [];
+        $tests = [];
 
         foreach ($annotations as $annotation) {
 
-            $rule = new ArgumentBag();
-            $rules[] = $rule;
+            $arguments = new Arguments();
+            $tests[] = $arguments;
 
             if ($annotation instanceof SecurityAnnotation) {
-
                 // TODO: !!! check how sensio expressions differ from access_control expressions
                 $expression = $annotation->getExpression();
-                $rule->addAttribute($expression);
+                $arguments->addAttribute($expression);
             } elseif ($annotation instanceof IsGrantedAnnotation) {
                 // Despite of the name, $annotation->getAttributes() is a string (annotation value)
-                $rule->addAttribute($annotation->getAttributes());
+                $arguments->addAttribute($annotation->getAttributes());
 
                 if ($annotation->getSubject()) {
-                    $rule->setSubjectMetadata(ArgumentBag::SUBJECT_CONTROLLER_ARGUMENT, $annotation->getSubject());
+                    $arguments->setSubjectMetadata(Arguments::SUBJECT_CONTROLLER_ARGUMENT, $annotation->getSubject());
                 }
             }
         }
 
-        return $rules;
+        $testBag = new TestBag($tests);
+
+        return $testBag;
     }
 }

@@ -11,10 +11,11 @@
 namespace Yarhon\LinkGuardBundle\Security\Provider;
 
 use Symfony\Component\Routing\Route;
-use Yarhon\LinkGuardBundle\Security\Authorization\ArgumentBag;
 use Yarhon\LinkGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\LinkGuardBundle\Security\Http\RouteRequestConstraintMatcher;
-
+use Yarhon\LinkGuardBundle\Security\Authorization\Test\Arguments;
+use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBag;
+use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBagMap;
 /**
  * SymfonyAccessControlProvider processes access_control config of Symfony SecurityBundle.
  *
@@ -50,9 +51,9 @@ class SymfonyAccessControlProvider implements ProviderInterface
 
         $constraint = new RequestConstraint($rule['path'], $rule['host'], $rule['methods'], $rule['ips']);
 
-        $arguments = new ArgumentBag();
+        $arguments = new Arguments();
         $arguments->setAttributes($rule['roles']);
-        $arguments->setSubjectMetadata(ArgumentBag::SUBJECT_CONTEXT_VARIABLE, 'request');
+        $arguments->setSubjectMetadata(Arguments::SUBJECT_CONTEXT_VARIABLE, 'request');
 
         if ($rule['allow_if']) {
             $expression = $rule['allow_if'];
@@ -65,7 +66,7 @@ class SymfonyAccessControlProvider implements ProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteRules(Route $route)
+    public function getTests(Route $route)
     {
         $requestConstraintMatcher = new RouteRequestConstraintMatcher($route);
 
@@ -73,6 +74,7 @@ class SymfonyAccessControlProvider implements ProviderInterface
 
         foreach ($this->rules as $rule) {
 
+            /** @var RequestConstraint $constraint */
             list($constraint, $arguments) = $rule;
 
             $matchType = $requestConstraintMatcher->matches($constraint);
@@ -81,20 +83,28 @@ class SymfonyAccessControlProvider implements ProviderInterface
                 continue;
             }
 
+            $testBag = new TestBag([$arguments]);
+
             if ($matchType == RouteRequestConstraintMatcher::MATCH_POSSIBLE) {
-                $matches[] = [$arguments, $constraint->createRequestMatcher()];
+                $matches[] = [$testBag, $constraint->createRequestMatcher()];
                 continue;
             }
 
             if ($matchType == RouteRequestConstraintMatcher::MATCH_ALWAYS) {
-                $matches[] = [$arguments];
+                $matches[] = [$testBag, null];
                 break;
             }
         }
 
-        $onlyStaticMatch = (count($matches) == 1 && !isset($matches[0][1]));
+        if (count($matches) == 1 && $matches[0][1] === null) {
+            // Always matching rule was found, and there were no possibly matching rules found before, so
+            // we don't need a TestBagMap to resolve it by Request in runtime.
+            $testBag = $matches[0][0];
+        } else {
+            $testBag = new TestBagMap($matches);
+        }
 
-        return $matches;
+        return $testBag;
     }
 
     /**
