@@ -72,7 +72,7 @@ class SymfonySecurityBundlePassTest extends TestCase
         $this->assertEquals(SymfonyAccessControlProvider::class, (string) $arguments[0]);
     }
 
-    public function testAddRules()
+    public function testAddRule()
     {
         $configs = [
             [],

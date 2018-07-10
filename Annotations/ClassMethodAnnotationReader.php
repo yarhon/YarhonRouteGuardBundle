@@ -58,7 +58,7 @@ class ClassMethodAnnotationReader implements ClassMethodAnnotationReaderInterfac
         $classAnnotations = $this->filter($this->delegate->getClassAnnotations($object));
         $methodAnnotations = $this->filter($this->delegate->getMethodAnnotations($method));
 
-        $annotations = array_merge_recursive($classAnnotations, $methodAnnotations);
+        $annotations = array_merge($classAnnotations, $methodAnnotations);
 
         return $annotations;
     }

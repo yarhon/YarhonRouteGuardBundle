@@ -12,7 +12,8 @@ namespace Yarhon\LinkGuardBundle\Security\Provider;
 
 use Symfony\Component\Routing\Route;
 use Yarhon\LinkGuardBundle\Security\Authorization\ArgumentBag;
-use Yarhon\LinkGuardBundle\Security\Http\RequestMatcher;
+use Yarhon\LinkGuardBundle\Security\Http\RequestConstraint;
+use Yarhon\LinkGuardBundle\Security\Http\RouteRequestConstraintMatcher;
 
 /**
  * SymfonyAccessControlProvider processes access_control config of Symfony SecurityBundle.
@@ -36,6 +37,9 @@ class SymfonyAccessControlProvider implements ProviderInterface
     }
 
     /**
+     * TODO: check for rules without at least one constraint parameter / at least one argument parameter
+     * (and check how symfony security processes such rules)
+     *
      * @param array $rule
      *
      * @throws \InvalidArgumentException (see self::normalizeRule method)
@@ -44,14 +48,18 @@ class SymfonyAccessControlProvider implements ProviderInterface
     {
         $rule = $this->normalizeRule($rule);
 
-        $this->rules[] = [
-            'pattern' => $rule['path'],
-            'host' => $rule['host'],
-            'ips' => $rule['ips'],
-            'roles' => $rule['roles'],
-            'expression' => $rule['allow_if'],
-            'methods' => array_map('strtoupper', $rule['methods']),
-        ];
+        $constraint = new RequestConstraint($rule['path'], $rule['host'], $rule['methods'], $rule['ips']);
+
+        $arguments = new ArgumentBag();
+        $arguments->setAttributes($rule['roles']);
+        $arguments->setSubjectMetadata(ArgumentBag::SUBJECT_CONTEXT_VARIABLE, 'request');
+
+        if ($rule['allow_if']) {
+            $expression = $rule['allow_if'];
+            $arguments->addAttribute($expression);
+        }
+
+        $this->rules[] = [$constraint, $arguments];
     }
 
     /**
@@ -59,76 +67,34 @@ class SymfonyAccessControlProvider implements ProviderInterface
      */
     public function getRouteRules(Route $route)
     {
-        /*
-        Rule pattern example: ^/secure1
+        $requestConstraintMatcher = new RouteRequestConstraintMatcher($route);
 
-        Route path example: /secure1/{page}
-        Static prefix example: /secure1
-        Regexp example: #^/secure1/(?P<page>\d+)$#sD
-         */
-
-        $compiledRoute = $route->compile();
-
-        $path = $route->getPath();
-        $staticPrefix = $compiledRoute->getStaticPrefix();
-        $regex = $compiledRoute->getRegex();
-
-        // or use $compiledRoute->getPathVariables() - if count is 0 - means static (check _locale in this case)
-        $isRouteStatic = $path === $staticPrefix;
+        $matches = [];
 
         foreach ($this->rules as $rule) {
-            $pattern = $rule['pattern'];
 
-            /* TODO: Look into case, when rule pattern has trailing slash, because it seems static prefix
-            is without trailing slash, i.e. for route "/secure1/{page}" static prefix is "/secure1"
-            */
+            list($constraint, $arguments) = $rule;
 
-            if ('^' != $pattern[0]) {
-                // TODO: issue some warning in debug, because in this case we can't rely on static prefix
-            }
+            $matchType = $requestConstraintMatcher->matches($constraint);
 
-            // Note: the delimiter in pattern should be the same as used in \Symfony\Component\HttpFoundation\RequestMatcher::matches
-            if (!preg_match('{'.$pattern.'}', $staticPrefix)) {
+            if ($matchType == RouteRequestConstraintMatcher::MATCH_NEVER) {
                 continue;
             }
 
-            // Rule is one of the possible matches
-
-            if ('$' == $pattern[strlen($pattern) - 1]) {
-                if ($isRouteStatic) {
-                    // do something
-
-                    // This rule is the only one possible match
-                    break;
-                } else {
-                    // This rule doesn't matches, because route has variables, prepended to static prefix,
-                    // but pattern requires path to end at static prefix.
-                    continue;
-                }
+            if ($matchType == RouteRequestConstraintMatcher::MATCH_POSSIBLE) {
+                $matches[] = [$arguments, $constraint->createRequestMatcher()];
+                continue;
             }
 
-            $argumentBag = $this->createArgumentBag($rule['roles'], $rule['expression']);
-
-            $requestMatcher = new RequestMatcher($pattern, $rule['host'], $rule['ips']);
+            if ($matchType == RouteRequestConstraintMatcher::MATCH_ALWAYS) {
+                $matches[] = [$arguments];
+                break;
+            }
         }
 
-        // var_dump($path, $staticPrefix, $regex, '-----------');
+        $onlyStaticMatch = (count($matches) == 1 && !isset($matches[0][1]));
 
-        return [];
-    }
-
-    private function createArgumentBag(array $roles, $expression = null)
-    {
-        $argumentBag = new ArgumentBag();
-        $argumentBag->setAttributes($roles);
-
-        if ($expression) {
-            $argumentBag->addAttribute($expression);
-        }
-
-        $argumentBag->setSubjectMetadata(ArgumentBag::SUBJECT_CONTEXT_VARIABLE, 'request');
-
-        return $argumentBag;
+        return $matches;
     }
 
     /**

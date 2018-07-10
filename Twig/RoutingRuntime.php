@@ -15,7 +15,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  *
- * @codeCoverageIgnore
  */
 class RoutingRuntime
 {

@@ -46,7 +46,6 @@ class AccessMapConfigurator
      */
     public function configure(AccessMap $accessMap)
     {
-        // TODO: separate test for clone
         $routeCollection = clone $this->router->getRouteCollection();
         $this->convertCollectionControllers($routeCollection);
         $accessMap->setRouteCollection($routeCollection);
