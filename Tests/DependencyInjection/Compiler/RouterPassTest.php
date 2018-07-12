@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\RouterPass;
-use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapConfigurator;
+use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapBuilderConfigurator;
 use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\UrlGeneratorConfigurator;
 
 /**
@@ -67,8 +67,9 @@ class RouterPassTest extends TestCase
 
         $this->pass->process($this->builder);
 
-        $definition = $this->builder->getDefinition(AccessMapConfigurator::class);
+        $definition = $this->builder->getDefinition(AccessMapBuilderConfigurator::class);
         $arguments = $definition->getArguments();
+
         $this->assertCount(1, $arguments);
         $this->assertInstanceOf(Reference::class, $arguments[0]);
         $this->assertEquals('router.default', (string) $arguments[0]);
@@ -89,6 +90,6 @@ class RouterPassTest extends TestCase
     {
         $this->builder->setParameter($this->parameterName, 'router.default');
         $this->builder->register('router.default');
-        $this->builder->register(AccessMapConfigurator::class)->setArgument(0, null);
+        $this->builder->register(AccessMapBuilderConfigurator::class)->setArgument(0, null);
     }
 }

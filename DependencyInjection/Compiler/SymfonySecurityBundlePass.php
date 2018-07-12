@@ -13,7 +13,7 @@ namespace Yarhon\LinkGuardBundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Reference;
-use Yarhon\LinkGuardBundle\Security\AccessMap;
+use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
 use Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider;
 
 /**
@@ -44,7 +44,7 @@ class SymfonySecurityBundlePass implements CompilerPassInterface
             $accessControlProvider->addMethodCall('addRule', [$accessControlRule]);
         }
 
-        $accessMapDefinition = $container->getDefinition(AccessMap::class);
+        $accessMapDefinition = $container->getDefinition(AccessMapBuilder::class);
         $accessMapDefinition->addMethodCall('addProvider', [new Reference(SymfonyAccessControlProvider::class)]);
     }
 }

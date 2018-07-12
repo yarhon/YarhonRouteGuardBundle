@@ -97,8 +97,8 @@ class SymfonyAccessControlProvider implements ProviderInterface
         }
 
         if (count($matches) == 1 && $matches[0][1] === null) {
-            /* Always matching rule was found, and there were no possibly matching rules found before, so
-               we don't need a TestBagMap to resolve it by Request in runtime. */
+            /* MATCH_ALWAYS rule was found, and there were no MATCH_POSSIBLE rules found before, so
+            we don't need a TestBagMap to resolve it by Request in runtime. */
             $testBag = $matches[0][0];
         } else {
             $testBag = new TestBagMap($matches);

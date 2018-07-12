@@ -56,8 +56,7 @@ class YarhonLinkGuardExtensionTest extends TestCase
     public function testPrivateServices()
     {
         $services = [
-            'Yarhon\LinkGuardBundle\Security\AccessMap',
-            'Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapConfigurator',
+            'Yarhon\LinkGuardBundle\Security\AccessMapBuilder',
             'Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager',
         ];
 

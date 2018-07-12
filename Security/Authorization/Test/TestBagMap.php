@@ -46,21 +46,24 @@ class TestBagMap implements TestBagInterface, RequestResolvableInterface
 
     public function getIterator()
     {
-        if (null === $this->tests) {
-            throw new \LogicException(sprintf('%s implements %s, you must call resolve() method before iterating over it.',
-                __CLASS__, RequestResolvableInterface::class));
-        }
+        $this->checkIfResolved();
 
         return new \ArrayIterator($this->tests);
     }
 
-    /// split container and resolver into different classes???
+    public function toArray()
+    {
+        $this->checkIfResolved();
+
+        return $this->tests;
+    }
 
     public function resolve(Request $request)
     {
         $resolved = null;
 
         foreach ($this->map as $item) {
+            /** @var TestBag $testBag */
             /** @var RequestMatcher $requestMatcher */
             list($testBag, $requestMatcher) = $item;
 
@@ -71,12 +74,17 @@ class TestBagMap implements TestBagInterface, RequestResolvableInterface
         }
 
         if ($resolved) {
-            // !!! get tests from resolved testBag
-            //$this->tests = $resolved;
-            self::getIterator();
-            $a = true;
+            $this->tests = $resolved->toArray();
         } else {
             $this->tests = [];
+        }
+    }
+
+    private function checkIfResolved()
+    {
+        if (null === $this->tests) {
+            throw new \LogicException(sprintf('%s implements %s, you must call resolve() method before iterating over it.',
+                __CLASS__, RequestResolvableInterface::class));
         }
     }
 }

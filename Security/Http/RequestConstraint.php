@@ -13,13 +13,13 @@ namespace Yarhon\LinkGuardBundle\Security\Http;
 use Symfony\Component\HttpFoundation\RequestMatcher;
 
 /**
- * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
- *
  * RequestConstraint holds a set of request requirements:
  * - path pattern
  * - host pattern
  * - http methods array
  * - ip address array
+ *
+ * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class RequestConstraint
 {
@@ -46,7 +46,7 @@ class RequestConstraint
     /**
      * RequestConstraint constructor.
      *
-     * @param string      $pathPattern
+     * @param string|null $pathPattern
      * @param string|null $hostPattern
      * @param string[]    $methods
      * @param string[]    $ips

@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
-use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapConfigurator;
+use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapBuilderConfigurator;
 use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\UrlGeneratorConfigurator;
 
 /**
@@ -35,11 +35,11 @@ class RouterPass implements CompilerPassInterface
         $routerServiceId = $container->getParameter($parameterName);
 
         if (!$container->has($routerServiceId)) {
-            throw new ServiceNotFoundException((string) $routerServiceId, AccessMapConfigurator::class);
+            throw new ServiceNotFoundException((string) $routerServiceId, AccessMapBuilderConfigurator::class);
         }
 
-        $accessMapConfiguratorDefinition = $container->getDefinition(AccessMapConfigurator::class);
-        $accessMapConfiguratorDefinition->replaceArgument(0, new Reference($routerServiceId));
+        $accessMapBuilderConfiguratorDefinition = $container->getDefinition(AccessMapBuilderConfigurator::class);
+        $accessMapBuilderConfiguratorDefinition->replaceArgument(0, new Reference($routerServiceId));
 
         $routerDefinition = $container->getDefinition($routerServiceId);
 

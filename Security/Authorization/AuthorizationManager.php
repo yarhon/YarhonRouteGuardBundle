@@ -11,26 +11,21 @@
 namespace Yarhon\LinkGuardBundle\Security\Authorization;
 
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Yarhon\LinkGuardBundle\Security\AccessMap;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class AuthorizationManager implements AuthorizationManagerInterface
 {
-    /**
-     * @var AccessMap
-     */
-    private $accessMap;
 
     /**
      * @var AuthorizationCheckerInterface
      */
     private $authorizationChecker;
 
-    public function __construct(AccessMap $accessMap, AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->accessMap = $accessMap;
+        //$this->accessMap = $accessMap;
         $this->authorizationChecker = $authorizationChecker;
     }
 

@@ -11,27 +11,34 @@
     <services>
         <defaults public="false" />
 
-        <service id="Yarhon\LinkGuardBundle\Security\AccessMap">
-            <argument>null</argument> <!--route collection, set by AccessMapConfigurator -->
-            <configurator service="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapConfigurator" method="configure" />
-        </service>
-
-        <service id="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapConfigurator">
-            <argument>null</argument> <!-- router service, taken by id specified in "link_guard.router_service_id" parameter -->
-            <call method="setControllerNameConverter">
-                <argument type="service" id="Yarhon\LinkGuardBundle\Routing\ControllerNameConverter" />
+        <service id="Yarhon\LinkGuardBundle\Security\AccessMapBuilder">
+            <argument>null</argument> <!--route collection, set by AccessMapBuilderConfigurator -->
+            <call method="setControllerNameResolver">
+                <argument type="service" id="Yarhon\LinkGuardBundle\Controller\ControllerNameResolver" />
             </call>
+            <configurator service="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapBuilderConfigurator" method="configure" />
         </service>
 
-        <service id="Yarhon\LinkGuardBundle\Routing\ControllerNameConverter">
+        <service id="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapBuilderConfigurator">
+            <argument>null</argument> <!-- router service, taken by id specified in "link_guard.router_service_id" parameter -->
+        </service>
+
+        <service id="Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter">
             <argument type="service" id="kernel" />
+        </service>
+
+        <service id="Yarhon\LinkGuardBundle\Controller\ControllerNameResolver">
+            <argument type="service" id="service_container" />
+            <call method="setDeprecationsConverter">
+                <argument type="service" id="Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter" />
+            </call>
         </service>
 
         <!-- set "kernel" service synthetic ("kernel" is originally set synthetic inside symfony/framework-bundle, which is an optional dependency) -->
         <service id="kernel" synthetic="true" public="true" />
 
         <service id="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager">
-            <argument type="service" id="Yarhon\LinkGuardBundle\Security\AccessMap" />
+            <!--<argument type="service" id="Yarhon\LinkGuardBundle\Security\AccessMap" />-->   <!-- access map should go here -->
             <argument type="service" id="security.authorization_checker" />
         </service>
         <service id="link_guard.authorization_manager" alias="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager" public="true"/>
@@ -44,7 +51,7 @@
         </service>
 
         <service id="Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer">
-            <argument type="service" id="Yarhon\LinkGuardBundle\Security\AccessMap" />
+            <argument type="service" id="Yarhon\LinkGuardBundle\Security\AccessMapBuilder" />
             <argument /><!-- cache dir -->
             <tag name="kernel.cache_warmer" />
         </service>

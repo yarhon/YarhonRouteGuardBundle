@@ -8,15 +8,17 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Security\Authorization\Test;
+namespace Yarhon\LinkGuardBundle\Controller;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface TestBagInterface extends \IteratorAggregate
+interface ControllerNameDeprecationsConverterInterface
 {
     /**
-     * @return Arguments[]
+     * @param string $controller
+     *
+     * @return string A converted controller in the class::method notation
      */
-    public function toArray();
+    public function convert($controller);
 }

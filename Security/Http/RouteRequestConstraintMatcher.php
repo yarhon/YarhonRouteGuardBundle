@@ -13,9 +13,9 @@ namespace Yarhon\LinkGuardBundle\Security\Http;
 use Symfony\Component\Routing\Route;
 
 /**
- * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
+ * RouteRequestConstraintMatcher checks at compile time if route would always/possibly/never match a RequestConstraint at runtime.
  *
- * This class checks if route would match a request constraint.
+ * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class RouteRequestConstraintMatcher
 {
@@ -25,7 +25,7 @@ class RouteRequestConstraintMatcher
     const MATCH_ALWAYS = 1;
 
     /**
-     * Means that route can match RequestConstraint, depending on path and/or runtime parameters.
+     * Means that route can match RequestConstraint, depending on runtime parameters
      */
     const MATCH_POSSIBLE = 2;
 
@@ -40,7 +40,7 @@ class RouteRequestConstraintMatcher
     private $route;
 
     /**
-     * RouteRequestConstraintMatcher
+     * RouteRequestConstraintMatcher constructor
      *
      * @param Route $route
      */

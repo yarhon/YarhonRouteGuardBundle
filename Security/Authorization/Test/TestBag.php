@@ -40,4 +40,9 @@ class TestBag implements TestBagInterface
     {
         return new \ArrayIterator($this->tests);
     }
+
+    public function toArray()
+    {
+        return $this->tests;
+    }
 }
