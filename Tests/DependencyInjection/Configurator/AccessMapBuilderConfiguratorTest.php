@@ -11,17 +11,20 @@
 namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Configurator;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapBuilderConfigurator;
 use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
-
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class AccessMapBuilderConfiguratorTest extends TestCase
 {
+    /**
+     * @var RouterInterface
+     */
     private $router;
 
     /**
@@ -29,16 +32,13 @@ class AccessMapBuilderConfiguratorTest extends TestCase
      */
     private $configurator;
 
-    private $accessMapBuilder;
-
     public function setUp()
     {
         $this->router = $this->createMock('Symfony\Component\Routing\Router');
         $this->configurator = new AccessMapBuilderConfigurator($this->router);
-        //$this->accessMapBuilder = $this->cre
     }
 
-    public function atestConfigure()
+    public function testConfigure()
     {
         $routeCollection = $this->createRouteCollection([
             '/path1' => 'class::method',
@@ -47,14 +47,11 @@ class AccessMapBuilderConfiguratorTest extends TestCase
         $this->router->method('getRouteCollection')
             ->willReturn($routeCollection);
 
-        $accessMap = new AccessMap();
-        $this->configurator->configure($accessMap);
+        $accessMapBuilder = new AccessMapBuilder();
+        $this->configurator->configure($accessMapBuilder);
 
         // Warning: this attribute is private
-        $this->assertAttributeEquals($routeCollection, 'routeCollection', $accessMap);
-
-        // test if clone was done
-        $this->assertAttributeNotSame($routeCollection, 'routeCollection', $accessMap);
+        $this->assertAttributeEquals($routeCollection, 'routeCollection', $accessMapBuilder);
     }
 
     private function createRouteCollection($routes)

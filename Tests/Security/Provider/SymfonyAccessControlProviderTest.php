@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Annotations;
+namespace Yarhon\LinkGuardBundle\Tests\Security\Provider;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,7 +59,7 @@ class SymfonyAccessControlProviderTest extends TestCase
         ];
     }
 
-    public function testConcept()
+    public function atestConcept()
     {
         /*
         $arguments = new Arguments();

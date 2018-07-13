@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Configurator;
+namespace Yarhon\LinkGuardBundle\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\RouteCollection;

@@ -33,7 +33,7 @@ class AccessMapBuilder
     /**
      * @var ProviderInterface[]
      */
-    private $providers = [];
+    private $authorizationProviders = [];
 
     /**
      * AccessMapBuilder constructor.
@@ -52,9 +52,9 @@ class AccessMapBuilder
     /**
      * @param ProviderInterface $provider
      */
-    public function addProvider(ProviderInterface $provider)
+    public function addAuthorizationProvider(ProviderInterface $provider)
     {
-        $this->providers[] = $provider;
+        $this->authorizationProviders[] = $provider;
     }
 
     /**
@@ -97,7 +97,7 @@ class AccessMapBuilder
     private function getRouteRules(Route $route)
     {
         $rules = [];
-        foreach ($this->providers as $provider) {
+        foreach ($this->authorizationProviders as $provider) {
             $testBag = $provider->getTests($route);
         }
 
@@ -145,9 +145,15 @@ class AccessMapBuilder
         foreach ($collection as $name => $route) {
             $controller = $route->getDefault('_controller');
 
-            if (false === $controller || (is_string($controller) && 1 === substr_count($controller, '::'))) {
-                // TODO: check if both parts are not empty
+            if (false === $controller) {
                 continue;
+            }
+
+            if (is_string($controller)) {
+                $parts = explode('::', $controller);
+                if (2 == count($parts) && !in_array('', $parts, true)) {
+                    continue;
+                }
             }
 
             throw new \InvalidArgumentException(

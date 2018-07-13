@@ -44,7 +44,7 @@ class SymfonySecurityBundlePass implements CompilerPassInterface
             $accessControlProvider->addMethodCall('addRule', [$accessControlRule]);
         }
 
-        $accessMapDefinition = $container->getDefinition(AccessMapBuilder::class);
-        $accessMapDefinition->addMethodCall('addProvider', [new Reference(SymfonyAccessControlProvider::class)]);
+        $accessMapBuilderDefinition = $container->getDefinition(AccessMapBuilder::class);
+        $accessMapBuilderDefinition->addMethodCall('addAuthorizationProvider', [new Reference(SymfonyAccessControlProvider::class)]);
     }
 }

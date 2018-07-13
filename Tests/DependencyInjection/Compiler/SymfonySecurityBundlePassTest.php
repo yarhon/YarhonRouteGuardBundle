@@ -55,7 +55,7 @@ class SymfonySecurityBundlePassTest extends TestCase
         $methodCalls = $this->builder->getDefinition(AccessMapBuilder::class)->getMethodCalls();
         $this->assertCount(0, $methodCalls);
 
-        $this->assertEquals(false, $this->builder->hasDefinition(SymfonyAccessControlProvider::class));
+        $this->assertFalse($this->builder->hasDefinition(SymfonyAccessControlProvider::class));
     }
 
     public function testProcessWithSecurityBundle()
@@ -67,7 +67,7 @@ class SymfonySecurityBundlePassTest extends TestCase
         $methodCalls = $this->builder->getDefinition(AccessMapBuilder::class)->getMethodCalls();
         $this->assertCount(1, $methodCalls);
         list($name, $arguments) = $methodCalls[0];
-        $this->assertEquals('addProvider', $name);
+        $this->assertEquals('addAuthorizationProvider', $name);
         $this->assertInstanceOf(Reference::class, $arguments[0]);
         $this->assertEquals(SymfonyAccessControlProvider::class, (string) $arguments[0]);
     }

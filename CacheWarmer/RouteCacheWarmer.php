@@ -11,6 +11,7 @@
 namespace Yarhon\LinkGuardBundle\CacheWarmer;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
+use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
 
 /**

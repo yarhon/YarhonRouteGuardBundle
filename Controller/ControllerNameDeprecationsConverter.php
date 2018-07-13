@@ -13,6 +13,10 @@ namespace Yarhon\LinkGuardBundle\Controller;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
+ * ControllerNameDeprecationsConverter holds convert methods for controller names is deprecated formats.
+ * We can't just use original code for the following reasons:
+ * - convertBundleNotation: in order not to tie to symfony/framework-bundle (it's optional)
+ * - convertServiceNotation: no separate converter exists in symfony/http-kernel
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

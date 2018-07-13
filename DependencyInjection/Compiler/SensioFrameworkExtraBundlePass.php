@@ -28,7 +28,7 @@ class SensioFrameworkExtraBundlePass implements CompilerPassInterface
             return;
         }
 
-        $accessMapDefinition = $container->getDefinition(AccessMapBuilder::class);
-        $accessMapDefinition->addMethodCall('addProvider', [new Reference(SensioSecurityProvider::class)]);
+        $accessMapBuilderDefinition = $container->getDefinition(AccessMapBuilder::class);
+        $accessMapBuilderDefinition->addMethodCall('addAuthorizationProvider', [new Reference(SensioSecurityProvider::class)]);
     }
 }
