@@ -16,6 +16,7 @@ use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SymfonySecurityBundlePass;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SensioFrameworkExtraBundlePass;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\RouterPass;
+use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\ContainerClassMapPass;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -29,5 +30,7 @@ class YarhonLinkGuardBundle extends Bundle
         $container->addCompilerPass(new SymfonySecurityBundlePass(), PassConfig::TYPE_BEFORE_REMOVING, 100);
         $container->addCompilerPass(new SensioFrameworkExtraBundlePass(), PassConfig::TYPE_BEFORE_REMOVING, 101);
         $container->addCompilerPass(new RouterPass(), PassConfig::TYPE_BEFORE_REMOVING, 102);
+
+        $container->addCompilerPass(new ContainerClassMapPass(), PassConfig::TYPE_REMOVE, 0);
     }
 }

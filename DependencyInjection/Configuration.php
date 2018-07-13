@@ -20,6 +20,13 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
+    private $symfonyControllers = [
+        'Symfony\Bundle\TwigBundle\Controller\PreviewErrorController',
+        'Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController',
+        'Symfony\Bundle\WebProfilerBundle\Controller\RouterController',
+        'Symfony\Bundle\WebProfilerBundle\Controller\ExceptionController',
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -33,6 +40,13 @@ class Configuration implements ConfigurationInterface
             ->children()
                 ->scalarNode('cache_dir')->defaultValue('link-guard')->end()
                 ->booleanNode('override_url_generator')->defaultValue(false)->end()
+                ->arrayNode('ignore_controllers')
+                    ->prototype('scalar')->end()
+                ->end()
+                ->arrayNode('ignore_controllers_symfony')
+                    ->prototype('scalar')->end()
+                    ->defaultValue($this->symfonyControllers)
+                ->end()
             ->end();
 
         return $treeBuilder;

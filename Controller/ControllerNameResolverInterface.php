@@ -20,8 +20,9 @@ interface ControllerNameResolverInterface
      *
      * @return string|false A controller name in the class::method notation, or false if controller name is unavailable
      *
-     * @throws \InvalidArgumentException If failed to resolve controller name
+     * @throws \InvalidArgumentException If failed to resolve controller name when controller is not callable
      *                                   If failed to convert deprecated controller formats
+     *                                   If failed to resolve controller class
      */
     public function resolve($controller);
 

@@ -29,6 +29,13 @@ class ConfigurationTest extends TestCase
         $defaults = [
             'cache_dir' => 'link-guard',
             'override_url_generator' => false,
+            'ignore_controllers' => [],
+            'ignore_controllers_symfony' => [
+                'Symfony\Bundle\TwigBundle\Controller\PreviewErrorController',
+                'Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController',
+                'Symfony\Bundle\WebProfilerBundle\Controller\RouterController',
+                'Symfony\Bundle\WebProfilerBundle\Controller\ExceptionController',
+            ],
         ];
 
         $this->assertEquals($defaults, $config);

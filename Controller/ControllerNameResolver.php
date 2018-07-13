@@ -10,32 +10,15 @@
 
 namespace Yarhon\LinkGuardBundle\Controller;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class ControllerNameResolver implements ControllerNameResolverInterface
 {
     /**
-     * @var ContainerInterface
-     */
-    private $container;
-
-    /**
      * @var ControllerNameDeprecationsConverter
      */
     private $deprecationsConverter;
-
-    /**
-     * ControllerNameResolver constructor.
-     *
-     * @param ContainerInterface $container
-     */
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-    }
 
     /**
      * {@inheritdoc}
@@ -55,7 +38,7 @@ class ControllerNameResolver implements ControllerNameResolverInterface
         if (is_array($controller) && isset($controller[0]) && isset($controller[1])) {
 
             if (is_string($controller[0])) {
-                return $this->resolveServiceClass($controller[0]).'::'.$controller[1];
+                return $this->resolveClass($controller[0]).'::'.$controller[1];
             } elseif (is_object(($controller[0]))) {
                 return get_class($controller[0]).'::'.$controller[1];
             }
@@ -76,20 +59,15 @@ class ControllerNameResolver implements ControllerNameResolverInterface
             // TODO: do we need to check $controller string format here?
 
             list($class, $method) = explode('::', $controller);
-            $class = $this->resolveServiceClass($class);
+            $class = $this->resolveClass($class);
             return $class.'::'.$method;
         }
 
-        throw new \InvalidArgumentException('Unable to resolve controller name.');
+        throw new \InvalidArgumentException('Unable to resolve controller name, the controller is not callable.');
     }
 
-    private function resolveServiceClass($class)
+    protected function resolveClass($class)
     {
-        if (!class_exists($class, false) && $this->container->has($class)) {
-            var_dump('service', $class);
-            //$class = $this->container->get
-        }
-
         return $class;
     }
 

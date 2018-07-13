@@ -14,7 +14,7 @@
         <service id="Yarhon\LinkGuardBundle\Security\AccessMapBuilder">
             <argument>null</argument> <!--route collection, set by AccessMapBuilderConfigurator -->
             <call method="setControllerNameResolver">
-                <argument type="service" id="Yarhon\LinkGuardBundle\Controller\ControllerNameResolver" />
+                <argument type="service" id="Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver" />
             </call>
             <configurator service="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapBuilderConfigurator" method="configure" />
         </service>
@@ -27,8 +27,9 @@
             <argument type="service" id="kernel" />
         </service>
 
-        <service id="Yarhon\LinkGuardBundle\Controller\ControllerNameResolver">
-            <argument type="service" id="service_container" />
+        <service id="Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver" public="true">
+            <!--<argument type="service" id="service_container" />-->
+            <argument>null</argument><!-- container class map, set by ContainerClassMapPass -->
             <call method="setDeprecationsConverter">
                 <argument type="service" id="Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter" />
             </call>

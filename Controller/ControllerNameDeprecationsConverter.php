@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
 
 /**
  * ControllerNameDeprecationsConverter holds convert methods for controller names is deprecated formats.
- * We can't just use original code for the following reasons:
+ * We can't just use the original code for the following reasons:
  * - convertBundleNotation: in order not to tie to symfony/framework-bundle (it's optional)
  * - convertServiceNotation: no separate converter exists in symfony/http-kernel
  *

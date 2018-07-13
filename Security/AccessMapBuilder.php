@@ -36,6 +36,16 @@ class AccessMapBuilder
     private $authorizationProviders = [];
 
     /**
+     * @var string[]
+     */
+    private $ignoredControllers = [];
+
+    /**
+     * @var string[]
+     */
+    private $ignoredRoutes = [];
+
+    /**
      * AccessMapBuilder constructor.
      *
      * @param RouteCollection|null $routeCollection
@@ -69,14 +79,27 @@ class AccessMapBuilder
         $this->resolveControllers($routeCollection);
         $this->checkControllers($routeCollection);
         $this->routeCollection = $routeCollection;
+
+        foreach ($routeCollection as $name => $route) {
+            $controller = $route->getDefault('_controller');
+            // var_dump($name, $controller);
+        }
     }
 
     /**
      * @param ControllerNameResolverInterface $controllerNameResolver
      */
-    public function setControllerNameResolver($controllerNameResolver)
+    public function setControllerNameResolver(ControllerNameResolverInterface $controllerNameResolver)
     {
         $this->controllerNameResolver = $controllerNameResolver;
+    }
+
+    /**
+     * @param string[] $ignoredControllers
+     */
+    public function setIgnoredControllers(array $ignoredControllers)
+    {
+        $this->ignoredControllers = $ignoredControllers;
     }
 
     public function build()
@@ -122,10 +145,11 @@ class AccessMapBuilder
                 // Note: for some controllers (i.e, functions as controllers), $controllerName would be false
                 $controllerName = $this->controllerNameResolver->resolve($controller);
 
-                if (true) {
+                if (!$this->isControllerIgnored($controllerName)) {
                     $route->setDefault('_controller', $controllerName);
                 } else {
                     $collection->remove($name);
+                    $this->ignoredRoutes[] = $name;
                 }
 
             } catch (\InvalidArgumentException $e) {
@@ -160,5 +184,17 @@ class AccessMapBuilder
                 sprintf('Invalid controller name for route "%s" - it should be either string in the class::method notation or boolean false.', $name)
             );
         }
+    }
+
+    /**
+     * @param string $controllerName
+     *
+     * @return bool
+     */
+    private function isControllerIgnored($controllerName)
+    {
+        list($class) = explode('::', $controllerName);
+
+        return in_array($class, $this->ignoredControllers, true);
     }
 }
