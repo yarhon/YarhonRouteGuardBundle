@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\DependencyInjection;
+namespace Yarhon\LinkGuardBundle\DependencyInjection\Container;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class ContainerClassMapBuilder
+class ClassMapBuilder
 {
     /**
      * @param ContainerBuilder $container
@@ -24,16 +24,16 @@ class ContainerClassMapBuilder
      */
     public function build(ContainerBuilder $container)
     {
-        $classMap = [];
+        $map = [];
 
         foreach ($container->getDefinitions() as $id => $definition) {
-            $classMap[$id] = $definition->getClass();
+            $map[$id] = $definition->getClass();
         }
 
         foreach ($container->getAliases() as $id => $alias) {
-            $classMap[$id] = $classMap[(string) $alias];
+            $map[$id] = $map[(string) $alias];
         }
 
-        return $classMap;
+        return $map;
     }
 }

@@ -25,7 +25,7 @@ class SensioFrameworkExtraBundlePassTest extends TestCase
     /**
      * @var ContainerBuilder
      */
-    private $builder;
+    private $container;
 
     /**
      * @var SensioFrameworkExtraBundlePass
@@ -34,28 +34,28 @@ class SensioFrameworkExtraBundlePassTest extends TestCase
 
     public function setUp()
     {
-        $this->builder = new ContainerBuilder();
-        $this->builder->register(AccessMapBuilder::class);
+        $this->container = new ContainerBuilder();
+        $this->container->register(AccessMapBuilder::class);
         $this->pass = new SensioFrameworkExtraBundlePass();
     }
 
     public function testProcessWithoutExtraBundle()
     {
-        $this->pass->process($this->builder);
+        $this->pass->process($this->container);
 
-        $methodCalls = $this->builder->getDefinition(AccessMapBuilder::class)->getMethodCalls();
+        $methodCalls = $this->container->getDefinition(AccessMapBuilder::class)->getMethodCalls();
         $this->assertCount(0, $methodCalls);
 
-        $this->assertFalse($this->builder->hasDefinition(SensioSecurityProvider::class));
+        $this->assertFalse($this->container->hasDefinition(SensioSecurityProvider::class));
     }
 
     public function testProcessWithExtraBundle()
     {
-        $this->builder->register('sensio_framework_extra.controller.listener');
+        $this->container->register('sensio_framework_extra.controller.listener');
 
-        $this->pass->process($this->builder);
+        $this->pass->process($this->container);
 
-        $methodCalls = $this->builder->getDefinition(AccessMapBuilder::class)->getMethodCalls();
+        $methodCalls = $this->container->getDefinition(AccessMapBuilder::class)->getMethodCalls();
         $this->assertCount(1, $methodCalls);
         list($name, $arguments) = $methodCalls[0];
         $this->assertEquals('addAuthorizationProvider', $name);

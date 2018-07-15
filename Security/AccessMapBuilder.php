@@ -82,7 +82,7 @@ class AccessMapBuilder
 
         foreach ($routeCollection as $name => $route) {
             $controller = $route->getDefault('_controller');
-            // var_dump($name, $controller);
+            //var_dump($name, $controller);
         }
     }
 

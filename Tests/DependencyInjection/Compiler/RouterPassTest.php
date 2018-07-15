@@ -27,7 +27,7 @@ class RouterPassTest extends TestCase
     /**
      * @var ContainerBuilder
      */
-    private $builder;
+    private $container;
 
     /**
      * @var RouterPass
@@ -41,7 +41,7 @@ class RouterPassTest extends TestCase
 
     public function setUp()
     {
-        $this->builder = new ContainerBuilder();
+        $this->container = new ContainerBuilder();
         $this->pass = new RouterPass();
     }
 
@@ -49,25 +49,25 @@ class RouterPassTest extends TestCase
     {
         $this->expectException(ParameterNotFoundException::class);
 
-        $this->pass->process($this->builder);
+        $this->pass->process($this->container);
     }
 
     public function testProcessWithoutRouter()
     {
-        $this->builder->setParameter($this->parameterName, 'router.default');
+        $this->container->setParameter($this->parameterName, 'router.default');
 
         $this->expectException(ServiceNotFoundException::class);
 
-        $this->pass->process($this->builder);
+        $this->pass->process($this->container);
     }
 
     public function testProcessAccessMapConfigurator()
     {
         $this->loadBasicConfiguration();
 
-        $this->pass->process($this->builder);
+        $this->pass->process($this->container);
 
-        $definition = $this->builder->getDefinition(AccessMapBuilderConfigurator::class);
+        $definition = $this->container->getDefinition(AccessMapBuilderConfigurator::class);
         $arguments = $definition->getArguments();
 
         $this->assertCount(1, $arguments);
@@ -81,15 +81,15 @@ class RouterPassTest extends TestCase
 
         $this->loadBasicConfiguration();
 
-        $this->pass->process($this->builder);
+        $this->pass->process($this->container);
 
-        $definition = $this->builder->getDefinition('router.default');
+        $definition = $this->container->getDefinition('router.default');
     }
 
     private function loadBasicConfiguration()
     {
-        $this->builder->setParameter($this->parameterName, 'router.default');
-        $this->builder->register('router.default');
-        $this->builder->register(AccessMapBuilderConfigurator::class)->setArgument(0, null);
+        $this->container->setParameter($this->parameterName, 'router.default');
+        $this->container->register('router.default');
+        $this->container->register(AccessMapBuilderConfigurator::class)->setArgument(0, null);
     }
 }

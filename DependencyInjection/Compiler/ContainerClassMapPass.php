@@ -12,8 +12,8 @@ namespace Yarhon\LinkGuardBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Yarhon\LinkGuardBundle\DependencyInjection\ContainerClassMapBuilder;
-use Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver;
+use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap;
+use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMapBuilder;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -22,11 +22,10 @@ class ContainerClassMapPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $classMapBuilder = new ContainerClassMapBuilder();
+        $builder = new ClassMapBuilder();
+        $map = $builder->build($container);
 
-        $classMap = $classMapBuilder->build($container);
-
-        $controllerNameResolverDefinition = $container->getDefinition(ContainerControllerNameResolver::class);
-        $controllerNameResolverDefinition->replaceArgument(0, $classMap);
+        $controllerNameResolverDefinition = $container->getDefinition(ClassMap::class);
+        $controllerNameResolverDefinition->replaceArgument(0, $map);
     }
 }

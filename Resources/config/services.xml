@@ -27,12 +27,15 @@
             <argument type="service" id="kernel" />
         </service>
 
-        <service id="Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver" public="true">
-            <!--<argument type="service" id="service_container" />-->
-            <argument>null</argument><!-- container class map, set by ContainerClassMapPass -->
+        <service id="Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver">
+            <argument type="service" id="Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap" />
             <call method="setDeprecationsConverter">
                 <argument type="service" id="Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter" />
             </call>
+        </service>
+
+        <service id="Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap" public="true"> <!-- is set as public only to be available for TYPE_REMOVE compiler pass -->
+            <argument type="collection"/>
         </service>
 
         <!-- set "kernel" service synthetic ("kernel" is originally set synthetic inside symfony/framework-bundle, which is an optional dependency) -->

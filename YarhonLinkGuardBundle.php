@@ -31,6 +31,7 @@ class YarhonLinkGuardBundle extends Bundle
         $container->addCompilerPass(new SensioFrameworkExtraBundlePass(), PassConfig::TYPE_BEFORE_REMOVING, 101);
         $container->addCompilerPass(new RouterPass(), PassConfig::TYPE_BEFORE_REMOVING, 102);
 
+        // We need only public services for the class map, so we include this pass at the very end, after removing all private services.
         $container->addCompilerPass(new ContainerClassMapPass(), PassConfig::TYPE_REMOVE, 0);
     }
 }

@@ -23,30 +23,30 @@ class YarhonLinkGuardExtensionTest extends TestCase
     /**
      * @var ContainerBuilder
      */
-    private $builder;
+    private $container;
 
     public function setUp()
     {
         $extension = new YarhonLinkGuardExtension();
-        $this->builder = new ContainerBuilder(new ParameterBag([]));
-        $this->builder->registerExtension($extension);
-        $this->builder->register('security.authorization_checker')->setSynthetic(true);
+        $this->container = new ContainerBuilder(new ParameterBag([]));
+        $this->container->registerExtension($extension);
+        $this->container->register('security.authorization_checker')->setSynthetic(true);
 
         $config = [
             'cache_dir' => 'link-guard',
             'override_url_generator' => true,
         ];
 
-        $this->builder->loadFromExtension($extension->getAlias(), $config);
+        $this->container->loadFromExtension($extension->getAlias(), $config);
     }
 
     public function testConfigParametersAreSet()
     {
         $this->markTestIncomplete('Watch for config changes.');
 
-        $this->builder->getCompilerPassConfig()->setOptimizationPasses([]);
-        $this->builder->getCompilerPassConfig()->setRemovingPasses([]);
-        $this->builder->compile();
+        $this->container->getCompilerPassConfig()->setOptimizationPasses([]);
+        $this->container->getCompilerPassConfig()->setRemovingPasses([]);
+        $this->container->compile();
 
         // ..................
 
@@ -65,16 +65,16 @@ class YarhonLinkGuardExtensionTest extends TestCase
             'Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface',
         ];
 
-        $this->builder->getCompilerPassConfig()->setOptimizationPasses([]);
-        $this->builder->getCompilerPassConfig()->setRemovingPasses([]);
-        $this->builder->compile();
+        $this->container->getCompilerPassConfig()->setOptimizationPasses([]);
+        $this->container->getCompilerPassConfig()->setRemovingPasses([]);
+        $this->container->compile();
 
         foreach ($services as $id) {
-            $this->assertTrue($this->builder->hasDefinition($id), $id);
+            $this->assertTrue($this->container->hasDefinition($id), $id);
         }
 
         foreach ($aliases as $id) {
-            $this->assertTrue($this->builder->hasAlias($id), $id);
+            $this->assertTrue($this->container->hasAlias($id), $id);
         }
 
         $this->markTestIncomplete('Watch for service changes.');
@@ -86,10 +86,10 @@ class YarhonLinkGuardExtensionTest extends TestCase
             'link_guard.authorization_manager',
         ];
 
-        $this->builder->compile();
+        $this->container->compile();
 
         foreach ($services as $id) {
-            $this->assertTrue($this->builder->hasDefinition($id), $id);
+            $this->assertTrue($this->container->hasDefinition($id), $id);
         }
     }
 
@@ -99,17 +99,17 @@ class YarhonLinkGuardExtensionTest extends TestCase
             'link_guard.router_service_id' => 'router.default',
         ];
 
-        $this->builder->compile();
+        $this->container->compile();
 
         foreach ($parameters as $key => $value) {
-            $this->assertTrue($this->builder->hasParameter($key), $key);
-            $this->assertEquals($value, $this->builder->getParameter($key), $key);
+            $this->assertTrue($this->container->hasParameter($key), $key);
+            $this->assertEquals($value, $this->container->getParameter($key), $key);
         }
     }
 
     private function getDefinitions()
     {
-        $defined = array_keys($this->builder->getDefinitions());
+        $defined = array_keys($this->container->getDefinitions());
         $defined = array_diff($defined, ['service_container', 'kernel', 'security.authorization_checker']);
         sort($defined);
 
@@ -118,7 +118,7 @@ class YarhonLinkGuardExtensionTest extends TestCase
 
     private function getAliases()
     {
-        $defined = array_keys($this->builder->getAliases());
+        $defined = array_keys($this->container->getAliases());
         $defined = array_diff($defined, ['Psr\Container\ContainerInterface', 'Symfony\Component\DependencyInjection\ContainerInterface']);
         sort($defined);
 
@@ -127,7 +127,7 @@ class YarhonLinkGuardExtensionTest extends TestCase
 
     private function getParameters()
     {
-        $defined = $this->builder->getParameterBag()->all();
+        $defined = $this->container->getParameterBag()->all();
         ksort($defined);
 
         return $defined;
