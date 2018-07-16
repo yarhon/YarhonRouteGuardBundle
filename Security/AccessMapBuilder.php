@@ -14,7 +14,6 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 use Yarhon\LinkGuardBundle\Security\Provider\ProviderInterface;
 use Yarhon\LinkGuardBundle\Routing\RouteCollection\TransformerInterface;
-use Yarhon\LinkGuardBundle\Routing\RouteCollection\Transformer;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -32,9 +31,9 @@ class AccessMapBuilder
     private $authorizationProviders = [];
 
     /**
-     * @var TransformerInterface
+     * @var TransformerInterface[]
      */
-    private $routeCollectionTransformer;
+    private $routeCollectionTransformers = [];
 
     /**
      * @var string[]
@@ -44,12 +43,13 @@ class AccessMapBuilder
     /**
      * AccessMapBuilder constructor.
      *
+     * We need to allow $routeCollection accept null value for container to be able to instantiate AccessMapBuilder
+     * without $routeCollection (it would be set by the configurator).
+     *
      * @param RouteCollection|null $routeCollection
      */
     public function __construct(RouteCollection $routeCollection = null)
     {
-        /* We need to allow $routeCollection accept null value for container to be able to instantiate AccessMapBuilder
-           without $routeCollection (it would be set by the configurator) */
         if ($routeCollection) {
             $this->setRouteCollection($routeCollection);
         }
@@ -66,26 +66,28 @@ class AccessMapBuilder
     /**
      * @param TransformerInterface $transformer
      */
-    public function setRouteCollectionTransformer(TransformerInterface $transformer)
+    public function addRouteCollectionTransformer(TransformerInterface $transformer)
     {
-        $this->routeCollectionTransformer = $transformer;
+        $this->routeCollectionTransformers[] = $transformer;
     }
 
     /**
      * @param RouteCollection $routeCollection
      *
-     * @throws \InvalidArgumentException If unable to resolve controller name (when ControllerNameResolver is set)
-     *                                   If controller name is not a string in the class::method notation or boolean false
+     * @throws \InvalidArgumentException If exception in one of the RouteCollection transformers occured
+     *
      */
     public function setRouteCollection(RouteCollection $routeCollection)
     {
-        if ($this->routeCollectionTransformer) {
-            $routeCollection = $this->routeCollectionTransformer->transform($routeCollection);
-            $this->ignoredRoutes = $this->routeCollectionTransformer->getIgnoredRoutes();
-        }
+        $originalRoutes = array_keys($routeCollection->all());
 
-        Transformer::checkControllersFormat($routeCollection);
+        $routeCollection = $this->transformRouteCollection($routeCollection);
+
         $this->routeCollection = $routeCollection;
+        $this->ignoredRoutes = array_diff($originalRoutes, array_keys($routeCollection->all()));
+
+        // TODO: check controllers format in case when there no ControllerNameTransformer added ?
+        // Transformer::checkControllersFormat($routeCollection);
     }
 
     public function build()
@@ -96,6 +98,24 @@ class AccessMapBuilder
 
             var_dump($name, $controller);
         }
+    }
+
+    /**
+     * @param RouteCollection $routeCollection
+     *
+     * @return RouteCollection
+     *
+     * @throws \InvalidArgumentException If exception in one of the RouteCollection transformers occured
+     */
+    private function transformRouteCollection(RouteCollection $routeCollection)
+    {
+        $routeCollection = clone $routeCollection;
+
+        foreach ($this->routeCollectionTransformers as $transformer) {
+            $routeCollection = $transformer->transform($routeCollection);
+        }
+
+        return $routeCollection;
     }
 
     /**
@@ -112,4 +132,33 @@ class AccessMapBuilder
 
         return $rules;
     }
+
+    /*
+     * @param RouteCollection $collection
+     *
+     * @throws \InvalidArgumentException If controller name is not a string in the class::method notation or boolean false
+
+    public function checkControllersFormat(RouteCollection $collection)
+    {
+
+        foreach ($collection as $name => $route) {
+            $controller = $route->getDefault('_controller');
+
+            if (false === $controller) {
+                continue;
+            }
+
+            if (is_string($controller)) {
+                $parts = explode('::', $controller);
+                if (2 == count($parts) && !in_array('', $parts, true)) {
+                    continue;
+                }
+            }
+
+            throw new \InvalidArgumentException(
+                sprintf('Invalid controller name for route "%s" - it should be either string in the class::method notation or boolean false.', $name)
+            );
+        }
+    }
+    */
 }

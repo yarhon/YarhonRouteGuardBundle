@@ -11,7 +11,6 @@
 namespace Yarhon\LinkGuardBundle\Routing\RouteCollection;
 
 use Symfony\Component\Routing\RouteCollection;
-use Yarhon\LinkGuardBundle\Controller\ControllerNameResolverInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -23,22 +22,7 @@ interface TransformerInterface
      *
      * @return RouteCollection
      *
-     * @throws \InvalidArgumentException If unable to resolve controller name (when ControllerNameResolver is set)
+     * @throws \InvalidArgumentException
      */
     public function transform(RouteCollection $routeCollection);
-
-    /**
-     * @param ControllerNameResolverInterface $controllerNameResolver
-     */
-    public function setControllerNameResolver(ControllerNameResolverInterface $controllerNameResolver);
-
-    /**
-     * @param string[] $ignoredControllers
-     */
-    public function setIgnoredControllers(array $ignoredControllers);
-
-    /**
-     * @return string[]
-     */
-    public function getIgnoredRoutes();
 }

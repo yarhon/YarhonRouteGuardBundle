@@ -35,7 +35,7 @@ class ClassMap implements ClassMapInterface
      */
     public function has($id)
     {
-        return isset($this->map[$id]);
+        return array_key_exists($id, $this->map);
     }
 
     /**
@@ -43,7 +43,7 @@ class ClassMap implements ClassMapInterface
      */
     public function get($id)
     {
-        if (!isset($this->map[$id])) {
+        if (!$this->has($id)) {
             throw new \InvalidArgumentException(sprintf('Service "%s" is not found.', $id));
         }
 

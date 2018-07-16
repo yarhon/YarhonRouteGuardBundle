@@ -45,8 +45,10 @@ class ControllerNameDeprecationsConverter implements ControllerNameDeprecationsC
      */
     public function convert($controller)
     {
-        $controller = $this->convertBundleNotation($controller);
-        $controller = $this->convertServiceNotation($controller);
+        if (is_string($controller)) {
+            $controller = $this->convertBundleNotation($controller);
+            $controller = $this->convertServiceNotation($controller);
+        }
 
         return $controller;
     }

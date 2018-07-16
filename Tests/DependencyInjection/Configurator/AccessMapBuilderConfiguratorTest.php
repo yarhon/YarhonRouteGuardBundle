@@ -12,8 +12,7 @@ namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Configurator;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Route;
+use Yarhon\LinkGuardBundle\Tests\HelperTrait;
 use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapBuilderConfigurator;
 use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
 
@@ -22,6 +21,8 @@ use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
  */
 class AccessMapBuilderConfiguratorTest extends TestCase
 {
+    use HelperTrait;
+
     /**
      * @var RouterInterface
      */
@@ -52,17 +53,5 @@ class AccessMapBuilderConfiguratorTest extends TestCase
 
         // Warning: this attribute is private
         $this->assertAttributeEquals($routeCollection, 'routeCollection', $accessMapBuilder);
-    }
-
-    private function createRouteCollection($routes)
-    {
-        $routeCollection = new RouteCollection();
-
-        foreach ($routes as $path => $controller) {
-            $route = new Route($path, ['_controller' => $controller]);
-            $routeCollection->add($path, $route);
-        }
-
-        return $routeCollection;
     }
 }

@@ -16,19 +16,6 @@ namespace Yarhon\LinkGuardBundle\Controller;
 class ControllerNameResolver implements ControllerNameResolverInterface
 {
     /**
-     * @var ControllerNameDeprecationsConverter
-     */
-    private $deprecationsConverter;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDeprecationsConverter(ControllerNameDeprecationsConverterInterface $deprecationsConverter)
-    {
-        $this->deprecationsConverter = $deprecationsConverter;
-    }
-
-    /**
      * @see \Symfony\Component\HttpKernel\Controller\ControllerResolver::getController For possible $controller forms
      *
      * {@inheritdoc}
@@ -48,19 +35,18 @@ class ControllerNameResolver implements ControllerNameResolverInterface
             return get_class($controller).'::__invoke';
         }
 
-        if (function_exists($controller)) {
-            // TODO: how to deal with this case?
-            return false;
-        }
-
         if (is_string($controller)) {
-            $controller = $this->convertDeprecations($controller);
+            if (function_exists($controller)) {
+                // TODO: how to deal with this case?
+                return false;
+            }
 
-            // TODO: do we need to check $controller string format here?
+            if (false === strpos($controller, '::')) {
+                return $this->resolveClass($controller).'::__invoke';
+            }
 
             list($class, $method) = explode('::', $controller);
-            $class = $this->resolveClass($class);
-            return $class.'::'.$method;
+            return $this->resolveClass($class).'::'.$method;
         }
 
         throw new \InvalidArgumentException('Unable to resolve controller name, the controller is not callable.');
@@ -69,27 +55,5 @@ class ControllerNameResolver implements ControllerNameResolverInterface
     protected function resolveClass($class)
     {
         return $class;
-    }
-
-    /**
-     * @param string $controller
-     *
-     * @return string
-     *
-     * @throws \InvalidArgumentException If converting fails
-     */
-    private function convertDeprecations($controller)
-    {
-        if (!$this->deprecationsConverter) {
-            return $controller;
-        }
-
-        try {
-            $controller = $this->deprecationsConverter->convert($controller);
-        } catch (\InvalidArgumentException $e) {
-            throw $e;
-        }
-
-        return $controller;
     }
 }

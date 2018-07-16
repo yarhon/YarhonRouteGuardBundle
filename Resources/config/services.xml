@@ -13,10 +13,17 @@
 
         <service id="Yarhon\LinkGuardBundle\Security\AccessMapBuilder">
             <argument>null</argument> <!--route collection, set by AccessMapBuilderConfigurator -->
-            <call method="setRouteCollectionTransformer">
-                <argument type="service" id="Yarhon\LinkGuardBundle\Routing\RouteCollection\Transformer" />
+            <call method="addRouteCollectionTransformer">
+                <argument type="service" id="Yarhon\LinkGuardBundle\Routing\RouteCollection\ControllerNameDeprecationsTransformer" />
+            </call>
+            <call method="addRouteCollectionTransformer">
+                <argument type="service" id="Yarhon\LinkGuardBundle\Routing\RouteCollection\ControllerNameTransformer" />
+            </call>
+            <call method="addRouteCollectionTransformer">
+                <argument type="service" id="Yarhon\LinkGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer" />
             </call>
             <configurator service="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapBuilderConfigurator" method="configure" />
+
         </service>
 
         <service id="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapBuilderConfigurator">
@@ -25,17 +32,20 @@
 
         <!-- route collection services -->
 
-        <service id="Yarhon\LinkGuardBundle\Routing\RouteCollection\Transformer">
-            <call method="setControllerNameResolver">
-                <argument type="service" id="Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver" />
-            </call>
+        <service id="Yarhon\LinkGuardBundle\Routing\RouteCollection\ControllerNameDeprecationsTransformer">
+            <argument type="service" id="Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter" />
+        </service>
+
+        <service id="Yarhon\LinkGuardBundle\Routing\RouteCollection\ControllerNameTransformer">
+            <argument type="service" id="Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver" />
+        </service>
+
+        <service id="Yarhon\LinkGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer">
+            <argument type="collection" />
         </service>
 
         <service id="Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver">
             <argument type="service" id="Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap" />
-            <call method="setDeprecationsConverter">
-                <argument type="service" id="Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter" />
-            </call>
         </service>
 
         <service id="Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter">

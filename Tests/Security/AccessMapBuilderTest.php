@@ -12,97 +12,81 @@ namespace Yarhon\LinkGuardBundle\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Route;
+use Yarhon\LinkGuardBundle\Tests\HelperTrait;
 use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
-use Yarhon\LinkGuardBundle\Controller\ControllerNameResolver;
+use Yarhon\LinkGuardBundle\Routing\RouteCollection\ControllerNameTransformer;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class AccessMapBuilderTest extends TestCase
 {
-
-    /**
-     * @var ControllerNameResolver
-     */
-    private $nameResolver;
+    use HelperTrait;
 
     /**
      * @var AccessMapBuilder
      */
     private $builder;
 
-    public function asetUp()
+    public function setUp()
     {
-        $this->nameResolver = $this->createMock(ControllerNameResolver::class);
-        $this->builder = new AccessMapBuilder(null, $this->nameResolver);
+        $this->builder = new AccessMapBuilder(null);
     }
 
-    public function atestControllerNameConverterCall()
+    public function testSetRouteCollection()
     {
-        $nameConverter = $this->createMock(ControllerNameConverter::class);
-        $nameConverter->method('convert')
-            ->willReturnCallback(function($argument) { return 'c_'.$argument; });
-
-        $this->configurator->setControllerNameConverter($nameConverter);
-
         $routeCollection = $this->createRouteCollection([
             '/path1' => 'class::method',
-            '/path2' => 'bundle:controller:action',
-            '/path3' => function() { },
         ]);
 
-        $this->router->method('getRouteCollection')
-            ->willReturn($routeCollection);
+        $this->builder->setRouteCollection($routeCollection);
 
-        $nameConverter->expects($this->exactly(1))
-            ->method('convert')
-            ->with('bundle:controller:action');
-
-        $accessMap = new AccessMap();
-        $this->configurator->configure($accessMap);
-
-        $routeCollectionConverted = $this->createRouteCollection([
-            '/path1' => 'class::method',
-            '/path2' => 'c_bundle:controller:action',
-            '/path3' => function() { },
-        ]);
-
-        // Warning: this attribute is private
-        $this->assertAttributeEquals($routeCollectionConverted, 'routeCollection', $accessMap);
+        $this->assertAttributeEquals($routeCollection, 'routeCollection', $this->builder);
+        $this->assertAttributeNotSame($routeCollection, 'routeCollection', $this->builder);
+        $this->assertAttributeEquals([], 'ignoredRoutes', $this->builder);
     }
 
-    public function atestControllerNameConverterException()
+    public function testSetRouteCollectionException()
     {
-        $this->markTestIncomplete('Watch catch block in convertCollectionControllers.');
+        $routeCollection = $this->createRouteCollection([
+            '/path1' => 'class',
+        ]);
 
-        $nameConverter = $this->createMock(ControllerNameConverter::class);
-        $nameConverter->method('convert')
+        $transformer = $this->createMock(ControllerNameTransformer::class);
+
+        $transformer->method('transform')
             ->willThrowException(new \InvalidArgumentException());
 
-        $this->configurator->setControllerNameConverter($nameConverter);
+        $this->builder->addRouteCollectionTransformer($transformer);
 
-        $routeCollection = $this->createRouteCollection([
-            '/path1' => 'class.method',
-        ]);
-
-        $this->router->method('getRouteCollection')
-            ->willReturn($routeCollection);
-
-        $accessMap = new AccessMap();
         $this->expectException(\InvalidArgumentException::class);
-        $this->configurator->configure($accessMap);
+
+        $this->builder->setRouteCollection($routeCollection);
     }
 
-    private function createRouteCollection($routes)
+    public function testTransformerCalls()
     {
-        $routeCollection = new RouteCollection();
+        $transformer = $this->createMock(ControllerNameTransformer::class);
 
-        foreach ($routes as $path => $controller) {
-            $route = new Route($path, ['_controller' => $controller]);
-            $routeCollection->add($path, $route);
-        }
+        $transformer->method('transform')
+            ->willReturn(new RouteCollection());
 
-        return $routeCollection;
+        $transformer->expects($this->once())
+            ->method('transform');
+
+        $routeCollection = $this->createRouteCollection([
+            '/path1' => 'class::method',
+        ]);
+
+        $this->builder->addRouteCollectionTransformer($transformer);
+        $this->builder->setRouteCollection($routeCollection);
+
+        $this->assertAttributeEquals(new RouteCollection(), 'routeCollection', $this->builder);
+        $this->assertAttributeEquals(['/path1'], 'ignoredRoutes', $this->builder);
+    }
+
+    public function testBuild()
+    {
+        $this->markTestIncomplete();
     }
 }
