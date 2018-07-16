@@ -13,7 +13,8 @@ namespace Yarhon\LinkGuardBundle\Security;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 use Yarhon\LinkGuardBundle\Security\Provider\ProviderInterface;
-use Yarhon\LinkGuardBundle\Controller\ControllerNameResolverInterface;
+use Yarhon\LinkGuardBundle\Routing\RouteCollection\TransformerInterface;
+use Yarhon\LinkGuardBundle\Routing\RouteCollection\Transformer;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -26,19 +27,14 @@ class AccessMapBuilder
     private $routeCollection;
 
     /**
-     * @var ControllerNameResolverInterface
-     */
-    private $controllerNameResolver;
-
-    /**
      * @var ProviderInterface[]
      */
     private $authorizationProviders = [];
 
     /**
-     * @var string[]
+     * @var TransformerInterface
      */
-    private $ignoredControllers = [];
+    private $routeCollectionTransformer;
 
     /**
      * @var string[]
@@ -68,6 +64,14 @@ class AccessMapBuilder
     }
 
     /**
+     * @param TransformerInterface $transformer
+     */
+    public function setRouteCollectionTransformer(TransformerInterface $transformer)
+    {
+        $this->routeCollectionTransformer = $transformer;
+    }
+
+    /**
      * @param RouteCollection $routeCollection
      *
      * @throws \InvalidArgumentException If unable to resolve controller name (when ControllerNameResolver is set)
@@ -75,31 +79,13 @@ class AccessMapBuilder
      */
     public function setRouteCollection(RouteCollection $routeCollection)
     {
-        $routeCollection = clone $routeCollection;
-        $this->resolveControllers($routeCollection);
-        $this->checkControllers($routeCollection);
-        $this->routeCollection = $routeCollection;
-
-        foreach ($routeCollection as $name => $route) {
-            $controller = $route->getDefault('_controller');
-            //var_dump($name, $controller);
+        if ($this->routeCollectionTransformer) {
+            $routeCollection = $this->routeCollectionTransformer->transform($routeCollection);
+            $this->ignoredRoutes = $this->routeCollectionTransformer->getIgnoredRoutes();
         }
-    }
 
-    /**
-     * @param ControllerNameResolverInterface $controllerNameResolver
-     */
-    public function setControllerNameResolver(ControllerNameResolverInterface $controllerNameResolver)
-    {
-        $this->controllerNameResolver = $controllerNameResolver;
-    }
-
-    /**
-     * @param string[] $ignoredControllers
-     */
-    public function setIgnoredControllers(array $ignoredControllers)
-    {
-        $this->ignoredControllers = $ignoredControllers;
+        Transformer::checkControllersFormat($routeCollection);
+        $this->routeCollection = $routeCollection;
     }
 
     public function build()
@@ -108,7 +94,7 @@ class AccessMapBuilder
 
             $controller = $route->getDefault('_controller');
 
-            // $rules = $this->getRouteRules($route);
+            var_dump($name, $controller);
         }
     }
 
@@ -125,76 +111,5 @@ class AccessMapBuilder
         }
 
         return $rules;
-    }
-
-    /**
-     * @param RouteCollection $collection
-     *
-     * @throws \InvalidArgumentException If unable to resolve controller name (when ControllerNameResolver is set)
-     */
-    private function resolveControllers(RouteCollection $collection)
-    {
-        if (!$this->controllerNameResolver) {
-            return;
-        }
-
-        foreach ($collection as $name => $route) {
-            $controller = $route->getDefault('_controller');
-
-            try {
-                // Note: for some controllers (i.e, functions as controllers), $controllerName would be false
-                $controllerName = $this->controllerNameResolver->resolve($controller);
-
-                if (!$this->isControllerIgnored($controllerName)) {
-                    $route->setDefault('_controller', $controllerName);
-                } else {
-                    $collection->remove($name);
-                    $this->ignoredRoutes[] = $name;
-                }
-
-            } catch (\InvalidArgumentException $e) {
-                throw new \InvalidArgumentException(sprintf('Unable to resolve controller name for route "%s": %s',
-                    $name, $e->getMessage()), 0, $e);
-            }
-        }
-    }
-
-    /**
-     * @param RouteCollection $collection
-     *
-     * @throws \InvalidArgumentException If controller name is not a string in the class::method notation or boolean false
-     */
-    private function checkControllers(RouteCollection $collection)
-    {
-        foreach ($collection as $name => $route) {
-            $controller = $route->getDefault('_controller');
-
-            if (false === $controller) {
-                continue;
-            }
-
-            if (is_string($controller)) {
-                $parts = explode('::', $controller);
-                if (2 == count($parts) && !in_array('', $parts, true)) {
-                    continue;
-                }
-            }
-
-            throw new \InvalidArgumentException(
-                sprintf('Invalid controller name for route "%s" - it should be either string in the class::method notation or boolean false.', $name)
-            );
-        }
-    }
-
-    /**
-     * @param string $controllerName
-     *
-     * @return bool
-     */
-    private function isControllerIgnored($controllerName)
-    {
-        list($class) = explode('::', $controllerName);
-
-        return in_array($class, $this->ignoredControllers, true);
     }
 }

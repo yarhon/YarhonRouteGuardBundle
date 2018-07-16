@@ -13,8 +13,8 @@
 
         <service id="Yarhon\LinkGuardBundle\Security\AccessMapBuilder">
             <argument>null</argument> <!--route collection, set by AccessMapBuilderConfigurator -->
-            <call method="setControllerNameResolver">
-                <argument type="service" id="Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver" />
+            <call method="setRouteCollectionTransformer">
+                <argument type="service" id="Yarhon\LinkGuardBundle\Routing\RouteCollection\Transformer" />
             </call>
             <configurator service="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapBuilderConfigurator" method="configure" />
         </service>
@@ -23,8 +23,12 @@
             <argument>null</argument> <!-- router service, taken by id specified in "link_guard.router_service_id" parameter -->
         </service>
 
-        <service id="Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter">
-            <argument type="service" id="kernel" />
+        <!-- route collection services -->
+
+        <service id="Yarhon\LinkGuardBundle\Routing\RouteCollection\Transformer">
+            <call method="setControllerNameResolver">
+                <argument type="service" id="Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver" />
+            </call>
         </service>
 
         <service id="Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver">
@@ -34,12 +38,18 @@
             </call>
         </service>
 
+        <service id="Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter">
+            <argument type="service" id="kernel" />
+        </service>
+
         <service id="Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap" public="true"> <!-- is set as public only to be available for TYPE_REMOVE compiler pass -->
             <argument type="collection"/>
         </service>
 
         <!-- set "kernel" service synthetic ("kernel" is originally set synthetic inside symfony/framework-bundle, which is an optional dependency) -->
-        <service id="kernel" synthetic="true" public="true" />
+        <!--<service id="kernel" synthetic="true" public="true" />-->
+
+        <!-- end route collection services -->
 
         <service id="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager">
             <!--<argument type="service" id="Yarhon\LinkGuardBundle\Security\AccessMap" />-->   <!-- access map should go here -->
