@@ -11,7 +11,7 @@
 namespace Yarhon\LinkGuardBundle\Security\Authorization\Test;
 
 /**
- * Arguments is a "value object" class for storing arguments for AuthorizationChecker::isGranted() checks.
+ * Arguments is a "value object" class for storing arguments for AuthorizationChecker::isGranted() authorization test.
  *
  * @see \Symfony\Component\Security\Core\Authorization\AuthorizationChecker::isGranted
  *

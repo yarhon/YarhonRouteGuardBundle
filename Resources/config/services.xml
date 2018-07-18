@@ -23,7 +23,6 @@
                 <argument type="service" id="Yarhon\LinkGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer" />
             </call>
             <configurator service="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapBuilderConfigurator" method="configure" />
-
         </service>
 
         <service id="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapBuilderConfigurator">

@@ -92,11 +92,17 @@ class AccessMapBuilder
 
     public function build()
     {
+        //var_dump($this->routeCollection->all());
+
         foreach ($this->routeCollection->all() as $name => $route) {
 
             $controller = $route->getDefault('_controller');
 
-            var_dump($name, $controller);
+            $c = $route->compile();
+            $s = $c->getStaticPrefix();
+            var_dump($name, $s);
+
+            // var_dump($name, $controller);
         }
     }
 

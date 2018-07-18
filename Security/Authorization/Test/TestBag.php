@@ -11,6 +11,9 @@
 namespace Yarhon\LinkGuardBundle\Security\Authorization\Test;
 
 /**
+ * TestBag holds a set of authorization tests (calls of AuthorizationChecker::isGranted()).
+ * Each test is represented by an Arguments instance.
+ *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class TestBag implements TestBagInterface
@@ -22,6 +25,7 @@ class TestBag implements TestBagInterface
 
     /**
      * TestBag constructor.
+     *
      * @param Arguments[] $tests
      */
     public function __construct(array $tests)

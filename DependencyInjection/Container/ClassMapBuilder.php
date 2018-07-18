@@ -13,6 +13,10 @@ namespace Yarhon\LinkGuardBundle\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
+ * ClassMapBuilder builds a ClassMap from ContainerBuilder.
+ * Since it makes no sense to have private services in ClassMap, ClassMapBuilder should be run
+ * by a CompilerPass with type TYPE_REMOVE (after removing private services).
+ *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class ClassMapBuilder

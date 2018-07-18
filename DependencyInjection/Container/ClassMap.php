@@ -11,6 +11,10 @@
 namespace Yarhon\LinkGuardBundle\DependencyInjection\Container;
 
 /**
+ * ClassMap is responsible for storing DI container class map: service id => class name.
+ * Since \Symfony\Component\DependencyInjection\ContainerInterface doesn't allow to get actual service class
+ * without instantiating it, we need ClassMap for the code that needs to be able to resolve service class by its id.
+/**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class ClassMap implements ClassMapInterface

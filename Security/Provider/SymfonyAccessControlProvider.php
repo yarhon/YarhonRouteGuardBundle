@@ -15,7 +15,9 @@ use Yarhon\LinkGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\LinkGuardBundle\Security\Http\RouteRequestConstraintMatcher;
 use Yarhon\LinkGuardBundle\Security\Authorization\Test\Arguments;
 use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBag;
-use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBagMap;
+
+use Yarhon\LinkGuardBundle\Security\Http\TestBagMap;
+
 /**
  * SymfonyAccessControlProvider processes access_control config of Symfony SecurityBundle.
  *

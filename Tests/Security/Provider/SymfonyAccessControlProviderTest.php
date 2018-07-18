@@ -18,69 +18,24 @@ use Yarhon\LinkGuardBundle\Security\Authorization\Test\Arguments;
 use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBag;
 use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBagMap;
 
+use Yarhon\LinkGuardBundle\Security\Http\RequestConstraint;
+use Yarhon\LinkGuardBundle\Security\Http\RouteRequestConstraintMatcher;
+use Symfony\Component\Routing\Route;
+
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class SymfonyAccessControlProviderTest extends TestCase
 {
-    /**
-     * @dataProvider addRuleProvider
-     */
-    public function atestAddRule($rule, $expected)
+    public function testMatcher()
     {
-        $provider = new SymfonyAccessControlProvider();
-        $provider->addRule($rule);
 
-        $expected = [0 => $expected];
+        $route = new Route('/secure1/{page}', [], ['page' => "\d+"]);
+        $matcher = new RouteRequestConstraintMatcher($route);
+        $constraint = new RequestConstraint('/secure1');
 
-        // Warning: this property is private
-        //$this->assertAttributeEquals($expected, 'rules', $provider);
+        $r = $matcher->matches($constraint);
+
     }
-
-    public function addRuleProvider()
-    {
-        return [
-            // test 1
-            [
-                [
-                    'path' => 'test1',
-                    'host' => null,
-                    'methods' => [],
-                    'ips' => [],
-                    'roles' => [],
-                    'allow_if' => null,
-                ],
-                [
-
-
-                ],
-            ],
-            // test 2
-        ];
-    }
-
-    public function atestConcept()
-    {
-        /*
-        $arguments = new Arguments();
-        $testBag = new TestBag([$arguments]);
-        $requestMatcher = new RequestMatcher();
-        $request = new Request();
-        $testBagMap = new TestBagMap([[$testBag, $requestMatcher]]);
-        */
-
-        $rules = [
-            ['path' => "^/admin", 'roles' => "ROLE_ADMIN" ],
-            ['path' => "^/secure1", 'roles' => "ROLE_SECURE_1"],
-            ['path' => "^/_internal/secure", 'allow_if' => "'127.0.0.1' == request.getClientIp() or has_role('ROLE_ADMIN')"],
-        ];
-
-        $provider = new SymfonyAccessControlProvider();
-
-        foreach ($rules as $rule) {
-            $provider->addRule($rule);
-        }
-    }
-
 }
 

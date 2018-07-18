@@ -61,7 +61,7 @@ class RequestConstraint
 
     public function hasRuntimeParameters()
     {
-        return (bool) ($this->hostPattern || $this->methods || $this->ips);
+        return (bool) ($this->hostPattern || count($this->methods) || count($this->ips));
     }
 
     public function createRequestMatcher()

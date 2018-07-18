@@ -70,6 +70,8 @@ class RouteRequestConstraintMatcher
         $staticPrefix = $compiledRoute->getStaticPrefix();
         $regex = $compiledRoute->getRegex();
 
+        var_dump($compiledRoute->getPathVariables());
+
         // or use $compiledRoute->getPathVariables() - if count is 0 - means static (check _locale in this case)
         $isRouteStatic = $path === $staticPrefix;
 
@@ -78,7 +80,8 @@ class RouteRequestConstraintMatcher
         $pattern = $constraint->getPathPattern();
 
         /* TODO: Look into case, when rule pattern has trailing slash, because it seems static prefix
-        is without trailing slash, i.e. for route "/secure1/{page}" static prefix is "/secure1"
+        is without trailing slash, i.e. for route "/secure1/{page}" static prefix is "/secure1",
+        but for route /secure1/ static prefix is /secure1/
         */
 
         if ('^' != $pattern[0]) {
@@ -87,6 +90,14 @@ class RouteRequestConstraintMatcher
 
         if (!preg_match('{'.$pattern.'}', $staticPrefix)) {
             return self::MATCH_NEVER;
+        }
+
+        if (!$compiledRoute->getPathVariables()) {
+            // route is static, so would always match
+
+            // !!! consider other parameters - host, methods, ips
+
+            return self::MATCH_ALWAYS;
         }
 
         // Rule is one of the possible matches

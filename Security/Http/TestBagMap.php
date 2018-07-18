@@ -8,25 +8,22 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Security\Authorization\Test;
+namespace Yarhon\LinkGuardBundle\Security\Http;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
+use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBagInterface;
+use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBag;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class TestBagMap implements TestBagInterface, RequestResolvableInterface
+class TestBagMap implements RequestResolvableInterface
 {
     /**
      * @var array
      */
     private $map;
-
-    /**
-     * @var Arguments[]
-     */
-    private $tests;
 
     /**
      * TestBagMap constructor.
@@ -39,23 +36,9 @@ class TestBagMap implements TestBagInterface, RequestResolvableInterface
         }
     }
 
-    public function add(TestBag $testBag, RequestMatcher $requestMatcher = null)
+    public function add(TestBagInterface $testBag, RequestMatcher $requestMatcher = null)
     {
         $this->map[] = [$testBag, $requestMatcher];
-    }
-
-    public function getIterator()
-    {
-        $this->checkIfResolved();
-
-        return new \ArrayIterator($this->tests);
-    }
-
-    public function toArray()
-    {
-        $this->checkIfResolved();
-
-        return $this->tests;
     }
 
     public function resolve(Request $request)
@@ -63,7 +46,6 @@ class TestBagMap implements TestBagInterface, RequestResolvableInterface
         $resolved = null;
 
         foreach ($this->map as $item) {
-            /** @var TestBag $testBag */
             /** @var RequestMatcher $requestMatcher */
             list($testBag, $requestMatcher) = $item;
 
@@ -73,18 +55,6 @@ class TestBagMap implements TestBagInterface, RequestResolvableInterface
             }
         }
 
-        if ($resolved) {
-            $this->tests = $resolved->toArray();
-        } else {
-            $this->tests = [];
-        }
-    }
-
-    private function checkIfResolved()
-    {
-        if (null === $this->tests) {
-            throw new \LogicException(sprintf('%s implements %s, you must call resolve() method before iterating over it.',
-                __CLASS__, RequestResolvableInterface::class));
-        }
+        return $resolved;
     }
 }
