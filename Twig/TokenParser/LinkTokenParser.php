@@ -17,17 +17,24 @@ use Twig\TokenStream;
 use Twig\Node\Node;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\ArrayExpression;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedNode;
+use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
 use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedExpression;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RouteIfGrantedTokenParser extends AbstractTokenParser
+class LinkTokenParser extends AbstractTokenParser
 {
-    const TAG_NAME = 'routeifgranted';
+    private $tagName;
 
-    const END_TAG_NAME = 'endrouteifgranted';
+    private $endTagName;
+
+    // We don't use expressions in class constants in order to be compatible with PHP 5.5.
+    public function __construct()
+    {
+        $this->tagName = LinkNode::TAG_NAME;
+        $this->endTagName = 'end'.LinkNode::TAG_NAME;
+    }
 
     /**
      * {@inheritdoc}
@@ -72,10 +79,10 @@ class RouteIfGrantedTokenParser extends AbstractTokenParser
         $stream->expect(Token::BLOCK_END_TYPE);
 
         $bodyNode = $parser->subparse(function(Token $token) {
-            return $token->test(['else', self::END_TAG_NAME]);
+            return $token->test(['else', $this->endTagName]);
         });
 
-        // $this->testForNestedTag($stream); + add self::TAG_NAME to subparse stop condition
+        // $this->testForNestedTag($stream); + add $this->tagName to subparse stop condition
 
         if ('else' == $stream->next()->getValue()) {
             $stream->expect(Token::BLOCK_END_TYPE);
@@ -84,21 +91,21 @@ class RouteIfGrantedTokenParser extends AbstractTokenParser
              * $dropNeedle parameter is significant to call next() on the stream, that would skip the node with the end tag name.
              * For unknown reason, that node is skipped automatically if there are no any nested tags (i.e., {% else %}).
              * Same result could be achieved by the following code after subparse call:
-             * $stream->expect(self::END_TAG_NAME).
+             * $stream->expect($this->endTagName).
              * We use second option to be able to allow / disallow nested tags in future.
              */
             $elseNode = $parser->subparse(function(Token $token) {
-                return $token->test([self::END_TAG_NAME]);
+                return $token->test([$this->endTagName]);
             });
 
-            // $this->testForNestedTag($stream); + add self::TAG_NAME to subparse stop condition
+            // $this->testForNestedTag($stream); + add $this->tagName to subparse stop condition
 
-            $stream->expect(self::END_TAG_NAME);
+            $stream->expect($this->endTagName);
         }
 
         $stream->expect(Token::BLOCK_END_TYPE);
 
-        $node = new RouteIfGrantedNode($condition, $bodyNode, $elseNode, $token->getLine(), $this->getTag());
+        $node = new LinkNode($condition, $bodyNode, $elseNode, $token->getLine(), $this->getTag());
 
         return $node;
     }
@@ -108,7 +115,7 @@ class RouteIfGrantedTokenParser extends AbstractTokenParser
      */
     public function getTag()
     {
-        return self::TAG_NAME;
+        return $this->tagName;
     }
 
     /**
@@ -175,7 +182,7 @@ class RouteIfGrantedTokenParser extends AbstractTokenParser
     /*
     private function testForNestedTag(TokenStream $stream)
     {
-        if (!$stream->getCurrent()->test(self::TAG_NAME)) {
+        if (!$stream->getCurrent()->test($this->tagName)) {
             return;
         }
 

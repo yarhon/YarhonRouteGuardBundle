@@ -12,8 +12,8 @@ namespace Yarhon\LinkGuardBundle\Twig\Extension;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedNode;
-use Yarhon\LinkGuardBundle\Twig\TokenParser\RouteIfGrantedTokenParser;
+use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
+use Yarhon\LinkGuardBundle\Twig\TokenParser\LinkTokenParser;
 use Yarhon\LinkGuardBundle\Twig\NodeVisitor\DiscoverRoutingFunctionNodeVisitor;
 use Yarhon\LinkGuardBundle\Twig\RoutingRuntime;
 
@@ -35,7 +35,7 @@ class RoutingExtension extends AbstractExtension
 
         $options = array_merge($defaults, $options);
 
-        RouteIfGrantedNode::setReferenceVarName($options['referenceVarName']);
+        LinkNode::setReferenceVarName($options['referenceVarName']);
     }
 
     /**
@@ -44,7 +44,7 @@ class RoutingExtension extends AbstractExtension
     public function getTokenParsers()
     {
         return [
-            new RouteIfGrantedTokenParser(),
+            new LinkTokenParser(),
         ];
     }
 

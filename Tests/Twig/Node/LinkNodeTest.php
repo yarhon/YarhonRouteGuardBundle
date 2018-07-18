@@ -13,9 +13,9 @@ namespace Yarhon\LinkGuardBundle\Tests\Twig\Node;
 use Twig_Error_Syntax as SyntaxError;   // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
 use Twig\Node\Node;
 use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedNode;
+use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
 
-class RouteIfGrantedNodeTest extends AbstractNodeTest
+class LinkNodeTest extends AbstractNodeTest
 {
     /**
      * @dataProvider compileDataProvider
@@ -63,25 +63,25 @@ EOD;
         $this->expectException(SyntaxError::class);
         $this->expectExceptionMessage('Condition node is required.');
 
-        $node = new RouteIfGrantedNode(null, new Node());
+        $node = new LinkNode(null, new Node());
         $this->compile($node);
     }
 
     public function testGetReferenceVarName()
     {
         $testName = uniqid();
-        RouteIfGrantedNode::setReferenceVarName($testName);
+        LinkNode::setReferenceVarName($testName);
 
-        $this->assertEquals($testName, RouteIfGrantedNode::getReferenceVarName());
+        $this->assertEquals($testName, LinkNode::getReferenceVarName());
     }
 
     public function testGetReferenceVarNameException()
     {
-        RouteIfGrantedNode::setReferenceVarName(null);
+        LinkNode::setReferenceVarName(null);
 
         $this->expectException('LogicException');
         $this->expectExceptionMessage('referenceVarName is not set. setReferenceVarName() method should be called first.');
 
-        RouteIfGrantedNode::getReferenceVarName();
+        LinkNode::getReferenceVarName();
     }
 }

@@ -17,10 +17,10 @@ use Twig\Node\PrintNode;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\NameExpression;
 use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedNode;
+use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
 use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedExpression;
 
-class RouteIfGrantedTokenParserTest extends AbstractNodeTest
+class LinkTokenParserTest extends AbstractNodeTest
 {
     /**
      * @dataProvider parseDataProvider
@@ -38,7 +38,7 @@ class RouteIfGrantedTokenParserTest extends AbstractNodeTest
             [
                 // general test
                 '{% routeifgranted ["secure1"] %}<a href="{{ route_reference }}">Link</a>{% endrouteifgranted %}',
-                new RouteIfGrantedNode(
+                new LinkNode(
                     new RouteIfGrantedExpression(
                         new Node([
                             new ConstantExpression('secure1', 0)
@@ -55,7 +55,7 @@ class RouteIfGrantedTokenParserTest extends AbstractNodeTest
             [
                 // else node test
                 '{% routeifgranted ["secure1"] %}{% else %}else text{% endrouteifgranted %}',
-                new RouteIfGrantedNode(
+                new LinkNode(
                     new RouteIfGrantedExpression(
                         new Node([
                             new ConstantExpression('secure1', 0)
@@ -69,7 +69,7 @@ class RouteIfGrantedTokenParserTest extends AbstractNodeTest
             [
                 // with "as"
                 '{% routeifgranted ["secure1"] as path %}{% endrouteifgranted %}',
-                new RouteIfGrantedNode(
+                new LinkNode(
                     (new RouteIfGrantedExpression(
                         new Node([
                             new ConstantExpression('secure1', 0)
@@ -82,7 +82,7 @@ class RouteIfGrantedTokenParserTest extends AbstractNodeTest
             [
                 // with "as"
                 '{% routeifgranted ["secure1"] as path relative %}{% endrouteifgranted %}',
-                new RouteIfGrantedNode(
+                new LinkNode(
                     (new RouteIfGrantedExpression(
                         new Node([
                             new ConstantExpression('secure1', 0)
@@ -95,7 +95,7 @@ class RouteIfGrantedTokenParserTest extends AbstractNodeTest
             [
                 // with "as"
                 '{% routeifgranted ["secure1"] as path absolute %}{% endrouteifgranted %}',
-                new RouteIfGrantedNode(
+                new LinkNode(
                     (new RouteIfGrantedExpression(
                         new Node([
                             new ConstantExpression('secure1', 0)
@@ -108,7 +108,7 @@ class RouteIfGrantedTokenParserTest extends AbstractNodeTest
             [
                 // with "as"
                 '{% routeifgranted ["secure1"] as url %}{% endrouteifgranted %}',
-                new RouteIfGrantedNode(
+                new LinkNode(
                     (new RouteIfGrantedExpression(
                         new Node([
                             new ConstantExpression('secure1', 0)

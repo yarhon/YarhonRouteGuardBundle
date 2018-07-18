@@ -17,7 +17,7 @@ use Twig\Node\Expression\ArrayExpression;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\NameExpression;
 use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedNode;
+use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
 use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedExpression;
 
 class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
@@ -43,7 +43,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
             [
                 // path function test
                 '{% routeifgranted discover %}{{ path("secure1") }}{% endrouteifgranted %}',
-                new RouteIfGrantedNode(
+                new LinkNode(
                     (new RouteIfGrantedExpression(
                         new Node([
                             new ConstantExpression('secure1', 0)
@@ -56,7 +56,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
             [
                 // url function test
                 '{% routeifgranted discover %}{{ url("secure1") }}{% endrouteifgranted %}',
-                new RouteIfGrantedNode(
+                new LinkNode(
                     (new RouteIfGrantedExpression(
                         new Node([
                             new ConstantExpression('secure1', 0)
@@ -69,7 +69,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
             [
                 // relative parameter test
                 '{% routeifgranted discover %}{{ path("secure1", {}, true) }}{% endrouteifgranted %}',
-                new RouteIfGrantedNode(
+                new LinkNode(
                     (new RouteIfGrantedExpression(
                         new Node([
                             new ConstantExpression('secure1', 0),

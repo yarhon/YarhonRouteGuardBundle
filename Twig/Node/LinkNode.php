@@ -14,20 +14,21 @@ use Twig_Compiler as Compiler;      // Workaround for PhpStorm to recognise type
 use Twig\Node\Node;
 use Twig\Error\SyntaxError;
 use Twig\Node\Expression\AssignNameExpression;
-use Yarhon\LinkGuardBundle\Twig\TokenParser\RouteIfGrantedTokenParser;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RouteIfGrantedNode extends Node
+class LinkNode extends Node
 {
+    const TAG_NAME = 'routeifgranted';
+
     /**
      * @var string
      */
     private static $referenceVarName;
 
     /**
-     * RouteIfGrantedNode constructor.
+     * LinkNode constructor.
      *
      * @param RouteIfGrantedExpression|null $condition
      * @param Node                          $bodyNode
@@ -49,7 +50,9 @@ class RouteIfGrantedNode extends Node
             $nodes['else'] = $elseNode;
         }
 
-        $tag = $tag ?: RouteIfGrantedTokenParser::TAG_NAME;
+        // This is needed only to allow omitting optional constructor parameters (tag is the very last of them)
+        // when creating instances of LinkNode in unit tests.
+        $tag = $tag ?: self::TAG_NAME;
 
         parent::__construct($nodes, [], $line, $tag);
     }

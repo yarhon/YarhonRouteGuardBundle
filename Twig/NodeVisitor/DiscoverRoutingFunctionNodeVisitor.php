@@ -17,7 +17,7 @@ use Twig\NodeVisitor\NodeVisitorInterface;
 use Twig\Error\SyntaxError;
 use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\Expression\NameExpression;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedNode;
+use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
 use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedExpression;
 
 /**
@@ -59,17 +59,17 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
     /**
      * {@inheritdoc}
      *
-     * @throws SyntaxError If no routing function call was found inside node
+     * @throws SyntaxError If zero / more than one routing function call was found inside node
      */
     public function leaveNode(Node $node, Environment $env)
     {
         if ($this->isTargetNode($node)) {
 
-            /** @var RouteIfGrantedNode $node */
+            /** @var LinkNode $node */
 
             if (!$this->scope->has('routingFunction')) {
                 throw new SyntaxError(
-                    '"routeifgranted" tag with discover option must contain one url() or path() call.',
+                    sprintf('"%s" tag with discover option must contain one url() or path() call.', LinkNode::TAG_NAME),
                     $node->getTemplateLine()
                 );
             }
@@ -87,14 +87,14 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
 
             if ($this->scope->has('routingFunction')) {
                 throw new SyntaxError(
-                    '"routeifgranted" tag with discover option must contain only one url() or path() call.',
+                    sprintf('"%s" tag with discover option must contain only one url() or path() call.', LinkNode::TAG_NAME),
                     $node->getTemplateLine()
                 );
             }
 
             $this->scope->set('routingFunction', $node);
 
-            $referenceVarName = RouteIfGrantedNode::getReferenceVarName();
+            $referenceVarName = LinkNode::getReferenceVarName();
             $newNode = new NameExpression($referenceVarName, $node->getTemplateLine());
             $newNode->setAttribute('always_defined', true);
 
@@ -119,7 +119,7 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
      */
     private function isTargetNode(Node $node)
     {
-        return $node instanceof RouteIfGrantedNode && !$node->hasNode('condition');
+        return $node instanceof LinkNode && !$node->hasNode('condition');
     }
 
     /**
