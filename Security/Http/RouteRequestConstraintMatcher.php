@@ -75,6 +75,11 @@ class RouteRequestConstraintMatcher
         // or use $compiledRoute->getPathVariables() - if count is 0 - means static (check _locale in this case)
         $isRouteStatic = $path === $staticPrefix;
 
+        /// !!!!!!
+        /// \Symfony\Component\Routing\Matcher\UrlMatcher::137
+        /// if ('' !== $compiledRoute->getStaticPrefix() && 0 !== strpos($pathinfo, $compiledRoute->getStaticPrefix()))
+
+
         /////////////////////////////////////
 
         $pattern = $constraint->getPathPattern();

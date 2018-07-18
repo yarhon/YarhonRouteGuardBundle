@@ -18,6 +18,9 @@ use Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer;
 use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\UrlGeneratorConfigurator;
 use Yarhon\LinkGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer;
 
+use Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension;
+use Yarhon\LinkGuardBundle\Twig\RoutingRuntime;
+
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */

@@ -47,17 +47,15 @@ class RouteIfGrantedExpression extends FunctionExpression
         parent::__construct(null, $arguments, $line);
 
         // Set default generateAs parameters.
-        // We call this function after parent constructor call to allow them to rely on internal structure
+        // We call this functions after parent constructor call to allow them to rely on internal structure
         // created by parent constructor (i.e., call $this->getNode('arguments'), $this->getTemplateLine()).
         $this->setFunctionName('path');
         $this->setRelative(false);
     }
 
-    /*
-     * TODO: allow to specify $generateAs as a constant (one of UrlGeneratorInterface constants).
-     * Note that $relative parameter in setRelative() method can be an instance of AbstractExpression,
-     * and it's execution result can be non-calculable at compile time.
-     */
+    // TODO: allow to specify $generateAs as a constant (one of UrlGeneratorInterface constants).
+    // Note that $relative parameter in setRelative() method can be an instance of AbstractExpression,
+    // and it's execution result can be non-calculable at compile time.
 
     /**
      * @param array $generateAs

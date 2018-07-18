@@ -87,7 +87,7 @@ class AccessMapBuilder
         $this->ignoredRoutes = array_diff($originalRoutes, array_keys($routeCollection->all()));
 
         // TODO: check controllers format in case when there no ControllerNameTransformer added ?
-        // Transformer::checkControllersFormat($routeCollection);
+        // checkControllersFormat($routeCollection);
     }
 
     public function build()
@@ -100,7 +100,7 @@ class AccessMapBuilder
 
             $c = $route->compile();
             $s = $c->getStaticPrefix();
-            var_dump($name, $s);
+            //var_dump($name, $s);
 
             // var_dump($name, $controller);
         }

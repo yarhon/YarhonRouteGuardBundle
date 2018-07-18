@@ -10,13 +10,14 @@
 
 namespace Yarhon\LinkGuardBundle\Twig;
 
+use Twig\Extension\RuntimeExtensionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  *
  */
-class RoutingRuntime
+class RoutingRuntime implements RuntimeExtensionInterface
 {
     // TODO: check \Symfony\Bridge\Twig\Extension\RoutingExtension::isUrlGenerationSafe
 

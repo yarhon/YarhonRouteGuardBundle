@@ -45,6 +45,7 @@ class RouterPass implements CompilerPassInterface
 
         $configurator = [new Reference(UrlGeneratorConfigurator::class), 'configure'];
 
+        // !!! TODO: think about this
         if (null !== $routerDefinition->getConfigurator()) {
             $routerDefinition->setConfigurator($configurator);
         }

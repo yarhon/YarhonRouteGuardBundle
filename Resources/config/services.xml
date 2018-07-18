@@ -76,7 +76,7 @@
         <service id="Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer">
             <argument type="service" id="Yarhon\LinkGuardBundle\Security\AccessMapBuilder" />
             <argument /><!-- cache dir -->
-            <tag name="kernel.cache_warmer" />
+            <tag name="kernel.cache_warmer" /> <!-- this tag is processed by framework bundle!!!! -->
         </service>
 
         <service id="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\UrlGeneratorConfigurator">
@@ -92,6 +92,7 @@
         </service>
 
         <service id="Yarhon\LinkGuardBundle\Twig\RoutingRuntime">
+            <tag name="twig.runtime" />
         </service>
 
     </services>

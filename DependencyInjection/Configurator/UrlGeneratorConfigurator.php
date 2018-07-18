@@ -53,12 +53,11 @@ class UrlGeneratorConfigurator
      */
     public function configure($router)
     {
-        /*
-         * We perform the following check (and not using Router type-hint), because someone can use
-         * different implementation of the Router class that is not extended from the basic one.
-         * And, unfortunately, Router class doesn't implement any interface(s) that we can rely on
-         * (i.e., interface(s) with "setOption" and "getGenerator" methods).
-         */
+
+        // We perform the following check (and not using Router type-hint), because someone can use
+        // different implementation of the Router class that is not extended from the basic one.
+        // And, unfortunately, Router class doesn't implement any interface(s) that we can rely on
+        // (i.e., interface(s) with "setOption" and "getGenerator" methods).
         if (!($router instanceof Router)) {
             //TODO: think about more informative action
             return;
