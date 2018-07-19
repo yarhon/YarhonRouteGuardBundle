@@ -16,16 +16,16 @@ use Twig\Node\Node;
 use Twig\Node\Expression\ArrayExpression;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\NameExpression;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedExpression;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 
-class RouteIfGrantedExpressionTest extends TestCase
+class RouteExpressionTest extends TestCase
 {
     /**
      * @dataProvider constructorDataProvider
      */
     public function testConstructor($sourceArguments, $expectedArguments)
     {
-        $expression = new RouteIfGrantedExpression($sourceArguments);
+        $expression = new RouteExpression($sourceArguments);
         $arguments = $expression->getNode('arguments');
 
         $this->assertEquals($expectedArguments, $arguments);
@@ -91,7 +91,7 @@ class RouteIfGrantedExpressionTest extends TestCase
             $this->expectExceptionMessage($expected[1]);
         }
 
-        $expression = new RouteIfGrantedExpression($sourceArguments);
+        $expression = new RouteExpression($sourceArguments);
     }
 
     public function constructorExceptionDataProvider()
@@ -115,7 +115,7 @@ class RouteIfGrantedExpressionTest extends TestCase
 
     public function testSetFunctionName()
     {
-        $expression = new RouteIfGrantedExpression(new Node([
+        $expression = new RouteExpression(new Node([
             new ConstantExpression('secure1', 0),
         ]));
 
@@ -135,7 +135,7 @@ class RouteIfGrantedExpressionTest extends TestCase
 
     public function testSetRelative()
     {
-        $expression = new RouteIfGrantedExpression(new Node([
+        $expression = new RouteExpression(new Node([
             new ConstantExpression('secure1', 0),
         ]));
 
@@ -155,7 +155,7 @@ class RouteIfGrantedExpressionTest extends TestCase
 
     public function testSetGenerateAs()
     {
-        $expression = new RouteIfGrantedExpression(new Node([
+        $expression = new RouteExpression(new Node([
             new ConstantExpression('secure1', 0),
         ]));
 

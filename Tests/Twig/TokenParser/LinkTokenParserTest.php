@@ -18,7 +18,7 @@ use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\NameExpression;
 use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
 use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedExpression;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 
 class LinkTokenParserTest extends AbstractNodeTest
 {
@@ -39,7 +39,7 @@ class LinkTokenParserTest extends AbstractNodeTest
                 // general test
                 '{% routeifgranted ["secure1"] %}<a href="{{ route_reference }}">Link</a>{% endrouteifgranted %}',
                 new LinkNode(
-                    new RouteIfGrantedExpression(
+                    new RouteExpression(
                         new Node([
                             new ConstantExpression('secure1', 0)
                         ])
@@ -56,65 +56,13 @@ class LinkTokenParserTest extends AbstractNodeTest
                 // else node test
                 '{% routeifgranted ["secure1"] %}{% else %}else text{% endrouteifgranted %}',
                 new LinkNode(
-                    new RouteIfGrantedExpression(
+                    new RouteExpression(
                         new Node([
                             new ConstantExpression('secure1', 0)
                         ])
                     ),
                     new Node(),
                     new TextNode('else text', 0)
-                )
-            ],
-
-            [
-                // with "as"
-                '{% routeifgranted ["secure1"] as path %}{% endrouteifgranted %}',
-                new LinkNode(
-                    (new RouteIfGrantedExpression(
-                        new Node([
-                            new ConstantExpression('secure1', 0)
-                        ])
-                    ))->setFunctionName('path')->setRelative(false),
-                    new Node()
-                )
-            ],
-
-            [
-                // with "as"
-                '{% routeifgranted ["secure1"] as path relative %}{% endrouteifgranted %}',
-                new LinkNode(
-                    (new RouteIfGrantedExpression(
-                        new Node([
-                            new ConstantExpression('secure1', 0)
-                        ])
-                    ))->setFunctionName('path')->setRelative(true),
-                    new Node()
-                )
-            ],
-
-            [
-                // with "as"
-                '{% routeifgranted ["secure1"] as path absolute %}{% endrouteifgranted %}',
-                new LinkNode(
-                    (new RouteIfGrantedExpression(
-                        new Node([
-                            new ConstantExpression('secure1', 0)
-                        ])
-                    ))->setFunctionName('path')->setRelative(false),
-                    new Node()
-                )
-            ],
-
-            [
-                // with "as"
-                '{% routeifgranted ["secure1"] as url %}{% endrouteifgranted %}',
-                new LinkNode(
-                    (new RouteIfGrantedExpression(
-                        new Node([
-                            new ConstantExpression('secure1', 0)
-                        ])
-                    ))->setFunctionName('url')->setRelative(false),
-                    new Node()
                 )
             ],
         ];
@@ -144,24 +92,6 @@ class LinkTokenParserTest extends AbstractNodeTest
             [
                 // without arguments and "discover"
                 '{% routeifgranted %}{% endrouteifgranted %}',
-                [SyntaxError::class]
-            ],
-
-            [
-                // with "as" and no params
-                '{% routeifgranted ["secure1"] as %}{% endrouteifgranted %}',
-                [SyntaxError::class, '"name" expected with value "url" or "path"']
-            ],
-
-            [
-                // with "as" and invalid function name
-                '{% routeifgranted ["secure1"] as blabla %}{% endrouteifgranted %}',
-                [SyntaxError::class, '"name" expected with value "url" or "path"']
-            ],
-
-            [
-                // with "as" and invalid relative param
-                '{% routeifgranted ["secure1"] as path blabla %}{% endrouteifgranted %}',
                 [SyntaxError::class]
             ],
         ];

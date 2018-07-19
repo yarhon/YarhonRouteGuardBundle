@@ -26,7 +26,7 @@ abstract class AbstractNodeTest extends TestCase
     /**
      * @var Environment
      */
-    private $environment;
+    protected $environment;
 
     public function setUp()
     {

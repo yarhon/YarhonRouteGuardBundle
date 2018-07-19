@@ -17,7 +17,7 @@ class ScopeTest extends TestCase
     public function testAll()
     {
         /*
-        $expression = new RouteIfGrantedExpression(new Node([
+        $expression = new RouteExpression(new Node([
             new ConstantExpression('secure1', 0),
         ]));
 

@@ -20,10 +20,10 @@ use Twig\Node\Expression\ConstantExpression;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RouteIfGrantedExpression extends FunctionExpression
+class RouteExpression extends FunctionExpression
 {
     /**
-     * RouteIfGrantedExpression constructor.
+     * RouteExpression constructor.
      *
      * @param Node $arguments
      * @param int  $line

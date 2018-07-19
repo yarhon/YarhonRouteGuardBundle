@@ -30,13 +30,12 @@ class LinkNode extends Node
     /**
      * LinkNode constructor.
      *
-     * @param RouteIfGrantedExpression|null $condition
-     * @param Node                          $bodyNode
-     * @param Node|null                     $elseNode
-     * @param int                           $line
-     * @param string|null                   $tag
+     * @param RouteExpression|null $condition
+     * @param Node                 $bodyNode
+     * @param Node|null            $elseNode
+     * @param int                  $line
      */
-    public function __construct(RouteIfGrantedExpression $condition = null, Node $bodyNode, Node $elseNode = null, $line = 0, $tag = null)
+    public function __construct(RouteExpression $condition = null, Node $bodyNode, Node $elseNode = null, $line = 0)
     {
         $nodes = [
             'body' => $bodyNode,
@@ -50,11 +49,7 @@ class LinkNode extends Node
             $nodes['else'] = $elseNode;
         }
 
-        // This is needed only to allow omitting optional constructor parameters (tag is the very last of them)
-        // when creating instances of LinkNode in unit tests.
-        $tag = $tag ?: self::TAG_NAME;
-
-        parent::__construct($nodes, [], $line, $tag);
+        parent::__construct($nodes, [], $line, self::TAG_NAME);
     }
 
     /**

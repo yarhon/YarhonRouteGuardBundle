@@ -18,7 +18,7 @@ use Twig\Error\SyntaxError;
 use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\Expression\NameExpression;
 use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteIfGrantedExpression;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -74,7 +74,7 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
                 );
             }
 
-            $condition = $this->createCondition($this->scope->get('routingFunction'), $node->getTemplateLine());
+            $condition = $this->createRouteExpression($this->scope->get('routingFunction'), $node->getTemplateLine());
             $node->setNode('condition', $condition);
 
             $this->scope->set('insideTargetNode', false);
@@ -136,11 +136,11 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
      * @param FunctionExpression $function
      * @param int                $line
      *
-     * @return RouteIfGrantedExpression
+     * @return RouteExpression
      *
      * @throws SyntaxError
      */
-    private function createCondition(FunctionExpression $function, $line)
+    private function createRouteExpression(FunctionExpression $function, $line)
     {
         $functionName = $function->getAttribute('name');
         $arguments = $function->getNode('arguments');
@@ -151,7 +151,7 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
             $arguments->removeNode(2);
         }
 
-        $condition = new RouteIfGrantedExpression($arguments, $line);
+        $condition = new RouteExpression($arguments, $line);
         $condition->setFunctionName($functionName);
 
         if ($relativeNode) {
