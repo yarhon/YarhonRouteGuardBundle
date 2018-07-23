@@ -35,7 +35,10 @@ class ControllerNameDeprecationsConverterTest extends TestCase
     {
         $this->kernel = $this->createMock(Kernel::class);
 
-        $bundle = $this->createMock(Bundle::class);
+        $bundle = $this->getMockForAbstractClass(Bundle::class);
+
+        // $bundle = $this->createMock(Bundle::class);
+
         $bundle->method('getNamespace')
             ->willReturn('Yarhon\LinkGuardBundle\Tests\Fixtures');
 
