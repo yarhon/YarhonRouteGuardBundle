@@ -1,7 +1,6 @@
 build:
     environment:
-        php:
-            version: '7.2'
+        php: { version: '7.2' }
 
     nodes:
         coverage:
@@ -13,27 +12,19 @@ build:
                             format: 'clover'
         tests_php_71:
             environment:
-                php:
-                    version: '7.1'
-            #tests: true
+                php: { version: '7.1' }
 
         tests_php_70:
             environment:
-                php:
-                    version: '7.0'
-            tests: true
+                php: { version: '7.0' }
 
         tests_php_56:
             environment:
-                php:
-                    version: '5.6'
-            tests: true
+                php: { version: '5.6' }
 
         tests_php_55:
             environment:
-                php:
-                    version: '5.5'
-            tests: true
+                php: { version: '5.5' }
 
 filter:
     excluded_paths:
