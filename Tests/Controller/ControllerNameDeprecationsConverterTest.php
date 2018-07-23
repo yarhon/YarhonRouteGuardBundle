@@ -35,8 +35,10 @@ class ControllerNameDeprecationsConverterTest extends TestCase
     {
         $this->kernel = $this->createMock(Kernel::class);
 
+        /*
         $bundle = $this->getMockForAbstractClass(Bundle::class);
 
+        // this triggers a warning in PHP <= 5.6
         // $bundle = $this->createMock(Bundle::class);
 
         $bundle->method('getNamespace')
@@ -44,6 +46,7 @@ class ControllerNameDeprecationsConverterTest extends TestCase
 
         $this->kernel->method('getBundle')
             ->willReturn($bundle);
+        */
 
         $this->converter = new ControllerNameDeprecationsConverter($this->kernel);
     }
@@ -73,10 +76,12 @@ class ControllerNameDeprecationsConverterTest extends TestCase
                 'service:method',
                 'service::method',
             ],
+            /*
             [
                 'Bundle:Simple:index',
                 'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::indexAction',
             ],
+            */
         ];
     }
 }
