@@ -15,7 +15,7 @@ build:
             environment:
                 php:
                     version: '7.1'
-            tests: true
+            #tests: true
 
         tests_php_70:
             environment:
@@ -34,9 +34,6 @@ build:
                 php:
                     version: '5.5'
             tests: true
-
-
-        tests: false #override default test node
 
 filter:
     excluded_paths:
