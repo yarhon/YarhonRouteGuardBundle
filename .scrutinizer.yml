@@ -4,7 +4,7 @@ build:
 
     dependencies:
         before:
-            - composer require phpunit/phpunit:^7.0 --dev
+            - composer require phpunit/phpunit:^5.0||6.0||^7.0 --dev
 
     nodes:
         coverage:
@@ -33,9 +33,9 @@ build:
                 override:
                     - composer install --no-interaction --prefer-lowest --prefer-stable
 
-        tests_php_55:
-            environment:
-                php: { version: '5.5' }
+#        tests_php_55:
+#            environment:
+#                php: { version: '5.5' }
 
 filter:
     excluded_paths:
