@@ -35,6 +35,9 @@ build:
                     version: '5.5'
             tests: true
 
+
+        tests: false #override default test node
+
 filter:
     excluded_paths:
         #- Tests/*

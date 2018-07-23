@@ -70,7 +70,7 @@ class RouteRequestConstraintMatcher
         $staticPrefix = $compiledRoute->getStaticPrefix();
         $regex = $compiledRoute->getRegex();
 
-        var_dump($compiledRoute->getPathVariables());
+        // var_dump($compiledRoute->getPathVariables());
 
         // or use $compiledRoute->getPathVariables() - if count is 0 - means static (check _locale in this case)
         $isRouteStatic = $path === $staticPrefix;

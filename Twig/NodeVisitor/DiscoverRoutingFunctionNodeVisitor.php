@@ -23,10 +23,13 @@ use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  *
- * TODO: check if we need to use \Twig\NodeVisitor\AbstractNodeVisitor for compatibility with Twig 1.x
+ * Note: we extend from AbstractNodeVisitor just for compatibility with Twig 1.x NodeVisitorInterface.
+ * When this compatibility would no longer be needed, we could drop usage of AbstractNodeVisitor
+ * and implement NodeVisitorInterface directly.
+ *
  * TODO: find a way to set source context for thrown exceptions (see \Twig_Parser::parse)
  */
-class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
+class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
 {
     /**
      * @var Scope
@@ -46,7 +49,7 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
     /**
      * {@inheritdoc}
      */
-    public function enterNode(Node $node, Environment $env)
+    protected function doEnterNode(Node $node, Environment $env)
     {
         if ($this->isTargetNode($node)) {
             $this->scope = $this->scope->enter();
@@ -61,7 +64,7 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
      *
      * @throws SyntaxError If zero / more than one routing function call was found inside node
      */
-    public function leaveNode(Node $node, Environment $env)
+    protected function doLeaveNode(Node $node, Environment $env)
     {
         if ($this->isTargetNode($node)) {
             /* @var LinkNode $node */
