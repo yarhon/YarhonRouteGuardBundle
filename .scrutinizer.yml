@@ -3,6 +3,38 @@ build:
         php:
             version: '7.2'
 
+    nodes:
+        coverage:
+            tests:
+                override:
+                    -   command: 'vendor/bin/phpunit --coverage-clover=coverage.xml'
+                        coverage:
+                            file: 'coverage.xml'
+                            format: 'clover'
+        tests_php_71:
+            environment:
+                php:
+                    version: '7.1'
+            tests: true
+
+        tests_php_70:
+            environment:
+                php:
+                    version: '7.0'
+            tests: true
+
+        tests_php_56:
+            environment:
+                php:
+                    version: '5.6'
+            tests: true
+
+        tests_php_55:
+            environment:
+                php:
+                    version: '5.5'
+            tests: true
+
 filter:
     excluded_paths:
         #- Tests/*
