@@ -2,6 +2,10 @@ build:
     environment:
         php: { version: '7.2' }
 
+    dependencies:
+        before:
+            - composer require phpunit/phpunit:^7.0 --dev
+
     nodes:
         coverage:
             tests:
@@ -21,6 +25,13 @@ build:
         tests_php_56:
             environment:
                 php: { version: '5.6' }
+
+        tests_php_56_lowest:
+            environment:
+                php: { version: '5.6' }
+            dependencies:
+                override:
+                    - composer install --no-interaction --prefer-lowest --prefer-stable
 
         tests_php_55:
             environment:
