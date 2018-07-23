@@ -49,7 +49,7 @@ class LinkTokenParser extends AbstractTokenParser
 
         if (!$stream->test('discover')) {
             $routeExpressionParser = new RouteExpressionParser($parser);
-            $condition  = $routeExpressionParser->parse($token);
+            $condition = $routeExpressionParser->parse($token);
         } else {
             $stream->next();
         }
@@ -62,7 +62,7 @@ class LinkTokenParser extends AbstractTokenParser
 
         $stream->expect(Token::BLOCK_END_TYPE);
 
-        $bodyNode = $parser->subparse(function(Token $token) {
+        $bodyNode = $parser->subparse(function (Token $token) {
             return $token->test(['else', $this->endTagName]);
         });
 
@@ -78,7 +78,7 @@ class LinkTokenParser extends AbstractTokenParser
              * $stream->expect($this->endTagName).
              * We use second option to be able to allow / disallow nested tags in future.
              */
-            $elseNode = $parser->subparse(function(Token $token) {
+            $elseNode = $parser->subparse(function (Token $token) {
                 return $token->test([$this->endTagName]);
             });
 

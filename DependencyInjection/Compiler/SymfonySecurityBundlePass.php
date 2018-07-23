@@ -25,6 +25,7 @@ class SymfonySecurityBundlePass implements CompilerPassInterface
     {
         if (!$container->hasExtension('security')) {
             $container->removeDefinition(SymfonyAccessControlProvider::class);
+
             return;
         }
 

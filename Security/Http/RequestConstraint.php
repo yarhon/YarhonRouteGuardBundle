@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\RequestMatcher;
  * - path pattern
  * - host pattern
  * - http methods array
- * - ip address array
+ * - ip address array.
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */

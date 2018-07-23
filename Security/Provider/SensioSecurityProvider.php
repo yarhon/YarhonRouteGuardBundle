@@ -71,7 +71,6 @@ class SensioSecurityProvider implements ProviderInterface
         $tests = [];
 
         foreach ($annotations as $annotation) {
-
             $arguments = new Arguments();
             $tests[] = $arguments;
 

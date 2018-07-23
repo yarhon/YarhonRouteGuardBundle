@@ -17,7 +17,6 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class AuthorizationManager implements AuthorizationManagerInterface
 {
-
     /**
      * @var AuthorizationCheckerInterface
      */

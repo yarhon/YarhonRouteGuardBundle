@@ -23,13 +23,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 class SensioSecurityAnnotatedController
 {
     /**
-     *
      * @IsGranted("POST_SHOW", subject="post")
      * @Template
      */
     public function show1($post)
     {
-
     }
 
     /**
@@ -38,6 +36,5 @@ class SensioSecurityAnnotatedController
      */
     public function show2($post)
     {
-
     }
 }

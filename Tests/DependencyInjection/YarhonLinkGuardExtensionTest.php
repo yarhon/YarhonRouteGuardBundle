@@ -49,8 +49,6 @@ class YarhonLinkGuardExtensionTest extends TestCase
         $this->container->compile();
 
         // ..................
-
-
     }
 
     public function testPrivateServices()

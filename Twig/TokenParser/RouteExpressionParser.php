@@ -68,7 +68,7 @@ class RouteExpressionParser
             $expression->setFunctionName($functionName);
 
             if ($stream->test(['absolute', 'relative'])) {
-                $relative = $stream->getCurrent()->getValue() == 'absolute' ? false : true;
+                $relative = 'absolute' == $stream->getCurrent()->getValue() ? false : true;
                 $expression->setRelative($relative);
                 $stream->next();
             }
@@ -99,7 +99,7 @@ class RouteExpressionParser
      * In case of invalid template syntax, when exception is thrown, if type and/or value argument is an array,
      * an "Array to string conversion" error happens:
      * - for type because of:  Twig_Token::typeToEnglish($type)
-     * - for value because of: sprintf(' with value "%s"', $value)
+     * - for value because of: sprintf(' with value "%s"', $value).
      *
      * @param TokenStream       $stream
      * @param array|int         $type

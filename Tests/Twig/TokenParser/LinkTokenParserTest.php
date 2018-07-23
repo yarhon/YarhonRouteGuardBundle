@@ -41,15 +41,15 @@ class LinkTokenParserTest extends AbstractNodeTest
                 new LinkNode(
                     new RouteExpression(
                         new Node([
-                            new ConstantExpression('secure1', 0)
+                            new ConstantExpression('secure1', 0),
                         ])
                     ),
                     new Node([
                         new TextNode('<a href="', 0),
                         new PrintNode(new NameExpression('route_reference', 0), 0),
-                        new TextNode('">Link</a>', 0)
+                        new TextNode('">Link</a>', 0),
                     ])
-                )
+                ),
             ],
 
             [
@@ -58,12 +58,12 @@ class LinkTokenParserTest extends AbstractNodeTest
                 new LinkNode(
                     new RouteExpression(
                         new Node([
-                            new ConstantExpression('secure1', 0)
+                            new ConstantExpression('secure1', 0),
                         ])
                     ),
                     new Node(),
                     new TextNode('else text', 0)
-                )
+                ),
             ],
         ];
     }
@@ -87,12 +87,12 @@ class LinkTokenParserTest extends AbstractNodeTest
             [
                 // without end tag
                 '{% routeifgranted ["secure1"] %}{% end %}',
-                [SyntaxError::class]
+                [SyntaxError::class],
             ],
             [
                 // without arguments and "discover"
                 '{% routeifgranted %}{% endrouteifgranted %}',
-                [SyntaxError::class]
+                [SyntaxError::class],
             ],
         ];
     }

@@ -74,8 +74,7 @@ class AccessMapBuilder
     /**
      * @param RouteCollection $routeCollection
      *
-     * @throws \InvalidArgumentException If exception in one of the RouteCollection transformers occured
-     *
+     * @throws \InvalidArgumentException If exception in one of the RouteCollection transformers was thrown
      */
     public function setRouteCollection(RouteCollection $routeCollection)
     {
@@ -95,7 +94,6 @@ class AccessMapBuilder
         //var_dump($this->routeCollection->all());
 
         foreach ($this->routeCollection->all() as $name => $route) {
-
             $controller = $route->getDefault('_controller');
 
             $c = $route->compile();
@@ -103,6 +101,10 @@ class AccessMapBuilder
             //var_dump($name, $s);
 
             // var_dump($name, $controller);
+
+            foreach ($this->authorizationProviders as $provider) {
+                $testBag = $provider->getTests($route);
+            }
         }
     }
 
@@ -111,7 +113,7 @@ class AccessMapBuilder
      *
      * @return RouteCollection
      *
-     * @throws \InvalidArgumentException If exception in one of the RouteCollection transformers occured
+     * @throws \InvalidArgumentException If exception in one of the RouteCollection transformers was thrown
      */
     private function transformRouteCollection(RouteCollection $routeCollection)
     {
@@ -122,21 +124,6 @@ class AccessMapBuilder
         }
 
         return $routeCollection;
-    }
-
-    /**
-     * @param Route $route
-     *
-     * @return array
-     */
-    private function getRouteRules(Route $route)
-    {
-        $rules = [];
-        foreach ($this->authorizationProviders as $provider) {
-            $testBag = $provider->getTests($route);
-        }
-
-        return $rules;
     }
 
     /*

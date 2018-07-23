@@ -50,19 +50,19 @@ class ContainerControllerNameResolverTest extends TestCase
         return [
             [
                 ['other_class', 'index'],
-                'other_class::index'
+                'other_class::index',
             ],
             [
                 ['service1', 'index'],
-                'service1_class::index'
+                'service1_class::index',
             ],
             [
                 'service1',
-                'service1_class::__invoke'
+                'service1_class::__invoke',
             ],
             [
                 'service1::index',
-                'service1_class::index'
+                'service1_class::index',
             ],
         ];
     }

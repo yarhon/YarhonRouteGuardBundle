@@ -15,7 +15,6 @@ use Yarhon\LinkGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\LinkGuardBundle\Security\Http\RouteRequestConstraintMatcher;
 use Yarhon\LinkGuardBundle\Security\Authorization\Test\Arguments;
 use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBag;
-
 use Yarhon\LinkGuardBundle\Security\Http\TestBagMap;
 
 /**
@@ -41,7 +40,7 @@ class SymfonyAccessControlProvider implements ProviderInterface
 
     /**
      * TODO: check for rules without at least one constraint parameter / at least one argument parameter
-     * (and check how symfony security processes such rules)
+     * (and check how symfony security processes such rules).
      *
      * @param array $rule
      *
@@ -75,30 +74,29 @@ class SymfonyAccessControlProvider implements ProviderInterface
         $matches = [];
 
         foreach ($this->rules as $rule) {
-
             /** @var RequestConstraint $constraint */
             list($constraint, $arguments) = $rule;
 
             $matchType = $requestConstraintMatcher->matches($constraint);
 
-            if ($matchType == RouteRequestConstraintMatcher::MATCH_NEVER) {
+            if (RouteRequestConstraintMatcher::MATCH_NEVER == $matchType) {
                 continue;
             }
 
             $testBag = new TestBag([$arguments]);
 
-            if ($matchType == RouteRequestConstraintMatcher::MATCH_POSSIBLE) {
+            if (RouteRequestConstraintMatcher::MATCH_POSSIBLE == $matchType) {
                 $matches[] = [$testBag, $constraint->createRequestMatcher()];
                 continue;
             }
 
-            if ($matchType == RouteRequestConstraintMatcher::MATCH_ALWAYS) {
+            if (RouteRequestConstraintMatcher::MATCH_ALWAYS == $matchType) {
                 $matches[] = [$testBag, null];
                 break;
             }
         }
 
-        if (count($matches) == 1 && $matches[0][1] === null) {
+        if (1 == count($matches) && null === $matches[0][1]) {
             // MATCH_ALWAYS rule was found, and there were no MATCH_POSSIBLE rules found before, so
             // we don't need a TestBagMap to resolve it by Request in runtime.
             $testBag = $matches[0][0];

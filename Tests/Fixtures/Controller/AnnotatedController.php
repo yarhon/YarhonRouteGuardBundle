@@ -26,7 +26,6 @@ class AnnotatedController
      */
     public function show1()
     {
-
     }
 
     /**
@@ -35,6 +34,5 @@ class AnnotatedController
      */
     public function show2()
     {
-
     }
 }

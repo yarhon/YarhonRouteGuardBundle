@@ -15,18 +15,17 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
- *
  */
 class RoutingRuntime implements RuntimeExtensionInterface
 {
     // TODO: check \Symfony\Bridge\Twig\Extension\RoutingExtension::isUrlGenerationSafe
 
-        // url:     $relative ? UrlGeneratorInterface::NETWORK_PATH  : UrlGeneratorInterface::ABSOLUTE_URL
-        //                      '//example.com/dir/file'               'http://example.com/dir/file'
-        // difference in scheme
+    // url:     $relative ? UrlGeneratorInterface::NETWORK_PATH  : UrlGeneratorInterface::ABSOLUTE_URL
+    //                      '//example.com/dir/file'               'http://example.com/dir/file'
+    // difference in scheme
 
-        // path:    $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH
-        //                      '../parent-file'                       '/dir/file'
+    // path:    $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH
+    //                      '../parent-file'                       '/dir/file'
 
     /**
      * @param string $name

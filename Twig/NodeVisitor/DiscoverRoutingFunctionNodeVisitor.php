@@ -64,8 +64,7 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
     public function leaveNode(Node $node, Environment $env)
     {
         if ($this->isTargetNode($node)) {
-
-            /** @var LinkNode $node */
+            /* @var LinkNode $node */
 
             if (!$this->scope->has('routingFunction')) {
                 throw new SyntaxError(
@@ -84,7 +83,6 @@ class DiscoverRoutingFunctionNodeVisitor implements NodeVisitorInterface
         }
 
         if ($this->scope->get('insideTargetNode') && $this->isRoutingFunctionNode($node)) {
-
             if ($this->scope->has('routingFunction')) {
                 throw new SyntaxError(
                     sprintf('"%s" tag with discover option must contain only one url() or path() call.', LinkNode::TAG_NAME),

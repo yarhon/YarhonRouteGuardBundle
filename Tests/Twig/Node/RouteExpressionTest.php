@@ -51,14 +51,14 @@ class RouteExpressionTest extends TestCase
                     new ConstantExpression('secure1', 0),
                     new ArrayExpression([
                         new ConstantExpression('page', 0),
-                        new ConstantExpression(10, 0)
+                        new ConstantExpression(10, 0),
                     ], 0),
                 ]),
                 new Node([
                     new ConstantExpression('secure1', 0),
                     new ArrayExpression([
                         new ConstantExpression('page', 0),
-                        new ConstantExpression(10, 0)
+                        new ConstantExpression(10, 0),
                     ], 0),
                     new ConstantExpression('GET', 0),
                     new ConstantExpression(false, 0),
@@ -77,7 +77,7 @@ class RouteExpressionTest extends TestCase
                     new ConstantExpression('POST', 0),
                     new ConstantExpression(false, 0),
                 ]),
-            ]
+            ],
         ];
     }
 
@@ -99,7 +99,7 @@ class RouteExpressionTest extends TestCase
         return [
             [
                 new Node([]),
-                [SyntaxError::class, 'At least one argument (name) is required.']
+                [SyntaxError::class, 'At least one argument (name) is required.'],
             ],
             [
                 new Node([
@@ -108,7 +108,7 @@ class RouteExpressionTest extends TestCase
                     new ConstantExpression('POST', 0),
                     new ConstantExpression(false, 0),
                 ]),
-                [SyntaxError::class, 'Unrecognized extra arguments, only 3 (name, parameters, method) allowed.']
+                [SyntaxError::class, 'Unrecognized extra arguments, only 3 (name, parameters, method) allowed.'],
             ],
         ];
     }

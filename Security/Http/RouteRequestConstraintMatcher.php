@@ -20,17 +20,17 @@ use Symfony\Component\Routing\Route;
 class RouteRequestConstraintMatcher
 {
     /**
-     * Means that route always matches RequestConstraint
+     * Means that route always matches RequestConstraint.
      */
     const MATCH_ALWAYS = 1;
 
     /**
-     * Means that route can match RequestConstraint, depending on runtime parameters
+     * Means that route can match RequestConstraint, depending on runtime parameters.
      */
     const MATCH_POSSIBLE = 2;
 
     /**
-     * Means that route would never match RequestConstraint
+     * Means that route would never match RequestConstraint.
      */
     const MATCH_NEVER = 3;
 
@@ -40,7 +40,7 @@ class RouteRequestConstraintMatcher
     private $route;
 
     /**
-     * RouteRequestConstraintMatcher constructor
+     * RouteRequestConstraintMatcher constructor.
      *
      * @param Route $route
      */
@@ -50,7 +50,7 @@ class RouteRequestConstraintMatcher
     }
 
     /**
-     * Note: It's important to use the same regexp delimiters ("{}") as are used in \Symfony\Component\HttpFoundation\RequestMatcher::matches
+     * Note: It's important to use the same regexp delimiters ("{}") as are used in \Symfony\Component\HttpFoundation\RequestMatcher::matches.
      *
      * @param RequestConstraint $constraint
      *
@@ -78,7 +78,6 @@ class RouteRequestConstraintMatcher
         /// !!!!!!
         /// \Symfony\Component\Routing\Matcher\UrlMatcher::137
         /// if ('' !== $compiledRoute->getStaticPrefix() && 0 !== strpos($pathinfo, $compiledRoute->getStaticPrefix()))
-
 
         /////////////////////////////////////
 

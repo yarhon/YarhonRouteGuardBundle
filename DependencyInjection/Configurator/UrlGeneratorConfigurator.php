@@ -13,7 +13,6 @@ namespace Yarhon\LinkGuardBundle\DependencyInjection\Configurator;
 use Symfony\Component\Routing\Router;
 use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Yarhon\LinkGuardBundle\Routing\UrlGenerator;
-use Yarhon\LinkGuardBundle\Routing\UrlGeneratorIAwareRouterInterface;
 use Yarhon\LinkGuardBundle\Routing\AuthorizationAwareUrlGeneratorInterface;
 use Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface;
 
@@ -31,7 +30,6 @@ class UrlGeneratorConfigurator
      * @var bool
      */
     private $overrideClass;
-
 
     /**
      * UrlGeneratorConfigurator constructor.
@@ -53,7 +51,6 @@ class UrlGeneratorConfigurator
      */
     public function configure($router)
     {
-
         // We perform the following check (and not using Router type-hint), because someone can use
         // different implementation of the Router class that is not extended from the basic one.
         // And, unfortunately, Router class doesn't implement any interface(s) that we can rely on

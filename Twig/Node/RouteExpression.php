@@ -35,11 +35,11 @@ class RouteExpression extends FunctionExpression
         // TODO: validate arguments types?
 
         if ($arguments->count() < 1) {
-            throw new SyntaxError("At least one argument (name) is required.", $line);
+            throw new SyntaxError('At least one argument (name) is required.', $line);
         }
 
         if ($arguments->count() > 3) {
-            throw new SyntaxError("Unrecognized extra arguments, only 3 (name, parameters, method) allowed.", $line);
+            throw new SyntaxError('Unrecognized extra arguments, only 3 (name, parameters, method) allowed.', $line);
         }
 
         $this->addDefaultArguments($arguments);
@@ -124,9 +124,9 @@ class RouteExpression extends FunctionExpression
      */
     private function transformFunctionName($functionName)
     {
-        if ($functionName == 'path') {
+        if ('path' == $functionName) {
             return 'path_if_granted';
-        } elseif ($functionName == 'url') {
+        } elseif ('url' == $functionName) {
             return 'url_if_granted';
         } else {
             throw new SyntaxError(sprintf('Invalid function name: %s', $functionName), $this->getTemplateLine());
@@ -140,12 +140,12 @@ class RouteExpression extends FunctionExpression
     {
         $line = $arguments->getTemplateLine();
 
-        if ($arguments->count() == 1) {
+        if (1 == $arguments->count()) {
             // add a default "parameters" argument
             $arguments->setNode(1, new ArrayExpression([], $line));
         }
 
-        if ($arguments->count() == 2) {
+        if (2 == $arguments->count()) {
             // add a default "method" argument
             $arguments->setNode(2, new ConstantExpression('GET', $line));
         }

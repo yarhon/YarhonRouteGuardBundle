@@ -12,7 +12,9 @@ namespace Yarhon\LinkGuardBundle\Security;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class FlatAccessMap
+class AccessMap
 {
-    private $tests = [];
+    public function add($providerName, $routeName, $testBag)
+    {
+    }
 }

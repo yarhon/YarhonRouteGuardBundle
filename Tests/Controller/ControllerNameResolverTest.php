@@ -44,29 +44,28 @@ class ControllerNameResolverTest extends TestCase
         return [
             [
                 [SimpleController::class, 'index'],
-                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::index'
+                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::index',
             ],
             [
                 [new SimpleController(), 'index'],
-                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::index'
+                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::index',
             ],
             [
                 new SimpleController(),
-                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::__invoke'
+                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::__invoke',
             ],
             [
                 'array_map',
-                false
+                false,
             ],
             [
                 'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController',
-                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::__invoke'
+                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::__invoke',
             ],
             [
                 'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::index',
-                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::index'
+                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::index',
             ],
-
         ];
     }
 

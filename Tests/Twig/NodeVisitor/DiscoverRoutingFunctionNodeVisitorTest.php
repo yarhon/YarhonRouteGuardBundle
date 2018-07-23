@@ -46,11 +46,11 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
                 new LinkNode(
                     (new RouteExpression(
                         new Node([
-                            new ConstantExpression('secure1', 0)
+                            new ConstantExpression('secure1', 0),
                         ])
                     ))->setFunctionName('path'),
                     new PrintNode($nameExpression, 0)
-                )
+                ),
             ],
 
             [
@@ -59,11 +59,11 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
                 new LinkNode(
                     (new RouteExpression(
                         new Node([
-                            new ConstantExpression('secure1', 0)
+                            new ConstantExpression('secure1', 0),
                         ])
                     ))->setFunctionName('url'),
                     new PrintNode($nameExpression, 0)
-                )
+                ),
             ],
 
             [
@@ -78,7 +78,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
                         ])
                     ))->setFunctionName('path')->setRelative(true),
                     new PrintNode($nameExpression, 0)
-                )
+                ),
             ],
         ];
     }
@@ -102,12 +102,12 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
             [
                 // without any routing function
                 '{% routeifgranted discover %}test{% endrouteifgranted %}',
-                [SyntaxError::class, '"routeifgranted" tag with discover option must contain one url() or path() call.']
+                [SyntaxError::class, '"routeifgranted" tag with discover option must contain one url() or path() call.'],
             ],
             [
                 // with 2 routing functions
                 '{% routeifgranted discover %}{{ url("secure1") }}{{ url("secure2") }}{% endrouteifgranted %}',
-                [SyntaxError::class, '"routeifgranted" tag with discover option must contain only one url() or path() call.']
+                [SyntaxError::class, '"routeifgranted" tag with discover option must contain only one url() or path() call.'],
             ],
         ];
     }

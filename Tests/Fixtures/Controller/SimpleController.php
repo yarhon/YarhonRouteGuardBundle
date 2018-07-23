@@ -17,6 +17,5 @@ class SimpleController
 {
     public function index()
     {
-
     }
 }

@@ -58,22 +58,21 @@ class ControllerNameDeprecationsConverterTest extends TestCase
     public function convertProvider()
     {
         return [
-
             [
                 ['zzz'],
-                ['zzz']
+                ['zzz'],
             ],
             [
                 'service::method',
-                'service::method'
+                'service::method',
             ],
             [
                 'service:method',
-                'service::method'
+                'service::method',
             ],
             [
                 'Bundle:Simple:index',
-                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::indexAction'
+                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::indexAction',
             ],
         ];
     }

@@ -37,36 +37,36 @@ class RouteExpressionParserTest extends AbstractNodeTest
                 '{% routeifgranted ["secure1"] as path %}{% endrouteifgranted %}',
                 (new RouteExpression(
                     new Node([
-                        new ConstantExpression('secure1', 0)
+                        new ConstantExpression('secure1', 0),
                     ])
-                ))->setFunctionName('path')->setRelative(false)
+                ))->setFunctionName('path')->setRelative(false),
             ],
 
             [
                 '{% routeifgranted ["secure1"] as path relative %}{% endrouteifgranted %}',
                 (new RouteExpression(
                     new Node([
-                        new ConstantExpression('secure1', 0)
+                        new ConstantExpression('secure1', 0),
                     ])
-                ))->setFunctionName('path')->setRelative(true)
+                ))->setFunctionName('path')->setRelative(true),
             ],
 
             [
                 '{% routeifgranted ["secure1"] as path absolute %}{% endrouteifgranted %}',
                 (new RouteExpression(
                     new Node([
-                        new ConstantExpression('secure1', 0)
+                        new ConstantExpression('secure1', 0),
                     ])
-                ))->setFunctionName('path')->setRelative(false)
+                ))->setFunctionName('path')->setRelative(false),
             ],
 
             [
                 '{% routeifgranted ["secure1"] as url %}{% endrouteifgranted %}',
                 (new RouteExpression(
                     new Node([
-                        new ConstantExpression('secure1', 0)
+                        new ConstantExpression('secure1', 0),
                     ])
-                ))->setFunctionName('url')->setRelative(false)
+                ))->setFunctionName('url')->setRelative(false),
             ],
         ];
     }
@@ -90,19 +90,19 @@ class RouteExpressionParserTest extends AbstractNodeTest
             [
                 // with "as" and no params
                 '{% routeifgranted ["secure1"] as %}{% endrouteifgranted %}',
-                [SyntaxError::class, '"name" expected with value "url" or "path"']
+                [SyntaxError::class, '"name" expected with value "url" or "path"'],
             ],
 
             [
                 // with "as" and invalid function name
                 '{% routeifgranted ["secure1"] as blabla %}{% endrouteifgranted %}',
-                [SyntaxError::class, '"name" expected with value "url" or "path"']
+                [SyntaxError::class, '"name" expected with value "url" or "path"'],
             ],
 
             [
                 // with "as" and invalid relative param
                 '{% routeifgranted ["secure1"] as path blabla %}{% endrouteifgranted %}',
-                [SyntaxError::class]
+                [SyntaxError::class],
             ],
         ];
     }

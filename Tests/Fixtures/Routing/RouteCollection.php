@@ -20,12 +20,12 @@ class RouteCollection extends BaseRouteCollection
 {
     public function __construct()
     {
-       $routes = [
+        $routes = [
            'name1' => new Route('path1', [], []),
        ];
 
-       foreach ($routes as $name => $route) {
-           $this->add($name, $route);
-       }
+        foreach ($routes as $name => $route) {
+            $this->add($name, $route);
+        }
     }
 }

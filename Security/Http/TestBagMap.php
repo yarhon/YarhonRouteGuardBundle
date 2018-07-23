@@ -27,12 +27,13 @@ class TestBagMap implements RequestResolvableInterface
 
     /**
      * TestBagMap constructor.
+     *
      * @param array $map
      */
     public function __construct(array $map)
     {
         foreach ($map as $item) {
-           $this->add($item[0], $item[1]);
+            $this->add($item[0], $item[1]);
         }
     }
 

@@ -115,7 +115,7 @@ abstract class AbstractNodeTest extends TestCase
         while (true) {
             try {
                 $tokens[] = $stream->look($i);
-                $i++;
+                ++$i;
             } catch (SyntaxError $e) {
                 break;
             }

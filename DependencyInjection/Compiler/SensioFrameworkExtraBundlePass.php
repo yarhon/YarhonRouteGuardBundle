@@ -25,6 +25,7 @@ class SensioFrameworkExtraBundlePass implements CompilerPassInterface
     {
         if (!$container->hasDefinition('sensio_framework_extra.controller.listener')) {
             $container->removeDefinition(SensioSecurityProvider::class);
+
             return;
         }
 

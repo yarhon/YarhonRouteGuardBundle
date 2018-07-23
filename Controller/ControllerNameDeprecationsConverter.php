@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\KernelInterface;
  * ControllerNameDeprecationsConverter holds convert methods for controller names is deprecated formats.
  * We can't just use the original code for the following reasons:
  * - convertBundleNotation: in order not to tie to symfony/framework-bundle (it's optional)
- * - convertServiceNotation: no separate converter exists in symfony/http-kernel
+ * - convertServiceNotation: no separate converter exists in symfony/http-kernel.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -115,7 +115,7 @@ class ControllerNameDeprecationsConverter implements ControllerNameDeprecationsC
             throw new \InvalidArgumentException(sprintf(
                 'The "%s" (from the _controller value "%s") does not exist or is not enabled in your kernel!',
                 $bundleName, $originalController
-            ),0, $e);
+            ), 0, $e);
         }
 
         $try = $bundle->getNamespace().'\\Controller\\'.$controller.'Controller';

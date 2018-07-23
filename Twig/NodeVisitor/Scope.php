@@ -11,7 +11,7 @@
 namespace Yarhon\LinkGuardBundle\Twig\NodeVisitor;
 
 /**
- * Modified version of \Symfony\Bridge\Twig\NodeVisitor\Scope
+ * Modified version of \Symfony\Bridge\Twig\NodeVisitor\Scope.
  *
  * @author Jean-François Simon <jeanfrancois.simon@sensiolabs.com>
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

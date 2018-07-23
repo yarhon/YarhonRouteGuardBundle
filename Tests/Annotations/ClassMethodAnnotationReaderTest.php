@@ -16,7 +16,6 @@ use Yarhon\LinkGuardBundle\Annotations\ClassMethodAnnotationReader;
 use Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\AnnotatedController;
 use Yarhon\LinkGuardBundle\Tests\Fixtures\Annotation\TestOne;
 use Yarhon\LinkGuardBundle\Tests\Fixtures\Annotation\TestTwo;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
