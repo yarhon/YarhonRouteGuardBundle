@@ -72,31 +72,38 @@ class RouteExpressionParserTest extends AbstractNodeTest
     }
 
     /**
-     * @expectedException \Twig\Error\SyntaxError
-     * @expectedExceptionMessage "name" expected with value "url" or "path"
+     * @dataProvider parseExceptionDataProvider
      */
-    public function testParseExceptionWithGenerateAsAndNoParams()
+    public function testParseException($source, $expected)
     {
-        $source = '{% routeifgranted ["secure1"] as %}{% endrouteifgranted %}';
+        $this->expectException($expected[0]);
+        if (isset($expected[1])) {
+            $this->expectExceptionMessage($expected[1]);
+        }
+
         $this->parse($source);
     }
 
-    /**
-     * @expectedException \Twig\Error\SyntaxError
-     * @expectedExceptionMessage "name" expected with value "url" or "path"
-     */
-    public function testParseExceptionWithGenerateAsAndInvalidFunctionName()
+    public function parseExceptionDataProvider()
     {
-        $source = '{% routeifgranted ["secure1"] as blabla %}{% endrouteifgranted %}';
-        $this->parse($source);
-    }
+        return [
+            [
+                // with "as" and no params
+                '{% routeifgranted ["secure1"] as %}{% endrouteifgranted %}',
+                [SyntaxError::class, '"name" expected with value "url" or "path"'],
+            ],
 
-    /**
-     * @expectedException \Twig\Error\SyntaxError
-     */
-    public function testParseExceptionWithGenerateAsAndInvalidRelativeParam()
-    {
-        $source = '{% routeifgranted ["secure1"] as path blabla %}{% endrouteifgranted %}';
-        $this->parse($source);
+            [
+                // with "as" and invalid function name
+                '{% routeifgranted ["secure1"] as blabla %}{% endrouteifgranted %}',
+                [SyntaxError::class, '"name" expected with value "url" or "path"'],
+            ],
+
+            [
+                // with "as" and invalid relative param
+                '{% routeifgranted ["secure1"] as path blabla %}{% endrouteifgranted %}',
+                [SyntaxError::class],
+            ],
+        ];
     }
 }

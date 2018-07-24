@@ -64,10 +64,6 @@ class ControllerNameDeprecationsTransformerTest extends TestCase
         $this->assertEquals($expected, $transformed);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unable to convert controller name for route "/path1": Q
-     */
     public function testTransformException()
     {
         $routeCollection = $this->createRouteCollection([
@@ -76,6 +72,9 @@ class ControllerNameDeprecationsTransformerTest extends TestCase
 
         $this->converter->method('convert')
             ->willThrowException(new \InvalidArgumentException('Q'));
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unable to convert controller name for route "/path1": Q');
 
         $this->transformer->transform($routeCollection);
     }

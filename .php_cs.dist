@@ -11,9 +11,8 @@ return PhpCsFixer\Config::create()
         '@Symfony' => true,
         '@Symfony:risky' => true,
         '@PHPUnit60Migration:risky' => true,
-        'php_unit_no_expectation_annotation' => false, // part of @PHPUnit60Migration:risky, to be enabled when PHP 5.5 support (that requires PHPUnit 4.x) will be dropped
         'array_syntax' => array('syntax' => 'short'),
-        'no_unused_imports' => false, // to be dropped when all interfaces would be stabilized
+        'no_unused_imports' => false,
     ))
     ->setRiskyAllowed(true)
     ->setFinder($finder)

@@ -84,22 +84,31 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
     }
 
     /**
-     * @expectedException \Twig\Error\SyntaxError
-     * @expectedExceptionMessage "routeifgranted" tag with discover option must contain one url() or path() call.
+     * @dataProvider discoverExceptionDataProvider
      */
-    public function testDiscoverExceptionNoCalls()
+    public function testDiscoverException($source, $expected)
     {
-        $source = '{% routeifgranted discover %}test{% endrouteifgranted %}';
+        $this->expectException($expected[0]);
+        if (isset($expected[1])) {
+            $this->expectExceptionMessage($expected[1]);
+        }
+
         $this->parse($source);
     }
 
-    /**
-     * @expectedException \Twig\Error\SyntaxError
-     * @expectedExceptionMessage "routeifgranted" tag with discover option must contain only one url() or path() call.
-     */
-    public function testDiscoverExceptionMultipleCalls()
+    public function discoverExceptionDataProvider()
     {
-        $source = '{% routeifgranted discover %}{{ url("secure1") }}{{ url("secure2") }}{% endrouteifgranted %}';
-        $this->parse($source);
+        return [
+            [
+                // without any routing function
+                '{% routeifgranted discover %}test{% endrouteifgranted %}',
+                [SyntaxError::class, '"routeifgranted" tag with discover option must contain one url() or path() call.'],
+            ],
+            [
+                // with 2 routing functions
+                '{% routeifgranted discover %}{{ url("secure1") }}{{ url("secure2") }}{% endrouteifgranted %}',
+                [SyntaxError::class, '"routeifgranted" tag with discover option must contain only one url() or path() call.'],
+            ],
+        ];
     }
 }
