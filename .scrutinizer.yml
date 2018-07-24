@@ -4,7 +4,7 @@ build:
 
     dependencies:
         after:
-            - composer require --dev phpunit/phpunit:^5.2||^6.0||^7.0
+            - composer require phpunit/phpunit:^5.2||^6.0||^7.0 --dev --no-interaction
 
     nodes:
         coverage:
@@ -17,6 +17,10 @@ build:
         tests_php_71:
             environment:
                 php: { version: '7.1' }
+
+            dependencies:
+                after:
+                    - composer require phpunit/phpunit:^5.2||^6.0||^7.0 --dev --no-interaction
 
         tests_php_70:
             environment:
