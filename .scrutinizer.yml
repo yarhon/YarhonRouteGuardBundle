@@ -3,8 +3,8 @@ build:
         php: { version: '7.2' }
 
     dependencies:
-        before:
-            - composer require phpunit/phpunit:"^7.0||^6.0" --dev
+        after:
+            - composer require phpunit/phpunit:"^7.0||^6.0||^5.2" --dev
 
     nodes:
         coverage:
@@ -14,13 +14,10 @@ build:
                         coverage:
                             file: 'coverage.xml'
                             format: 'clover'
+                            
         tests_php_71:
             environment:
                 php: { version: '7.1' }
-
-#            dependencies:
-#                after:
-#                    - composer require phpunit/phpunit:^5.2||^6.0||^7.0 --dev --no-interaction
 
         tests_php_70:
             environment:
