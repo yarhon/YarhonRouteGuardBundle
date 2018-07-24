@@ -18,7 +18,7 @@ use Twig\Compiler;
 use Twig\Node\Node;
 use Twig\Token;
 use Twig\TokenStream;
-use Twig\Error\SyntaxError;
+use Twig_Error_Syntax as SyntaxError; // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
 use Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension;
 
 abstract class AbstractNodeTest extends TestCase
@@ -63,7 +63,7 @@ abstract class AbstractNodeTest extends TestCase
 
         /*
         Alternative way:
-        $this->environment->addFunction(new TwigFunction('url', function() {}))
+        $this->environment->addFunction(new TwigFunction('url', function () {}))
         */
     }
 

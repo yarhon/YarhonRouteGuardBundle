@@ -22,7 +22,7 @@ class RouteCollection extends BaseRouteCollection
     {
         $routes = [
            'name1' => new Route('path1', [], []),
-       ];
+        ];
 
         foreach ($routes as $name => $route) {
             $this->add($name, $route);
