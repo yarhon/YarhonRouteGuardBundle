@@ -3,8 +3,8 @@ build:
         php: { version: '7.2' }
 
     dependencies:
-        after:
-            - composer require phpunit/phpunit:^5.2||^6.0||^7.0 --dev --no-interaction
+        before:
+            - composer require phpunit/phpunit:^5.2||^6.0||^7.0 --dev
 
     nodes:
         coverage:
@@ -18,9 +18,9 @@ build:
             environment:
                 php: { version: '7.1' }
 
-            dependencies:
-                after:
-                    - composer require phpunit/phpunit:^5.2||^6.0||^7.0 --dev --no-interaction
+#            dependencies:
+#                after:
+#                    - composer require phpunit/phpunit:^5.2||^6.0||^7.0 --dev --no-interaction
 
         tests_php_70:
             environment:
