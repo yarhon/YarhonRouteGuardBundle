@@ -70,7 +70,7 @@ class RouteCacheWarmer implements CacheWarmerInterface
      */
     private function createCacheDir($baseDir)
     {
-        $cacheDir = $baseDir.DIRECTORY_SEPARATOR.$this->cacheDir;
+        $cacheDir = $baseDir.\DIRECTORY_SEPARATOR.$this->cacheDir;
 
         if (!is_dir($cacheDir)) {
             if (false === @mkdir($cacheDir, 0777, true)) {
