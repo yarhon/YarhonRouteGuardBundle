@@ -21,7 +21,7 @@ class RouteCollection extends BaseRouteCollection
     public function __construct()
     {
         $routes = [
-           'name1' => new Route('path1', [], []),
+            'name1' => new Route('path1', [], []),
         ];
 
         foreach ($routes as $name => $route) {
