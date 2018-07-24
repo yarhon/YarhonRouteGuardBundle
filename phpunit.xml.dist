@@ -18,7 +18,7 @@
     </php>
 
     <testsuites>
-        <testsuite name="Project Test Suite">
+        <testsuite name="LingGuard Bundle Test Suite">
             <directory>./Tests</directory>
         </testsuite>
     </testsuites>

@@ -45,18 +45,20 @@ class RouterPassTest extends TestCase
         $this->pass = new RouterPass();
     }
 
+    /**
+     * @expectedException \Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException
+     */
     public function testProcessWithoutParameter()
     {
-        $this->expectException(ParameterNotFoundException::class);
-
         $this->pass->process($this->container);
     }
 
+    /**
+     * @expectedException \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException
+     */
     public function testProcessWithoutRouter()
     {
         $this->container->setParameter($this->parameterName, 'router.default');
-
-        $this->expectException(ServiceNotFoundException::class);
 
         $this->pass->process($this->container);
     }

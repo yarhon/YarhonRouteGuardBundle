@@ -58,11 +58,12 @@ EOD;
         return $dataSet;
     }
 
+    /**
+     * @expectedException \Twig\Error\SyntaxError
+     * @expectedExceptionMessage Condition node is required.
+     */
     public function testCompileWithoutConditionException()
     {
-        $this->expectException(SyntaxError::class);
-        $this->expectExceptionMessage('Condition node is required.');
-
         $node = new LinkNode(null, new Node());
         $this->compile($node);
     }
@@ -75,13 +76,13 @@ EOD;
         $this->assertEquals($testName, LinkNode::getReferenceVarName());
     }
 
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage referenceVarName is not set. setReferenceVarName() method should be called first.
+     */
     public function testGetReferenceVarNameException()
     {
         LinkNode::setReferenceVarName(null);
-
-        $this->expectException('LogicException');
-        $this->expectExceptionMessage('referenceVarName is not set. setReferenceVarName() method should be called first.');
-
         LinkNode::getReferenceVarName();
     }
 }

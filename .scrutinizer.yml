@@ -2,15 +2,15 @@ build:
     environment:
         php: { version: '7.2' }
 
-    dependencies:
-        before:
-            - composer require phpunit/phpunit:^5.0||^6.0||^7.0 --dev
+    tests:
+        override:
+            - vendor/bin/simple-phpunit
 
     nodes:
         coverage:
             tests:
                 override:
-                    -   command: 'vendor/bin/phpunit --coverage-clover=coverage.xml'
+                    -   command: 'vendor/bin/simple-phpunit --coverage-clover=coverage.xml'
                         coverage:
                             file: 'coverage.xml'
                             format: 'clover'
@@ -33,9 +33,9 @@ build:
                 override:
                     - composer install --no-interaction --prefer-lowest --prefer-stable
 
-#        tests_php_55:
-#            environment:
-#                php: { version: '5.5' }
+        tests_php_55:
+            environment:
+                php: { version: '5.5' }
 
 filter:
     excluded_paths:

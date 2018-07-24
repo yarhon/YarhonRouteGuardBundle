@@ -60,6 +60,10 @@ class ControllerNameTransformerTest extends TestCase
         $this->assertEquals($expected, $transformed);
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Unable to resolve controller name for route "/path1": Q
+     */
     public function testTransformException()
     {
         $routeCollection = $this->createRouteCollection([
@@ -68,9 +72,6 @@ class ControllerNameTransformerTest extends TestCase
 
         $this->resolver->method('resolve')
             ->willThrowException(new \InvalidArgumentException('Q'));
-
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unable to resolve controller name for route "/path1": Q');
 
         $this->transformer->transform($routeCollection);
     }

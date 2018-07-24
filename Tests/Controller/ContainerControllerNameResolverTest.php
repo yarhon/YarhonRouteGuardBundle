@@ -67,10 +67,11 @@ class ContainerControllerNameResolverTest extends TestCase
         ];
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
     public function testResolveException()
     {
-        $this->expectException(\InvalidArgumentException::class);
-
         $resolved = $this->resolver->resolve('service2');
     }
 }

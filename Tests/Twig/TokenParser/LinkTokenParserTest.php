@@ -69,31 +69,20 @@ class LinkTokenParserTest extends AbstractNodeTest
     }
 
     /**
-     * @dataProvider parseExceptionDataProvider
+     * @expectedException \Twig\Error\SyntaxError
      */
-    public function testParseException($source, $expected)
+    public function testParseExceptionNoEndTag()
     {
-        $this->expectException($expected[0]);
-        if (isset($expected[1])) {
-            $this->expectExceptionMessage($expected[1]);
-        }
-
+        $source = '{% routeifgranted ["secure1"] %}{% end %}';
         $this->parse($source);
     }
 
-    public function parseExceptionDataProvider()
+    /**
+     * @expectedException \Twig\Error\SyntaxError
+     */
+    public function testParseExceptionNoArgumentsOrDiscover()
     {
-        return [
-            [
-                // without end tag
-                '{% routeifgranted ["secure1"] %}{% end %}',
-                [SyntaxError::class],
-            ],
-            [
-                // without arguments and "discover"
-                '{% routeifgranted %}{% endrouteifgranted %}',
-                [SyntaxError::class],
-            ],
-        ];
+        $source = '{% routeifgranted %}{% endrouteifgranted %}';
+        $this->parse($source);
     }
 }

@@ -82,35 +82,26 @@ class RouteExpressionTest extends TestCase
     }
 
     /**
-     * @dataProvider constructorExceptionDataProvider
+     * @expectedException \Twig\Error\SyntaxError
+     * @expectedExceptionMessage At least one argument (name) is required.
      */
-    public function testConstructorException($sourceArguments, $expected)
+    public function testConstructorExceptionNoArguments()
     {
-        $this->expectException($expected[0]);
-        if (isset($expected[1])) {
-            $this->expectExceptionMessage($expected[1]);
-        }
-
-        $expression = new RouteExpression($sourceArguments);
+        $expression = new RouteExpression(new Node([]));
     }
 
-    public function constructorExceptionDataProvider()
+    /**
+     * @expectedException \Twig\Error\SyntaxError
+     * @expectedExceptionMessage Unrecognized extra arguments, only 3 (name, parameters, method) allowed.
+     */
+    public function testConstructorExceptionExtraArguments()
     {
-        return [
-            [
-                new Node([]),
-                [SyntaxError::class, 'At least one argument (name) is required.'],
-            ],
-            [
-                new Node([
-                    new ConstantExpression('secure1', 0),
-                    new ArrayExpression([], 0),
-                    new ConstantExpression('POST', 0),
-                    new ConstantExpression(false, 0),
-                ]),
-                [SyntaxError::class, 'Unrecognized extra arguments, only 3 (name, parameters, method) allowed.'],
-            ],
-        ];
+        $expression = new RouteExpression(new Node([
+            new ConstantExpression('secure1', 0),
+            new ArrayExpression([], 0),
+            new ConstantExpression('POST', 0),
+            new ConstantExpression(false, 0),
+        ]));
     }
 
     public function testSetFunctionName()
@@ -126,9 +117,17 @@ class RouteExpressionTest extends TestCase
 
         $expression->setFunctionName('url');
         $this->assertEquals('url_if_granted', $expression->getAttribute('name'));
+    }
 
-        $this->expectException(SyntaxError::class);
-        $this->expectExceptionMessage('Invalid function name: blabla');
+    /**
+     * @expectedException \Twig\Error\SyntaxError
+     * @expectedExceptionMessage Invalid function name: blabla
+     */
+    public function testSetFunctionNameException()
+    {
+        $expression = new RouteExpression(new Node([
+            new ConstantExpression('secure1', 0),
+        ]));
 
         $expression->setFunctionName('blabla');
     }
@@ -165,9 +164,17 @@ class RouteExpressionTest extends TestCase
 
         $relativeNode = $expression->getNode('arguments')->getNode(3);
         $this->assertEquals($relativeNode, new ConstantExpression(true, 0));
+    }
 
-        $this->expectException(SyntaxError::class);
-        $this->expectExceptionMessage('setGenerateAs array parameter must have at least one parameter (functionName).');
+    /**
+     * @expectedException \Twig\Error\SyntaxError
+     * @expectedExceptionMessage setGenerateAs array parameter must have at least one parameter (functionName).
+     */
+    public function testSetGenerateAsException()
+    {
+        $expression = new RouteExpression(new Node([
+            new ConstantExpression('secure1', 0),
+        ]));
 
         $expression->setGenerateAs([]);
     }

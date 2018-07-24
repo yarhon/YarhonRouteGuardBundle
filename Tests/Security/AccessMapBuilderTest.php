@@ -46,6 +46,9 @@ class AccessMapBuilderTest extends TestCase
         $this->assertAttributeEquals([], 'ignoredRoutes', $this->builder);
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
     public function testSetRouteCollectionException()
     {
         $routeCollection = $this->createRouteCollection([
@@ -58,8 +61,6 @@ class AccessMapBuilderTest extends TestCase
             ->willThrowException(new \InvalidArgumentException());
 
         $this->builder->addRouteCollectionTransformer($transformer);
-
-        $this->expectException(\InvalidArgumentException::class);
 
         $this->builder->setRouteCollection($routeCollection);
     }

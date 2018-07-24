@@ -72,38 +72,31 @@ class RouteExpressionParserTest extends AbstractNodeTest
     }
 
     /**
-     * @dataProvider parseExceptionDataProvider
+     * @expectedException \Twig\Error\SyntaxError
+     * @expectedExceptionMessage "name" expected with value "url" or "path"
      */
-    public function testParseException($source, $expected)
+    public function testParseExceptionWithGenerateAsAndNoParams()
     {
-        $this->expectException($expected[0]);
-        if (isset($expected[1])) {
-            $this->expectExceptionMessage($expected[1]);
-        }
-
+        $source = '{% routeifgranted ["secure1"] as %}{% endrouteifgranted %}';
         $this->parse($source);
     }
 
-    public function parseExceptionDataProvider()
+    /**
+     * @expectedException \Twig\Error\SyntaxError
+     * @expectedExceptionMessage "name" expected with value "url" or "path"
+     */
+    public function testParseExceptionWithGenerateAsAndInvalidFunctionName()
     {
-        return [
-            [
-                // with "as" and no params
-                '{% routeifgranted ["secure1"] as %}{% endrouteifgranted %}',
-                [SyntaxError::class, '"name" expected with value "url" or "path"'],
-            ],
+        $source = '{% routeifgranted ["secure1"] as blabla %}{% endrouteifgranted %}';
+        $this->parse($source);
+    }
 
-            [
-                // with "as" and invalid function name
-                '{% routeifgranted ["secure1"] as blabla %}{% endrouteifgranted %}',
-                [SyntaxError::class, '"name" expected with value "url" or "path"'],
-            ],
-
-            [
-                // with "as" and invalid relative param
-                '{% routeifgranted ["secure1"] as path blabla %}{% endrouteifgranted %}',
-                [SyntaxError::class],
-            ],
-        ];
+    /**
+     * @expectedException \Twig\Error\SyntaxError
+     */
+    public function testParseExceptionWithGenerateAsAndInvalidRelativeParam()
+    {
+        $source = '{% routeifgranted ["secure1"] as path blabla %}{% endrouteifgranted %}';
+        $this->parse($source);
     }
 }

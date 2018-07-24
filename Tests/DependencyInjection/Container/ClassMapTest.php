@@ -33,11 +33,12 @@ class ClassMapTest extends TestCase
         $this->assertEquals('class_name', $map->get('test1'));
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
     public function testGetException()
     {
         $map = new ClassMap(['test1' => 'class_name']);
-
-        $this->expectException(\InvalidArgumentException::class);
 
         $map->get('test2');
     }
