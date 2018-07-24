@@ -11,11 +11,11 @@
 namespace Yarhon\LinkGuardBundle\Twig\Node;
 
 use Twig\Node\Node;
-use Twig\Error\SyntaxError;
 use Twig\Node\Expression\AbstractExpression;
 use Twig\Node\Expression\ArrayExpression;
 use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\Expression\ConstantExpression;
+use Twig\Error\SyntaxError;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

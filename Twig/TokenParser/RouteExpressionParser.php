@@ -10,13 +10,13 @@
 
 namespace Yarhon\LinkGuardBundle\Twig\TokenParser;
 
-use Twig_Token as Token;              // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Token
-use Twig_Error_Syntax as SyntaxError; // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
+use Twig\Token;
+use Twig\Parser;
 use Twig\TokenStream;
 use Twig\Node\Node;
 use Twig\Node\Expression\ArrayExpression;
+use Twig_Error_Syntax as SyntaxError; // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
 use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
-use Twig\Parser;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

@@ -10,17 +10,17 @@
 
 namespace Yarhon\LinkGuardBundle\Twig\Node;
 
-use Twig_Compiler as Compiler;      // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Compiler
+use Twig\Compiler;
 use Twig\Node\Node;
-use Twig\Error\SyntaxError;
 use Twig\Node\Expression\AssignNameExpression;
+use Twig\Error\SyntaxError;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class LinkNode extends Node
 {
-    const TAG_NAME = 'routeifgranted';
+    /* public */ const TAG_NAME = 'routeifgranted';
 
     /**
      * @var string

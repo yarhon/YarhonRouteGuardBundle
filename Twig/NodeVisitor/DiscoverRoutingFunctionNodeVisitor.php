@@ -10,13 +10,13 @@
 
 namespace Yarhon\LinkGuardBundle\Twig\NodeVisitor;
 
-use Twig_Node as Node;               // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Node\Node
-use Twig_Environment as Environment; // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Environment
+use Twig\Node\Node;
+use Twig\Environment;
 use Twig\NodeVisitor\AbstractNodeVisitor;
 use Twig\NodeVisitor\NodeVisitorInterface;
-use Twig\Error\SyntaxError;
 use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\Expression\NameExpression;
+use Twig\Error\SyntaxError;
 use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
 use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 

@@ -10,9 +10,9 @@
 
 namespace Yarhon\LinkGuardBundle\Tests\Twig\TokenParser;
 
-use Twig_Error_Syntax as SyntaxError;   // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
 use Twig\Node\Node;
 use Twig\Node\Expression\ConstantExpression;
+use Twig\Error\SyntaxError;
 use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
 use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
 use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;

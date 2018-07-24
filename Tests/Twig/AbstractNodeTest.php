@@ -11,7 +11,6 @@
 namespace Yarhon\LinkGuardBundle\Tests\Twig;
 
 use PHPUnit\Framework\TestCase;
-use Twig_Error_Syntax as SyntaxError;   // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
 use Twig\Environment;
 use Twig\Parser;
 use Twig\Source;
@@ -19,6 +18,7 @@ use Twig\Compiler;
 use Twig\Node\Node;
 use Twig\Token;
 use Twig\TokenStream;
+use Twig\Error\SyntaxError;
 use Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension;
 
 abstract class AbstractNodeTest extends TestCase

@@ -10,13 +10,9 @@
 
 namespace Yarhon\LinkGuardBundle\Twig\TokenParser;
 
-use Twig_Token as Token;              // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Token
-use Twig_Error_Syntax as SyntaxError; // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
 use Twig\TokenParser\AbstractTokenParser;
+use Twig\Token;
 use Twig\TokenStream;
-use Twig\Node\Node;
-use Twig\Node\Expression\ConstantExpression;
-use Twig\Node\Expression\ArrayExpression;
 use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
 use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 
@@ -25,16 +21,9 @@ use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
  */
 class LinkTokenParser extends AbstractTokenParser
 {
-    private $tagName;
+    /* private */ const TAG_NAME = LinkNode::TAG_NAME;
 
-    private $endTagName;
-
-    // We don't use expressions in class constants in order to be compatible with PHP 5.5.
-    public function __construct()
-    {
-        $this->tagName = LinkNode::TAG_NAME;
-        $this->endTagName = 'end'.LinkNode::TAG_NAME;
-    }
+    /* private */ const END_TAG_NAME = 'end'.LinkNode::TAG_NAME;
 
     /**
      * {@inheritdoc}
@@ -63,7 +52,7 @@ class LinkTokenParser extends AbstractTokenParser
         $stream->expect(Token::BLOCK_END_TYPE);
 
         $bodyNode = $parser->subparse(function (Token $token) {
-            return $token->test(['else', $this->endTagName]);
+            return $token->test(['else', self::END_TAG_NAME]);
         });
 
         // $this->testForNestedTag($stream); + add $this->tagName to subparse stop condition
@@ -79,12 +68,12 @@ class LinkTokenParser extends AbstractTokenParser
              * We use second option to be able to allow / disallow nested tags in future.
              */
             $elseNode = $parser->subparse(function (Token $token) {
-                return $token->test([$this->endTagName]);
+                return $token->test([self::END_TAG_NAME]);
             });
 
-            // $this->testForNestedTag($stream); + add $this->tagName to subparse stop condition
+            // $this->testForNestedTag($stream); + add self::TAG_NAME to subparse stop condition
 
-            $stream->expect($this->endTagName);
+            $stream->expect(self::END_TAG_NAME);
         }
 
         $stream->expect(Token::BLOCK_END_TYPE);
@@ -99,13 +88,13 @@ class LinkTokenParser extends AbstractTokenParser
      */
     public function getTag()
     {
-        return $this->tagName;
+        return self::TAG_NAME;
     }
 
     /*
     private function testForNestedTag(TokenStream $stream)
     {
-        if (!$stream->getCurrent()->test($this->tagName)) {
+        if (!$stream->getCurrent()->test($this->getTag()) {
             return;
         }
 
