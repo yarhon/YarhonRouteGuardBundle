@@ -35,7 +35,7 @@ build:
                 php: { version: '5.6' }
             dependencies:
                 override:
-                    - composer install --no-interaction --prefer-lowest --prefer-stable
+                    - composer update --no-interaction --prefer-lowest --prefer-stable
 
 filter:
     excluded_paths:
