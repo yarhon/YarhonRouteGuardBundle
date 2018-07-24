@@ -26,7 +26,7 @@ class SimpleRouter implements RouterInterface
         return new RouteCollection();
     }
 
-    public function generate($name, $parameters = array(), $referenceType = self::ABSOLUTE_PATH)
+    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
     {
         return null;
     }

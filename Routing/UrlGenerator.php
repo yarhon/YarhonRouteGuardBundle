@@ -40,7 +40,7 @@ class UrlGenerator extends BaseUrlGenerator implements AuthorizationAwareUrlGene
      *
      * {@inheritdoc}
      */
-    protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $referenceType, $hostTokens, array $requiredSchemes = array())
+    protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $referenceType, $hostTokens, array $requiredSchemes = [])
     {
         // checks should go here
         //$this->authorizationManager->isGranted('a');
