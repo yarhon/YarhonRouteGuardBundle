@@ -21,9 +21,26 @@ use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
  */
 class LinkTokenParser extends AbstractTokenParser
 {
-    /* private */ const TAG_NAME = LinkNode::TAG_NAME;
+    /**
+     * @var string
+     */
+    private $tagName;
 
-    /* private */ const END_TAG_NAME = 'end'.LinkNode::TAG_NAME;
+    /**
+     * @var string
+     */
+    private $endTagName;
+
+    /**
+     * LinkTokenParser constructor.
+     *
+     * @param $tagName
+     */
+    public function __construct($tagName)
+    {
+        $this->tagName = $tagName;
+        $this->endTagName = 'end'.$tagName;
+    }
 
     /**
      * {@inheritdoc}
@@ -52,10 +69,10 @@ class LinkTokenParser extends AbstractTokenParser
         $stream->expect(Token::BLOCK_END_TYPE);
 
         $bodyNode = $parser->subparse(function (Token $token) {
-            return $token->test(['else', self::END_TAG_NAME]);
+            return $token->test(['else', $this->endTagName]);
         });
 
-        // $this->testForNestedTag($stream); + add self::TAG_NAME to subparse stop condition
+        // $this->testForNestedTag($stream); + add $this->tagName to subparse stop condition
 
         if ('else' == $stream->next()->getValue()) {
             $stream->expect(Token::BLOCK_END_TYPE);
@@ -66,12 +83,12 @@ class LinkTokenParser extends AbstractTokenParser
             // $stream->expect($this->endTagName).
             // We use second option to be more explicit and to allow / disallow nested tags in the future.
             $elseNode = $parser->subparse(function (Token $token) {
-                return $token->test([self::END_TAG_NAME]);
+                return $token->test([$this->endTagName]);
             });
 
-            // $this->testForNestedTag($stream); + add self::TAG_NAME to subparse stop condition
+            // $this->testForNestedTag($stream); + add $this->tagName to subparse stop condition
 
-            $stream->expect(self::END_TAG_NAME);
+            $stream->expect($this->endTagName);
         }
 
         $stream->expect(Token::BLOCK_END_TYPE);
@@ -86,7 +103,7 @@ class LinkTokenParser extends AbstractTokenParser
      */
     public function getTag()
     {
-        return self::TAG_NAME;
+        return $this->tagName;
     }
 
     /*

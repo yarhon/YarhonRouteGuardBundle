@@ -35,7 +35,7 @@ class LinkTokenParserTest extends AbstractNodeTest
     {
         return [
             [
-                //  body node test
+                // body node test
                 '{% $linkTag ["secure1"] %}<a href="{{ route_reference }}">Link</a>{% end$linkTag %}',
                 new LinkNode(
                     null,

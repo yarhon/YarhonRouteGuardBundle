@@ -35,7 +35,7 @@ class RoutingExtension extends AbstractExtension
     public function __construct(array $options = [])
     {
         $defaults = [
-             // 'tagName' => 'routeifgranted',
+            'tagName' => 'routeifgranted',
             'referenceVarName' => 'route_reference',
         ];
 
@@ -50,7 +50,7 @@ class RoutingExtension extends AbstractExtension
     public function getTokenParsers()
     {
         return [
-            new LinkTokenParser(),
+            new LinkTokenParser($this->options['tagName']),
         ];
     }
 

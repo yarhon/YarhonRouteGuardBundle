@@ -49,7 +49,7 @@ class LinkNode extends Node
             $nodes['else'] = $elseNode;
         }
 
-        parent::__construct($nodes, [], $line, self::TAG_NAME);
+        parent::__construct($nodes, [], $line);
     }
 
     /**
