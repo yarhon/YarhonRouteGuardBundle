@@ -84,7 +84,7 @@ abstract class AbstractNodeTest extends TestCase
         ];
         $source = strtr($source, $replacements);
 
-        // Note: "name" (template name) parameter as null is significant for the private $name variable
+        // "name" (template name) parameter as null is significant for the private $name property
         // of parsed Node instances to be propagated with null value (it's default value).
         // Then properties of this instances would be strictly equal to properties
         // of Node instances provided by @dataProvider.
@@ -94,7 +94,7 @@ abstract class AbstractNodeTest extends TestCase
 
         // Twig lexer will set line numbers starting from 1 (and only 1, if source is one-line string).
         // This sets line numbers of all tokens to 0 (default value in Node class constructor)
-        // to allow skip non-required line number parameters in Nodes instances, created in dataProviders.
+        // to allow skip non-required line number parameters in Nodes instances provided by @dataProvider.
         $this->hackLineNumbers($stream, 0);
 
         $parser = new Parser($this->environment);

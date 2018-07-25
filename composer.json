@@ -26,8 +26,7 @@
     },
     "require-dev": {
         "symfony/expression-language": "^3.3||^4.0",
-        "sensio/framework-extra-bundle": "^5.0",
-        "symfony/phpunit-bridge": "^3.3||^4.0"
+        "sensio/framework-extra-bundle": "^5.0"
     },
     "suggest": {
 
@@ -36,7 +35,8 @@
         "psr-4": { "Yarhon\\LinkGuardBundle\\": "" }
     },
     "autoload-dev": {
-        "psr-4": { "Yarhon\\LinkGuardBundle\\Tests\\": "" }
+        "psr-4": { "Yarhon\\LinkGuardBundle\\Tests\\": "" },
+        "files": ["Tests/annotation_loader.php"]
     },
     "minimum-stability": "stable"
 }
