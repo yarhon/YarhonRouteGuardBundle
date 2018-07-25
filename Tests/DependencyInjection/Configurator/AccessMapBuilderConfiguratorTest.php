@@ -51,7 +51,6 @@ class AccessMapBuilderConfiguratorTest extends TestCase
         $accessMapBuilder = new AccessMapBuilder();
         $this->configurator->configure($accessMapBuilder);
 
-        // Warning: this attribute is private
         $this->assertAttributeEquals($routeCollection, 'routeCollection', $accessMapBuilder);
     }
 }

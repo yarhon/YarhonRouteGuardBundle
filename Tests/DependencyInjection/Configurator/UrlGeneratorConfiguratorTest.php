@@ -87,7 +87,6 @@ class UrlGeneratorConfiguratorTest extends TestCase
 
         $generator = $this->router->getGenerator();
 
-        // Warning: this attribute is private
         $this->assertAttributeEquals($this->authorizationManager, 'authorizationManager', $generator);
 
         $this->markTestIncomplete('Watch for AuthorizationManager changes.');

@@ -14,6 +14,7 @@ use Twig\Node\Node;
 use Twig\Error\SyntaxError;
 use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
 use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 
 class LinkNodeTest extends AbstractNodeTest
 {
@@ -67,21 +68,24 @@ EOD;
         $this->compile($node);
     }
 
-    public function testGetReferenceVarName()
+    public function testSetReferenceVarName()
     {
         $testName = uniqid();
         LinkNode::setReferenceVarName($testName);
 
-        $this->assertEquals($testName, LinkNode::getReferenceVarName());
+        $this->assertAttributeEquals($testName, 'referenceVarName', LinkNode::class);
     }
 
-    public function testGetReferenceVarNameException()
+    public function testSetReferenceVarNameException()
     {
         LinkNode::setReferenceVarName(null);
 
-        $this->expectException('LogicException');
-        $this->expectExceptionMessage('referenceVarName is not set. setReferenceVarName() method should be called first.');
+        $routeExpression = $this->createMock(RouteExpression::class);
+        $node = new LinkNode($routeExpression, new Node());
 
-        LinkNode::getReferenceVarName();
+        $this->expectException('LogicException');
+        $this->expectExceptionMessage('referenceVarName is not set. setReferenceVarName() method should be called before compiling.');
+
+        $this->compile($node);
     }
 }

@@ -38,7 +38,7 @@ class ControllerNameDeprecationsConverterTest extends TestCase
         /*
         $bundle = $this->getMockForAbstractClass(Bundle::class);
 
-        // this triggers a warning in PHP <= 5.6
+        // this triggers a warning in PHP 5.6
         // $bundle = $this->createMock(Bundle::class);
 
         $bundle->method('getNamespace')

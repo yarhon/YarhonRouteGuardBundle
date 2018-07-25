@@ -53,6 +53,14 @@ class LinkNode extends Node
     }
 
     /**
+     * @param string $referenceVarName
+     */
+    public static function setReferenceVarName($referenceVarName)
+    {
+        self::$referenceVarName = $referenceVarName;
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @throws SyntaxError
@@ -67,7 +75,13 @@ class LinkNode extends Node
             throw new SyntaxError('Condition node is required.', $this->getTemplateLine());
         }
 
-        $referenceVar = new AssignNameExpression(self::getReferenceVarName(), 0);
+        if (!self::$referenceVarName) {
+            throw new \LogicException(
+                sprintf('referenceVarName is not set. setReferenceVarName() method should be called before compiling.')
+            );
+        }
+
+        $referenceVar = new AssignNameExpression(self::$referenceVarName, 0);
 
         $compiler
             ->write('if (false !== (')
@@ -91,29 +105,5 @@ class LinkNode extends Node
         $compiler
             ->outdent()
             ->write("}\n");
-    }
-
-    /**
-     * @param string $referenceVarName
-     */
-    public static function setReferenceVarName($referenceVarName)
-    {
-        self::$referenceVarName = $referenceVarName;
-    }
-
-    /**
-     * @return string
-     *
-     * @throws \LogicException
-     */
-    public static function getReferenceVarName()
-    {
-        if (!self::$referenceVarName) {
-            throw new \LogicException(
-                sprintf('referenceVarName is not set. setReferenceVarName() method should be called first.')
-            );
-        }
-
-        return self::$referenceVarName;
     }
 }

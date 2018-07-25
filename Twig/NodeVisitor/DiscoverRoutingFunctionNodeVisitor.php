@@ -32,12 +32,23 @@ use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
 {
     /**
+     * @var string
+     */
+    private $referenceVarName;
+
+    /**
      * @var Scope
      */
     private $scope;
 
-    public function __construct()
+    /**
+     * DiscoverRoutingFunctionNodeVisitor constructor.
+     *
+     * @param $referenceVarName
+     */
+    public function __construct($referenceVarName)
     {
+        $this->referenceVarName = $referenceVarName;
         $this->scope = new Scope();
     }
 
@@ -90,8 +101,7 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
 
             $this->scope->set('routingFunction', $node);
 
-            $referenceVarName = LinkNode::getReferenceVarName();
-            $newNode = new NameExpression($referenceVarName, $node->getTemplateLine());
+            $newNode = new NameExpression($this->referenceVarName, $node->getTemplateLine());
             $newNode->setAttribute('always_defined', true);
 
             return $newNode;

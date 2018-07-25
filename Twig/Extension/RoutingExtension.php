@@ -23,6 +23,11 @@ use Yarhon\LinkGuardBundle\Twig\RoutingRuntime;
 class RoutingExtension extends AbstractExtension
 {
     /**
+     * @var array
+     */
+    private $options;
+
+    /**
      * RoutingExtension constructor.
      *
      * @param array $options
@@ -30,12 +35,13 @@ class RoutingExtension extends AbstractExtension
     public function __construct(array $options = [])
     {
         $defaults = [
+             // 'tagName' => 'routeifgranted',
             'referenceVarName' => 'route_reference',
         ];
 
-        $options = array_merge($defaults, $options);
+        $this->options = array_merge($defaults, $options);
 
-        LinkNode::setReferenceVarName($options['referenceVarName']);
+        LinkNode::setReferenceVarName($this->options['referenceVarName']);
     }
 
     /**
@@ -54,7 +60,7 @@ class RoutingExtension extends AbstractExtension
     public function getNodeVisitors()
     {
         return [
-            new DiscoverRoutingFunctionNodeVisitor(),
+            new DiscoverRoutingFunctionNodeVisitor($this->options['referenceVarName']),
         ];
     }
 
