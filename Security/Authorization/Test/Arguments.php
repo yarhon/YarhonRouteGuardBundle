@@ -22,19 +22,17 @@ class Arguments
     /**
      * Indicates that subject is the name of the "context" variable (request, etc.).
      */
-    const SUBJECT_CONTEXT_VARIABLE = 1;
+    /* public */ const SUBJECT_CONTEXT_VARIABLE = 1;
 
     /**
      * Indicates that subject is the name of controller argument.
      */
-    const SUBJECT_CONTROLLER_ARGUMENT = 2;
+    /* public */ const SUBJECT_CONTROLLER_ARGUMENT = 2;
 
     /**
      * List of possible variable names, to be used in setSubjectMetadata() with SUBJECT_CONTEXT_VARIABLE type.
-     *
-     * @var array
      */
-    private $contextVariables = [
+    /* private */ const CONTEXT_VARIABLES = [
         'request',
     ];
 
@@ -90,7 +88,7 @@ class Arguments
             throw new \InvalidArgumentException(sprintf('Invalid subject type: %s', $type));
         }
 
-        if (self::SUBJECT_CONTEXT_VARIABLE === $type && !in_array($name, $this->contextVariables, true)) {
+        if (self::SUBJECT_CONTEXT_VARIABLE === $type && !in_array($name, self::CONTEXT_VARIABLES, true)) {
             throw new \InvalidArgumentException(sprintf('Unknown subject context variable name: %s', $name));
         }
 

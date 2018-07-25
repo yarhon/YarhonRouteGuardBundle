@@ -36,11 +36,6 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
      */
     private $scope;
 
-    /**
-     * @var array
-     */
-    private $routingFunctions = ['url', 'path'];
-
     public function __construct()
     {
         $this->scope = new Scope();
@@ -130,7 +125,7 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
      */
     private function isRoutingFunctionNode(Node $node)
     {
-        return $node instanceof FunctionExpression && in_array($node->getAttribute('name'), $this->routingFunctions);
+        return $node instanceof FunctionExpression && in_array($node->getAttribute('name'), ['url', 'path']);
     }
 
     /**

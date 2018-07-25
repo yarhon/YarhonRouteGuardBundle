@@ -37,7 +37,7 @@ class LinkNodeTest extends AbstractNodeTest
         $dataSet = [];
 
         // general test
-        $dataSet[0][0] = '{% routeifgranted ["secure1"] %}body text{% endrouteifgranted %}';
+        $dataSet[0][0] = '{% $linkTag ["secure1"] %}body text{% end$linkTag %}';
         $dataSet[0][1] = <<<'EOD'
 if (false !== ($context["route_reference"] = %s)) {
     echo "body text";
@@ -45,7 +45,7 @@ if (false !== ($context["route_reference"] = %s)) {
 
 EOD;
         // else node test
-        $dataSet[1][] = '{% routeifgranted ["secure1"] %}body text{% else %}else text{% endrouteifgranted %}';
+        $dataSet[1][] = '{% $linkTag ["secure1"] %}body text{% else %}else text{% end$linkTag %}';
         $dataSet[1][] = <<<'EOD'
 if (false !== ($context["route_reference"] = %s)) {
     echo "body text";

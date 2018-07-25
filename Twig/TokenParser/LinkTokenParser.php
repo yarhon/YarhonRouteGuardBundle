@@ -55,18 +55,16 @@ class LinkTokenParser extends AbstractTokenParser
             return $token->test(['else', self::END_TAG_NAME]);
         });
 
-        // $this->testForNestedTag($stream); + add $this->tagName to subparse stop condition
+        // $this->testForNestedTag($stream); + add self::TAG_NAME to subparse stop condition
 
         if ('else' == $stream->next()->getValue()) {
             $stream->expect(Token::BLOCK_END_TYPE);
 
-            /*
-             * $dropNeedle parameter is significant to call next() on the stream, that would skip the node with the end tag name.
-             * For unknown reason, that node is skipped automatically if there are no any nested tags (i.e., {% else %}).
-             * Same result could be achieved by the following code after subparse call:
-             * $stream->expect($this->endTagName).
-             * We use second option to be able to allow / disallow nested tags in future.
-             */
+            // $dropNeedle parameter of subparse method is significant to call next() on the stream, that would skip the node with the end tag name.
+            // For unknown reason, that node is skipped automatically if there are no any nested tags (i.e., {% else %}).
+            // Same result could be achieved by the following code after subparse call:
+            // $stream->expect($this->endTagName).
+            // We use second option to be more explicit and to allow / disallow nested tags in the future.
             $elseNode = $parser->subparse(function (Token $token) {
                 return $token->test([self::END_TAG_NAME]);
             });
@@ -98,8 +96,7 @@ class LinkTokenParser extends AbstractTokenParser
             return;
         }
 
-        throw new SyntaxError(
-            sprintf('Nested "%s" tags are not allowed.', $this->getTag()),
+        throw new SyntaxError(sprintf('Nested "%s" tags are not allowed.', $this->getTag()),
             $stream->getCurrent()->getLine(), $stream->getSourceContext()
         );
     }

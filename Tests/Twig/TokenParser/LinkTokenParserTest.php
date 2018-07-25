@@ -13,12 +13,10 @@ namespace Yarhon\LinkGuardBundle\Tests\Twig\TokenParser;
 use Twig\Node\Node;
 use Twig\Node\TextNode;
 use Twig\Node\PrintNode;
-use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\NameExpression;
 use Twig\Error\SyntaxError;
 use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
 use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 
 class LinkTokenParserTest extends AbstractNodeTest
 {
@@ -28,6 +26,7 @@ class LinkTokenParserTest extends AbstractNodeTest
     public function testParse($source, $expected)
     {
         $node = $this->parse($source);
+        $node->removeNode('condition');
 
         $this->assertEquals($expected, $node);
     }
@@ -36,14 +35,10 @@ class LinkTokenParserTest extends AbstractNodeTest
     {
         return [
             [
-                // general test
-                '{% routeifgranted ["secure1"] %}<a href="{{ route_reference }}">Link</a>{% endrouteifgranted %}',
+                //  body node test
+                '{% $linkTag ["secure1"] %}<a href="{{ route_reference }}">Link</a>{% end$linkTag %}',
                 new LinkNode(
-                    new RouteExpression(
-                        new Node([
-                            new ConstantExpression('secure1', 0),
-                        ])
-                    ),
+                    null,
                     new Node([
                         new TextNode('<a href="', 0),
                         new PrintNode(new NameExpression('route_reference', 0), 0),
@@ -54,13 +49,9 @@ class LinkTokenParserTest extends AbstractNodeTest
 
             [
                 // else node test
-                '{% routeifgranted ["secure1"] %}{% else %}else text{% endrouteifgranted %}',
+                '{% $linkTag ["secure1"] %}{% else %}else text{% end$linkTag %}',
                 new LinkNode(
-                    new RouteExpression(
-                        new Node([
-                            new ConstantExpression('secure1', 0),
-                        ])
-                    ),
+                    null,
                     new Node(),
                     new TextNode('else text', 0)
                 ),
@@ -86,12 +77,12 @@ class LinkTokenParserTest extends AbstractNodeTest
         return [
             [
                 // without end tag
-                '{% routeifgranted ["secure1"] %}{% end %}',
+                '{% $linkTag ["secure1"] %}{% end %}',
                 [SyntaxError::class],
             ],
             [
                 // without arguments and "discover"
-                '{% routeifgranted %}{% endrouteifgranted %}',
+                '{% $linkTag %}{% end$linkTag %}',
                 [SyntaxError::class],
             ],
         ];

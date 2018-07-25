@@ -42,7 +42,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
         return [
             [
                 // path function test
-                '{% routeifgranted discover %}{{ path("secure1") }}{% endrouteifgranted %}',
+                '{% $linkTag discover %}{{ path("secure1") }}{% end$linkTag %}',
                 new LinkNode(
                     (new RouteExpression(
                         new Node([
@@ -55,7 +55,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
 
             [
                 // url function test
-                '{% routeifgranted discover %}{{ url("secure1") }}{% endrouteifgranted %}',
+                '{% $linkTag discover %}{{ url("secure1") }}{% end$linkTag %}',
                 new LinkNode(
                     (new RouteExpression(
                         new Node([
@@ -68,7 +68,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
 
             [
                 // relative parameter test
-                '{% routeifgranted discover %}{{ path("secure1", {}, true) }}{% endrouteifgranted %}',
+                '{% $linkTag discover %}{{ path("secure1", {}, true) }}{% end$linkTag %}',
                 new LinkNode(
                     (new RouteExpression(
                         new Node([
@@ -101,13 +101,13 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
         return [
             [
                 // without any routing function
-                '{% routeifgranted discover %}test{% endrouteifgranted %}',
-                [SyntaxError::class, '"routeifgranted" tag with discover option must contain one url() or path() call.'],
+                '{% $linkTag discover %}test{% end$linkTag %}',
+                [SyntaxError::class, sprintf('"%s" tag with discover option must contain one url() or path() call.', $this->linkTag)],
             ],
             [
                 // with 2 routing functions
-                '{% routeifgranted discover %}{{ url("secure1") }}{{ url("secure2") }}{% endrouteifgranted %}',
-                [SyntaxError::class, '"routeifgranted" tag with discover option must contain only one url() or path() call.'],
+                '{% $linkTag discover %}{{ url("secure1") }}{{ url("secure2") }}{% end$linkTag %}',
+                [SyntaxError::class, sprintf('"%s" tag with discover option must contain only one url() or path() call.', $this->linkTag)],
             ],
         ];
     }

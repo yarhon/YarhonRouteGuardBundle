@@ -34,7 +34,7 @@ class RouteExpressionParserTest extends AbstractNodeTest
     {
         return [
             [
-                '{% routeifgranted ["secure1"] as path %}{% endrouteifgranted %}',
+                '{% $linkTag ["secure1"] as path %}{% end$linkTag %}',
                 (new RouteExpression(
                     new Node([
                         new ConstantExpression('secure1', 0),
@@ -43,7 +43,7 @@ class RouteExpressionParserTest extends AbstractNodeTest
             ],
 
             [
-                '{% routeifgranted ["secure1"] as path relative %}{% endrouteifgranted %}',
+                '{% $linkTag ["secure1"] as path relative %}{% end$linkTag %}',
                 (new RouteExpression(
                     new Node([
                         new ConstantExpression('secure1', 0),
@@ -52,7 +52,7 @@ class RouteExpressionParserTest extends AbstractNodeTest
             ],
 
             [
-                '{% routeifgranted ["secure1"] as path absolute %}{% endrouteifgranted %}',
+                '{% $linkTag ["secure1"] as path absolute %}{% end$linkTag %}',
                 (new RouteExpression(
                     new Node([
                         new ConstantExpression('secure1', 0),
@@ -61,7 +61,7 @@ class RouteExpressionParserTest extends AbstractNodeTest
             ],
 
             [
-                '{% routeifgranted ["secure1"] as url %}{% endrouteifgranted %}',
+                '{% $linkTag ["secure1"] as url %}{% end$linkTag %}',
                 (new RouteExpression(
                     new Node([
                         new ConstantExpression('secure1', 0),
@@ -89,19 +89,19 @@ class RouteExpressionParserTest extends AbstractNodeTest
         return [
             [
                 // with "as" and no params
-                '{% routeifgranted ["secure1"] as %}{% endrouteifgranted %}',
+                '{% $linkTag ["secure1"] as %}{% end$linkTag %}',
                 [SyntaxError::class, '"name" expected with value "url" or "path"'],
             ],
 
             [
                 // with "as" and invalid function name
-                '{% routeifgranted ["secure1"] as blabla %}{% endrouteifgranted %}',
+                '{% $linkTag ["secure1"] as blabla %}{% end$linkTag %}',
                 [SyntaxError::class, '"name" expected with value "url" or "path"'],
             ],
 
             [
                 // with "as" and invalid relative param
-                '{% routeifgranted ["secure1"] as path blabla %}{% endrouteifgranted %}',
+                '{% $linkTag ["secure1"] as path blabla %}{% end$linkTag %}',
                 [SyntaxError::class],
             ],
         ];

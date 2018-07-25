@@ -28,6 +28,8 @@ abstract class AbstractNodeTest extends TestCase
      */
     protected $environment;
 
+    protected $linkTag = 'routeifgranted';
+
     public function setUp()
     {
         $loader = $this->getMockBuilder('Twig\Loader\LoaderInterface')->getMock();
@@ -77,6 +79,11 @@ abstract class AbstractNodeTest extends TestCase
      */
     protected function parse($source)
     {
+        $replacements = [
+            '$linkTag' => $this->linkTag,
+        ];
+        $source = strtr($source, $replacements);
+
         /*
          * Note: "name" (template name) parameter as null is significant for the private $name variable
          * of parsed Node instances to be propagated with null value (it's default value).
