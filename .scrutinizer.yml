@@ -9,10 +9,14 @@ build:
             - vendor/bin/phpunit
 
     nodes:
-        tests_php_72:
+        analysis:
             environment:
                 php: { version: '7.2' }
                 
+        tests_php_72:
+            environment:
+                php: { version: '7.2' }
+
             tests:
                 override:
                     -   command: 'vendor/bin/phpunit --coverage-clover=coverage.xml'
@@ -36,7 +40,3 @@ build:
             dependencies:
                 override:
                     - composer update --prefer-lowest --prefer-stable
-
-filter:
-    excluded_paths:
-        #- Tests/*
