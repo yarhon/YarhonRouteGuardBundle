@@ -13,11 +13,11 @@ namespace Yarhon\LinkGuardBundle\Security\Http;
 use Symfony\Component\Routing\Route;
 
 /**
- * RouteRequestConstraintMatcher checks at compile time if route would always/possibly/never match a RequestConstraint at runtime.
+ * RouteMatcher checks at compile time if route would always/possibly/never match a RequestConstraint at runtime.
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RouteRequestConstraintMatcher
+class RouteMatcher
 {
     /**
      * Means that route always matches RequestConstraint.
@@ -35,28 +35,28 @@ class RouteRequestConstraintMatcher
     const MATCH_NEVER = 3;
 
     /**
-     * @var Route
+     * @var RequestConstraint
      */
-    private $route;
+    private $constraint;
 
     /**
-     * RouteRequestConstraintMatcher constructor.
+     * RouteMatcher constructor.
      *
-     * @param Route $route
+     * @param RequestConstraint $constraint
      */
-    public function __construct(Route $route)
+    public function __construct(RequestConstraint $constraint)
     {
-        $this->route = $route;
+        $this->constraint = $constraint;
     }
 
     /**
      * Note: It's important to use the same regexp delimiters ("{}") as are used in \Symfony\Component\HttpFoundation\RequestMatcher::matches.
      *
-     * @param RequestConstraint $constraint
+     * @param Route $route
      *
      * @return int One of self::MATCH_* constants
      */
-    public function matches(RequestConstraint $constraint)
+    public function matches(Route $route)
     {
         /*
         Constraint path pattern example: ^/secure1
@@ -65,8 +65,8 @@ class RouteRequestConstraintMatcher
         Route regexp example: #^/secure1/(?P<page>\d+)$#sD
         */
 
-        $path = $this->route->getPath();
-        $compiledRoute = $this->route->compile();
+        $path = $route->getPath();
+        $compiledRoute = $route->compile();
         $staticPrefix = $compiledRoute->getStaticPrefix();
         $regex = $compiledRoute->getRegex();
 
@@ -81,7 +81,7 @@ class RouteRequestConstraintMatcher
 
         /////////////////////////////////////
 
-        $pattern = $constraint->getPathPattern();
+        $pattern = $this->constraint->getPathPattern();
 
         /* TODO: Look into case, when rule pattern has trailing slash, because it seems static prefix
         is without trailing slash, i.e. for route "/secure1/{page}" static prefix is "/secure1",

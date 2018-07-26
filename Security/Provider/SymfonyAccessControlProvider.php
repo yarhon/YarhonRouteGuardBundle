@@ -12,7 +12,8 @@ namespace Yarhon\LinkGuardBundle\Security\Provider;
 
 use Symfony\Component\Routing\Route;
 use Yarhon\LinkGuardBundle\Security\Http\RequestConstraint;
-use Yarhon\LinkGuardBundle\Security\Http\RouteRequestConstraintMatcher;
+use Yarhon\LinkGuardBundle\Security\Http\RouteMatcher;
+use Yarhon\LinkGuardBundle\Security\Http\RequestMatcher;
 use Yarhon\LinkGuardBundle\Security\Authorization\Test\Arguments;
 use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBag;
 use Yarhon\LinkGuardBundle\Security\Http\TestBagMap;
@@ -52,14 +53,14 @@ class SymfonyAccessControlProvider implements ProviderInterface
 
         $constraint = new RequestConstraint($rule['path'], $rule['host'], $rule['methods'], $rule['ips']);
 
-        $arguments = new Arguments();
-        $arguments->setAttributes($rule['roles']);
-        $arguments->setSubjectMetadata(Arguments::SUBJECT_CONTEXT_VARIABLE, 'request');
-
+        $attributes = $rule['roles'];
         if ($rule['allow_if']) {
             $expression = $rule['allow_if'];
-            $arguments->addAttribute($expression);
+            $attributes[] = $expression;
         }
+
+        $arguments = new Arguments($attributes);
+        $arguments->setSubjectMetadata(Arguments::SUBJECT_CONTEXT_VARIABLE, 'request');
 
         $this->rules[] = [$constraint, $arguments];
     }
@@ -69,28 +70,27 @@ class SymfonyAccessControlProvider implements ProviderInterface
      */
     public function getTests(Route $route)
     {
-        $requestConstraintMatcher = new RouteRequestConstraintMatcher($route);
-
         $matches = [];
 
         foreach ($this->rules as $rule) {
             /** @var RequestConstraint $constraint */
             list($constraint, $arguments) = $rule;
 
-            $matchType = $requestConstraintMatcher->matches($constraint);
+            $routeMatcher = new RouteMatcher($constraint);
+            $matchType = $routeMatcher->matches($route);
 
-            if (RouteRequestConstraintMatcher::MATCH_NEVER == $matchType) {
+            if (RouteMatcher::MATCH_NEVER == $matchType) {
                 continue;
             }
 
             $testBag = new TestBag([$arguments]);
 
-            if (RouteRequestConstraintMatcher::MATCH_POSSIBLE == $matchType) {
-                $matches[] = [$testBag, $constraint->createRequestMatcher()];
+            if (RouteMatcher::MATCH_POSSIBLE == $matchType) {
+                $matches[] = [$testBag, new RequestMatcher($constraint)];
                 continue;
             }
 
-            if (RouteRequestConstraintMatcher::MATCH_ALWAYS == $matchType) {
+            if (RouteMatcher::MATCH_ALWAYS == $matchType) {
                 $matches[] = [$testBag, null];
                 break;
             }
@@ -99,12 +99,12 @@ class SymfonyAccessControlProvider implements ProviderInterface
         if (1 == count($matches) && null === $matches[0][1]) {
             // MATCH_ALWAYS rule was found, and there were no MATCH_POSSIBLE rules found before, so
             // we don't need a TestBagMap to resolve it by Request in runtime.
-            $testBag = $matches[0][0];
-        } else {
-            $testBag = new TestBagMap($matches);
+            return $matches[0][0];
+        } elseif (count($matches)) {
+            return new TestBagMap($matches);
         }
 
-        return $testBag;
+        return null;
     }
 
     /**

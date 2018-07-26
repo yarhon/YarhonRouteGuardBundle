@@ -61,7 +61,7 @@ class SensioSecurityProvider implements ProviderInterface
     {
         $controller = $route->getDefault('_controller');
         if (!$controller && !is_string($controller)) {
-            return [];
+            return null;
         }
 
         list($class, $method) = explode('::', $controller);
@@ -71,25 +71,30 @@ class SensioSecurityProvider implements ProviderInterface
         $tests = [];
 
         foreach ($annotations as $annotation) {
-            $arguments = new Arguments();
-            $tests[] = $arguments;
+            $attributes = [];
+            $subject = null;
 
             if ($annotation instanceof SecurityAnnotation) {
                 // TODO: !!! check how sensio expressions differ from access_control expressions
                 $expression = $annotation->getExpression();
-                $arguments->addAttribute($expression);
+                $attributes[] = $expression;
             } elseif ($annotation instanceof IsGrantedAnnotation) {
                 // Despite of the name, $annotation->getAttributes() is a string (annotation value)
-                $arguments->addAttribute($annotation->getAttributes());
-
-                if ($annotation->getSubject()) {
-                    $arguments->setSubjectMetadata(Arguments::SUBJECT_CONTROLLER_ARGUMENT, $annotation->getSubject());
-                }
+                $attributes[] = $annotation->getAttributes();
+                $subject = $annotation->getSubject();
             }
+
+            $arguments = new Arguments($attributes);
+            if ($subject) {
+                $arguments->setSubjectMetadata(Arguments::SUBJECT_CONTROLLER_ARGUMENT, $subject);
+            }
+            $tests[] = $arguments;
         }
 
-        $testBag = new TestBag($tests);
+        if (count($tests)) {
+            return new TestBag($tests);
+        }
 
-        return $testBag;
+        return null;
     }
 }

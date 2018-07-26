@@ -11,9 +11,7 @@
 namespace Yarhon\LinkGuardBundle\Security\Http;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcher;
 use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBagInterface;
-use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBag;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -37,11 +35,18 @@ class TestBagMap implements RequestResolvableInterface
         }
     }
 
+    /**
+     * @param TestBagInterface    $testBag
+     * @param RequestMatcher|null $requestMatcher
+     */
     public function add(TestBagInterface $testBag, RequestMatcher $requestMatcher = null)
     {
         $this->map[] = [$testBag, $requestMatcher];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function resolve(Request $request)
     {
         $resolved = null;

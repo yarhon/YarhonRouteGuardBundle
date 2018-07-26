@@ -12,6 +12,7 @@ namespace Yarhon\LinkGuardBundle\Security\Provider;
 
 use Symfony\Component\Routing\Route;
 use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBagInterface;
+use Yarhon\LinkGuardBundle\Security\Http\RequestResolvableInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -21,7 +22,7 @@ interface ProviderInterface
     /**
      * @param Route $route
      *
-     * @return TestBagInterface
+     * @return TestBagInterface|RequestResolvableInterface|null
      */
     public function getTests(Route $route);
 }

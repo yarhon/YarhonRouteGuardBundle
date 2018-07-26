@@ -47,17 +47,9 @@ class Arguments
     private $subjectMetadata;
 
     /**
-     * @param mixed $attribute
-     */
-    public function addAttribute($attribute)
-    {
-        $this->attributes[] = $attribute;
-    }
-
-    /**
      * @param mixed[] $attributes
      */
-    public function setAttributes(array $attributes)
+    public function __construct(array $attributes)
     {
         $this->attributes = $attributes;
     }

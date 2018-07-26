@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\RequestMatcher;
  * - path pattern
  * - host pattern
  * - http methods array
- * - ip address array.
+ * - ip addresses array.
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
@@ -59,18 +59,36 @@ class RequestConstraint
         $this->ips = $ips;
     }
 
-    public function hasRuntimeParameters()
-    {
-        return (bool) ($this->hostPattern || count($this->methods) || count($this->ips));
-    }
-
-    public function createRequestMatcher()
-    {
-        return new RequestMatcher($this->pathPattern, $this->hostPattern, $this->methods, $this->ips);
-    }
-
+    /**
+     * @return string|null
+     */
     public function getPathPattern()
     {
         return $this->pathPattern;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getHostPattern()
+    {
+        return $this->hostPattern;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMethods()
+    {
+        return $this->methods;
+    }
+
+    /**
+     * @return array
+     */
+    public function getIps()
+    {
+        return $this->ips;
+    }
+
 }
