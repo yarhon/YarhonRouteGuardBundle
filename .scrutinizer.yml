@@ -1,6 +1,4 @@
 build:
-    environment:
-        php: { version: '7.2' }
 
     dependencies:
         after:
@@ -12,12 +10,13 @@ build:
 
     nodes:
         tests_php_72:
+            environment:
+                php: { version: '7.2' }
+                
             tests:
                 override:
                     -   command: 'vendor/bin/phpunit --coverage-clover=coverage.xml'
-                        coverage:
-                            file: 'coverage.xml'
-                            format: 'clover'
+                        coverage: { file: 'coverage.xml', format: 'clover' }
 
         tests_php_71:
             environment:
