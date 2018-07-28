@@ -13,31 +13,16 @@ namespace Yarhon\LinkGuardBundle\Security\Http;
 use Symfony\Component\Routing\Route;
 
 /**
- * RouteMatcher checks at compile time if route would always/possibly/never match a RequestConstraint at runtime.
+ * RouteMatcher checks if Route would always/possibly/never match a RequestConstraint.
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class RouteMatcher
 {
     /**
-     * Means that route always matches RequestConstraint.
+     * @var array
      */
-    const MATCH_ALWAYS = 1;
-
-    /**
-     * Means that route can match RequestConstraint, depending on runtime parameters.
-     */
-    const MATCH_POSSIBLE = 2;
-
-    /**
-     * Means that route would never match RequestConstraint.
-     */
-    const MATCH_NEVER = 3;
-
-    /**
-     * @var RequestConstraint
-     */
-    private $constraint;
+    private $parameters;
 
     /**
      * RouteMatcher constructor.
@@ -46,77 +31,121 @@ class RouteMatcher
      */
     public function __construct(RequestConstraint $constraint)
     {
-        $this->constraint = $constraint;
+        // Note: order of parameters should be equal to the order of RequestConstraint constructor arguments.
+        $this->parameters = [
+            'pathPattern' => $constraint->getPathPattern(),
+            'hostPattern' => $constraint->getHostPattern(),
+            'methods' => $constraint->getMethods(),
+            'ips' => $constraint->getIps(),
+        ];
+    }
+
+    /**
+     * @param Route $route
+     *
+     * @return bool|RequestConstraint Boolean true/false if route would always/never match RequestConstraint
+     *                                A fresh RequestConstraint instance if route would possibly match RequestConstraint
+     */
+    public function matches(Route $route)
+    {
+        // All parameters equal to false (like empty strings and arrays) would be filtered out.
+        $parameters = array_filter($this->parameters);
+
+        if (0 === count($parameters)) {
+            // If there are no non-empty parameters, route would always match
+            return true;
+        }
+
+        $matchResults = [];
+
+        foreach ($parameters as $parameter => $value) {
+            $matcher = 'match'.ucfirst($parameter);
+            $matchResults[$parameter] = method_exists($this, $matcher) ? $this->$matcher($route, $value) : 0;
+        }
+
+        if (in_array(-1, $matchResults, true)) {
+            // One of the parameters would never match
+            return false;
+        }
+
+        if ([1] === array_unique($matchResults)) {
+            // All parameters would always match
+            return true;
+        }
+
+        $parameters = $this->parameters;
+
+        // Set always matching parameters to null to avoid theirs further unnecessary matching.
+        foreach (array_keys($matchResults, 1, true) as $parameter) {
+            $parameters[$parameter] = null;
+        }
+
+        return new RequestConstraint(...array_values($parameters));
     }
 
     /**
      * Note: It's important to use the same regexp delimiters ("{}") as are used in \Symfony\Component\HttpFoundation\RequestMatcher::matches.
      *
-     * @param Route $route
-     *
-     * @return int One of self::MATCH_* constants
+     * Path pattern example: ^/secure1
+     * Route path example: /secure1/{page}
+     * Route static prefix example: /secure1
+     * Route regexp example: #^/secure1/(?P<page>\d+)$#sD
      */
-    public function matches(Route $route)
+    private function matchPathPattern(Route $route, $pattern)
     {
-        /*
-        Constraint path pattern example: ^/secure1
-        Route path example: /secure1/{page}
-        Route static prefix example: /secure1
-        Route regexp example: #^/secure1/(?P<page>\d+)$#sD
-        */
+        // TODO: check UTF-8 routes
+        // TODO: check $decodedChars in UrlGenerator
 
         $path = $route->getPath();
         $compiledRoute = $route->compile();
         $staticPrefix = $compiledRoute->getStaticPrefix();
         $regex = $compiledRoute->getRegex();
 
-        // var_dump($compiledRoute->getPathVariables());
-
-        // or use $compiledRoute->getPathVariables() - if count is 0 - means static (check _locale in this case)
-        $isRouteStatic = $path === $staticPrefix;
-
-        /// !!!!!!
-        /// \Symfony\Component\Routing\Matcher\UrlMatcher::137
+        /// !!!!!! Symfony\Component\Routing\Matcher\UrlMatcher::137
         /// if ('' !== $compiledRoute->getStaticPrefix() && 0 !== strpos($pathinfo, $compiledRoute->getStaticPrefix()))
 
-        /////////////////////////////////////
-
-        $pattern = $this->constraint->getPathPattern();
-
-        /* TODO: Look into case, when rule pattern has trailing slash, because it seems static prefix
-        is without trailing slash, i.e. for route "/secure1/{page}" static prefix is "/secure1",
-        but for route /secure1/ static prefix is /secure1/
-        */
+        // TODO: Look into case, when rule pattern has trailing slash, because it seems static prefix
+        // is without trailing slash, i.e. for route "/secure1/{page}" static prefix is "/secure1",
+        // but for route /secure1/ static prefix is /secure1/
 
         if ('^' != $pattern[0]) {
             // TODO: issue some warning in debug, because in this case we can't rely on static prefix
         }
 
         if (!preg_match('{'.$pattern.'}', $staticPrefix)) {
-            return self::MATCH_NEVER;
+            return -1;
         }
 
         if (!$compiledRoute->getPathVariables()) {
             // route is static, so would always match
-
-            // !!! consider other parameters - host, methods, ips
-
-            return self::MATCH_ALWAYS;
+            return 1;
         }
 
         // Rule is one of the possible matches
 
+        /*
         if ('$' == $pattern[strlen($pattern) - 1]) {
             if ($isRouteStatic) {
                 // do something
 
                 // This rule is the only one possible match
-                return self::MATCH_POSSIBLE;
+                return 0;
             } else {
                 // This rule doesn't matches, because route has variables, prepended to static prefix,
                 // but pattern requires path to end at static prefix.
-                return self::MATCH_NEVER;
+                return -1;
             }
         }
+        */
+    }
+
+    private function matchHostPattern(Route $route, $pattern)
+    {
+        return 0;
+    }
+
+    private function matchMethods(Route $route, array $methods)
+    {
+        return 0;
     }
 }

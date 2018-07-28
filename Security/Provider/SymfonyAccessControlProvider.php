@@ -52,6 +52,7 @@ class SymfonyAccessControlProvider implements ProviderInterface
         $rule = $this->normalizeRule($rule);
 
         $constraint = new RequestConstraint($rule['path'], $rule['host'], $rule['methods'], $rule['ips']);
+        $routeMatcher = new RouteMatcher($constraint);
 
         $attributes = $rule['roles'];
         if ($rule['allow_if']) {
@@ -62,7 +63,7 @@ class SymfonyAccessControlProvider implements ProviderInterface
         $arguments = new Arguments($attributes);
         $arguments->setSubjectMetadata(Arguments::SUBJECT_CONTEXT_VARIABLE, 'request');
 
-        $this->rules[] = [$constraint, $arguments];
+        $this->rules[] = [$routeMatcher, $arguments];
     }
 
     /**
@@ -73,32 +74,32 @@ class SymfonyAccessControlProvider implements ProviderInterface
         $matches = [];
 
         foreach ($this->rules as $rule) {
-            /** @var RequestConstraint $constraint */
-            list($constraint, $arguments) = $rule;
+            /** @var RouteMatcher $routeMatcher */
+            list($routeMatcher, $arguments) = $rule;
 
-            $routeMatcher = new RouteMatcher($constraint);
-            $matchType = $routeMatcher->matches($route);
+            $matchResult = $routeMatcher->matches($route);
 
-            if (RouteMatcher::MATCH_NEVER == $matchType) {
+            if (false === $matchResult) {
                 continue;
             }
 
+            // TODO: create TestBag in addRule method? (make sure that one TestBag instance can be shared across different routes)
             $testBag = new TestBag([$arguments]);
 
-            if (RouteMatcher::MATCH_POSSIBLE == $matchType) {
-                $matches[] = [$testBag, new RequestMatcher($constraint)];
-                continue;
-            }
-
-            if (RouteMatcher::MATCH_ALWAYS == $matchType) {
+            if (true == $matchResult) {
                 $matches[] = [$testBag, null];
                 break;
+            }
+
+            if ($matchResult instanceof RequestConstraint) {
+                $matches[] = [$testBag, new RequestMatcher($matchResult)];
+                continue;
             }
         }
 
         if (1 == count($matches) && null === $matches[0][1]) {
-            // MATCH_ALWAYS rule was found, and there were no MATCH_POSSIBLE rules found before, so
-            // we don't need a TestBagMap to resolve it by Request in runtime.
+            // Always matching rule was found, and there were no possibly matching rules found before,
+            // so we don't need a TestBagMap for resolving it by Request in runtime.
             return $matches[0][0];
         } elseif (count($matches)) {
             return new TestBagMap($matches);
@@ -129,6 +130,9 @@ class SymfonyAccessControlProvider implements ProviderInterface
             'allow_if' => null,
             'requires_channel' => null,
         ];
+
+        // TODO: is someone passes null for  methods / ips  - it would go to RequestMatcher constructor, that currently doesn't support this
+        // TODO: is someone passes null for roles - it would to Arguments, that currently doesn't support this
 
         $diff = array_diff(array_keys($rule), array_keys($prototype));
 

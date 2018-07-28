@@ -10,8 +10,6 @@
 
 namespace Yarhon\LinkGuardBundle\Security\Http;
 
-use Symfony\Component\HttpFoundation\RequestMatcher;
-
 /**
  * RequestConstraint holds a set of request requirements:
  * - path pattern
@@ -36,12 +34,12 @@ class RequestConstraint
     /**
      * @var array
      */
-    private $methods = [];
+    private $methods;
 
     /**
      * @var array
      */
-    private $ips = [];
+    private $ips;
 
     /**
      * RequestConstraint constructor.
@@ -51,10 +49,11 @@ class RequestConstraint
      * @param string[]    $methods
      * @param string[]    $ips
      */
-    public function __construct($pathPattern = null, $hostPattern = null, array $methods = [], array $ips = [])
+    public function __construct($pathPattern = null, $hostPattern = null, array $methods = null, array $ips = null)
     {
         $this->pathPattern = $pathPattern;
         $this->hostPattern = $hostPattern;
+        // TODO: check if not null ?
         $this->methods = array_map('strtoupper', $methods);
         $this->ips = $ips;
     }
@@ -76,7 +75,7 @@ class RequestConstraint
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getMethods()
     {
@@ -84,11 +83,10 @@ class RequestConstraint
     }
 
     /**
-     * @return array
+     * @return array|null
      */
     public function getIps()
     {
         return $this->ips;
     }
-
 }

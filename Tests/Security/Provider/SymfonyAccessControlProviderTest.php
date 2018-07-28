@@ -16,9 +16,9 @@ use Symfony\Component\HttpFoundation\RequestMatcher;
 use Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider;
 use Yarhon\LinkGuardBundle\Security\Authorization\Test\Arguments;
 use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBag;
-use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBagMap;
+use Yarhon\LinkGuardBundle\Security\Http\TestBagMap;
 use Yarhon\LinkGuardBundle\Security\Http\RequestConstraint;
-use Yarhon\LinkGuardBundle\Security\Http\RouteRequestConstraintMatcher;
+use Yarhon\LinkGuardBundle\Security\Http\RouteMatcher;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -28,10 +28,14 @@ class SymfonyAccessControlProviderTest extends TestCase
 {
     public function testMatcher()
     {
-        $route = new Route('/secure1/{page}', [], ['page' => "\d+"]);
-        $matcher = new RouteRequestConstraintMatcher($route);
-        $constraint = new RequestConstraint('/secure1');
 
-        $r = $matcher->matches($constraint);
+        /*
+        $route = new Route('/secure1/{page}', [], ['page' => "\d+"]);
+
+        $constraint = new RequestConstraint('/secure1');
+        $matcher = new RouteMatcher($constraint);
+
+        // $r = $matcher->matches($route);
+        */
     }
 }
