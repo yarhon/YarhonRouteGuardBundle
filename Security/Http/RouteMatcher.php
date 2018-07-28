@@ -52,7 +52,7 @@ class RouteMatcher
         $parameters = array_filter($this->parameters);
 
         if (0 === count($parameters)) {
-            // If there are no non-empty parameters, route would always match
+            // If all parameters are empty, route would always match
             return true;
         }
 

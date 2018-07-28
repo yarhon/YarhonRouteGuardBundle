@@ -11,6 +11,7 @@
 namespace Yarhon\LinkGuardBundle\Security\Provider;
 
 use Symfony\Component\Routing\Route;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Yarhon\LinkGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\LinkGuardBundle\Security\Http\RouteMatcher;
 use Yarhon\LinkGuardBundle\Security\Http\RequestMatcher;
