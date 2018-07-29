@@ -24,6 +24,9 @@ use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\UrlGeneratorConfigur
  */
 class RouterPass implements CompilerPassInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     public function process(ContainerBuilder $container)
     {
         $parameterName = 'link_guard.router_service_id';

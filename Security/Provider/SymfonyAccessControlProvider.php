@@ -41,23 +41,20 @@ class SymfonyAccessControlProvider implements ProviderInterface
     }
 
     /**
-     * TODO: check for rules without at least one constraint parameter / at least one argument parameter
-     * (and check how symfony security processes such rules).
-     *
      * @param array $rule
-     *
-     * @throws \InvalidArgumentException (see self::normalizeRule method)
      */
     public function addRule(array $rule)
     {
-        $rule = $this->normalizeRule($rule);
+        // TODO: ??? is someone passes null for roles - it would to Arguments, that currently doesn't support this
 
         $constraint = new RequestConstraint($rule['path'], $rule['host'], $rule['methods'], $rule['ips']);
         $routeMatcher = new RouteMatcher($constraint);
 
         $attributes = $rule['roles'];
-        if ($rule['allow_if']) {
-            $expression = $rule['allow_if'];
+        if ($rule['allow_if'] && class_exists(Expression::class)) {
+            // When allow_if is specified, but ExpressionLanguage component is not installed,
+            // Symfony SecurityBundle would throw an exception, so we don't have to duplicate it.
+            $expression = new Expression($rule['allow_if']);
             $attributes[] = $expression;
         }
 
@@ -107,55 +104,5 @@ class SymfonyAccessControlProvider implements ProviderInterface
         }
 
         return null;
-    }
-
-    /**
-     * Checks and normalizes config rule, according to configuration defined in
-     * \Symfony\Bundle\SecurityBundle\DependencyInjection\MainConfiguration::addAccessControlSection.
-     *
-     * @param array $rule
-     *
-     * @return array $rule
-     *
-     * @throws \InvalidArgumentException When rule array keys doesn't correspond to configuration prototype
-     *                                   (possibly, BC breaking changes in Symfony SecurityBundle)
-     */
-    private function normalizeRule(array $rule)
-    {
-        $prototype = [
-            'path' => null,
-            'host' => null,
-            'methods' => [],
-            'ips' => [],
-            'roles' => [],
-            'allow_if' => null,
-            'requires_channel' => null,
-        ];
-
-        // TODO: is someone passes null for  methods / ips  - it would go to RequestMatcher constructor, that currently doesn't support this
-        // TODO: is someone passes null for roles - it would to Arguments, that currently doesn't support this
-
-        $diff = array_diff(array_keys($rule), array_keys($prototype));
-
-        if (count($diff)) {
-            throw new \InvalidArgumentException(sprintf('Options %s are not supported in access_control rules.',
-                implode(', ', $diff)));
-        }
-
-        $rule = array_merge($prototype, $rule);
-
-        if (is_string($rule['methods'])) {
-            $rule['methods'] = preg_split('/\s*,\s*/', $rule['methods']);
-        }
-
-        if (is_string($rule['roles'])) {
-            $rule['roles'] = preg_split('/\s*,\s*/', $rule['roles']);
-        }
-
-        if (is_string($rule['ips'])) {
-            $rule['ips'] = [$rule['ips']];
-        }
-
-        return $rule;
     }
 }

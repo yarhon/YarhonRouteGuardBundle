@@ -21,6 +21,9 @@ use Yarhon\LinkGuardBundle\Security\Provider\SensioSecurityProvider;
  */
 class SensioFrameworkExtraBundlePass implements CompilerPassInterface
 {
+    /**
+     * {@inheritdoc}
+     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('sensio_framework_extra.controller.listener')) {

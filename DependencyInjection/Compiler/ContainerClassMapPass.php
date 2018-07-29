@@ -20,10 +20,22 @@ use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMapBuilder;
  */
 class ContainerClassMapPass implements CompilerPassInterface
 {
+    /**
+     * @var ContainerBuilder
+     */
+    private $classMapBuilder;
+
+    public function __construct(ClassMapBuilder $classMapBuilder)
+    {
+        $this->classMapBuilder = $classMapBuilder;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function process(ContainerBuilder $container)
     {
-        $builder = new ClassMapBuilder();
-        $map = $builder->build($container);
+        $map = $this->classMapBuilder->build($container);
 
         $controllerNameResolverDefinition = $container->getDefinition(ClassMap::class);
         $controllerNameResolverDefinition->replaceArgument(0, $map);

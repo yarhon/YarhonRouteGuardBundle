@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\ContainerClassMapPass;
 use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap;
+use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMapBuilder;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -34,7 +35,12 @@ class ContainerClassMapPassTest extends TestCase
     public function setUp()
     {
         $this->container = new ContainerBuilder();
-        $this->pass = new ContainerClassMapPass();
+
+        $classMapBuilder = $this->createMock(ClassMapBuilder::class);
+        $classMapBuilder->method('build')
+            ->willReturn(['test_service' => 'test_class']);
+
+        $this->pass = new ContainerClassMapPass($classMapBuilder);
 
         $definition = new Definition(ClassMap::class, [[]]);
         $definition->setPublic(true);
@@ -43,10 +49,6 @@ class ContainerClassMapPassTest extends TestCase
 
     public function testProcess()
     {
-        $definition1 = new Definition('test_class1', [[]]);
-        $definition1->setPublic(true);
-        $this->container->setDefinition('test1', $definition1);
-
         $this->container->compile();
         $this->pass->process($this->container);
 
@@ -56,7 +58,7 @@ class ContainerClassMapPassTest extends TestCase
         $this->assertCount(1, $arguments);
 
         $expected = [
-            'test1' => 'test_class1',
+            'test_service' => 'test_class',
         ];
 
         $this->assertArraySubset($expected, $arguments[0]);

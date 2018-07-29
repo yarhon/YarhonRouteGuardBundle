@@ -16,6 +16,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SymfonySecurityBundlePass;
 use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
 use Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider;
+use Yarhon\LinkGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -32,13 +33,21 @@ class SymfonySecurityBundlePassTest extends TestCase
      */
     private $pass;
 
+    /**
+     * @var ForeignExtensionAccessor;
+     */
+    private $foreignExtensionAccessor;
+
     private $securityExtension;
 
     public function setUp()
     {
         $this->container = new ContainerBuilder();
         $this->container->register(AccessMapBuilder::class);
-        $this->pass = new SymfonySecurityBundlePass();
+
+        $this->foreignExtensionAccessor = $this->createMock(ForeignExtensionAccessor::class);
+
+        $this->pass = new SymfonySecurityBundlePass($this->foreignExtensionAccessor);
 
         $this->securityExtension = $this->createMock('Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension');
 
@@ -48,7 +57,7 @@ class SymfonySecurityBundlePassTest extends TestCase
         $this->container->register(SymfonyAccessControlProvider::class);
     }
 
-    public function testProcessWithoutSecurityBundle()
+    public function testWithoutSecurityBundle()
     {
         $this->pass->process($this->container);
 
@@ -58,8 +67,30 @@ class SymfonySecurityBundlePassTest extends TestCase
         $this->assertFalse($this->container->hasDefinition(SymfonyAccessControlProvider::class));
     }
 
-    public function testProcessWithSecurityBundle()
+    public function testWithSecurityBundleNoAccessControl()
     {
+        $this->foreignExtensionAccessor->method('getProcessedConfig')
+            ->willReturn([]);
+
+        $this->container->registerExtension($this->securityExtension);
+
+        $this->pass->process($this->container);
+
+        $methodCalls = $this->container->getDefinition(AccessMapBuilder::class)->getMethodCalls();
+        $this->assertCount(0, $methodCalls);
+
+        $this->assertFalse($this->container->hasDefinition(SymfonyAccessControlProvider::class));
+    }
+
+    public function testWithAccessControl()
+    {
+        $rules = [
+            ['path' => '/path1'],
+        ];
+
+        $this->foreignExtensionAccessor->method('getProcessedConfig')
+            ->willReturn(['access_control' => $rules]);
+
         $this->container->registerExtension($this->securityExtension);
 
         $this->pass->process($this->container);
@@ -74,25 +105,15 @@ class SymfonySecurityBundlePassTest extends TestCase
 
     public function testAddRule()
     {
-        $configs = [
-            [],
-            [
-                'access_control' => [
-                    ['path' => '1'],
-                ],
-            ],
-            [
-                'access_control' => [
-                    ['path' => '2'],
-                ],
-            ],
+        $rules = [
+            ['path' => '/path1'],
+            ['path' => '/path2'],
         ];
 
-        $this->container->registerExtension($this->securityExtension);
+        $this->foreignExtensionAccessor->method('getProcessedConfig')
+            ->willReturn(['access_control' => $rules]);
 
-        foreach ($configs as $config) {
-            $this->container->loadFromExtension('security', $config);
-        }
+        $this->container->registerExtension($this->securityExtension);
 
         $this->pass->process($this->container);
 
@@ -101,10 +122,10 @@ class SymfonySecurityBundlePassTest extends TestCase
 
         list($name, $arguments) = $methodCalls[0];
         $this->assertEquals('addRule', $name);
-        $this->assertEquals(['path' => '1'], $arguments[0]);
+        $this->assertEquals($rules[0], $arguments[0]);
 
         list($name, $arguments) = $methodCalls[1];
         $this->assertEquals('addRule', $name);
-        $this->assertEquals(['path' => '2'], $arguments[0]);
+        $this->assertEquals($rules[1], $arguments[0]);
     }
 }

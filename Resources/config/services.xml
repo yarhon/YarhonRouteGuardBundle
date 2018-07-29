@@ -85,9 +85,7 @@
         </service>
 
         <service id="Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension">
-            <argument type="collection">
-                <argument key="referenceVarName">route_reference</argument>
-            </argument>
+            <argument type="collection" />
             <tag name="twig.extension" />
         </service>
 

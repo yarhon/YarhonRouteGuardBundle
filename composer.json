@@ -36,7 +36,7 @@
     },
     "autoload-dev": {
         "psr-4": { "Yarhon\\LinkGuardBundle\\Tests\\": "" },
-        "files": ["Tests/annotation_loader.php"]
+        "files": [ "Tests/annotation_loader.php" ]
     },
     "minimum-stability": "stable"
 }
