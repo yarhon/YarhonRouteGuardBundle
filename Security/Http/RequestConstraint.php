@@ -51,10 +51,13 @@ class RequestConstraint
      */
     public function __construct($pathPattern = null, $hostPattern = null, array $methods = null, array $ips = null)
     {
+        if (null !== $methods) {
+            $methods = array_map('strtoupper', $methods);
+        }
+
         $this->pathPattern = $pathPattern;
         $this->hostPattern = $hostPattern;
-        // TODO: check if not null ?
-        $this->methods = array_map('strtoupper', $methods);
+        $this->methods = $methods;
         $this->ips = $ips;
     }
 

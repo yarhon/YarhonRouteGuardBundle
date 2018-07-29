@@ -29,7 +29,7 @@ class YarhonLinkGuardBundle extends Bundle
     {
         parent::build($container);
 
-        $foreignExtensionAccessor = new ForeignExtensionAccessor($container);
+        $foreignExtensionAccessor = new ForeignExtensionAccessor();
         $classMapBuilder = new ClassMapBuilder();
 
         $container->addCompilerPass(new SymfonySecurityBundlePass($foreignExtensionAccessor), PassConfig::TYPE_BEFORE_REMOVING, 100);

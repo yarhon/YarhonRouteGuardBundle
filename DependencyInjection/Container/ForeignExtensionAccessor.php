@@ -20,46 +20,41 @@ use Symfony\Component\Config\Definition\Processor;
 class ForeignExtensionAccessor
 {
     /**
-     * @var ContainerBuilder;
-     */
-    private $container;
-
-    /**
      * @var Processor
      */
     private $processor;
 
     /**
      * ForeignExtensionAccessor constructor.
-     * @param ContainerBuilder $container
+
      * @param Processor|null   $processor
      */
-    public function __construct(ContainerBuilder $container, Processor $processor = null)
+    public function __construct(Processor $processor = null)
     {
-        $this->container = $container;
         $this->processor = $processor ?: new Processor();
     }
 
     /**
      * Returns processed config of a foreign extension outside of it's context.
      *
-     * @param string $extensionName
+     * @param ContainerBuilder $container
+     * @param string           $extensionName
      *
      * @return array Processed configuration
      *
      * @throws \LogicException When extension configuration class in not an instance of ConfigurationExtensionInterface
      */
-    public function getProcessedConfig($extensionName)
+    public function getProcessedConfig(ContainerBuilder $container, $extensionName)
     {
-        $extension = $this->container->getExtension($extensionName);
+        $extension = $container->getExtension($extensionName);
 
         if (!($extension instanceof ConfigurationExtensionInterface)) {
             throw new \LogicException(sprintf('"%s" extension configuration class is not an instance of %s.',
                 $extensionName, ConfigurationExtensionInterface::class));
         }
 
-        $configuration = $extension->getConfiguration([], $this->container);
-        $configs = $this->container->getExtensionConfig($extensionName);
+        $configuration = $extension->getConfiguration([], $container);
+        $configs = $container->getExtensionConfig($extensionName);
         $processed = $this->processor->processConfiguration($configuration, $configs);
 
         return $processed;
