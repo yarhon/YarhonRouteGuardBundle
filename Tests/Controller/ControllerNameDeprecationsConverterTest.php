@@ -13,7 +13,7 @@ namespace Yarhon\LinkGuardBundle\Tests\Controller;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter;
 
 /**
@@ -35,10 +35,7 @@ class ControllerNameDeprecationsConverterTest extends TestCase
     {
         $this->kernel = $this->createMock(Kernel::class);
 
-        //$bundle = $this->getMockForAbstractClass(Bundle::class);
-
-        // this triggers a warning in PHP 5.6
-        $bundle = $this->createPartialMock(Bundle::class, ['getNamespace']);
+        $bundle = $this->createMock(BundleInterface::class);
 
         $bundle->method('getNamespace')
             ->willReturn('Yarhon\LinkGuardBundle\Tests\Fixtures');
@@ -74,12 +71,10 @@ class ControllerNameDeprecationsConverterTest extends TestCase
                 'service:method',
                 'service::method',
             ],
-            /*
             [
                 'Bundle:Simple:index',
                 'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::indexAction',
             ],
-            */
         ];
     }
 }
