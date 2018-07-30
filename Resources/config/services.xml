@@ -55,9 +55,6 @@
             <argument type="collection"/>
         </service>
 
-        <!-- set "kernel" service synthetic ("kernel" is originally set synthetic inside symfony/framework-bundle, which is an optional dependency) -->
-        <!--<service id="kernel" synthetic="true" public="true" />-->
-
         <!-- end route collection services -->
 
         <service id="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager">
