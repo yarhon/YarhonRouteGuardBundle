@@ -72,6 +72,16 @@ class AccessMapBuilder
     }
 
     /**
+     * @param TransformerInterface[] $transformers
+     */
+    public function setRouteCollectionTransformers(array $transformers)
+    {
+        foreach ($transformers as $transformer) {
+            $this->addRouteCollectionTransformer($transformer);
+        }
+    }
+
+    /**
      * @param RouteCollection $routeCollection
      *
      * @throws \InvalidArgumentException If exception in one of the RouteCollection transformers was thrown
@@ -94,6 +104,7 @@ class AccessMapBuilder
         //var_dump($this->routeCollection->all());
 
         foreach ($this->routeCollection->all() as $name => $route) {
+            var_dump($name);
 
             foreach ($this->authorizationProviders as $provider) {
                 $testBag = $provider->getTests($route);

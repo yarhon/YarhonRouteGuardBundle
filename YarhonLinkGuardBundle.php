@@ -17,6 +17,7 @@ use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SymfonySecurityBundlePas
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SensioFrameworkExtraBundlePass;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\RouterPass;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\ContainerClassMapPass;
+use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\RouteCollectionTransformerTaggedPass;
 use Yarhon\LinkGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
 use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMapBuilder;
 
@@ -31,6 +32,8 @@ class YarhonLinkGuardBundle extends Bundle
 
         $foreignExtensionAccessor = new ForeignExtensionAccessor();
         $classMapBuilder = new ClassMapBuilder();
+
+        $container->addCompilerPass(new RouteCollectionTransformerTaggedPass(), PassConfig::TYPE_BEFORE_REMOVING);
 
         $container->addCompilerPass(new SymfonySecurityBundlePass($foreignExtensionAccessor), PassConfig::TYPE_BEFORE_REMOVING, 100);
         $container->addCompilerPass(new SensioFrameworkExtraBundlePass(), PassConfig::TYPE_BEFORE_REMOVING, 101);
