@@ -12,13 +12,12 @@ namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Container;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\Extension\Extension;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\DependencyInjection\Extension\ConfigurationExtensionInterface;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Yarhon\LinkGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
-use Yarhon\LinkGuardBundle\Tests\Fixtures\DependencyInjection\ForeignExtension;
-use Yarhon\LinkGuardBundle\Tests\Fixtures\DependencyInjection\Configuration;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -61,5 +60,23 @@ class ForeignExtensionAccessorTest extends TestCase
         $config = $accessor->getProcessedConfig($container, 'foreign');
 
         $this->assertEquals(['processed' => true], $config);
+    }
+
+    public function testGetProcessedConfigException()
+    {
+        $extension = $this->createMock(ExtensionInterface::class);
+        $extension->method('getAlias')
+            ->willReturn('foreign');
+
+        $processor = $this->createMock(Processor::class);
+
+        $accessor = new ForeignExtensionAccessor($processor);
+        $container = new ContainerBuilder();
+        $container->registerExtension($extension);
+
+        $this->expectException(\LogicException::class);
+        $this->expectExceptionMessage(sprintf('"%s" extension configuration class is not an instance of %s.', 'foreign', ConfigurationExtensionInterface::class));
+
+        $accessor->getProcessedConfig($container, 'foreign');
     }
 }

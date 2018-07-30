@@ -35,18 +35,16 @@ class ControllerNameDeprecationsConverterTest extends TestCase
     {
         $this->kernel = $this->createMock(Kernel::class);
 
-        /*
-        $bundle = $this->getMockForAbstractClass(Bundle::class);
+        //$bundle = $this->getMockForAbstractClass(Bundle::class);
 
         // this triggers a warning in PHP 5.6
-        // $bundle = $this->createMock(Bundle::class);
+        $bundle = $this->createMock(Bundle::class);
 
         $bundle->method('getNamespace')
             ->willReturn('Yarhon\LinkGuardBundle\Tests\Fixtures');
 
         $this->kernel->method('getBundle')
             ->willReturn($bundle);
-        */
 
         $this->converter = new ControllerNameDeprecationsConverter($this->kernel);
     }
