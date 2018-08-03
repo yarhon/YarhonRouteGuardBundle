@@ -37,7 +37,7 @@ class ContainerClassMapPass implements CompilerPassInterface
     {
         $map = $this->classMapBuilder->build($container);
 
-        $controllerNameResolverDefinition = $container->getDefinition(ClassMap::class);
-        $controllerNameResolverDefinition->replaceArgument(0, $map);
+        $classMapDefinition = $container->getDefinition(ClassMap::class);
+        $classMapDefinition->replaceArgument(0, $map);
     }
 }
