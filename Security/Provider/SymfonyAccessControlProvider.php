@@ -12,6 +12,7 @@ namespace Yarhon\LinkGuardBundle\Security\Provider;
 
 use Symfony\Component\Routing\Route;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Psr\Log\LoggerAwareTrait;
 use Yarhon\LinkGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\LinkGuardBundle\Security\Http\RouteMatcher;
 use Yarhon\LinkGuardBundle\Security\Http\RequestMatcher;
@@ -28,24 +29,19 @@ use Yarhon\LinkGuardBundle\Security\Http\TestBagMap;
  */
 class SymfonyAccessControlProvider implements ProviderInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var array
      */
     private $rules = [];
 
     /**
-     * SymfonyAccessControlProvider constructor.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * @param array $rule
      */
     public function addRule(array $rule)
     {
-        // TODO: ??? is someone passes null for roles - it would to Arguments, that currently doesn't support this
+        $this->inspectRule($rule, count($this->rules));
 
         $constraint = new RequestConstraint($rule['path'], $rule['host'], $rule['methods'], $rule['ips']);
         $routeMatcher = new RouteMatcher($constraint);
@@ -81,7 +77,7 @@ class SymfonyAccessControlProvider implements ProviderInterface
                 continue;
             }
 
-            // TODO: create TestBag in addRule method? (make sure that one TestBag instance can be shared across different routes)
+            // TODO: create TestBag in the addRule method? (make sure that one TestBag instance can be shared across different routes)
             $testBag = new TestBag([$arguments]);
 
             if (true == $matchResult) {
@@ -104,5 +100,18 @@ class SymfonyAccessControlProvider implements ProviderInterface
         }
 
         return null;
+    }
+
+    private function inspectRule(array $rule, $index)
+    {
+        if (!$this->logger) {
+            return;
+        }
+
+        if ($rule['path'] && '^' !== $rule['path'][0]) {
+            $message = 'Access control rule #%s path pattern "%s" doesn\'t starts from "^" - that makes matching pattern to route static prefix impossible and reduces performance.';
+            $message = sprintf($message, $index, $rule['path']);
+            $this->logger->warning($message, $rule);
+        }
     }
 }

@@ -48,7 +48,7 @@ class RouteMatcher
      */
     public function matches(Route $route)
     {
-        // All parameters equal to false (like empty strings and arrays) would be filtered out.
+        // All parameters equal to false (like nulls, empty strings and arrays) would be filtered out.
         $parameters = array_filter($this->parameters);
 
         if (0 === count($parameters)) {
@@ -84,7 +84,7 @@ class RouteMatcher
     }
 
     /**
-     * Note: It's important to use the same regexp delimiters ("{}") as are used in \Symfony\Component\HttpFoundation\RequestMatcher::matches.
+     * Note: It's important to use the same regexp delimiters ("{}") that are used in \Symfony\Component\HttpFoundation\RequestMatcher::matches.
      *
      * Path pattern example: ^/secure1
      * Route path example: /secure1/{page}
@@ -93,9 +93,6 @@ class RouteMatcher
      */
     private function matchPathPattern(Route $route, $pattern)
     {
-        // TODO: check UTF-8 routes
-        // TODO: check $decodedChars in UrlGenerator
-
         $path = $route->getPath();
         $compiledRoute = $route->compile();
         $staticPrefix = $compiledRoute->getStaticPrefix();
@@ -144,8 +141,4 @@ class RouteMatcher
         return 0;
     }
 
-    private function matchMethods(Route $route, array $methods)
-    {
-        return 0;
-    }
 }

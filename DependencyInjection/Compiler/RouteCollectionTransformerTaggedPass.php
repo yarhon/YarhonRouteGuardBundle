@@ -17,7 +17,7 @@ use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
 
 /**
  * We use CompilerPass to inject tagged services for compatibility with Symfony 3.3.
- * Starting from Symfony 3.4. we can use <argument type="tagged" tag="link_guard.route_collection_transformer" />
+ * Starting from Symfony 3.4 we can use <argument type="tagged" tag="link_guard.route_collection_transformer" />
  * in services.xml and remove this CompilerPass.
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

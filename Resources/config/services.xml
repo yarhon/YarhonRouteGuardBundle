@@ -59,9 +59,17 @@
         <service id="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface" alias="link_guard.authorization_manager" />
 
         <service id="Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider">
+            <call method="setLogger">
+                <argument type="service" id="logger" on-invalid="ignore" />
+            </call>
+            <tag name="monolog.logger" channel="link_guard" />
         </service>
 
         <service id="Yarhon\LinkGuardBundle\Security\Provider\SensioSecurityProvider">
+            <call method="setLogger">
+                <argument type="service" id="logger" on-invalid="ignore" />
+            </call>
+            <tag name="monolog.logger" channel="link_guard" />
         </service>
 
         <service id="Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer">

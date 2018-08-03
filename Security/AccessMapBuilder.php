@@ -104,8 +104,6 @@ class AccessMapBuilder
         //var_dump($this->routeCollection->all());
 
         foreach ($this->routeCollection->all() as $name => $route) {
-            var_dump($name);
-
             foreach ($this->authorizationProviders as $provider) {
                 $testBag = $provider->getTests($route);
             }

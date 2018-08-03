@@ -14,6 +14,7 @@ use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationException;
 use Symfony\Component\Routing\Route;
+use Psr\Log\LoggerAwareTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
 use Yarhon\LinkGuardBundle\Annotations\ClassMethodAnnotationReader;
@@ -29,6 +30,8 @@ use Yarhon\LinkGuardBundle\Security\Authorization\Test\Arguments;
  */
 class SensioSecurityProvider implements ProviderInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var ClassMethodAnnotationReader
      */

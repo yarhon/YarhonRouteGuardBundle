@@ -11,13 +11,14 @@
 namespace Yarhon\LinkGuardBundle\Security\Provider;
 
 use Symfony\Component\Routing\Route;
+use Psr\Log\LoggerAwareInterface;
 use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBagInterface;
 use Yarhon\LinkGuardBundle\Security\Http\RequestResolvableInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface ProviderInterface
+interface ProviderInterface extends LoggerAwareInterface
 {
     /**
      * @param Route $route
