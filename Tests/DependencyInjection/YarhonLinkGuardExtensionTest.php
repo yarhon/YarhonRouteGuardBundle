@@ -34,7 +34,6 @@ class YarhonLinkGuardExtensionTest extends TestCase
 
         $config = [
             'cache_dir' => 'link-guard',
-            'override_url_generator' => true,
         ];
 
         $this->container->loadFromExtension($extension->getAlias(), $config);
@@ -59,7 +58,7 @@ class YarhonLinkGuardExtensionTest extends TestCase
         ];
 
         $aliases = [
-            'link_guard.authorization_manager',
+            'yarhon_link_guard.authorization_manager',
             'Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface',
         ];
 
@@ -81,7 +80,7 @@ class YarhonLinkGuardExtensionTest extends TestCase
     public function testPublicServices()
     {
         $services = [
-            'link_guard.authorization_manager',
+            'yarhon_link_guard.authorization_manager',
         ];
 
         $this->container->compile();
@@ -94,7 +93,7 @@ class YarhonLinkGuardExtensionTest extends TestCase
     public function testParameters()
     {
         $parameters = [
-            'link_guard.router_service_id' => 'router.default',
+
         ];
 
         $this->container->compile();

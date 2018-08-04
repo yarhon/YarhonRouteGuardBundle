@@ -42,11 +42,9 @@ class AccessMapBuilderTest extends TestCase
         $this->builder->setRouteCollection($routeCollection);
 
         $this->assertAttributeEquals($routeCollection, 'routeCollection', $this->builder);
-        $this->assertAttributeNotSame($routeCollection, 'routeCollection', $this->builder);
-        $this->assertAttributeEquals([], 'ignoredRoutes', $this->builder);
     }
 
-    public function testSetRouteCollectionException()
+    public function testTransformerCallException()
     {
         $routeCollection = $this->createRouteCollection([
             '/path1' => 'class',
@@ -58,10 +56,11 @@ class AccessMapBuilderTest extends TestCase
             ->willThrowException(new \InvalidArgumentException());
 
         $this->builder->addRouteCollectionTransformer($transformer);
+        $this->builder->setRouteCollection($routeCollection);
 
         $this->expectException(\InvalidArgumentException::class);
 
-        $this->builder->setRouteCollection($routeCollection);
+        $this->builder->build();
     }
 
     public function testTransformerCalls()
@@ -80,6 +79,8 @@ class AccessMapBuilderTest extends TestCase
 
         $this->builder->addRouteCollectionTransformer($transformer);
         $this->builder->setRouteCollection($routeCollection);
+
+        $this->builder->build();
 
         $this->assertAttributeEquals(new RouteCollection(), 'routeCollection', $this->builder);
         $this->assertAttributeEquals(['/path1'], 'ignoredRoutes', $this->builder);

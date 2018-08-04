@@ -12,8 +12,6 @@ namespace Yarhon\LinkGuardBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\Reference;
-use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
 use Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider;
 use Yarhon\LinkGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
 
@@ -45,20 +43,12 @@ class SymfonySecurityBundlePass implements CompilerPassInterface
 
         $config = $this->extensionAccessor->getProcessedConfig($container, 'security');
 
-        if (!isset($config['access_control'])) {
+        if (!isset($config['access_control']) || 0 === count($config['access_control'])) {
             $container->removeDefinition(SymfonyAccessControlProvider::class);
-
             return;
         }
 
-        $accessControl = $config['access_control'];
-
         $accessControlProvider = $container->getDefinition(SymfonyAccessControlProvider::class);
-        foreach ($accessControl as $accessControlRule) {
-            $accessControlProvider->addMethodCall('addRule', [$accessControlRule]);
-        }
-
-        $accessMapBuilderDefinition = $container->getDefinition(AccessMapBuilder::class);
-        $accessMapBuilderDefinition->addMethodCall('addAuthorizationProvider', [new Reference(SymfonyAccessControlProvider::class)]);
+        $accessControlProvider->addMethodCall('setRules', [$config['access_control']]);
     }
 }

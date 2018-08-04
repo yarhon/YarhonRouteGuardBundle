@@ -12,9 +12,7 @@ namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Compiler;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SensioFrameworkExtraBundlePass;
-use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
 use Yarhon\LinkGuardBundle\Security\Provider\SensioSecurityProvider;
 
 /**
@@ -35,16 +33,13 @@ class SensioFrameworkExtraBundlePassTest extends TestCase
     public function setUp()
     {
         $this->container = new ContainerBuilder();
-        $this->container->register(AccessMapBuilder::class);
+        $this->container->register(SensioSecurityProvider::class);
         $this->pass = new SensioFrameworkExtraBundlePass();
     }
 
     public function testProcessWithoutExtraBundle()
     {
         $this->pass->process($this->container);
-
-        $methodCalls = $this->container->getDefinition(AccessMapBuilder::class)->getMethodCalls();
-        $this->assertCount(0, $methodCalls);
 
         $this->assertFalse($this->container->hasDefinition(SensioSecurityProvider::class));
     }
@@ -55,11 +50,6 @@ class SensioFrameworkExtraBundlePassTest extends TestCase
 
         $this->pass->process($this->container);
 
-        $methodCalls = $this->container->getDefinition(AccessMapBuilder::class)->getMethodCalls();
-        $this->assertCount(1, $methodCalls);
-        list($name, $arguments) = $methodCalls[0];
-        $this->assertEquals('addAuthorizationProvider', $name);
-        $this->assertInstanceOf(Reference::class, $arguments[0]);
-        $this->assertEquals(SensioSecurityProvider::class, (string) $arguments[0]);
+        $this->assertTrue($this->container->hasDefinition(SensioSecurityProvider::class));
     }
 }

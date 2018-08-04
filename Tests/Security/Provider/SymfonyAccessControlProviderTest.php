@@ -38,7 +38,7 @@ class SymfonyAccessControlProviderTest extends TestCase
 
         $a = [''];
 
-        var_dump(isset($a[0]));
+        //var_dump(isset($a[0]));
 
         //var_dump($compiled->getRegex());
         //$test1 = "hello";

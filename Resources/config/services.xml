@@ -4,37 +4,51 @@
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
-    <parameters>
-        <parameter key="link_guard.router_service_id">router.default</parameter> <!-- default value is symfony/framework-bundle router service id -->
-    </parameters>
-
     <services>
-        <defaults public="false" />
+        <defaults public="false" autowire="false" autoconfigure="false" />
 
         <service id="Yarhon\LinkGuardBundle\Security\AccessMapBuilder">
-            <argument>null</argument> <!--route collection, set by AccessMapBuilderConfigurator -->
-            <configurator service="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapBuilderConfigurator" method="configure" />
+            <argument>null</argument> <!--route collection -->
+            <call method="setRouteCollectionTransformers">
+                <argument type="collection" />
+            </call>
+            <call method="setAuthorizationProviders">
+                <argument type="collection" />
+            </call>
+            <call method="importRouteCollection">
+                <argument type="service" id="router" on-invalid="ignore" />
+            </call>
+            <call method="setLogger">
+                <argument type="service" id="logger" on-invalid="ignore" />
+            </call>
+            <tag name="monolog.logger" channel="link_guard" />
         </service>
 
-        <service id="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\AccessMapBuilderConfigurator">
-            <argument>null</argument> <!-- router service, taken by id specified in "link_guard.router_service_id" parameter -->
+        <!-- authorization providers -->
+
+        <service id="Yarhon\LinkGuardBundle\Security\Provider\SensioSecurityProvider">
+            <tag name="yarhon_link_guard.authorization_provider" priority="1024" />
+        </service>
+
+        <service id="Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider">
+            <tag name="yarhon_link_guard.authorization_provider" priority="1023" />
         </service>
 
         <!-- route collection services -->
 
         <service id="Yarhon\LinkGuardBundle\Routing\RouteCollection\ControllerNameDeprecationsTransformer">
             <argument type="service" id="Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter" />
-            <tag name="link_guard.route_collection_transformer" priority="1024" />
+            <tag name="yarhon_link_guard.route_collection_transformer" priority="1024" />
         </service>
 
         <service id="Yarhon\LinkGuardBundle\Routing\RouteCollection\ControllerNameTransformer">
             <argument type="service" id="Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver" />
-            <tag name="link_guard.route_collection_transformer" priority="1023" />
+            <tag name="yarhon_link_guard.route_collection_transformer" priority="1023" />
         </service>
 
         <service id="Yarhon\LinkGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer">
             <argument type="collection" />
-            <tag name="link_guard.route_collection_transformer" priority="1022" />
+            <tag name="yarhon_link_guard.route_collection_transformer" priority="1022" />
         </service>
 
         <service id="Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver">
@@ -46,7 +60,7 @@
         </service>
 
         <service id="Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap" public="true"> <!-- is set as public only to be available for TYPE_REMOVE compiler pass -->
-            <argument type="collection"/>
+            <argument type="collection" />
         </service>
 
         <!-- end route collection services -->
@@ -55,32 +69,13 @@
             <!--<argument type="service" id="Yarhon\LinkGuardBundle\Security\AccessMap" />-->   <!-- access map should go here -->
             <argument type="service" id="security.authorization_checker" />
         </service>
-        <service id="link_guard.authorization_manager" alias="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager" public="true"/>
-        <service id="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface" alias="link_guard.authorization_manager" />
-
-        <service id="Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider">
-            <call method="setLogger">
-                <argument type="service" id="logger" on-invalid="ignore" />
-            </call>
-            <tag name="monolog.logger" channel="link_guard" />
-        </service>
-
-        <service id="Yarhon\LinkGuardBundle\Security\Provider\SensioSecurityProvider">
-            <call method="setLogger">
-                <argument type="service" id="logger" on-invalid="ignore" />
-            </call>
-            <tag name="monolog.logger" channel="link_guard" />
-        </service>
+        <service id="yarhon_link_guard.authorization_manager" alias="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager" public="true"/>
+        <service id="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface" alias="yarhon_link_guard.authorization_manager" />
 
         <service id="Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer">
             <argument type="service" id="Yarhon\LinkGuardBundle\Security\AccessMapBuilder" />
             <argument /><!-- cache dir -->
             <tag name="kernel.cache_warmer" /> <!-- this tag is processed by framework bundle!!!! -->
-        </service>
-
-        <service id="Yarhon\LinkGuardBundle\DependencyInjection\Configurator\UrlGeneratorConfigurator">
-            <argument type="service" id="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager" />
-            <argument /><!-- override class -->
         </service>
 
         <service id="Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension">

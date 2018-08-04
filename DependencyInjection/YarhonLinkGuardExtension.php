@@ -16,7 +16,6 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Config\FileLocator;
 use Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer;
-use Yarhon\LinkGuardBundle\DependencyInjection\Configurator\UrlGeneratorConfigurator;
 use Yarhon\LinkGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer;
 use Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension;
 use Yarhon\LinkGuardBundle\Twig\RoutingRuntime;
@@ -39,9 +38,6 @@ class YarhonLinkGuardExtension extends Extension
 
         $definition = $container->getDefinition(RouteCacheWarmer::class);
         $definition->replaceArgument(1, $config['cache_dir']);
-
-        $definition = $container->getDefinition(UrlGeneratorConfigurator::class);
-        $definition->replaceArgument(1, $config['override_url_generator']);
 
         $ignoredControllers = array_merge($config['ignore_controllers'], $config['ignore_controllers_symfony']);
         $definition = $container->getDefinition(RemoveIgnoredTransformer::class);

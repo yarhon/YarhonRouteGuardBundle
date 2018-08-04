@@ -13,14 +13,13 @@ namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Compiler;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\RouteCollectionTransformerTaggedPass;
+use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\InsertTaggedServicesPass;
 use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
-
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RouteCollectionTransformerTaggedPassTest extends TestCase
+class InsertTaggedServicesPassTest extends TestCase
 {
     /**
      * @var ContainerBuilder
@@ -28,7 +27,7 @@ class RouteCollectionTransformerTaggedPassTest extends TestCase
     private $container;
 
     /**
-     * @var RouteCollectionTransformerTaggedPass
+     * @var InsertTaggedServicesPass
      */
     private $pass;
 
@@ -36,13 +35,14 @@ class RouteCollectionTransformerTaggedPassTest extends TestCase
     {
         $this->container = new ContainerBuilder();
         $this->container->register(AccessMapBuilder::class);
-        $this->pass = new RouteCollectionTransformerTaggedPass();
+        $this->pass = new InsertTaggedServicesPass();
     }
 
-    public function testProcess()
+    /**
+     * @dataProvider processDataProvider
+     */
+    public function testProcess($destination, $tagName)
     {
-        $tagName = 'link_guard.route_collection_transformer';
-
         $definition1 = new Definition();
         $definition1->addTag($tagName, ['priority' => 10]);
 
@@ -53,16 +53,20 @@ class RouteCollectionTransformerTaggedPassTest extends TestCase
 
         $this->container->setDefinition('test2', $definition2);
 
+        $definition = $this->container->getDefinition($destination[0]);
+        $definition->addMethodCall($destination[1], [[]]);
+
         $this->pass->process($this->container);
 
-        $definition = $this->container->getDefinition(AccessMapBuilder::class);
         $methodCalls = $definition->getMethodCalls();
+
+        //var_dump('m', $methodCalls);
 
         $this->assertCount(1, $methodCalls);
 
         list($methodName, $arguments) = $methodCalls[0];
 
-        $this->assertEquals('setRouteCollectionTransformers', $methodName);
+        $this->assertEquals($destination[1], $methodName);
         $this->assertCount(1, $arguments);
 
         $argument = $arguments[0];
@@ -70,5 +74,19 @@ class RouteCollectionTransformerTaggedPassTest extends TestCase
 
         $this->assertEquals('test2', (string) $argument[0]);
         $this->assertEquals('test1', (string) $argument[1]);
+    }
+
+    public function processDataProvider()
+    {
+        return [
+            [
+                [AccessMapBuilder::class, 'setRouteCollectionTransformers'],
+                'yarhon_link_guard.route_collection_transformer',
+            ],
+            [
+                [AccessMapBuilder::class, 'setAuthorizationProviders'],
+                'yarhon_link_guard.authorization_provider',
+            ],
+        ];
     }
 }
