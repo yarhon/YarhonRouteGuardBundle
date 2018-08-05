@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SymfonySecurityBundlePass;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SensioFrameworkExtraBundlePass;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\ContainerClassMapPass;
-use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\InsertTaggedServicesPass;
+use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\InjectTaggedServicesPass;
 use Yarhon\LinkGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
 use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMapBuilder;
 
@@ -35,7 +35,7 @@ class YarhonLinkGuardBundle extends Bundle
         $container->addCompilerPass(new SymfonySecurityBundlePass($foreignExtensionAccessor), PassConfig::TYPE_BEFORE_REMOVING, 100);
         $container->addCompilerPass(new SensioFrameworkExtraBundlePass(), PassConfig::TYPE_BEFORE_REMOVING, 101);
 
-        $container->addCompilerPass(new InsertTaggedServicesPass(), PassConfig::TYPE_BEFORE_REMOVING, 0);
+        $container->addCompilerPass(new InjectTaggedServicesPass(), PassConfig::TYPE_BEFORE_REMOVING, 0);
 
         // We need only public services for the class map, so we include this pass at the very end, after removing all private services.
         $container->addCompilerPass(new ContainerClassMapPass($classMapBuilder), PassConfig::TYPE_REMOVE, 0);

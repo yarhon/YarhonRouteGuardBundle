@@ -16,15 +16,15 @@ use Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
 use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
 
 /**
- * Inserts tagged services collection as a method call argument.
+ * Injects tagged services collection as a method call argument.
  * Method call should initially contain one argument - empty collection (i.e. <argument type="collection" />).
  *
- * We use CompilerPass to insert tagged services for compatibility with Symfony 3.3.
+ * We use CompilerPass to inject tagged services for compatibility with Symfony 3.3.
  * Starting from Symfony 3.4 we can use <argument type="tagged" tag="..." /> and remove this CompilerPass.
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class InsertTaggedServicesPass implements CompilerPassInterface
+class InjectTaggedServicesPass implements CompilerPassInterface
 {
     use PriorityTaggedServiceTrait;
 

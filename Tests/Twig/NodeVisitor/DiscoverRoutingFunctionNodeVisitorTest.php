@@ -16,9 +16,11 @@ use Twig\Node\Expression\ArrayExpression;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\NameExpression;
 use Twig\Error\SyntaxError;
+use Twig\TwigFunction;
 use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
 use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
 use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
+use Yarhon\LinkGuardBundle\Twig\NodeVisitor\DiscoverRoutingFunctionNodeVisitor;
 
 class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
 {
@@ -30,7 +32,12 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
     {
         parent::setUp();
 
-        $this->emulateTwigBridgeRoutingExtension($this->environment);
+        $this->environment->addFunction(new TwigFunction('url', function () {}));
+        $this->environment->addFunction(new TwigFunction('path', function () {}));
+
+        $nodeVisitor = new DiscoverRoutingFunctionNodeVisitor(['url', 'path'], $this->referenceVarName, $this->linkTag);
+
+        $this->environment->addNodeVisitor($nodeVisitor);
     }
 
     /**
@@ -111,12 +118,12 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
             [
                 // without any routing function
                 '{% $linkTag discover %}test{% end$linkTag %}',
-                [SyntaxError::class, sprintf('"%s" tag with discover option must contain one url() or path() call.', $this->linkTag)],
+                [SyntaxError::class, sprintf('"%s" tag with discover option must contain one "url()" / "path()" call.', $this->linkTag)],
             ],
             [
                 // with 2 routing functions
                 '{% $linkTag discover %}{{ url("secure1") }}{{ url("secure2") }}{% end$linkTag %}',
-                [SyntaxError::class, sprintf('"%s" tag with discover option must contain only one url() or path() call.', $this->linkTag)],
+                [SyntaxError::class, sprintf('"%s" tag with discover option must contain only one "url()" / "path()" call.', $this->linkTag)],
             ],
         ];
     }

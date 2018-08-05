@@ -13,13 +13,13 @@ namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Compiler;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\InsertTaggedServicesPass;
+use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\InjectTaggedServicesPass;
 use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class InsertTaggedServicesPassTest extends TestCase
+class InjectTaggedServicesPassTest extends TestCase
 {
     /**
      * @var ContainerBuilder
@@ -27,7 +27,7 @@ class InsertTaggedServicesPassTest extends TestCase
     private $container;
 
     /**
-     * @var InsertTaggedServicesPass
+     * @var InjectTaggedServicesPass
      */
     private $pass;
 
@@ -35,7 +35,7 @@ class InsertTaggedServicesPassTest extends TestCase
     {
         $this->container = new ContainerBuilder();
         $this->container->register(AccessMapBuilder::class);
-        $this->pass = new InsertTaggedServicesPass();
+        $this->pass = new InjectTaggedServicesPass();
     }
 
     /**

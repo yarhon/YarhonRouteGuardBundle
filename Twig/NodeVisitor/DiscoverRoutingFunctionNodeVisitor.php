@@ -32,6 +32,11 @@ use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
 {
     /**
+     * @var array
+     */
+    private $discoverFunctions = [];
+
+    /**
      * @var string
      */
     private $referenceVarName;
@@ -49,11 +54,13 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
     /**
      * DiscoverRoutingFunctionNodeVisitor constructor.
      *
+     * @param array $discoverFunctions
      * @param string $referenceVarName
      * @param string $tagName
      */
-    public function __construct($referenceVarName, $tagName)
+    public function __construct(array $discoverFunctions, $referenceVarName, $tagName)
     {
+        $this->discoverFunctions = $discoverFunctions;
         $this->referenceVarName = $referenceVarName;
         $this->tagName = $tagName;
         $this->scope = new Scope();
@@ -84,7 +91,7 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
 
             if (!$this->scope->has('routingFunction')) {
                 throw new SyntaxError(
-                    sprintf('"%s" tag with discover option must contain one url() or path() call.', $this->tagName),
+                    sprintf('"%s" tag with discover option must contain one %s call.', $this->tagName, $this->createDiscoverFunctionsString()),
                     $node->getTemplateLine()
                 );
             }
@@ -98,10 +105,10 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
             return $node;
         }
 
-        if ($this->scope->get('insideTargetNode') && $this->isRoutingFunctionNode($node)) {
+        if ($this->scope->get('insideTargetNode') && $this->isDiscoveredFunctionNode($node)) {
             if ($this->scope->has('routingFunction')) {
                 throw new SyntaxError(
-                    sprintf('"%s" tag with discover option must contain only one url() or path() call.', $this->tagName),
+                    sprintf('"%s" tag with discover option must contain only one %s call.', $this->tagName, $this->createDiscoverFunctionsString()),
                     $node->getTemplateLine()
                 );
             }
@@ -140,9 +147,9 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
      *
      * @return bool
      */
-    private function isRoutingFunctionNode(Node $node)
+    private function isDiscoveredFunctionNode(Node $node)
     {
-        return $node instanceof FunctionExpression && in_array($node->getAttribute('name'), ['url', 'path']);
+        return $node instanceof FunctionExpression && in_array($node->getAttribute('name'), $this->discoverFunctions);
     }
 
     /**
@@ -172,5 +179,15 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
         }
 
         return $expression;
+    }
+
+    private function createDiscoverFunctionsString()
+    {
+        $functions = $this->discoverFunctions;
+        $functions = array_map(function($name) {
+           return '"'.$name.'()"';
+        }, $functions);
+
+        return implode(' / ', $functions);
     }
 }

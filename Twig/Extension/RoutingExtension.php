@@ -28,11 +28,17 @@ class RoutingExtension extends AbstractExtension
     private $options;
 
     /**
+     * @var array
+     */
+    private $discoverFunctions;
+
+    /**
      * RoutingExtension constructor.
      *
      * @param array $options
+     * @param array $discoverFunctions
      */
-    public function __construct(array $options = [])
+    public function __construct(array $options = [], array $discoverFunctions = [])
     {
         $defaults = [
             'tag_name' => 'routeifgranted',
@@ -42,6 +48,8 @@ class RoutingExtension extends AbstractExtension
         $this->options = array_merge($defaults, $options);
 
         LinkNode::setReferenceVarName($this->options['reference_var_name']);
+
+        $this->discoverFunctions = $discoverFunctions;
     }
 
     /**
@@ -59,9 +67,13 @@ class RoutingExtension extends AbstractExtension
      */
     public function getNodeVisitors()
     {
-        return [
-            new DiscoverRoutingFunctionNodeVisitor($this->options['reference_var_name'], $this->options['tag_name']),
-        ];
+        $nodeVisitors = [];
+
+        if (0 !== count($this->discoverFunctions)) {
+            $nodeVisitors[] = new DiscoverRoutingFunctionNodeVisitor($this->discoverFunctions, $this->options['reference_var_name'], $this->options['tag_name']);
+        }
+
+        return $nodeVisitors;
     }
 
     /**

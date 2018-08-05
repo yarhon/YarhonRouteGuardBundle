@@ -18,7 +18,6 @@ use Twig\Compiler;
 use Twig\Node\Node;
 use Twig\Token;
 use Twig\TokenStream;
-use Twig\TwigFunction;
 use Twig_Error_Syntax as SyntaxError; // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
 use Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension;
 
@@ -56,22 +55,6 @@ abstract class AbstractNodeTest extends TestCase
             ->setMethods(null)
             ->getMock();
         */
-    }
-
-    private function getTwigBridgeRoutingExtension()
-    {
-        $extension = $this->getMockBuilder('Symfony\Bridge\Twig\Extension\RoutingExtension')
-            ->disableOriginalConstructor()
-            ->setMethods(null)
-            ->getMock();
-
-        return $extension;
-    }
-
-    protected function emulateTwigBridgeRoutingExtension(Environment $environment)
-    {
-        $environment->addFunction(new TwigFunction('url', function () {}));
-        $environment->addFunction(new TwigFunction('path', function () {}));
     }
 
     /**
