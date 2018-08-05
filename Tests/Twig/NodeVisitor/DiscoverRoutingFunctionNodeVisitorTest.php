@@ -28,16 +28,13 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
 
     private $referenceVarName = 'route_reference';
 
-    public function setUp()
+    public function testConstruct()
     {
-        parent::setUp();
+        $nodeVisitor = new DiscoverRoutingFunctionNodeVisitor(['func'], 'foo', 'bar');
 
-        $this->environment->addFunction(new TwigFunction('url', function () {}));
-        $this->environment->addFunction(new TwigFunction('path', function () {}));
-
-        $nodeVisitor = new DiscoverRoutingFunctionNodeVisitor(['url', 'path'], $this->referenceVarName, $this->linkTag);
-
-        $this->environment->addNodeVisitor($nodeVisitor);
+        $this->assertAttributeEquals(['func'], 'discoverFunctions', $nodeVisitor);
+        $this->assertAttributeEquals('foo', 'referenceVarName', $nodeVisitor);
+        $this->assertAttributeEquals('bar', 'tagName', $nodeVisitor);
     }
 
     /**
@@ -45,6 +42,8 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
      */
     public function testDiscover($source, $expected)
     {
+        $this->loadNodeVisitor();
+
         $node = $this->parse($source);
 
         $this->assertEquals($expected, $node);
@@ -104,6 +103,8 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
      */
     public function testDiscoverException($source, $expected)
     {
+        $this->loadNodeVisitor();
+
         $this->expectException($expected[0]);
         if (isset($expected[1])) {
             $this->expectExceptionMessage($expected[1]);
@@ -126,5 +127,14 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
                 [SyntaxError::class, sprintf('"%s" tag with discover option must contain only one "url()" / "path()" call.', $this->linkTag)],
             ],
         ];
+    }
+
+    private function loadNodeVisitor()
+    {
+        $this->environment->addFunction(new TwigFunction('url', function () {}));
+        $this->environment->addFunction(new TwigFunction('path', function () {}));
+
+        $nodeVisitor = new DiscoverRoutingFunctionNodeVisitor(['url', 'path'], $this->referenceVarName, $this->linkTag);
+        $this->environment->addNodeVisitor($nodeVisitor);
     }
 }

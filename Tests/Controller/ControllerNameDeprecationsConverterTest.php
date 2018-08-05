@@ -15,6 +15,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter;
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

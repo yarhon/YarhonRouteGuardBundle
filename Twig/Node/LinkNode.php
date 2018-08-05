@@ -14,6 +14,7 @@ use Twig\Compiler;
 use Twig\Node\Node;
 use Twig\Node\Expression\AssignNameExpression;
 use Twig\Error\SyntaxError;
+use Twig\Error\RuntimeError;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -62,6 +63,7 @@ class LinkNode extends Node
      * {@inheritdoc}
      *
      * @throws SyntaxError
+     * @throws RuntimeError
      */
     public function compile(Compiler $compiler)
     {
@@ -74,7 +76,7 @@ class LinkNode extends Node
         }
 
         if (!self::$referenceVarName) {
-            throw new \LogicException(
+            throw new RuntimeError(
                 sprintf('referenceVarName is not set. setReferenceVarName() method should be called before compiling.')
             );
         }

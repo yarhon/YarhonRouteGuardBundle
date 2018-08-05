@@ -15,6 +15,7 @@ use Symfony\Component\Routing\RouteCollection;
 use Yarhon\LinkGuardBundle\Tests\HelperTrait;
 use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
 use Yarhon\LinkGuardBundle\Routing\RouteCollection\ControllerNameTransformer;
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -30,7 +31,7 @@ class AccessMapBuilderTest extends TestCase
 
     public function setUp()
     {
-        $this->builder = new AccessMapBuilder(null);
+        $this->builder = new AccessMapBuilder();
     }
 
     public function testSetRouteCollection()
@@ -53,12 +54,12 @@ class AccessMapBuilderTest extends TestCase
         $transformer = $this->createMock(ControllerNameTransformer::class);
 
         $transformer->method('transform')
-            ->willThrowException(new \InvalidArgumentException());
+            ->willThrowException(new InvalidArgumentException());
 
         $this->builder->addRouteCollectionTransformer($transformer);
         $this->builder->setRouteCollection($routeCollection);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $this->builder->build();
     }

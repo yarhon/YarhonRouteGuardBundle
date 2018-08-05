@@ -10,6 +10,8 @@
 
 namespace Yarhon\LinkGuardBundle\Security\Authorization\Test;
 
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+
 /**
  * Arguments is a "value object" class for storing arguments for AuthorizationChecker::isGranted() authorization test.
  *
@@ -22,12 +24,12 @@ class Arguments
     /**
      * Indicates that subject is the name of the "context" variable (request, etc.).
      */
-    /* public */ const SUBJECT_CONTEXT_VARIABLE = 1;
+    const SUBJECT_CONTEXT_VARIABLE = 1;
 
     /**
      * Indicates that subject is the name of controller argument.
      */
-    /* public */ const SUBJECT_CONTROLLER_ARGUMENT = 2;
+    const SUBJECT_CONTROLLER_ARGUMENT = 2;
 
     /**
      * List of possible variable names, to be used in setSubjectMetadata() with SUBJECT_CONTEXT_VARIABLE type.
@@ -72,16 +74,16 @@ class Arguments
      * @param int    $type One of self::SUBJECT_* constants
      * @param string $name Subject variable / argument name
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function setSubjectMetadata($type, $name)
     {
         if (!in_array($type, [self::SUBJECT_CONTEXT_VARIABLE, self::SUBJECT_CONTROLLER_ARGUMENT], true)) {
-            throw new \InvalidArgumentException(sprintf('Invalid subject type: %s', $type));
+            throw new InvalidArgumentException(sprintf('Invalid subject type: %s', $type));
         }
 
         if (self::SUBJECT_CONTEXT_VARIABLE === $type && !in_array($name, self::CONTEXT_VARIABLES, true)) {
-            throw new \InvalidArgumentException(sprintf('Unknown subject context variable name: %s', $name));
+            throw new InvalidArgumentException(sprintf('Unknown subject context variable name: %s', $name));
         }
 
         $this->subjectMetadata = [$type, $name];

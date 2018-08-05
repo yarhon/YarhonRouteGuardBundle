@@ -12,6 +12,7 @@ namespace Yarhon\LinkGuardBundle\Routing\RouteCollection;
 
 use Symfony\Component\Routing\RouteCollection;
 use Yarhon\LinkGuardBundle\Controller\ControllerNameResolverInterface;
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -46,7 +47,7 @@ class ControllerNameTransformer implements TransformerInterface
     /**
      * @param RouteCollection $collection
      *
-     * @throws \InvalidArgumentException If unable to resolve controller name
+     * @throws InvalidArgumentException If unable to resolve controller name
      */
     private function resolveControllers(RouteCollection $collection)
     {
@@ -57,8 +58,8 @@ class ControllerNameTransformer implements TransformerInterface
                 // Note: for some controllers (i.e, functions as controllers), $controllerName would be false
                 $controllerName = $this->resolver->resolve($controller);
                 $route->setDefault('_controller', $controllerName);
-            } catch (\InvalidArgumentException $e) {
-                throw new \InvalidArgumentException(sprintf('Unable to resolve controller name for route "%s": %s',
+            } catch (InvalidArgumentException $e) {
+                throw new InvalidArgumentException(sprintf('Unable to resolve controller name for route "%s": %s',
                     $name, $e->getMessage()), 0, $e);
             }
         }

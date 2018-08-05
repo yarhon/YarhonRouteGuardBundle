@@ -10,6 +10,8 @@
 
 namespace Yarhon\LinkGuardBundle\Controller;
 
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
@@ -49,7 +51,7 @@ class ControllerNameResolver implements ControllerNameResolverInterface
             return $this->resolveClass($class).'::'.$method;
         }
 
-        throw new \InvalidArgumentException('Unable to resolve controller name, the controller is not callable.');
+        throw new InvalidArgumentException('Unable to resolve controller name, the controller is not callable.');
     }
 
     protected function resolveClass($class)

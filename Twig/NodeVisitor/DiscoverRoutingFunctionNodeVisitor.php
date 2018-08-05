@@ -54,7 +54,7 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
     /**
      * DiscoverRoutingFunctionNodeVisitor constructor.
      *
-     * @param array $discoverFunctions
+     * @param array  $discoverFunctions
      * @param string $referenceVarName
      * @param string $tagName
      */
@@ -184,8 +184,8 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
     private function createDiscoverFunctionsString()
     {
         $functions = $this->discoverFunctions;
-        $functions = array_map(function($name) {
-           return '"'.$name.'()"';
+        $functions = array_map(function ($name) {
+            return '"'.$name.'()"';
         }, $functions);
 
         return implode(' / ', $functions);

@@ -45,6 +45,7 @@ class SymfonySecurityBundlePass implements CompilerPassInterface
 
         if (!isset($config['access_control']) || 0 === count($config['access_control'])) {
             $container->removeDefinition(SymfonyAccessControlProvider::class);
+
             return;
         }
 

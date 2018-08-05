@@ -93,7 +93,6 @@ class YarhonLinkGuardExtensionTest extends TestCase
     public function testParameters()
     {
         $parameters = [
-
         ];
 
         $this->container->compile();

@@ -13,6 +13,7 @@ namespace Yarhon\LinkGuardBundle\CacheWarmer;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
+use Yarhon\LinkGuardBundle\Exception\RuntimeException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -64,7 +65,7 @@ class RouteCacheWarmer implements CacheWarmerInterface
      *
      * @return string $cacheDir
      *
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     private function createCacheDir($baseDir)
     {
@@ -72,10 +73,10 @@ class RouteCacheWarmer implements CacheWarmerInterface
 
         if (!is_dir($cacheDir)) {
             if (false === @mkdir($cacheDir, 0777, true)) {
-                throw new \RuntimeException(sprintf('Unable to create the LinkGuard Bundle cache directory "%s".', $cacheDir));
+                throw new RuntimeException(sprintf('Unable to create the LinkGuard Bundle cache directory "%s".', $cacheDir));
             }
         } elseif (!is_writable($cacheDir)) {
-            throw new \RuntimeException(sprintf('The LinkGuard Bundle cache directory "%s" is not writable for the current system user.', $cacheDir));
+            throw new RuntimeException(sprintf('The LinkGuard Bundle cache directory "%s" is not writable for the current system user.', $cacheDir));
         }
 
         return $cacheDir;

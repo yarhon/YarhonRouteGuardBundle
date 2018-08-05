@@ -79,7 +79,6 @@ abstract class AbstractNodeTest extends TestCase
         $source = new Source($source, null);
         $stream = $this->environment->tokenize($source);
 
-
         // Twig lexer will set line numbers starting from 1 (and only 1, if source is one-line string).
         // This sets line numbers of all tokens to 0 (default value in Node class constructor)
         // to allow skip non-required line number parameters in Nodes instances created in test cases.

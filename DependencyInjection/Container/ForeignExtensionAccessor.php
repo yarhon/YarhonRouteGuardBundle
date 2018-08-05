@@ -13,6 +13,7 @@ namespace Yarhon\LinkGuardBundle\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ConfigurationExtensionInterface;
 use Symfony\Component\Config\Definition\Processor;
+use Yarhon\LinkGuardBundle\Exception\LogicException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -27,7 +28,8 @@ class ForeignExtensionAccessor
     /**
      * ForeignExtensionAccessor constructor.
 
-     * @param Processor|null   $processor
+     *
+     * @param Processor|null $processor
      */
     public function __construct(Processor $processor = null)
     {
@@ -42,14 +44,14 @@ class ForeignExtensionAccessor
      *
      * @return array Processed configuration
      *
-     * @throws \LogicException When extension configuration class in not an instance of ConfigurationExtensionInterface
+     * @throws LogicException When extension configuration class in not an instance of ConfigurationExtensionInterface
      */
     public function getProcessedConfig(ContainerBuilder $container, $extensionName)
     {
         $extension = $container->getExtension($extensionName);
 
         if (!($extension instanceof ConfigurationExtensionInterface)) {
-            throw new \LogicException(sprintf('"%s" extension configuration class is not an instance of %s.',
+            throw new LogicException(sprintf('"%s" extension configuration class is not an instance of %s.',
                 $extensionName, ConfigurationExtensionInterface::class));
         }
 

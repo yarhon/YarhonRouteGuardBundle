@@ -18,6 +18,7 @@ use Symfony\Component\DependencyInjection\Extension\ConfigurationExtensionInterf
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Yarhon\LinkGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
+use Yarhon\LinkGuardBundle\Exception\LogicException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -32,7 +33,7 @@ class ForeignExtensionAccessorTest extends TestCase
             ],
             [
                 'key2' => 'value2',
-            ]
+            ],
         ];
 
         $configuration = $this->createMock(ConfigurationInterface::class);
@@ -74,7 +75,7 @@ class ForeignExtensionAccessorTest extends TestCase
         $container = new ContainerBuilder();
         $container->registerExtension($extension);
 
-        $this->expectException(\LogicException::class);
+        $this->expectException(LogicException::class);
         $this->expectExceptionMessage(sprintf('"%s" extension configuration class is not an instance of %s.', 'foreign', ConfigurationExtensionInterface::class));
 
         $accessor->getProcessedConfig($container, 'foreign');

@@ -15,6 +15,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Yarhon\LinkGuardBundle\Tests\HelperTrait;
 use Yarhon\LinkGuardBundle\Routing\RouteCollection\ControllerNameDeprecationsTransformer;
 use Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter;
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -71,9 +72,9 @@ class ControllerNameDeprecationsTransformerTest extends TestCase
         ]);
 
         $this->converter->method('convert')
-            ->willThrowException(new \InvalidArgumentException('Q'));
+            ->willThrowException(new InvalidArgumentException('Q'));
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unable to convert controller name for route "/path1": Q');
 
         $this->transformer->transform($routeCollection);

@@ -11,6 +11,7 @@
 namespace Yarhon\LinkGuardBundle\Controller;
 
 use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMapInterface;
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * ContainerControllerNameResolver is responsible for resolving class name from service id
@@ -37,6 +38,13 @@ class ContainerControllerNameResolver extends ControllerNameResolver
         $this->classMap = $classMap;
     }
 
+    /**
+     * @param string $class
+     *
+     * @return string
+     *
+     * @throws InvalidArgumentException
+     */
     protected function resolveClass($class)
     {
         if (!$this->classMap->has($class)) {
@@ -47,7 +55,7 @@ class ContainerControllerNameResolver extends ControllerNameResolver
 
         // Service class in container class map can be null is some cases (i.e., when service is instantiated by a factory method).
         if (null === $realClass) {
-            throw new \InvalidArgumentException(sprintf('Unable to resolve class for service "%s".', $class));
+            throw new InvalidArgumentException(sprintf('Unable to resolve class for service "%s".', $class));
         }
 
         return $realClass;

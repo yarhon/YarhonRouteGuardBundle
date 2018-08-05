@@ -13,6 +13,7 @@ namespace Yarhon\LinkGuardBundle\Tests\Controller;
 use PHPUnit\Framework\TestCase;
 use Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver;
 use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap;
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -69,7 +70,7 @@ class ContainerControllerNameResolverTest extends TestCase
 
     public function testResolveException()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $resolved = $this->resolver->resolve('service2');
     }

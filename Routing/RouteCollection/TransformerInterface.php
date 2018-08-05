@@ -11,6 +11,7 @@
 namespace Yarhon\LinkGuardBundle\Routing\RouteCollection;
 
 use Symfony\Component\Routing\RouteCollection;
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -22,7 +23,7 @@ interface TransformerInterface
      *
      * @return RouteCollection
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function transform(RouteCollection $routeCollection);
 }

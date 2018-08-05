@@ -15,6 +15,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Yarhon\LinkGuardBundle\Tests\HelperTrait;
 use Yarhon\LinkGuardBundle\Routing\RouteCollection\ControllerNameTransformer;
 use Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver;
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -67,9 +68,9 @@ class ControllerNameTransformerTest extends TestCase
         ]);
 
         $this->resolver->method('resolve')
-            ->willThrowException(new \InvalidArgumentException('Q'));
+            ->willThrowException(new InvalidArgumentException('Q'));
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unable to resolve controller name for route "/path1": Q');
 
         $this->transformer->transform($routeCollection);

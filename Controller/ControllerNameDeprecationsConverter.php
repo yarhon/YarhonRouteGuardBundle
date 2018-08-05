@@ -11,6 +11,7 @@
 namespace Yarhon\LinkGuardBundle\Controller;
 
 use Symfony\Component\HttpKernel\KernelInterface;
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * ControllerNameDeprecationsConverter holds convert methods for controller names is deprecated formats.
@@ -73,12 +74,18 @@ class ControllerNameDeprecationsConverter implements ControllerNameDeprecationsC
 
     /**
      * @see \Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver::createController Original source
+     *
+     * @throws InvalidArgumentException
      */
     private function convertBundleNotation($controller)
     {
         if (false === strpos($controller, '::') && 2 === substr_count($controller, ':')) {
             $deprecatedNotation = $controller;
-            $controller = $this->parseBundleNotation($controller);
+            try {
+                $controller = $this->parseBundleNotation($controller);
+            } catch (\InvalidArgumentException $e) {
+                throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+            }
 
             // @trigger_error(sprintf('Referencing controllers with %s is deprecated since Symfony 4.1. Use %s instead.', $deprecatedNotation, $controller), E_USER_DEPRECATED);
         }
@@ -95,8 +102,7 @@ class ControllerNameDeprecationsConverter implements ControllerNameDeprecationsC
      *
      * @return string A string in the class::method notation
      *
-     * @throws \InvalidArgumentException when the specified bundle is not enabled
-     *                                   or the controller cannot be found
+     * @throws \InvalidArgumentException When the specified bundle is not enabled or the controller cannot be found
      */
     private function parseBundleNotation($controller)
     {

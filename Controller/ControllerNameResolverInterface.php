@@ -10,6 +10,8 @@
 
 namespace Yarhon\LinkGuardBundle\Controller;
 
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
@@ -20,8 +22,8 @@ interface ControllerNameResolverInterface
      *
      * @return string|false A controller name in the class::method notation, or false if controller name is unavailable
      *
-     * @throws \InvalidArgumentException If failed to resolve controller name when controller is not callable
-     *                                   If failed to resolve controller class
+     * @throws InvalidArgumentException If failed to resolve controller name when controller is not callable
+     *                                  If failed to resolve controller class
      */
     public function resolve($controller);
 }

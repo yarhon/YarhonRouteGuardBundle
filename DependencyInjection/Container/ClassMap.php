@@ -10,6 +10,8 @@
 
 namespace Yarhon\LinkGuardBundle\DependencyInjection\Container;
 
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+
 /**
  * ClassMap is responsible for storing DI container class map: service id => class name.
  * Since \Symfony\Component\DependencyInjection\ContainerInterface doesn't allow to get actual service class
@@ -48,7 +50,7 @@ class ClassMap implements ClassMapInterface
     public function get($id)
     {
         if (!$this->has($id)) {
-            throw new \InvalidArgumentException(sprintf('Service "%s" is not found.', $id));
+            throw new InvalidArgumentException(sprintf('Service "%s" is not found.', $id));
         }
 
         return $this->map[$id];

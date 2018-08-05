@@ -10,6 +10,8 @@
 
 namespace Yarhon\LinkGuardBundle\Controller;
 
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
@@ -19,6 +21,8 @@ interface ControllerNameDeprecationsConverterInterface
      * @param string $controller
      *
      * @return string A converted controller in the class::method notation
+     *
+     * @throws InvalidArgumentException
      */
     public function convert($controller);
 }

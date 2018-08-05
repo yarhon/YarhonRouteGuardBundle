@@ -17,6 +17,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Yarhon\LinkGuardBundle\Security\Provider\ProviderInterface;
 use Yarhon\LinkGuardBundle\Routing\RouteCollection\TransformerInterface;
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -93,7 +94,7 @@ class AccessMapBuilder implements LoggerAwareInterface
     }
 
     /**
-     * @throws \InvalidArgumentException If exception in one of the RouteCollection transformers was thrown
+     * @throws InvalidArgumentException If exception in one of the RouteCollection transformers was thrown
      */
     public function build()
     {
@@ -137,7 +138,7 @@ class AccessMapBuilder implements LoggerAwareInterface
      *
      * @return RouteCollection
      *
-     * @throws \InvalidArgumentException If exception in one of the RouteCollection transformers was thrown
+     * @throws InvalidArgumentException If exception in one of the RouteCollection transformers was thrown
      */
     private function transformRouteCollection(RouteCollection $routeCollection)
     {

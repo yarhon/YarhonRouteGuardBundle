@@ -17,9 +17,24 @@ use Twig\Node\Expression\NameExpression;
 use Twig\Error\SyntaxError;
 use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
 use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
+use Yarhon\LinkGuardBundle\Twig\TokenParser\LinkTokenParser;
 
 class LinkTokenParserTest extends AbstractNodeTest
 {
+    public function testConstruct()
+    {
+        $tokenParser = new LinkTokenParser('foo');
+
+        $this->assertAttributeEquals('foo', 'tagName', $tokenParser);
+        $this->assertAttributeEquals('endfoo', 'endTagName', $tokenParser);
+    }
+
+    public function testGetTag()
+    {
+        $tokenParser = new LinkTokenParser('foo');
+        $this->assertEquals('foo', $tokenParser->getTag());
+    }
+
     /**
      * @dataProvider parseDataProvider
      */

@@ -12,6 +12,7 @@ namespace Yarhon\LinkGuardBundle\Tests\Controller;
 
 use PHPUnit\Framework\TestCase;
 use Yarhon\LinkGuardBundle\Controller\ControllerNameResolver;
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
 use Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController;
 
 /**
@@ -71,7 +72,7 @@ class ControllerNameResolverTest extends TestCase
 
     public function testResolveException()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $resolved = $this->resolver->resolve([]);
     }

@@ -12,6 +12,7 @@ namespace Yarhon\LinkGuardBundle\Routing\RouteCollection;
 
 use Symfony\Component\Routing\RouteCollection;
 use Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverterInterface;
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -46,7 +47,7 @@ class ControllerNameDeprecationsTransformer implements TransformerInterface
     /**
      * @param RouteCollection $collection
      *
-     * @throws \InvalidArgumentException If unable to resolve controller name (when ControllerNameResolver is set)
+     * @throws InvalidArgumentException If unable to resolve controller name (when ControllerNameResolver is set)
      */
     private function convertControllers(RouteCollection $collection)
     {
@@ -60,8 +61,8 @@ class ControllerNameDeprecationsTransformer implements TransformerInterface
             try {
                 $controllerName = $this->converter->convert($controller);
                 $route->setDefault('_controller', $controllerName);
-            } catch (\InvalidArgumentException $e) {
-                throw new \InvalidArgumentException(sprintf('Unable to convert controller name for route "%s": %s',
+            } catch (InvalidArgumentException $e) {
+                throw new InvalidArgumentException(sprintf('Unable to convert controller name for route "%s": %s',
                     $name, $e->getMessage()), 0, $e);
             }
         }

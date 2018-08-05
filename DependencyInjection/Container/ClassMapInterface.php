@@ -10,6 +10,8 @@
 
 namespace Yarhon\LinkGuardBundle\DependencyInjection\Container;
 
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
@@ -19,8 +21,6 @@ interface ClassMapInterface
      * @param string $id
      *
      * @return bool
-     *
-     * @throws \LogicException
      */
     public function has($id);
 
@@ -29,7 +29,7 @@ interface ClassMapInterface
      *
      * @return string
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function get($id);
 }

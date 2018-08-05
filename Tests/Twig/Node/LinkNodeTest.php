@@ -12,6 +12,7 @@ namespace Yarhon\LinkGuardBundle\Tests\Twig\Node;
 
 use Twig\Node\Node;
 use Twig\Error\SyntaxError;
+use Twig\Error\RuntimeError;
 use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
 use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
 use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
@@ -85,7 +86,7 @@ EOD;
         $routeExpression = $this->createMock(RouteExpression::class);
         $node = new LinkNode($routeExpression, new Node());
 
-        $this->expectException('LogicException');
+        $this->expectException(RuntimeError::class);
         $this->expectExceptionMessage('referenceVarName is not set. setReferenceVarName() method should be called before compiling.');
 
         $this->compile($node);

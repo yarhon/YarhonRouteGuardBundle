@@ -20,8 +20,6 @@ use Yarhon\LinkGuardBundle\Security\Http\TestBagMap;
 use Yarhon\LinkGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\LinkGuardBundle\Security\Http\RouteMatcher;
 use Symfony\Component\Routing\Route;
-
-
 use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
 
 /**
@@ -31,7 +29,7 @@ class SymfonyAccessControlProviderTest extends TestCase
 {
     public function testMatcher()
     {
-        $route = new Route('/secure1/{page}', ['page' => 10 ], ['page' => '\d+'], ['utf8' => false]);
+        $route = new Route('/secure1/{page}', ['page' => 10], ['page' => '\d+'], ['utf8' => false]);
 
         $compiled = $route->compile();
 

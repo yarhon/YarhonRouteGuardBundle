@@ -12,6 +12,7 @@ namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Container;
 
 use PHPUnit\Framework\TestCase;
 use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap;
+use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -37,7 +38,7 @@ class ClassMapTest extends TestCase
     {
         $map = new ClassMap(['test1' => 'class_name']);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $map->get('test2');
     }
