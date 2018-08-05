@@ -18,6 +18,7 @@ use Twig\Compiler;
 use Twig\Node\Node;
 use Twig\Token;
 use Twig\TokenStream;
+use Twig\TwigFunction;
 use Twig_Error_Syntax as SyntaxError; // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
 use Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension;
 
@@ -28,7 +29,9 @@ abstract class AbstractNodeTest extends TestCase
      */
     protected $environment;
 
-    protected $linkTag = 'routeifgranted';
+    private $linkTag = 'routeifgranted';
+
+    private $referenceVarName = 'route_reference';
 
     public function setUp()
     {
@@ -37,13 +40,14 @@ abstract class AbstractNodeTest extends TestCase
         $this->environment = new Environment($loader, ['cache' => false, 'autoescape' => false, 'optimizations' => 0]);
 
         $this->environment->addExtension($this->getRoutingExtension());
-        $this->environment->addExtension($this->getTwigBridgeRoutingExtension());
     }
 
     private function getRoutingExtension()
     {
-        // TODO: get extension as a service, like in normal flow
-        return new RoutingExtension();
+        return new RoutingExtension([
+            'tag_name' => $this->linkTag,
+            'reference_var_name' => $this->referenceVarName,
+        ]);
 
         /*
         Alternative way:
@@ -62,11 +66,12 @@ abstract class AbstractNodeTest extends TestCase
             ->getMock();
 
         return $extension;
+    }
 
-        /*
-        Alternative way:
-        $this->environment->addFunction(new TwigFunction('url', function () {}))
-        */
+    protected function emulateTwigBridgeRoutingExtension(Environment $environment)
+    {
+        $environment->addFunction(new TwigFunction('url', function () {}));
+        $environment->addFunction(new TwigFunction('path', function () {}));
     }
 
     /**

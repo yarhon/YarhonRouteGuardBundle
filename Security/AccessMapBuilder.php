@@ -41,21 +41,6 @@ class AccessMapBuilder implements LoggerAwareInterface
     private $routeCollectionTransformers = [];
 
     /**
-     * AccessMapBuilder constructor.
-     *
-     * We need to allow $routeCollection accept null value for container to be able to instantiate AccessMapBuilder
-     * without $routeCollection.
-     *
-     * @param RouteCollection|null $routeCollection
-     */
-    public function __construct(RouteCollection $routeCollection = null)
-    {
-        if ($routeCollection) {
-            $this->setRouteCollection($routeCollection);
-        }
-    }
-
-    /**
      * @param ProviderInterface $provider
      */
     public function addAuthorizationProvider(ProviderInterface $provider)

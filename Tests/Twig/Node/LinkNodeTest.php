@@ -18,6 +18,8 @@ use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 
 class LinkNodeTest extends AbstractNodeTest
 {
+    private $referenceVarName = 'route_reference';
+
     /**
      * @dataProvider compileDataProvider
      */
@@ -28,7 +30,7 @@ class LinkNodeTest extends AbstractNodeTest
 
         $conditionNode = $node->getNode('condition');
         $conditionSource = $this->compile($conditionNode);
-        $expected = sprintf($expected, $conditionSource);
+        $expected = sprintf($expected, $this->referenceVarName, $conditionSource);
 
         $this->assertEquals($expected, $source);
     }
@@ -40,7 +42,7 @@ class LinkNodeTest extends AbstractNodeTest
         // general test
         $dataSet[0][0] = '{% $linkTag ["secure1"] %}body text{% end$linkTag %}';
         $dataSet[0][1] = <<<'EOD'
-if (false !== ($context["route_reference"] = %s)) {
+if (false !== ($context["%s"] = %s)) {
     echo "body text";
 }
 
@@ -48,7 +50,7 @@ EOD;
         // else node test
         $dataSet[1][] = '{% $linkTag ["secure1"] %}body text{% else %}else text{% end$linkTag %}';
         $dataSet[1][] = <<<'EOD'
-if (false !== ($context["route_reference"] = %s)) {
+if (false !== ($context["%s"] = %s)) {
     echo "body text";
 } else {
     echo "else text";

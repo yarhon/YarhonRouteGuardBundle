@@ -8,7 +8,6 @@
         <defaults public="false" autowire="false" autoconfigure="false" />
 
         <service id="Yarhon\LinkGuardBundle\Security\AccessMapBuilder">
-            <argument>null</argument> <!--route collection -->
             <call method="setRouteCollectionTransformers">
                 <argument type="collection" />
             </call>
@@ -75,7 +74,7 @@
         <service id="Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer">
             <argument type="service" id="Yarhon\LinkGuardBundle\Security\AccessMapBuilder" />
             <argument /><!-- cache dir -->
-            <tag name="kernel.cache_warmer" /> <!-- this tag is processed by framework bundle!!!! -->
+            <tag name="kernel.cache_warmer" />
         </service>
 
         <service id="Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension">

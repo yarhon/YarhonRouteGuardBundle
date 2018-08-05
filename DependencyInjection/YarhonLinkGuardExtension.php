@@ -13,7 +13,6 @@ namespace Yarhon\LinkGuardBundle\DependencyInjection;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Extension\Extension;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Config\FileLocator;
 use Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer;
 use Yarhon\LinkGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer;
@@ -42,5 +41,8 @@ class YarhonLinkGuardExtension extends Extension
         $ignoredControllers = array_merge($config['ignore_controllers'], $config['ignore_controllers_symfony']);
         $definition = $container->getDefinition(RemoveIgnoredTransformer::class);
         $definition->replaceArgument(0, $ignoredControllers);
+
+        $definition = $container->getDefinition(RoutingExtension::class);
+        $definition->replaceArgument(0, $config['twig']);
     }
 }

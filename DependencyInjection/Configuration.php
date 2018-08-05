@@ -46,6 +46,13 @@ class Configuration implements ConfigurationInterface
                     ->prototype('scalar')->end()
                     ->defaultValue($this->symfonyControllers)
                 ->end()
+                ->arrayNode('twig')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('tag_name')->defaultValue('routeifgranted')->end()
+                        ->scalarNode('reference_var_name')->defaultValue('route_reference')->end()
+                    ->end()
+                ->end()
             ->end();
 
         return $treeBuilder;

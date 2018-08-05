@@ -37,6 +37,11 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
     private $referenceVarName;
 
     /**
+     * @var string
+     */
+    private $tagName;
+
+    /**
      * @var Scope
      */
     private $scope;
@@ -44,11 +49,13 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
     /**
      * DiscoverRoutingFunctionNodeVisitor constructor.
      *
-     * @param $referenceVarName
+     * @param string $referenceVarName
+     * @param string $tagName
      */
-    public function __construct($referenceVarName)
+    public function __construct($referenceVarName, $tagName)
     {
         $this->referenceVarName = $referenceVarName;
+        $this->tagName = $tagName;
         $this->scope = new Scope();
     }
 
@@ -68,7 +75,7 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
     /**
      * {@inheritdoc}
      *
-     * @throws SyntaxError If zero / more than one routing function call was found inside node
+     * @throws SyntaxError If zero / more than one routing function calls was found inside node
      */
     protected function doLeaveNode(Node $node, Environment $env)
     {
@@ -77,7 +84,7 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
 
             if (!$this->scope->has('routingFunction')) {
                 throw new SyntaxError(
-                    sprintf('"%s" tag with discover option must contain one url() or path() call.', LinkNode::TAG_NAME),
+                    sprintf('"%s" tag with discover option must contain one url() or path() call.', $this->tagName),
                     $node->getTemplateLine()
                 );
             }
@@ -94,7 +101,7 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
         if ($this->scope->get('insideTargetNode') && $this->isRoutingFunctionNode($node)) {
             if ($this->scope->has('routingFunction')) {
                 throw new SyntaxError(
-                    sprintf('"%s" tag with discover option must contain only one url() or path() call.', LinkNode::TAG_NAME),
+                    sprintf('"%s" tag with discover option must contain only one url() or path() call.', $this->tagName),
                     $node->getTemplateLine()
                 );
             }
@@ -157,13 +164,13 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
             $arguments->removeNode(2);
         }
 
-        $condition = new RouteExpression($arguments, $line);
-        $condition->setFunctionName($functionName);
+        $expression = new RouteExpression($arguments, $line);
+        $expression->setFunctionName($functionName);
 
         if ($relativeNode) {
-            $condition->setRelative($relativeNode);
+            $expression->setRelative($relativeNode);
         }
 
-        return $condition;
+        return $expression;
     }
 }

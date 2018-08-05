@@ -35,6 +35,10 @@ class ConfigurationTest extends TestCase
                 'Symfony\Bundle\WebProfilerBundle\Controller\RouterController',
                 'Symfony\Bundle\WebProfilerBundle\Controller\ExceptionController',
             ],
+            'twig' => [
+                'tag_name' => 'routeifgranted',
+                'reference_var_name' => 'route_reference',
+            ],
         ];
 
         $this->assertEquals($defaults, $config);

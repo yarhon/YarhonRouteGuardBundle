@@ -35,13 +35,13 @@ class RoutingExtension extends AbstractExtension
     public function __construct(array $options = [])
     {
         $defaults = [
-            'tagName' => 'routeifgranted',
-            'referenceVarName' => 'route_reference',
+            'tag_name' => 'routeifgranted',
+            'reference_var_name' => 'route_reference',
         ];
 
         $this->options = array_merge($defaults, $options);
 
-        LinkNode::setReferenceVarName($this->options['referenceVarName']);
+        LinkNode::setReferenceVarName($this->options['reference_var_name']);
     }
 
     /**
@@ -50,7 +50,7 @@ class RoutingExtension extends AbstractExtension
     public function getTokenParsers()
     {
         return [
-            new LinkTokenParser($this->options['tagName']),
+            new LinkTokenParser($this->options['tag_name']),
         ];
     }
 
@@ -60,7 +60,7 @@ class RoutingExtension extends AbstractExtension
     public function getNodeVisitors()
     {
         return [
-            new DiscoverRoutingFunctionNodeVisitor($this->options['referenceVarName']),
+            new DiscoverRoutingFunctionNodeVisitor($this->options['reference_var_name'], $this->options['tag_name']),
         ];
     }
 

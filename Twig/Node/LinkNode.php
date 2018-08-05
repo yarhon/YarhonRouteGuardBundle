@@ -20,8 +20,6 @@ use Twig\Error\SyntaxError;
  */
 class LinkNode extends Node
 {
-    /* public */ const TAG_NAME = 'routeifgranted';
-
     /**
      * @var string
      */

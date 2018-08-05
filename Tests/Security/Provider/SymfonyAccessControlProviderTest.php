@@ -21,6 +21,9 @@ use Yarhon\LinkGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\LinkGuardBundle\Security\Http\RouteMatcher;
 use Symfony\Component\Routing\Route;
 
+
+use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
+
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
@@ -36,7 +39,7 @@ class SymfonyAccessControlProviderTest extends TestCase
 
         //var_dump($prefix);
 
-        $a = [''];
+        $a = new AccessMapBuilder(null);
 
         //var_dump(isset($a[0]));
 

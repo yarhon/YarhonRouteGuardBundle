@@ -22,7 +22,16 @@ use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 
 class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
 {
-    private static $referenceVarName = 'route_reference';
+    private $linkTag = 'routeifgranted';
+
+    private $referenceVarName = 'route_reference';
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->emulateTwigBridgeRoutingExtension($this->environment);
+    }
 
     /**
      * @dataProvider discoverDataProvider
@@ -36,7 +45,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
 
     public function discoverDataProvider()
     {
-        $nameExpression = new NameExpression(self::$referenceVarName, 0);
+        $nameExpression = new NameExpression($this->referenceVarName, 0);
         $nameExpression->setAttribute('always_defined', true);
 
         return [
