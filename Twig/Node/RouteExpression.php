@@ -44,93 +44,44 @@ class RouteExpression extends FunctionExpression
 
         $this->addDefaultArguments($arguments);
 
-        parent::__construct(null, $arguments, $line);
+        parent::__construct('route_guard_link', $arguments, $line);
 
         // Set default generateAs parameters.
-        // We call this functions after parent constructor call to allow them to rely on internal structure
+        // We call this function after parent constructor call to allow it to rely on internal structure
         // created by parent constructor (i.e., call $this->getNode('arguments'), $this->getTemplateLine()).
-        $this->setFunctionName('path');
-        $this->setRelative(false);
-    }
-
-    // TODO: allow to specify $generateAs as a constant (one of UrlGeneratorInterface constants).
-    // Note that $relative parameter in setRelative() method can be an instance of AbstractExpression,
-    // and it's execution result can be non-calculable at compile time.
-
-    /**
-     * @param array $generateAs
-     *
-     * @return self
-     *
-     * @throws SyntaxError
-     */
-    public function setGenerateAs($generateAs)
-    {
-        if (is_array($generateAs)) {
-            if (!isset($generateAs[0])) {
-                throw new SyntaxError('setGenerateAs array parameter must have at least one parameter (functionName).',
-                    $this->getTemplateLine());
-            }
-
-            $this->setFunctionName($generateAs[0]);
-
-            if (isset($generateAs[1])) {
-                $this->setRelative($generateAs[1]);
-            }
-        }
-
-        return $this;
+        $this->setGenerateAs('path', false);
     }
 
     /**
-     * @param string $functionName
+     * TODO: allow to specify $referenceType as a constant (one of UrlGeneratorInterface constants).
+     * Note that $relative can be an instance of AbstractExpression, and it's execution result can be non-calculable at compile time.
      *
-     * @return self
-     *
-     * @throws SyntaxError
-     */
-    public function setFunctionName($functionName)
-    {
-        $functionName = $this->transformFunctionName($functionName);
-        $this->setAttribute('name', $functionName);
-
-        return $this;
-    }
-
-    /**
+     * @param string                  $referenceType
      * @param bool|AbstractExpression $relative
      *
      * @return self
+     *
+     * @throws SyntaxError
      */
-    public function setRelative($relative)
+    public function setGenerateAs($referenceType, $relative = false)
     {
-        // TODO: validate $relative
+        if (!in_array($referenceType, ['url', 'path'], true)) {
+            throw new SyntaxError(sprintf('Invalid reference type: %s', $referenceType), $this->getTemplateLine());
+        }
+
+        $referenceType = new ConstantExpression($referenceType, $this->getTemplateLine());
 
         if (!($relative instanceof AbstractExpression)) {
             $relative = new ConstantExpression($relative, $this->getTemplateLine());
         }
 
-        $this->getNode('arguments')->setNode(3, $relative);
+        $argument = new ArrayExpression([], $this->getTemplateLine());
+        $argument->addElement($referenceType);
+        $argument->addElement($relative);
+
+        $this->getNode('arguments')->setNode(3, $argument);
 
         return $this;
-    }
-
-    /**
-     * @param string $functionName
-     *
-     * @return string
-     *
-     * @throws SyntaxError
-     */
-    private function transformFunctionName($functionName)
-    {
-        if ('path' == $functionName) {
-            return 'path_if_granted';
-        } elseif ('url' == $functionName) {
-            return 'url_if_granted';
-        } else {
-            throw new SyntaxError(sprintf('Invalid function name: %s', $functionName), $this->getTemplateLine());
-        }
     }
 
     /**

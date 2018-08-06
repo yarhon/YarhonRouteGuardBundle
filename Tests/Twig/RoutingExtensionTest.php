@@ -25,8 +25,9 @@ class RoutingExtensionTest extends TestCase
         $extension = new RoutingExtension();
 
         $functions = [
-            new TwigFunction('url_if_granted', [RoutingRuntime::class, 'urlIfGranted']),
-            new TwigFunction('path_if_granted', [RoutingRuntime::class, 'pathIfGranted']),
+            new TwigFunction('route_guard_link', [RoutingRuntime::class, 'link']),
+            new TwigFunction('route_guard_path', [RoutingRuntime::class, 'path']),
+            new TwigFunction('route_guard_url', [RoutingRuntime::class, 'url']),
         ];
 
         $this->assertEquals($functions, $extension->getFunctions());

@@ -60,19 +60,11 @@ class LinkTokenParser extends AbstractTokenParser
             $stream->next();
         }
 
-        /*
-        if ($stream->nextIf('if')) {
-            $parser->getExpressionParser()->parseExpression();
-        }
-        */
-
         $stream->expect(Token::BLOCK_END_TYPE);
 
         $bodyNode = $parser->subparse(function (Token $token) {
             return $token->test(['else', $this->endTagName]);
         });
-
-        // $this->testForNestedTag($stream); + add $this->tagName to subparse stop condition
 
         if ('else' == $stream->next()->getValue()) {
             $stream->expect(Token::BLOCK_END_TYPE);
@@ -85,8 +77,6 @@ class LinkTokenParser extends AbstractTokenParser
             $elseNode = $parser->subparse(function (Token $token) {
                 return $token->test([$this->endTagName]);
             });
-
-            // $this->testForNestedTag($stream); + add $this->tagName to subparse stop condition
 
             $stream->expect($this->endTagName);
         }
@@ -105,17 +95,4 @@ class LinkTokenParser extends AbstractTokenParser
     {
         return $this->tagName;
     }
-
-    /*
-    private function testForNestedTag(TokenStream $stream)
-    {
-        if (!$stream->getCurrent()->test($this->getTag()) {
-            return;
-        }
-
-        throw new SyntaxError(sprintf('Nested "%s" tags are not allowed.', $this->getTag()),
-            $stream->getCurrent()->getLine(), $stream->getSourceContext()
-        );
-    }
-    */
 }

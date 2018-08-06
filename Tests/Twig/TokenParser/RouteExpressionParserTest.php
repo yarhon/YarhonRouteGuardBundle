@@ -39,16 +39,15 @@ class RouteExpressionParserTest extends AbstractNodeTest
                     new Node([
                         new ConstantExpression('secure1', 0),
                     ])
-                ))->setFunctionName('path')->setRelative(false),
+                ))->setGenerateAs('path', false),
             ],
-
             [
                 '{% $linkTag ["secure1"] as path relative %}{% end$linkTag %}',
                 (new RouteExpression(
                     new Node([
                         new ConstantExpression('secure1', 0),
                     ])
-                ))->setFunctionName('path')->setRelative(true),
+                ))->setGenerateAs('path', true),
             ],
 
             [
@@ -57,7 +56,7 @@ class RouteExpressionParserTest extends AbstractNodeTest
                     new Node([
                         new ConstantExpression('secure1', 0),
                     ])
-                ))->setFunctionName('path')->setRelative(false),
+                ))->setGenerateAs('path', false),
             ],
 
             [
@@ -66,8 +65,9 @@ class RouteExpressionParserTest extends AbstractNodeTest
                     new Node([
                         new ConstantExpression('secure1', 0),
                     ])
-                ))->setFunctionName('url')->setRelative(false),
+                ))->setGenerateAs('url', false),
             ],
+
         ];
     }
 

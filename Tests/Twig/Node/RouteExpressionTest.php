@@ -28,6 +28,9 @@ class RouteExpressionTest extends TestCase
         $expression = new RouteExpression($sourceArguments);
         $arguments = $expression->getNode('arguments');
 
+        // Remove the "generateAs" node, as it's tested in separate method.
+        $arguments->removeNode(3);
+
         $this->assertEquals($expectedArguments, $arguments);
     }
 
@@ -42,10 +45,8 @@ class RouteExpressionTest extends TestCase
                     new ConstantExpression('secure1', 0),
                     new ArrayExpression([], 0),
                     new ConstantExpression('GET', 0),
-                    new ConstantExpression(false, 0),
                 ]),
             ],
-
             [
                 new Node([
                     new ConstantExpression('secure1', 0),
@@ -61,10 +62,8 @@ class RouteExpressionTest extends TestCase
                         new ConstantExpression(10, 0),
                     ], 0),
                     new ConstantExpression('GET', 0),
-                    new ConstantExpression(false, 0),
                 ]),
             ],
-
             [
                 new Node([
                     new ConstantExpression('secure1', 0),
@@ -75,7 +74,6 @@ class RouteExpressionTest extends TestCase
                     new ConstantExpression('secure1', 0),
                     new ArrayExpression([], 0),
                     new ConstantExpression('POST', 0),
-                    new ConstantExpression(false, 0),
                 ]),
             ],
         ];
@@ -113,62 +111,126 @@ class RouteExpressionTest extends TestCase
         ];
     }
 
-    public function testSetFunctionName()
+    public function testDefaultGenerateAs()
     {
         $expression = new RouteExpression(new Node([
             new ConstantExpression('secure1', 0),
         ]));
 
-        $this->assertEquals('path_if_granted', $expression->getAttribute('name'));
+        $arguments = $expression->getNode('arguments');
+        $this->assertTrue($arguments->hasNode(3));
+        $generateAsNode = $arguments->getNode(3);
 
-        $expression->setFunctionName('path');
-        $this->assertEquals('path_if_granted', $expression->getAttribute('name'));
+        $expected = new ArrayExpression([
+            new ConstantExpression(0, 0),
+            new ConstantExpression('path', 0),
+            new ConstantExpression(1, 0),
+            new ConstantExpression(false, 0),
+        ], 0);
 
-        $expression->setFunctionName('url');
-        $this->assertEquals('url_if_granted', $expression->getAttribute('name'));
-
-        $this->expectException(SyntaxError::class);
-        $this->expectExceptionMessage('Invalid function name: blabla');
-
-        $expression->setFunctionName('blabla');
+        $this->assertEquals($generateAsNode, $expected);
     }
 
-    public function testSetRelative()
+    /**
+     * @dataProvider setGenerateAsDataProvider
+     */
+    public function testSetGenerateAs($generateAs, $expected)
     {
         $expression = new RouteExpression(new Node([
             new ConstantExpression('secure1', 0),
         ]));
 
-        $relativeNode = $expression->getNode('arguments')->getNode(3);
-        $this->assertEquals($relativeNode, new ConstantExpression(false, 0));
+        $expression->setGenerateAs(...$generateAs);
 
-        $expression->setRelative(true);
+        $arguments = $expression->getNode('arguments');
+        $this->assertTrue($arguments->hasNode(3));
+        $generateAsNode = $arguments->getNode(3);
 
-        $relativeNode = $expression->getNode('arguments')->getNode(3);
-        $this->assertEquals($relativeNode, new ConstantExpression(true, 0));
-
-        $nameExpression = new NameExpression('rel', 0);
-        $expression->setRelative($nameExpression);
-        $relativeNode = $expression->getNode('arguments')->getNode(3);
-        $this->assertEquals($relativeNode, $nameExpression);
+        $this->assertEquals($generateAsNode, $expected);
     }
 
-    public function testSetGenerateAs()
+    public function setGenerateAsDataProvider()
+    {
+        return [
+            [
+                ['path'],
+                new ArrayExpression([
+                    new ConstantExpression(0, 0),
+                    new ConstantExpression('path', 0),
+                    new ConstantExpression(1, 0),
+                    new ConstantExpression(false, 0),
+                ], 0),
+            ],
+            [
+                ['path', false],
+                new ArrayExpression([
+                    new ConstantExpression(0, 0),
+                    new ConstantExpression('path', 0),
+                    new ConstantExpression(1, 0),
+                    new ConstantExpression(false, 0),
+                ], 0),
+            ],
+            [
+                ['path', true],
+                new ArrayExpression([
+                    new ConstantExpression(0, 0),
+                    new ConstantExpression('path', 0),
+                    new ConstantExpression(1, 0),
+                    new ConstantExpression(true, 0),
+                ], 0),
+            ],
+            [
+                ['url', false],
+                new ArrayExpression([
+                    new ConstantExpression(0, 0),
+                    new ConstantExpression('url', 0),
+                    new ConstantExpression(1, 0),
+                    new ConstantExpression(false, 0),
+                ], 0),
+            ],
+            [
+                ['url', true],
+                new ArrayExpression([
+                    new ConstantExpression(0, 0),
+                    new ConstantExpression('url', 0),
+                    new ConstantExpression(1, 0),
+                    new ConstantExpression(true, 0),
+                ], 0),
+            ],
+            [
+                ['url', new ConstantExpression(5, 0)],
+                new ArrayExpression([
+                    new ConstantExpression(0, 0),
+                    new ConstantExpression('url', 0),
+                    new ConstantExpression(1, 0),
+                    new ConstantExpression(5, 0),
+                ], 0),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider setGenerateAsExceptionDataProvider
+     */
+    public function testSetGenerateAsException($generateAs, $expected)
     {
         $expression = new RouteExpression(new Node([
             new ConstantExpression('secure1', 0),
         ]));
 
-        $expression->setGenerateAs(['url', true]);
+        $this->expectException($expected[0]);
+        $this->expectExceptionMessage($expected[1]);
 
-        $this->assertEquals('url_if_granted', $expression->getAttribute('name'));
+        $expression->setGenerateAs(...$generateAs);
+    }
 
-        $relativeNode = $expression->getNode('arguments')->getNode(3);
-        $this->assertEquals($relativeNode, new ConstantExpression(true, 0));
-
-        $this->expectException(SyntaxError::class);
-        $this->expectExceptionMessage('setGenerateAs array parameter must have at least one parameter (functionName).');
-
-        $expression->setGenerateAs([]);
+    public function setGenerateAsExceptionDataProvider()
+    {
+        return [
+            [
+               ['foo'],
+               [SyntaxError::class, 'Invalid reference type: foo'],
+            ],
+        ];
     }
 }

@@ -82,8 +82,9 @@ class RoutingExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('url_if_granted', [RoutingRuntime::class, 'urlIfGranted']),
-            new TwigFunction('path_if_granted', [RoutingRuntime::class, 'pathIfGranted']),
+            new TwigFunction('route_guard_link', [RoutingRuntime::class, 'link']),
+            new TwigFunction('route_guard_path', [RoutingRuntime::class, 'path']),
+            new TwigFunction('route_guard_url', [RoutingRuntime::class, 'url']),
         ];
     }
 }

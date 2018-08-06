@@ -50,11 +50,6 @@ class RouteExpressionParser
         $parser = $this->parser;
         $stream = $parser->getStream();
 
-        // or take token from arguments?
-        $token = $stream->getCurrent();
-
-        ///////////////////////////
-
         $arguments = $parser->getExpressionParser()->parseArrayExpression();
         $arguments = $this->arrayExpressionToArguments($arguments);
         $expression = new RouteExpression($arguments, $token->getLine());
@@ -63,15 +58,16 @@ class RouteExpressionParser
             // $functionName = $stream->expect(Token::NAME_TYPE, ['url', 'path'])->getValue();
             // Workaround for bug in Twig_TokenStream::expect() method. See self::streamExpect().
             $message = '"name" expected with value "url" or "path"';
-            $functionName = $this->streamExpect($stream, Token::NAME_TYPE, ['url', 'path'], $message)->getValue();
-
-            $expression->setFunctionName($functionName);
+            $referenceType = $this->streamExpect($stream, Token::NAME_TYPE, ['url', 'path'], $message)->getValue();
+            $generateAs = [$referenceType];
 
             if ($stream->test(['absolute', 'relative'])) {
                 $relative = 'absolute' == $stream->getCurrent()->getValue() ? false : true;
-                $expression->setRelative($relative);
+                $generateAs[] = $relative;
                 $stream->next();
             }
+
+            $expression->setGenerateAs(...$generateAs);
         }
 
         return $expression;

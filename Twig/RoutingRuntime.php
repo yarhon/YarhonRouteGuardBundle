@@ -35,7 +35,7 @@ class RoutingRuntime implements RuntimeExtensionInterface
      *
      * @return string|bool
      */
-    protected function routeIfGranted($name, $parameters = [], $method = 'GET', $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
+    protected function generate($name, $parameters = [], $method = 'GET', $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
         // TODO: implement this
         return true;
@@ -45,15 +45,15 @@ class RoutingRuntime implements RuntimeExtensionInterface
      * @param string $name
      * @param array  $parameters
      * @param string $method
-     * @param bool   $relative
+     * @param array  $generateAs
      *
      * @return string|bool
      */
-    public function urlIfGranted($name, $parameters = [], $method = 'GET', $relative = false)
+    public function link($name, $parameters = [], $method = 'GET', array $generateAs = [])
     {
-        $referenceType = $relative ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL;
+        // TODO: transform $generateAs
 
-        return $this->routeIfGranted($name, $parameters, $method, $referenceType);
+        return $this->generate($name, $parameters, $method, $referenceType);
     }
 
     /**
@@ -64,10 +64,25 @@ class RoutingRuntime implements RuntimeExtensionInterface
      *
      * @return string|bool
      */
-    public function pathIfGranted($name, $parameters = [], $method = 'GET', $relative = false)
+    public function path($name, $parameters = [], $method = 'GET', $relative = false)
     {
         $referenceType = $relative ? UrlGeneratorInterface::RELATIVE_PATH : UrlGeneratorInterface::ABSOLUTE_PATH;
 
-        return $this->routeIfGranted($name, $parameters, $method, $referenceType);
+        return $this->generate($name, $parameters, $method, $referenceType);
+    }
+
+    /**
+     * @param string $name
+     * @param array  $parameters
+     * @param string $method
+     * @param bool   $relative
+     *
+     * @return string|bool
+     */
+    public function url($name, $parameters = [], $method = 'GET', $relative = false)
+    {
+        $referenceType = $relative ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL;
+
+        return $this->generate($name, $parameters, $method, $referenceType);
     }
 }

@@ -163,22 +163,33 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
     private function createRouteExpression(FunctionExpression $function, $line)
     {
         $functionName = $function->getAttribute('name');
-        $arguments = $function->getNode('arguments');
-        $relativeNode = null;
-
-        if ($arguments->hasNode(2)) {
-            $relativeNode = $arguments->getNode(2);
-            $arguments->removeNode(2);
+        $functionArguments = [];
+        foreach ($function->getNode('arguments') as $argument) {
+            $functionArguments[] = $argument;
         }
 
-        $expression = new RouteExpression($arguments, $line);
-        $expression->setFunctionName($functionName);
+        list($arguments, $generateAs) = $this->convertFunction($functionName, $functionArguments);
 
-        if ($relativeNode) {
-            $expression->setRelative($relativeNode);
-        }
+        $expression = new RouteExpression(new Node($arguments), $line);
+        $expression->setGenerateAs(...$generateAs);
 
         return $expression;
+    }
+
+    private function convertFunction($functionName, $functionArguments)
+    {
+        $arguments = [$functionArguments[0]];
+        $generateAs = [$functionName];
+
+        if (isset($functionArguments[1])) {
+            $arguments[1] = $functionArguments[1];
+        }
+
+        if (isset($functionArguments[2])) {
+            $generateAs[1] = $functionArguments[2];
+        }
+
+        return [$arguments, $generateAs];
     }
 
     private function createDiscoverFunctionsString()

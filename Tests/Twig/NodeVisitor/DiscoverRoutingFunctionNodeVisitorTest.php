@@ -63,7 +63,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
                         new Node([
                             new ConstantExpression('secure1', 0),
                         ])
-                    ))->setFunctionName('path'),
+                    ))->setGenerateAs('path'),
                     new PrintNode($nameExpression, 0)
                 ),
             ],
@@ -76,7 +76,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
                         new Node([
                             new ConstantExpression('secure1', 0),
                         ])
-                    ))->setFunctionName('url'),
+                    ))->setGenerateAs('url'),
                     new PrintNode($nameExpression, 0)
                 ),
             ],
@@ -91,7 +91,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
                             new ArrayExpression([], 0),
                             new ConstantExpression('GET', 0),
                         ])
-                    ))->setFunctionName('path')->setRelative(true),
+                    ))->setGenerateAs('path', true),
                     new PrintNode($nameExpression, 0)
                 ),
             ],
