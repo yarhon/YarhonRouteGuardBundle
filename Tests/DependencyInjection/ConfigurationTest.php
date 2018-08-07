@@ -38,6 +38,7 @@ class ConfigurationTest extends TestCase
             'twig' => [
                 'tag_name' => 'routeifgranted',
                 'reference_var_name' => 'route_reference',
+                'discover' => true,
             ],
         ];
 

@@ -51,6 +51,7 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->scalarNode('tag_name')->defaultValue('routeifgranted')->end()
                         ->scalarNode('reference_var_name')->defaultValue('route_reference')->end()
+                        ->booleanNode('discover')->defaultValue(true)->end()
                     ->end()
                 ->end()
             ->end();

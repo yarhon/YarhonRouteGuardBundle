@@ -67,7 +67,7 @@ class RoutingExtensionTest extends TestCase
         $this->assertAttributeEquals($options['reference_var_name'], 'referenceVarName', LinkNode::class);
     }
 
-    public function testDiscoverFunctionsEmpty()
+    public function testDiscoverNodeVisitorEmpty()
     {
         $extension = new RoutingExtension();
         $nodeVisitors = [];
@@ -75,16 +75,17 @@ class RoutingExtensionTest extends TestCase
         $this->assertEquals($nodeVisitors, $extension->getNodeVisitors());
     }
 
-    public function testDiscoverFunctions()
+    public function testDiscoverNodeVisitor()
     {
         $options = [
             'tag_name' => 'foo',
             'reference_var_name' => 'bar',
+            'discover' => true,
         ];
 
-        $extension = new RoutingExtension($options, ['func']);
+        $extension = new RoutingExtension($options);
         $nodeVisitors = [
-            new DiscoverRoutingFunctionNodeVisitor(['func'], $options['reference_var_name'], $options['tag_name']),
+            new DiscoverRoutingFunctionNodeVisitor($options['reference_var_name'], $options['tag_name']),
         ];
 
         $this->assertEquals($nodeVisitors, $extension->getNodeVisitors());

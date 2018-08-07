@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SymfonySecurityBundlePass;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SensioFrameworkExtraBundlePass;
+use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\TwigBundlePass;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\ContainerClassMapPass;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\InjectTaggedServicesPass;
 use Yarhon\LinkGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
@@ -34,6 +35,7 @@ class YarhonLinkGuardBundle extends Bundle
 
         $container->addCompilerPass(new SymfonySecurityBundlePass($foreignExtensionAccessor), PassConfig::TYPE_BEFORE_REMOVING, 100);
         $container->addCompilerPass(new SensioFrameworkExtraBundlePass(), PassConfig::TYPE_BEFORE_REMOVING, 101);
+        $container->addCompilerPass(new TwigBundlePass(), PassConfig::TYPE_BEFORE_REMOVING, 103);
 
         $container->addCompilerPass(new InjectTaggedServicesPass(), PassConfig::TYPE_BEFORE_REMOVING, 0);
 

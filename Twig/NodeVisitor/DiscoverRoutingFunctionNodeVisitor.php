@@ -32,9 +32,9 @@ use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
 {
     /**
-     * @var array
+     * @var DiscoveredFunctions
      */
-    private $discoverFunctions = [];
+    private $discoveredFunctions;
 
     /**
      * @var string
@@ -54,15 +54,14 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
     /**
      * DiscoverRoutingFunctionNodeVisitor constructor.
      *
-     * @param array  $discoverFunctions
-     * @param string $referenceVarName
-     * @param string $tagName
+     * @param string              $referenceVarName
+     * @param string              $tagName
      */
-    public function __construct(array $discoverFunctions, $referenceVarName, $tagName)
+    public function __construct($referenceVarName, $tagName)
     {
-        $this->discoverFunctions = $discoverFunctions;
         $this->referenceVarName = $referenceVarName;
         $this->tagName = $tagName;
+        $this->discoveredFunctions = new DiscoveredFunctions();
         $this->scope = new Scope();
     }
 
@@ -91,7 +90,7 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
 
             if (!$this->scope->has('routingFunction')) {
                 throw new SyntaxError(
-                    sprintf('"%s" tag with discover option must contain one %s call.', $this->tagName, $this->createDiscoverFunctionsString()),
+                    sprintf('"%s" tag with discover option must contain one %s call.', $this->tagName, $this->createDiscoveredFunctionsString()),
                     $node->getTemplateLine()
                 );
             }
@@ -105,10 +104,10 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
             return $node;
         }
 
-        if ($this->scope->get('insideTargetNode') && $this->isDiscoveredFunctionNode($node)) {
+        if ($this->scope->get('insideTargetNode') && $this->isDiscoveredNode($node)) {
             if ($this->scope->has('routingFunction')) {
                 throw new SyntaxError(
-                    sprintf('"%s" tag with discover option must contain only one %s call.', $this->tagName, $this->createDiscoverFunctionsString()),
+                    sprintf('"%s" tag with discover option must contain only one %s call.', $this->tagName, $this->createDiscoveredFunctionsString()),
                     $node->getTemplateLine()
                 );
             }
@@ -147,9 +146,9 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
      *
      * @return bool
      */
-    private function isDiscoveredFunctionNode(Node $node)
+    private function isDiscoveredNode(Node $node)
     {
-        return $node instanceof FunctionExpression && in_array($node->getAttribute('name'), $this->discoverFunctions);
+        return $node instanceof FunctionExpression && $this->discoveredFunctions->has($node->getAttribute('name'));
     }
 
     /**
@@ -168,7 +167,7 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
             $functionArguments[] = $argument;
         }
 
-        list($arguments, $generateAs) = $this->convertFunction($functionName, $functionArguments);
+        list($arguments, $generateAs) = $this->discoveredFunctions->resolveArguments($functionName, $functionArguments);
 
         $expression = new RouteExpression(new Node($arguments), $line);
         $expression->setGenerateAs(...$generateAs);
@@ -176,25 +175,9 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
         return $expression;
     }
 
-    private function convertFunction($functionName, $functionArguments)
+    private function createDiscoveredFunctionsString()
     {
-        $arguments = [$functionArguments[0]];
-        $generateAs = [$functionName];
-
-        if (isset($functionArguments[1])) {
-            $arguments[1] = $functionArguments[1];
-        }
-
-        if (isset($functionArguments[2])) {
-            $generateAs[1] = $functionArguments[2];
-        }
-
-        return [$arguments, $generateAs];
-    }
-
-    private function createDiscoverFunctionsString()
-    {
-        $functions = $this->discoverFunctions;
+        $functions = $this->discoveredFunctions->getFunctions();
         $functions = array_map(function ($name) {
             return '"'.$name.'()"';
         }, $functions);

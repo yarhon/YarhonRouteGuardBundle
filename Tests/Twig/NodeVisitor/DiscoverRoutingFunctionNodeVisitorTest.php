@@ -28,15 +28,6 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
 
     private $referenceVarName = 'route_reference';
 
-    public function testConstruct()
-    {
-        $nodeVisitor = new DiscoverRoutingFunctionNodeVisitor(['func'], 'foo', 'bar');
-
-        $this->assertAttributeEquals(['func'], 'discoverFunctions', $nodeVisitor);
-        $this->assertAttributeEquals('foo', 'referenceVarName', $nodeVisitor);
-        $this->assertAttributeEquals('bar', 'tagName', $nodeVisitor);
-    }
-
     /**
      * @dataProvider discoverDataProvider
      */
@@ -134,7 +125,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
         $this->environment->addFunction(new TwigFunction('url', function () {}));
         $this->environment->addFunction(new TwigFunction('path', function () {}));
 
-        $nodeVisitor = new DiscoverRoutingFunctionNodeVisitor(['url', 'path'], $this->referenceVarName, $this->linkTag);
+        $nodeVisitor = new DiscoverRoutingFunctionNodeVisitor($this->referenceVarName, $this->linkTag);
         $this->environment->addNodeVisitor($nodeVisitor);
     }
 }

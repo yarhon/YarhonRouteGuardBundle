@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SymfonySecurityBundlePass;
 use Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider;
 use Yarhon\LinkGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
+use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -46,7 +47,7 @@ class SymfonySecurityBundlePassTest extends TestCase
 
         $this->pass = new SymfonySecurityBundlePass($this->foreignExtensionAccessor);
 
-        $this->securityExtension = $this->createMock('Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension');
+        $this->securityExtension = $this->createMock(SecurityExtension::class);
 
         $this->securityExtension->method('getAlias')
             ->willReturn('security');

@@ -79,7 +79,6 @@
 
         <service id="Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension">
             <argument type="collection" />
-            <argument type="collection" />
             <tag name="twig.extension" />
         </service>
 
