@@ -36,7 +36,7 @@ class TwigBundlePass implements CompilerPassInterface
         if (!$container->hasDefinition('twig.extension.routing')) {
             $definition = $container->getDefinition(RoutingExtension::class);
             $options = $definition->getArgument(0);
-            $options['discover'] = false;
+            $options['discover_routing_functions'] = false;
             $definition->replaceArgument(0, $options);
         }
     }

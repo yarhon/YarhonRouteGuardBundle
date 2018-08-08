@@ -14,6 +14,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\RouteCollection;
 use Yarhon\LinkGuardBundle\Tests\HelperTrait;
 use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
+use Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider;
 use Yarhon\LinkGuardBundle\Routing\RouteCollection\ControllerNameTransformer;
 use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
 
@@ -32,6 +33,9 @@ class AccessMapBuilderTest extends TestCase
     public function setUp()
     {
         $this->builder = new AccessMapBuilder();
+
+        $authorizationProvider = $this->createMock(SymfonyAccessControlProvider::class);
+        $this->builder->addAuthorizationProvider($authorizationProvider);
     }
 
     public function testSetRouteCollection()

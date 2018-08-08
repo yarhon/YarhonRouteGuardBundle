@@ -33,8 +33,8 @@ class InjectTaggedServicesPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $this->inject($container, [AccessMapBuilder::class, 'setRouteCollectionTransformers'], 'yarhon_link_guard.route_collection_transformer');
-        $this->inject($container, [AccessMapBuilder::class, 'setAuthorizationProviders'], 'yarhon_link_guard.authorization_provider');
+        $this->inject($container, [AccessMapBuilder::class, 'setRouteCollectionTransformers'], 'yarhon_route_guard.route_collection_transformer');
+        $this->inject($container, [AccessMapBuilder::class, 'setAuthorizationProviders'], 'yarhon_route_guard.authorization_provider');
     }
 
     private function inject(ContainerBuilder $container, $destination, $tagName)

@@ -58,7 +58,7 @@ class YarhonLinkGuardExtensionTest extends TestCase
         ];
 
         $aliases = [
-            'yarhon_link_guard.authorization_manager',
+            'yarhon_route_guard.authorization_manager',
             'Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface',
         ];
 
@@ -80,7 +80,7 @@ class YarhonLinkGuardExtensionTest extends TestCase
     public function testPublicServices()
     {
         $services = [
-            'yarhon_link_guard.authorization_manager',
+            'yarhon_route_guard.authorization_manager',
         ];
 
         $this->container->compile();

@@ -98,27 +98,28 @@ class AccessMapBuilder implements LoggerAwareInterface
      */
     public function build()
     {
-        //var_dump($this->routeCollection->all());
-
         if (!$this->routeCollection) {
+            // TODO: warning or exception
+            return;
+        }
+
+        if (0 === count($this->authorizationProviders)) {
+            // TODO: warning or exception
             return;
         }
 
         $this->injectLogger();
 
         if ($this->logger) {
-            $this->logger->info('Build access map');
-            $this->logger->info('Route collection count', ['count' => count($this->routeCollection)]);
+            $this->logger->info('Build access map. Route collection count', ['count' => count($this->routeCollection)]);
         }
 
-        /////////////////////////////////////
         $originalRoutes = array_keys($this->routeCollection->all());
         $routeCollection = $this->transformRouteCollection($this->routeCollection);
         $ignoredRoutes = array_diff($originalRoutes, array_keys($routeCollection->all()));
         // TODO: check controllers format in case when no ControllerNameTransformer added ? $this->checkControllersFormat($routeCollection)
-        ////////////////////////////////////
 
-        if ($this->logger) {
+        if ($this->logger && count($ignoredRoutes)) {
             $this->logger->info('Ignored routes count', ['count' => count($ignoredRoutes)]);
         }
 

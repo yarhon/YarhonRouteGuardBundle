@@ -81,11 +81,11 @@ class InjectTaggedServicesPassTest extends TestCase
         return [
             [
                 [AccessMapBuilder::class, 'setRouteCollectionTransformers'],
-                'yarhon_link_guard.route_collection_transformer',
+                'yarhon_route_guard.route_collection_transformer',
             ],
             [
                 [AccessMapBuilder::class, 'setAuthorizationProviders'],
-                'yarhon_link_guard.authorization_provider',
+                'yarhon_route_guard.authorization_provider',
             ],
         ];
     }
