@@ -12,7 +12,6 @@ namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Compiler;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\InjectTaggedServicesPass;
 use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
 
@@ -43,15 +42,8 @@ class InjectTaggedServicesPassTest extends TestCase
      */
     public function testProcess($destination, $tagName)
     {
-        $definition1 = new Definition();
-        $definition1->addTag($tagName, ['priority' => 10]);
-
-        $this->container->setDefinition('test1', $definition1);
-
-        $definition2 = new Definition();
-        $definition2->addTag($tagName, ['priority' => 20]);
-
-        $this->container->setDefinition('test2', $definition2);
+        $this->container->register('test1')->addTag($tagName, ['priority' => 10]);
+        $this->container->register('test2')->addTag($tagName, ['priority' => 20]);
 
         $definition = $this->container->getDefinition($destination[0]);
         $definition->addMethodCall($destination[1], [[]]);

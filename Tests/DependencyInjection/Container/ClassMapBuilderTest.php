@@ -12,8 +12,6 @@ namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Container;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Alias;
 use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMapBuilder;
 
 /**
@@ -33,17 +31,9 @@ class ClassMapBuilderTest extends TestCase
 
     public function testBuild()
     {
-        $definition1 = new Definition('test_class1', [[]]);
-        $definition1->setPublic(true);
-        $this->container->setDefinition('test1', $definition1);
-
-        $definition2 = new Definition('test_class2', [[]]);
-        $definition2->setPublic(true);
-        $this->container->setDefinition('test2', $definition2);
-
-        $alias1 = new Alias('test1');
-        $alias1->setPublic(true);
-        $this->container->setAlias('test1_alias', $alias1);
+        $this->container->register('test1', 'test_class1')->setPublic(true);
+        $this->container->register('test2', 'test_class2')->setPublic(true);
+        $this->container->setAlias('test1_alias', 'test1')->setPublic(true);
 
         $this->container->compile();
 

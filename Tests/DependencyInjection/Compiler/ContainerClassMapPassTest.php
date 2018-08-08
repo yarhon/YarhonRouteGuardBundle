@@ -12,7 +12,6 @@ namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Compiler;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\ContainerClassMapPass;
 use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap;
 use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMapBuilder;
@@ -42,9 +41,9 @@ class ContainerClassMapPassTest extends TestCase
 
         $this->pass = new ContainerClassMapPass($classMapBuilder);
 
-        $definition = new Definition(ClassMap::class, [[]]);
-        $definition->setPublic(true);
-        $this->container->setDefinition(ClassMap::class, $definition);
+        $this->container->register(ClassMap::class)
+            ->setArgument(0, [])
+            ->setPublic(true);
     }
 
     public function testProcess()

@@ -46,7 +46,7 @@
         </service>
 
         <service id="Yarhon\LinkGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer">
-            <argument type="collection" />
+            <argument type="collection" /> <!-- ignoredControllers -->
             <tag name="yarhon_route_guard.route_collection_transformer" priority="1022" />
         </service>
 
@@ -59,7 +59,7 @@
         </service>
 
         <service id="Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap" public="true"> <!-- is set as public only to be available for TYPE_REMOVE compiler pass -->
-            <argument type="collection" />
+            <argument type="collection" /> <!-- map -->
         </service>
 
         <!-- end route collection services -->
@@ -78,10 +78,9 @@
         </service>
 
         <service id="Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension">
-            <argument type="collection" />
+            <argument type="collection" /> <!-- options -->
             <tag name="twig.extension" />
         </service>
-        <service id="yarhon_route_guard.twig.extension.routing" alias="Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension" public="true"/>
 
         <service id="Yarhon\LinkGuardBundle\Twig\RoutingRuntime">
             <tag name="twig.runtime" />

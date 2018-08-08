@@ -32,7 +32,6 @@ class TwigBundlePass implements CompilerPassInterface
             return;
         }
 
-        // TODO: additionally check for $container->has('router')? It's done in \Symfony\Bundle\TwigBundle\DependencyInjection\Compiler\ExtensionPass
         if (!$container->hasDefinition('twig.extension.routing')) {
             $definition = $container->getDefinition(RoutingExtension::class);
             $options = $definition->getArgument(0);

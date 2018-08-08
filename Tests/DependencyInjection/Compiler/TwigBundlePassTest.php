@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\TwigBundlePass;
 use Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension;
+use Yarhon\LinkGuardBundle\Twig\RoutingRuntime;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -34,7 +35,10 @@ class TwigBundlePassTest extends TestCase
     public function setUp()
     {
         $this->container = new ContainerBuilder();
-        $this->container->setDefinition(RoutingExtension::class, new Definition(null, [ [] ]));
+        $this->container->register(RoutingExtension::class)
+            ->setArgument(0, []);
+        $this->container->register(RoutingRuntime::class);
+
         $this->pass = new TwigBundlePass();
     }
 
