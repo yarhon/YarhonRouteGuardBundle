@@ -12,8 +12,8 @@ namespace Yarhon\LinkGuardBundle\Twig\Extension;
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
-use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
-use Yarhon\LinkGuardBundle\Twig\TokenParser\LinkTokenParser;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteNode;
+use Yarhon\LinkGuardBundle\Twig\TokenParser\RouteTokenParser;
 use Yarhon\LinkGuardBundle\Twig\NodeVisitor\DiscoverRoutingFunctionNodeVisitor;
 use Yarhon\LinkGuardBundle\Twig\RoutingRuntime;
 
@@ -35,14 +35,14 @@ class RoutingExtension extends AbstractExtension
     public function __construct(array $options = [])
     {
         $defaults = [
-            'tag_name' => 'routeifgranted',
-            'reference_var_name' => 'route_reference',
-            'discover' => false,
+            'tag_name' => 'route',
+            'reference_var_name' => 'ref',
+            'discover_routing_functions' => false,
         ];
 
         $this->options = array_merge($defaults, $options);
 
-        LinkNode::setReferenceVarName($this->options['reference_var_name']);
+        RouteNode::setReferenceVarName($this->options['reference_var_name']);
     }
 
     /**
@@ -50,8 +50,10 @@ class RoutingExtension extends AbstractExtension
      */
     public function getTokenParsers()
     {
+        // TODO: pass $discover to parser
+
         return [
-            new LinkTokenParser($this->options['tag_name']),
+            new RouteTokenParser($this->options['tag_name']),
         ];
     }
 
@@ -62,7 +64,7 @@ class RoutingExtension extends AbstractExtension
     {
         $nodeVisitors = [];
 
-        if ($this->options['discover']) {
+        if ($this->options['discover_routing_functions']) {
             $nodeVisitors[] = new DiscoverRoutingFunctionNodeVisitor($this->options['reference_var_name'], $this->options['tag_name']);
         }
 

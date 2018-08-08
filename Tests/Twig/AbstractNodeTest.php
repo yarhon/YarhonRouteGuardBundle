@@ -28,9 +28,9 @@ abstract class AbstractNodeTest extends TestCase
      */
     protected $environment;
 
-    private $linkTag = 'routeifgranted';
+    private $tagName = 'route';
 
-    private $referenceVarName = 'route_reference';
+    private $referenceVarName = 'ref';
 
     public function setUp()
     {
@@ -44,7 +44,7 @@ abstract class AbstractNodeTest extends TestCase
     private function getRoutingExtension()
     {
         return new RoutingExtension([
-            'tag_name' => $this->linkTag,
+            'tag_name' => $this->tagName,
             'reference_var_name' => $this->referenceVarName,
         ]);
 
@@ -68,7 +68,7 @@ abstract class AbstractNodeTest extends TestCase
     protected function parse($source)
     {
         $replacements = [
-            '$linkTag' => $this->linkTag,
+            '$tagName' => $this->tagName,
         ];
         $source = strtr($source, $replacements);
 

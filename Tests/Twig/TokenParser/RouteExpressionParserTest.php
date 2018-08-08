@@ -14,7 +14,6 @@ use Twig\Node\Node;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Error\SyntaxError;
 use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
-use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
 use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 
 class RouteExpressionParserTest extends AbstractNodeTest
@@ -34,7 +33,7 @@ class RouteExpressionParserTest extends AbstractNodeTest
     {
         return [
             [
-                '{% $linkTag ["secure1"] as path %}{% end$linkTag %}',
+                '{% $tagName ["secure1"] as path %}{% end$tagName %}',
                 (new RouteExpression(
                     new Node([
                         new ConstantExpression('secure1', 0),
@@ -42,7 +41,7 @@ class RouteExpressionParserTest extends AbstractNodeTest
                 ))->setGenerateAs('path', false),
             ],
             [
-                '{% $linkTag ["secure1"] as path relative %}{% end$linkTag %}',
+                '{% $tagName ["secure1"] as path relative %}{% end$tagName %}',
                 (new RouteExpression(
                     new Node([
                         new ConstantExpression('secure1', 0),
@@ -51,7 +50,7 @@ class RouteExpressionParserTest extends AbstractNodeTest
             ],
 
             [
-                '{% $linkTag ["secure1"] as path absolute %}{% end$linkTag %}',
+                '{% $tagName ["secure1"] as path absolute %}{% end$tagName %}',
                 (new RouteExpression(
                     new Node([
                         new ConstantExpression('secure1', 0),
@@ -60,7 +59,7 @@ class RouteExpressionParserTest extends AbstractNodeTest
             ],
 
             [
-                '{% $linkTag ["secure1"] as url %}{% end$linkTag %}',
+                '{% $tagName ["secure1"] as url %}{% end$tagName %}',
                 (new RouteExpression(
                     new Node([
                         new ConstantExpression('secure1', 0),
@@ -89,19 +88,19 @@ class RouteExpressionParserTest extends AbstractNodeTest
         return [
             [
                 // with "as" and no params
-                '{% $linkTag ["secure1"] as %}{% end$linkTag %}',
+                '{% $tagName ["secure1"] as %}{% end$tagName %}',
                 [SyntaxError::class, '"name" expected with value "url" or "path"'],
             ],
 
             [
                 // with "as" and invalid function name
-                '{% $linkTag ["secure1"] as blabla %}{% end$linkTag %}',
+                '{% $tagName ["secure1"] as blabla %}{% end$tagName %}',
                 [SyntaxError::class, '"name" expected with value "url" or "path"'],
             ],
 
             [
                 // with "as" and invalid relative param
-                '{% $linkTag ["secure1"] as path blabla %}{% end$linkTag %}',
+                '{% $tagName ["secure1"] as path blabla %}{% end$tagName %}',
                 [SyntaxError::class],
             ],
         ];

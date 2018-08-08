@@ -12,8 +12,8 @@ namespace Yarhon\LinkGuardBundle\Tests\Twig;
 
 use PHPUnit\Framework\TestCase;
 use Twig\TwigFunction;
-use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
-use Yarhon\LinkGuardBundle\Twig\TokenParser\LinkTokenParser;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteNode;
+use Yarhon\LinkGuardBundle\Twig\TokenParser\RouteTokenParser;
 use Yarhon\LinkGuardBundle\Twig\NodeVisitor\DiscoverRoutingFunctionNodeVisitor;
 use Yarhon\LinkGuardBundle\Twig\RoutingRuntime;
 use Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension;
@@ -36,18 +36,18 @@ class RoutingExtensionTest extends TestCase
     public function testGetTokenParsersDefaultOptions()
     {
         $defaults = [
-            'tag_name' => 'routeifgranted',
-            'reference_var_name' => 'route_reference',
+            'tag_name' => 'route',
+            'reference_var_name' => 'ref',
         ];
 
         $extension = new RoutingExtension();
 
         $tokenParsers = [
-            new LinkTokenParser($defaults['tag_name']),
+            new RouteTokenParser($defaults['tag_name']),
         ];
 
         $this->assertEquals($tokenParsers, $extension->getTokenParsers());
-        $this->assertAttributeEquals($defaults['reference_var_name'], 'referenceVarName', LinkNode::class);
+        $this->assertAttributeEquals($defaults['reference_var_name'], 'referenceVarName', RouteNode::class);
     }
 
     public function testGetTokenParsersCustomOptions()
@@ -60,11 +60,11 @@ class RoutingExtensionTest extends TestCase
         $extension = new RoutingExtension($options);
 
         $tokenParsers = [
-            new LinkTokenParser($options['tag_name']),
+            new RouteTokenParser($options['tag_name']),
         ];
 
         $this->assertEquals($tokenParsers, $extension->getTokenParsers());
-        $this->assertAttributeEquals($options['reference_var_name'], 'referenceVarName', LinkNode::class);
+        $this->assertAttributeEquals($options['reference_var_name'], 'referenceVarName', RouteNode::class);
     }
 
     public function testDiscoverNodeVisitorEmpty()
@@ -80,7 +80,7 @@ class RoutingExtensionTest extends TestCase
         $options = [
             'tag_name' => 'foo',
             'reference_var_name' => 'bar',
-            'discover' => true,
+            'discover_routing_functions' => true,
         ];
 
         $extension = new RoutingExtension($options);

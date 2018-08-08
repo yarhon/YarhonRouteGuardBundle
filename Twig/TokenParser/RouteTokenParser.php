@@ -13,13 +13,13 @@ namespace Yarhon\LinkGuardBundle\Twig\TokenParser;
 use Twig\TokenParser\AbstractTokenParser;
 use Twig\Token;
 use Twig\TokenStream;
-use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteNode;
 use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class LinkTokenParser extends AbstractTokenParser
+class RouteTokenParser extends AbstractTokenParser
 {
     /**
      * @var string
@@ -32,7 +32,7 @@ class LinkTokenParser extends AbstractTokenParser
     private $endTagName;
 
     /**
-     * LinkTokenParser constructor.
+     * RouteTokenParser constructor.
      *
      * @param $tagName
      */
@@ -83,7 +83,7 @@ class LinkTokenParser extends AbstractTokenParser
 
         $stream->expect(Token::BLOCK_END_TYPE);
 
-        $node = new LinkNode($condition, $bodyNode, $elseNode, $token->getLine());
+        $node = new RouteNode($condition, $bodyNode, $elseNode, $token->getLine());
 
         return $node;
     }

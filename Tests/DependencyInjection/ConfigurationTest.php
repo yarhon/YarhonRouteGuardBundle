@@ -28,17 +28,16 @@ class ConfigurationTest extends TestCase
 
         $defaults = [
             'cache_dir' => 'link-guard',
-            'ignore_controllers' => [],
-            'ignore_controllers_symfony' => [
+            'ignore_controllers' => [
                 'Symfony\Bundle\TwigBundle\Controller\PreviewErrorController',
                 'Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController',
                 'Symfony\Bundle\WebProfilerBundle\Controller\RouterController',
                 'Symfony\Bundle\WebProfilerBundle\Controller\ExceptionController',
             ],
             'twig' => [
-                'tag_name' => 'routeifgranted',
-                'reference_var_name' => 'route_reference',
-                'discover' => true,
+                'tag_name' => 'route',
+                'reference_var_name' => 'ref',
+                'discover_routing_functions' => true,
             ],
         ];
 

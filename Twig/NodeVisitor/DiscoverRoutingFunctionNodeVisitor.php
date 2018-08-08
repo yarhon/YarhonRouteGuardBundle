@@ -17,7 +17,7 @@ use Twig\NodeVisitor\NodeVisitorInterface;
 use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\Expression\NameExpression;
 use Twig\Error\SyntaxError;
-use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteNode;
 use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 
 /**
@@ -86,7 +86,7 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
     protected function doLeaveNode(Node $node, Environment $env)
     {
         if ($this->isTargetNode($node)) {
-            /* @var LinkNode $node */
+            /* @var RouteNode $node */
 
             if (!$this->scope->has('routingFunction')) {
                 throw new SyntaxError(
@@ -138,7 +138,7 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
      */
     private function isTargetNode(Node $node)
     {
-        return $node instanceof LinkNode && !$node->hasNode('condition');
+        return $node instanceof RouteNode && !$node->hasNode('condition');
     }
 
     /**

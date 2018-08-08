@@ -19,7 +19,7 @@ use Twig\Error\RuntimeError;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class LinkNode extends Node
+class RouteNode extends Node
 {
     /**
      * @var string
@@ -27,7 +27,7 @@ class LinkNode extends Node
     private static $referenceVarName;
 
     /**
-     * LinkNode constructor.
+     * RouteNode constructor.
      *
      * @param RouteExpression|null $condition
      * @param Node                 $bodyNode

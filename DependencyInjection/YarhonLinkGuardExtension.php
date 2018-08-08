@@ -38,9 +38,8 @@ class YarhonLinkGuardExtension extends Extension
         $definition = $container->getDefinition(RouteCacheWarmer::class);
         $definition->replaceArgument(1, $config['cache_dir']);
 
-        $ignoredControllers = array_merge($config['ignore_controllers'], $config['ignore_controllers_symfony']);
         $definition = $container->getDefinition(RemoveIgnoredTransformer::class);
-        $definition->replaceArgument(0, $ignoredControllers);
+        $definition->replaceArgument(0, $config['ignore_controllers']);
 
         $definition = $container->getDefinition(RoutingExtension::class);
         $definition->replaceArgument(0, $config['twig']);

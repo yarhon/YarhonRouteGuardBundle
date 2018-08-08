@@ -16,14 +16,14 @@ use Twig\Node\PrintNode;
 use Twig\Node\Expression\NameExpression;
 use Twig\Error\SyntaxError;
 use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
-use Yarhon\LinkGuardBundle\Twig\Node\LinkNode;
-use Yarhon\LinkGuardBundle\Twig\TokenParser\LinkTokenParser;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteNode;
+use Yarhon\LinkGuardBundle\Twig\TokenParser\RouteTokenParser;
 
-class LinkTokenParserTest extends AbstractNodeTest
+class RouteTokenParserTest extends AbstractNodeTest
 {
     public function testConstruct()
     {
-        $tokenParser = new LinkTokenParser('foo');
+        $tokenParser = new RouteTokenParser('foo');
 
         $this->assertAttributeEquals('foo', 'tagName', $tokenParser);
         $this->assertAttributeEquals('endfoo', 'endTagName', $tokenParser);
@@ -31,7 +31,7 @@ class LinkTokenParserTest extends AbstractNodeTest
 
     public function testGetTag()
     {
-        $tokenParser = new LinkTokenParser('foo');
+        $tokenParser = new RouteTokenParser('foo');
         $this->assertEquals('foo', $tokenParser->getTag());
     }
 
@@ -51,8 +51,8 @@ class LinkTokenParserTest extends AbstractNodeTest
         return [
             [
                 // body node test
-                '{% $linkTag ["secure1"] %}<a href="{{ link }}">Link</a>{% end$linkTag %}',
-                new LinkNode(
+                '{% $tagName ["secure1"] %}<a href="{{ link }}">Link</a>{% end$tagName %}',
+                new RouteNode(
                     null,
                     new Node([
                         new TextNode('<a href="', 0),
@@ -64,8 +64,8 @@ class LinkTokenParserTest extends AbstractNodeTest
 
             [
                 // else node test
-                '{% $linkTag ["secure1"] %}{% else %}else text{% end$linkTag %}',
-                new LinkNode(
+                '{% $tagName ["secure1"] %}{% else %}else text{% end$tagName %}',
+                new RouteNode(
                     null,
                     new Node(),
                     new TextNode('else text', 0)
@@ -92,12 +92,12 @@ class LinkTokenParserTest extends AbstractNodeTest
         return [
             [
                 // without end tag
-                '{% $linkTag ["secure1"] %}{% end %}',
+                '{% $tagName ["secure1"] %}{% end %}',
                 [SyntaxError::class],
             ],
             [
                 // without arguments and "discover"
-                '{% $linkTag %}{% end$linkTag %}',
+                '{% $tagName %}{% end$tagName %}',
                 [SyntaxError::class],
             ],
         ];
