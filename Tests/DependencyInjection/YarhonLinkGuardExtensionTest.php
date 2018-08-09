@@ -30,6 +30,8 @@ class YarhonLinkGuardExtensionTest extends TestCase
         $extension = new YarhonLinkGuardExtension();
         $this->container = new ContainerBuilder(new ParameterBag([]));
         $this->container->registerExtension($extension);
+
+        // TODO: remove this?
         $this->container->register('security.authorization_checker')->setSynthetic(true);
 
         $config = [

@@ -18,8 +18,10 @@ use Twig\Compiler;
 use Twig\Node\Node;
 use Twig\Token;
 use Twig\TokenStream;
+use Twig\TwigFunction;
 use Twig_Error_Syntax as SyntaxError; // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
-use Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension;
+use Yarhon\LinkGuardBundle\Twig\TokenParser\RouteTokenParser;
+use Yarhon\LinkGuardBundle\Twig\Node\RouteNode;
 
 abstract class AbstractNodeTest extends TestCase
 {
@@ -38,23 +40,10 @@ abstract class AbstractNodeTest extends TestCase
 
         $this->environment = new Environment($loader, ['cache' => false, 'autoescape' => false, 'optimizations' => 0]);
 
-        $this->environment->addExtension($this->getRoutingExtension());
-    }
+        $this->environment->addTokenParser(new RouteTokenParser($this->tagName, false));
+        $this->environment->addFunction(new TwigFunction('route_guard_link', function () {}));
 
-    private function getRoutingExtension()
-    {
-        return new RoutingExtension([
-            'tag_name' => $this->tagName,
-            'reference_var_name' => $this->referenceVarName,
-        ]);
-
-        /*
-        Alternative way:
-        $routingExtension = $this->getMockBuilder(RoutingExtension::class)
-            ->disableOriginalConstructor()
-            ->setMethods(null)
-            ->getMock();
-        */
+        RouteNode::setReferenceVarName($this->referenceVarName);
     }
 
     /**

@@ -38,16 +38,16 @@ class RoutingExtensionTest extends TestCase
         $defaults = [
             'tag_name' => 'route',
             'reference_var_name' => 'ref',
+            'discover_routing_functions' => false,
         ];
 
         $extension = new RoutingExtension();
 
         $tokenParsers = [
-            new RouteTokenParser($defaults['tag_name']),
+            new RouteTokenParser($defaults['tag_name'], $defaults['discover_routing_functions']),
         ];
 
         $this->assertEquals($tokenParsers, $extension->getTokenParsers());
-        $this->assertAttributeEquals($defaults['reference_var_name'], 'referenceVarName', RouteNode::class);
     }
 
     public function testGetTokenParsersCustomOptions()
@@ -55,16 +55,16 @@ class RoutingExtensionTest extends TestCase
         $options = [
             'tag_name' => 'foo',
             'reference_var_name' => 'bar',
+            'discover_routing_functions' => true,
         ];
 
         $extension = new RoutingExtension($options);
 
         $tokenParsers = [
-            new RouteTokenParser($options['tag_name']),
+            new RouteTokenParser($options['tag_name'], $options['discover_routing_functions']),
         ];
 
         $this->assertEquals($tokenParsers, $extension->getTokenParsers());
-        $this->assertAttributeEquals($options['reference_var_name'], 'referenceVarName', RouteNode::class);
     }
 
     public function testDiscoverNodeVisitorEmpty()
@@ -89,5 +89,24 @@ class RoutingExtensionTest extends TestCase
         ];
 
         $this->assertEquals($nodeVisitors, $extension->getNodeVisitors());
+    }
+
+    public function testRouteNode()
+    {
+        $defaults = [
+            'reference_var_name' => 'ref',
+        ];
+
+        $extension = new RoutingExtension();
+
+        $this->assertAttributeEquals($defaults['reference_var_name'], 'referenceVarName', RouteNode::class);
+
+        $options = [
+            'reference_var_name' => 'bar',
+        ];
+
+        $extension = new RoutingExtension($options);
+
+        $this->assertAttributeEquals($options['reference_var_name'], 'referenceVarName', RouteNode::class);
     }
 }

@@ -50,10 +50,8 @@ class RoutingExtension extends AbstractExtension
      */
     public function getTokenParsers()
     {
-        // TODO: pass $discover to parser
-
         return [
-            new RouteTokenParser($this->options['tag_name']),
+            new RouteTokenParser($this->options['tag_name'], $this->options['discover_routing_functions']),
         ];
     }
 

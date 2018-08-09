@@ -104,6 +104,9 @@ class RouteNode extends Node
 
         $compiler
             ->outdent()
-            ->write("}\n");
+            ->write("}\n")
+            ->write('unset(')
+            ->subcompile($referenceVar)
+            ->write(");\n");
     }
 }

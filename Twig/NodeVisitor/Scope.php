@@ -98,6 +98,8 @@ class Scope
         if (array_key_exists($key, $this->data)) {
             return true;
         }
+
+        return false;
     }
 
     /**

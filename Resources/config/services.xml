@@ -58,7 +58,8 @@
             <argument type="service" id="kernel" />
         </service>
 
-        <service id="Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap" public="true"> <!-- is set as public only to be available for TYPE_REMOVE compiler pass -->
+        <!-- is set as public only to be available for TYPE_REMOVE compiler pass -->
+        <service id="Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap" public="true">
             <argument type="collection" /> <!-- map -->
         </service>
 
@@ -69,7 +70,7 @@
             <argument type="service" id="security.authorization_checker" />
         </service>
         <service id="yarhon_route_guard.authorization_manager" alias="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager" public="true"/>
-        <service id="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface" alias="yarhon_link_guard.authorization_manager" />
+        <service id="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface" alias="yarhon_route_guard.authorization_manager" />
 
         <service id="Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer">
             <argument type="service" id="Yarhon\LinkGuardBundle\Security\AccessMapBuilder" />

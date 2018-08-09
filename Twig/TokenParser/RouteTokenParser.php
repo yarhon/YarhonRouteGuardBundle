@@ -12,7 +12,7 @@ namespace Yarhon\LinkGuardBundle\Twig\TokenParser;
 
 use Twig\TokenParser\AbstractTokenParser;
 use Twig\Token;
-use Twig\TokenStream;
+use Twig\Parser;
 use Yarhon\LinkGuardBundle\Twig\Node\RouteNode;
 use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 
@@ -32,14 +32,38 @@ class RouteTokenParser extends AbstractTokenParser
     private $endTagName;
 
     /**
+     * @var bool
+     */
+    private $allowDiscover;
+
+    /**
+     * @var RouteExpressionParser
+     */
+    private $expressionParser;
+
+    /**
      * RouteTokenParser constructor.
      *
-     * @param $tagName
+     * @param string $tagName
+     * @param bool   $allowDiscover
      */
-    public function __construct($tagName)
+    public function __construct($tagName, $allowDiscover = false)
     {
         $this->tagName = $tagName;
         $this->endTagName = 'end'.$tagName;
+        $this->allowDiscover = $allowDiscover;
+
+        $this->expressionParser = new RouteExpressionParser();
+
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setParser(Parser $parser)
+    {
+        parent::setParser($parser);
+        $this->expressionParser->setParser($parser);
     }
 
     /**
@@ -53,11 +77,10 @@ class RouteTokenParser extends AbstractTokenParser
         $parser = $this->parser;
         $stream = $parser->getStream();
 
-        if (!$stream->test('discover')) {
-            $routeExpressionParser = new RouteExpressionParser($parser);
-            $condition = $routeExpressionParser->parse($token);
-        } else {
+        if ($this->allowDiscover && $stream->test('discover')) {
             $stream->next();
+        } else {
+            $condition = $this->expressionParser->parse($token);
         }
 
         $stream->expect(Token::BLOCK_END_TYPE);

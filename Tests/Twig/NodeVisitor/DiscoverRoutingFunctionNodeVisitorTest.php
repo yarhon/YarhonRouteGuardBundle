@@ -18,23 +18,35 @@ use Twig\Node\Expression\NameExpression;
 use Twig\Error\SyntaxError;
 use Twig\TwigFunction;
 use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
+use Yarhon\LinkGuardBundle\Twig\TokenParser\RouteTokenParser;
 use Yarhon\LinkGuardBundle\Twig\Node\RouteNode;
 use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 use Yarhon\LinkGuardBundle\Twig\NodeVisitor\DiscoverRoutingFunctionNodeVisitor;
 
 class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
 {
-    private $tagName = 'route';
+    private $tagName = 'routewithdiscover';
 
-    private $referenceVarName = 'ref';
+    private  $referenceVarName = 'ref';
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->environment->addFunction(new TwigFunction('url', function () {}));
+        $this->environment->addFunction(new TwigFunction('path', function () {}));
+
+        $nodeVisitor = new DiscoverRoutingFunctionNodeVisitor($this->referenceVarName, $this->tagName);
+        $this->environment->addNodeVisitor($nodeVisitor);
+
+        $this->environment->addTokenParser(new RouteTokenParser($this->tagName, true));
+    }
 
     /**
      * @dataProvider discoverDataProvider
      */
     public function testDiscover($source, $expected)
     {
-        $this->loadNodeVisitor();
-
         $node = $this->parse($source);
 
         $this->assertEquals($expected, $node);
@@ -48,7 +60,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
         return [
             [
                 // path function test
-                '{% $tagName discover %}{{ path("secure1") }}{% end$tagName %}',
+                '{% routewithdiscover discover %}{{ path("secure1") }}{% endroutewithdiscover %}',
                 new RouteNode(
                     (new RouteExpression(
                         new Node([
@@ -61,7 +73,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
 
             [
                 // url function test
-                '{% $tagName discover %}{{ url("secure1") }}{% end$tagName %}',
+                '{% routewithdiscover discover %}{{ url("secure1") }}{% endroutewithdiscover %}',
                 new RouteNode(
                     (new RouteExpression(
                         new Node([
@@ -74,7 +86,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
 
             [
                 // relative parameter test
-                '{% $tagName discover %}{{ path("secure1", {}, true) }}{% end$tagName %}',
+                '{% routewithdiscover discover %}{{ path("secure1", {}, true) }}{% endroutewithdiscover %}',
                 new RouteNode(
                     (new RouteExpression(
                         new Node([
@@ -94,8 +106,6 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
      */
     public function testDiscoverException($source, $expected)
     {
-        $this->loadNodeVisitor();
-
         $this->expectException($expected[0]);
         if (isset($expected[1])) {
             $this->expectExceptionMessage($expected[1]);
@@ -109,23 +119,14 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
         return [
             [
                 // without any routing function
-                '{% $tagName discover %}test{% end$tagName %}',
+                '{% routewithdiscover discover %}test{% endroutewithdiscover %}',
                 [SyntaxError::class, sprintf('"%s" tag with discover option must contain one "url()" / "path()" call.', $this->tagName)],
             ],
             [
                 // with 2 routing functions
-                '{% $tagName discover %}{{ url("secure1") }}{{ url("secure2") }}{% end$tagName %}',
+                '{% routewithdiscover discover %}{{ url("secure1") }}{{ url("secure2") }}{% endroutewithdiscover %}',
                 [SyntaxError::class, sprintf('"%s" tag with discover option must contain only one "url()" / "path()" call.', $this->tagName)],
             ],
         ];
-    }
-
-    private function loadNodeVisitor()
-    {
-        $this->environment->addFunction(new TwigFunction('url', function () {}));
-        $this->environment->addFunction(new TwigFunction('path', function () {}));
-
-        $nodeVisitor = new DiscoverRoutingFunctionNodeVisitor($this->referenceVarName, $this->tagName);
-        $this->environment->addNodeVisitor($nodeVisitor);
     }
 }

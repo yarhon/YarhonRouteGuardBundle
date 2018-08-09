@@ -11,7 +11,6 @@
 namespace Yarhon\LinkGuardBundle\Security;
 
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -62,6 +61,8 @@ class AccessMapBuilder implements LoggerAwareInterface
      */
     public function setAuthorizationProviders(array $providers)
     {
+        $this->authorizationProviders = [];
+
         foreach ($providers as $provider) {
             $this->addAuthorizationProvider($provider);
         }
@@ -72,6 +73,8 @@ class AccessMapBuilder implements LoggerAwareInterface
      */
     public function setRouteCollectionTransformers(array $transformers)
     {
+        $this->routeCollectionTransformers = [];
+
         foreach ($transformers as $transformer) {
             $this->addRouteCollectionTransformer($transformer);
         }

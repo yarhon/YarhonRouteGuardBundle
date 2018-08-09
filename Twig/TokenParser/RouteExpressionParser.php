@@ -20,6 +20,8 @@ use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
+ *
+ * TODO: implement \Twig\TokenParser\TokenParserInterface ?
  */
 class RouteExpressionParser
 {
@@ -29,11 +31,9 @@ class RouteExpressionParser
     private $parser;
 
     /**
-     * RouteExpressionParser constructor.
-     *
      * @param Parser $parser
      */
-    public function __construct(Parser $parser)
+    public function setParser(Parser $parser)
     {
         $this->parser = $parser;
     }

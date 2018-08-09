@@ -12,7 +12,6 @@ namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Compiler;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Definition;
 use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\TwigBundlePass;
 use Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension;
 use Yarhon\LinkGuardBundle\Twig\RoutingRuntime;
@@ -42,19 +41,37 @@ class TwigBundlePassTest extends TestCase
         $this->pass = new TwigBundlePass();
     }
 
-    public function testProcessWithoutRoutingExtension()
+    public function testWithoutTwig()
     {
         $this->pass->process($this->container);
 
-        //$this->assertFalse($this->container->hasDefinition(SensioSecurityProvider::class));
+        $this->assertFalse($this->container->hasDefinition(RoutingExtension::class));
+        $this->assertFalse($this->container->hasDefinition(RoutingRuntime::class));
     }
 
-    public function testProcessWithRoutingExtension()
+    public function testWithTwig()
     {
-        //$this->container->register('sensio_framework_extra.controller.listener');
+        $this->container->register('twig');
 
         $this->pass->process($this->container);
 
-        //$this->assertTrue($this->container->hasDefinition(SensioSecurityProvider::class));
+        $this->assertTrue($this->container->hasDefinition(RoutingExtension::class));
+        $this->assertTrue($this->container->hasDefinition(RoutingRuntime::class));
+
+        $options = $this->container->getDefinition(RoutingExtension::class)->getArgument(0);
+
+        $this->assertEquals(['discover_routing_functions' => false], $options);
+    }
+
+    public function testWithTwigRoutingExtension()
+    {
+        $this->container->register('twig');
+        $this->container->register('twig.extension.routing');
+
+        $this->pass->process($this->container);
+
+        $options = $this->container->getDefinition(RoutingExtension::class)->getArgument(0);
+
+        $this->assertEquals([], $options);
     }
 }

@@ -31,7 +31,7 @@ class RouteNodeTest extends AbstractNodeTest
 
         $conditionNode = $node->getNode('condition');
         $conditionSource = $this->compile($conditionNode);
-        $expected = sprintf($expected, $this->referenceVarName, $conditionSource);
+        $expected = sprintf($expected, $this->referenceVarName, $conditionSource, $this->referenceVarName);
 
         $this->assertEquals($expected, $source);
     }
@@ -46,6 +46,7 @@ class RouteNodeTest extends AbstractNodeTest
 if (false !== ($context["%s"] = %s)) {
     echo "body text";
 }
+unset($context["%s"]);
 
 EOD;
         // else node test
@@ -56,6 +57,7 @@ if (false !== ($context["%s"] = %s)) {
 } else {
     echo "else text";
 }
+unset($context["%s"]);
 
 EOD;
 
