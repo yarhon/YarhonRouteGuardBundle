@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Twig;
+namespace Yarhon\RouteGuardBundle\Tests\Twig;
 
 use PHPUnit\Framework\TestCase;
 use Twig\Environment;
@@ -20,8 +20,8 @@ use Twig\Token;
 use Twig\TokenStream;
 use Twig\TwigFunction;
 use Twig_Error_Syntax as SyntaxError; // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
-use Yarhon\LinkGuardBundle\Twig\TokenParser\RouteTokenParser;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteNode;
+use Yarhon\RouteGuardBundle\Twig\TokenParser\RouteTokenParser;
+use Yarhon\RouteGuardBundle\Twig\Node\RouteNode;
 
 abstract class AbstractNodeTest extends TestCase
 {

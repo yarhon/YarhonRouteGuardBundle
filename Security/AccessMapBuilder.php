@@ -8,15 +8,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Security;
+namespace Yarhon\RouteGuardBundle\Security;
 
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Yarhon\LinkGuardBundle\Security\Provider\ProviderInterface;
-use Yarhon\LinkGuardBundle\Routing\RouteCollection\TransformerInterface;
-use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+use Yarhon\RouteGuardBundle\Security\Provider\ProviderInterface;
+use Yarhon\RouteGuardBundle\Routing\RouteCollection\TransformerInterface;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

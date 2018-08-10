@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Container;
+namespace Yarhon\RouteGuardBundle\Tests\DependencyInjection\Container;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -17,8 +17,8 @@ use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\DependencyInjection\Extension\ConfigurationExtensionInterface;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Yarhon\LinkGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
-use Yarhon\LinkGuardBundle\Exception\LogicException;
+use Yarhon\RouteGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
+use Yarhon\RouteGuardBundle\Exception\LogicException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

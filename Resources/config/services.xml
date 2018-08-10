@@ -7,7 +7,7 @@
     <services>
         <defaults public="false" autowire="false" autoconfigure="false" />
 
-        <service id="Yarhon\LinkGuardBundle\Security\AccessMapBuilder">
+        <service id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder">
             <call method="setRouteCollectionTransformers">
                 <argument type="collection" />
             </call>
@@ -25,65 +25,65 @@
 
         <!-- authorization providers -->
 
-        <service id="Yarhon\LinkGuardBundle\Security\Provider\SensioSecurityProvider">
+        <service id="Yarhon\RouteGuardBundle\Security\Provider\SensioSecurityProvider">
             <tag name="yarhon_route_guard.authorization_provider" priority="1024" />
         </service>
 
-        <service id="Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider">
+        <service id="Yarhon\RouteGuardBundle\Security\Provider\SymfonyAccessControlProvider">
             <tag name="yarhon_route_guard.authorization_provider" priority="1023" />
         </service>
 
         <!-- route collection services -->
 
-        <service id="Yarhon\LinkGuardBundle\Routing\RouteCollection\ControllerNameDeprecationsTransformer">
-            <argument type="service" id="Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter" />
+        <service id="Yarhon\RouteGuardBundle\Routing\RouteCollection\ControllerNameDeprecationsTransformer">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerNameDeprecationsConverter" />
             <tag name="yarhon_route_guard.route_collection_transformer" priority="1024" />
         </service>
 
-        <service id="Yarhon\LinkGuardBundle\Routing\RouteCollection\ControllerNameTransformer">
-            <argument type="service" id="Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver" />
+        <service id="Yarhon\RouteGuardBundle\Routing\RouteCollection\ControllerNameTransformer">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ContainerControllerNameResolver" />
             <tag name="yarhon_route_guard.route_collection_transformer" priority="1023" />
         </service>
 
-        <service id="Yarhon\LinkGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer">
+        <service id="Yarhon\RouteGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer">
             <argument type="collection" /> <!-- ignoredControllers -->
             <tag name="yarhon_route_guard.route_collection_transformer" priority="1022" />
         </service>
 
-        <service id="Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver">
-            <argument type="service" id="Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap" />
+        <service id="Yarhon\RouteGuardBundle\Controller\ContainerControllerNameResolver">
+            <argument type="service" id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" />
         </service>
 
-        <service id="Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter">
+        <service id="Yarhon\RouteGuardBundle\Controller\ControllerNameDeprecationsConverter">
             <argument type="service" id="kernel" />
         </service>
 
         <!-- is set as public only to be available for TYPE_REMOVE compiler pass -->
-        <service id="Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap" public="true">
+        <service id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" public="true">
             <argument type="collection" /> <!-- map -->
         </service>
 
         <!-- end route collection services -->
 
-        <service id="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager">
-            <!--<argument type="service" id="Yarhon\LinkGuardBundle\Security\AccessMap" />-->   <!-- access map should go here -->
+        <service id="Yarhon\RouteGuardBundle\Security\Authorization\AuthorizationManager">
+            <!--<argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMap" />-->   <!-- access map should go here -->
             <argument type="service" id="security.authorization_checker" />
         </service>
-        <service id="yarhon_route_guard.authorization_manager" alias="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager" public="true"/>
-        <service id="Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface" alias="yarhon_route_guard.authorization_manager" />
+        <service id="yarhon_route_guard.authorization_manager" alias="Yarhon\RouteGuardBundle\Security\Authorization\AuthorizationManager" public="true"/>
+        <service id="Yarhon\RouteGuardBundle\Security\Authorization\AuthorizationManagerInterface" alias="yarhon_route_guard.authorization_manager" />
 
-        <service id="Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer">
-            <argument type="service" id="Yarhon\LinkGuardBundle\Security\AccessMapBuilder" />
+        <service id="Yarhon\RouteGuardBundle\CacheWarmer\RouteCacheWarmer">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
             <argument /><!-- cache dir -->
             <tag name="kernel.cache_warmer" />
         </service>
 
-        <service id="Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension">
+        <service id="Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension">
             <argument type="collection" /> <!-- options -->
             <tag name="twig.extension" />
         </service>
 
-        <service id="Yarhon\LinkGuardBundle\Twig\RoutingRuntime">
+        <service id="Yarhon\RouteGuardBundle\Twig\RoutingRuntime">
             <tag name="twig.runtime" />
         </service>
 

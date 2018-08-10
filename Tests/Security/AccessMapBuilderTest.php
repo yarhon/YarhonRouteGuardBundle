@@ -8,16 +8,16 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Security;
+namespace Yarhon\RouteGuardBundle\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
-use Yarhon\LinkGuardBundle\Tests\HelperTrait;
-use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
-use Yarhon\LinkGuardBundle\Security\Provider\ProviderInterface;
-use Yarhon\LinkGuardBundle\Routing\RouteCollection\TransformerInterface;
-use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+use Yarhon\RouteGuardBundle\Tests\HelperTrait;
+use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
+use Yarhon\RouteGuardBundle\Security\Provider\ProviderInterface;
+use Yarhon\RouteGuardBundle\Routing\RouteCollection\TransformerInterface;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

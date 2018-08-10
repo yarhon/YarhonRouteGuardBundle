@@ -8,21 +8,21 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\DependencyInjection;
+namespace Yarhon\RouteGuardBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\Config\FileLocator;
-use Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer;
-use Yarhon\LinkGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer;
-use Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension;
-use Yarhon\LinkGuardBundle\Twig\RoutingRuntime;
+use Yarhon\RouteGuardBundle\CacheWarmer\RouteCacheWarmer;
+use Yarhon\RouteGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer;
+use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
+use Yarhon\RouteGuardBundle\Twig\RoutingRuntime;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class YarhonLinkGuardExtension extends Extension
+class YarhonRouteGuardExtension extends Extension
 {
     /**
      * {@inheritdoc}

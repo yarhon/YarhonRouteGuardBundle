@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Routing\RouteCollection;
+namespace Yarhon\RouteGuardBundle\Routing\RouteCollection;
 
 use Symfony\Component\Routing\RouteCollection;
 

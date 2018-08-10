@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Twig;
+namespace Yarhon\RouteGuardBundle\Twig;
 
 use Twig\Extension\RuntimeExtensionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

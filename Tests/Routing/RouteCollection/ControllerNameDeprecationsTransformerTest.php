@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Routing\RouteCollection;
+namespace Yarhon\RouteGuardBundle\Tests\Routing\RouteCollection;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use Yarhon\LinkGuardBundle\Tests\HelperTrait;
-use Yarhon\LinkGuardBundle\Routing\RouteCollection\ControllerNameDeprecationsTransformer;
-use Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter;
-use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+use Yarhon\RouteGuardBundle\Tests\HelperTrait;
+use Yarhon\RouteGuardBundle\Routing\RouteCollection\ControllerNameDeprecationsTransformer;
+use Yarhon\RouteGuardBundle\Controller\ControllerNameDeprecationsConverter;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

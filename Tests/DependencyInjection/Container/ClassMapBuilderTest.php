@@ -8,11 +8,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Container;
+namespace Yarhon\RouteGuardBundle\Tests\DependencyInjection\Container;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMapBuilder;
+use Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMapBuilder;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

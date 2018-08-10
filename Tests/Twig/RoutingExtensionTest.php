@@ -8,15 +8,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Twig;
+namespace Yarhon\RouteGuardBundle\Tests\Twig;
 
 use PHPUnit\Framework\TestCase;
 use Twig\TwigFunction;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteNode;
-use Yarhon\LinkGuardBundle\Twig\TokenParser\RouteTokenParser;
-use Yarhon\LinkGuardBundle\Twig\NodeVisitor\DiscoverRoutingFunctionNodeVisitor;
-use Yarhon\LinkGuardBundle\Twig\RoutingRuntime;
-use Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension;
+use Yarhon\RouteGuardBundle\Twig\Node\RouteNode;
+use Yarhon\RouteGuardBundle\Twig\TokenParser\RouteTokenParser;
+use Yarhon\RouteGuardBundle\Twig\NodeVisitor\DiscoverRoutingFunctionNodeVisitor;
+use Yarhon\RouteGuardBundle\Twig\RoutingRuntime;
+use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
 
 class RoutingExtensionTest extends TestCase
 {

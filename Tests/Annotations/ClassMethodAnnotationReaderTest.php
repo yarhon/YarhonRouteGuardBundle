@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Annotations;
+namespace Yarhon\RouteGuardBundle\Tests\Annotations;
 
 use PHPUnit\Framework\TestCase;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Yarhon\LinkGuardBundle\Annotations\ClassMethodAnnotationReader;
-use Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\AnnotatedController;
-use Yarhon\LinkGuardBundle\Tests\Fixtures\Annotation\TestOne;
-use Yarhon\LinkGuardBundle\Tests\Fixtures\Annotation\TestTwo;
+use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReader;
+use Yarhon\RouteGuardBundle\Tests\Fixtures\Controller\AnnotatedController;
+use Yarhon\RouteGuardBundle\Tests\Fixtures\Annotation\TestOne;
+use Yarhon\RouteGuardBundle\Tests\Fixtures\Annotation\TestTwo;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 

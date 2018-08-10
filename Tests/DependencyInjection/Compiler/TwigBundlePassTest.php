@@ -8,13 +8,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Compiler;
+namespace Yarhon\RouteGuardBundle\Tests\DependencyInjection\Compiler;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\TwigBundlePass;
-use Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension;
-use Yarhon\LinkGuardBundle\Twig\RoutingRuntime;
+use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\TwigBundlePass;
+use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
+use Yarhon\RouteGuardBundle\Twig\RoutingRuntime;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

@@ -8,9 +8,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\DependencyInjection\Container;
+namespace Yarhon\RouteGuardBundle\DependencyInjection\Container;
 
-use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * ClassMap is responsible for storing DI container class map: service id => class name.

@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Twig\Node;
+namespace Yarhon\RouteGuardBundle\Tests\Twig\Node;
 
 use PHPUnit\Framework\TestCase;
 use Twig\Node\Node;
@@ -16,7 +16,7 @@ use Twig\Node\Expression\ArrayExpression;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\NameExpression;
 use Twig\Error\SyntaxError;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
+use Yarhon\RouteGuardBundle\Twig\Node\RouteExpression;
 
 class RouteExpressionTest extends TestCase
 {

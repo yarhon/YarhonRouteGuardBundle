@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Twig\NodeVisitor;
+namespace Yarhon\RouteGuardBundle\Twig\NodeVisitor;
 
 use Twig\Node\Node;
 

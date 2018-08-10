@@ -8,13 +8,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Twig\TokenParser;
+namespace Yarhon\RouteGuardBundle\Tests\Twig\TokenParser;
 
 use Twig\Node\Node;
 use Twig\Node\Expression\ConstantExpression;
 use Twig\Error\SyntaxError;
-use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
+use Yarhon\RouteGuardBundle\Tests\Twig\AbstractNodeTest;
+use Yarhon\RouteGuardBundle\Twig\Node\RouteExpression;
 
 class RouteExpressionParserTest extends AbstractNodeTest
 {

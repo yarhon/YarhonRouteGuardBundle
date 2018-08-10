@@ -8,10 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Twig\NodeVisitor;
+namespace Yarhon\RouteGuardBundle\Tests\Twig\NodeVisitor;
 
 use PHPUnit\Framework\TestCase;
-use Yarhon\LinkGuardBundle\Twig\NodeVisitor\Scope;
+use Yarhon\RouteGuardBundle\Twig\NodeVisitor\Scope;
 
 class ScopeTest extends TestCase
 {

@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Fixtures\Controller;
+namespace Yarhon\RouteGuardBundle\Tests\Fixtures\Controller;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

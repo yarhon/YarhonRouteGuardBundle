@@ -8,10 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Controller;
+namespace Yarhon\RouteGuardBundle\Controller;
 
-use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMapInterface;
-use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+use Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMapInterface;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * ContainerControllerNameResolver is responsible for resolving class name from service id

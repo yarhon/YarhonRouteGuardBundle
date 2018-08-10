@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Twig\NodeVisitor;
+namespace Yarhon\RouteGuardBundle\Twig\NodeVisitor;
 
 use Twig\Node\Node;
 use Twig\Environment;
@@ -17,8 +17,8 @@ use Twig\NodeVisitor\NodeVisitorInterface;
 use Twig\Node\Expression\FunctionExpression;
 use Twig\Node\Expression\NameExpression;
 use Twig\Error\SyntaxError;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteNode;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
+use Yarhon\RouteGuardBundle\Twig\Node\RouteNode;
+use Yarhon\RouteGuardBundle\Twig\Node\RouteExpression;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Exception;
+namespace Yarhon\RouteGuardBundle\Exception;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

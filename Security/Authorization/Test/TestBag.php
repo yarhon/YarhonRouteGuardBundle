@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Security\Authorization\Test;
+namespace Yarhon\RouteGuardBundle\Security\Authorization\Test;
 
 /**
  * TestBag holds a set of authorization tests (calls of AuthorizationChecker::isGranted()).

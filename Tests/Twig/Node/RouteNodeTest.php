@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Twig\Node;
+namespace Yarhon\RouteGuardBundle\Tests\Twig\Node;
 
 use Twig\Node\Node;
 use Twig\Error\SyntaxError;
 use Twig\Error\RuntimeError;
-use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteNode;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
+use Yarhon\RouteGuardBundle\Tests\Twig\AbstractNodeTest;
+use Yarhon\RouteGuardBundle\Twig\Node\RouteNode;
+use Yarhon\RouteGuardBundle\Twig\Node\RouteExpression;
 
 class RouteNodeTest extends AbstractNodeTest
 {

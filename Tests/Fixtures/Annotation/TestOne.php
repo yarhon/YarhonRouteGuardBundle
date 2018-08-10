@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Fixtures\Annotation;
+namespace Yarhon\RouteGuardBundle\Tests\Fixtures\Annotation;
 
 use Doctrine\Common\Annotations\Annotation;
 

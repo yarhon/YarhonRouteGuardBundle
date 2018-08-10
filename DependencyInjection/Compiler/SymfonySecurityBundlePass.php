@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\DependencyInjection\Compiler;
+namespace Yarhon\RouteGuardBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider;
-use Yarhon\LinkGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
+use Yarhon\RouteGuardBundle\Security\Provider\SymfonyAccessControlProvider;
+use Yarhon\RouteGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

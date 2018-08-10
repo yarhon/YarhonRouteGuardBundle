@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Annotations;
+namespace Yarhon\RouteGuardBundle\Annotations;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

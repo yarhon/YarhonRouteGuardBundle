@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\DependencyInjection\Compiler;
+namespace Yarhon\RouteGuardBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
-use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
+use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
 
 /**
  * Injects tagged services collection as a method call argument.

@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Security\Http;
+namespace Yarhon\RouteGuardBundle\Security\Http;
 
 /**
  * RequestConstraint holds a set of request requirements:

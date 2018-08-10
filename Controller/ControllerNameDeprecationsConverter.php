@@ -8,10 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Controller;
+namespace Yarhon\RouteGuardBundle\Controller;
 
 use Symfony\Component\HttpKernel\KernelInterface;
-use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * ControllerNameDeprecationsConverter holds convert methods for controller names is deprecated formats.

@@ -1,5 +1,5 @@
 {
-    "name": "yarhon/link-guard-bundle",
+    "name": "yarhon/route-guard-bundle",
     "description": "This bundle provides a way to .... !!!!!",
     "keywords": ["...."],
     "type": "symfony-bundle",
@@ -33,10 +33,10 @@
 
     },
     "autoload": {
-        "psr-4": { "Yarhon\\LinkGuardBundle\\": "" }
+        "psr-4": { "Yarhon\\RouteGuardBundle\\": "" }
     },
     "autoload-dev": {
-        "psr-4": { "Yarhon\\LinkGuardBundle\\Tests\\": "" },
+        "psr-4": { "Yarhon\\RouteGuardBundle\\Tests\\": "" },
         "files": [ "Tests/annotation_loader.php" ]
     },
     "minimum-stability": "stable"

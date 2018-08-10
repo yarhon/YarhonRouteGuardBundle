@@ -8,19 +8,19 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection;
+namespace Yarhon\RouteGuardBundle\Tests\DependencyInjection;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Yarhon\LinkGuardBundle\DependencyInjection\YarhonLinkGuardExtension;
-use Yarhon\LinkGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer;
-use Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension;
-use Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer;
+use Yarhon\RouteGuardBundle\DependencyInjection\YarhonRouteGuardExtension;
+use Yarhon\RouteGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer;
+use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
+use Yarhon\RouteGuardBundle\CacheWarmer\RouteCacheWarmer;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class YarhonLinkGuardExtensionTest extends TestCase
+class YarhonRouteGuardExtensionTest extends TestCase
 {
     /**
      * @var ContainerBuilder
@@ -29,7 +29,7 @@ class YarhonLinkGuardExtensionTest extends TestCase
 
     public function setUp()
     {
-        $extension = new YarhonLinkGuardExtension();
+        $extension = new YarhonRouteGuardExtension();
         $this->container = new ContainerBuilder();
         $this->container->registerExtension($extension);
 
@@ -66,13 +66,13 @@ class YarhonLinkGuardExtensionTest extends TestCase
     public function testPrivateServices()
     {
         $services = [
-            'Yarhon\LinkGuardBundle\Security\AccessMapBuilder',
-            'Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManager',
+            'Yarhon\RouteGuardBundle\Security\AccessMapBuilder',
+            'Yarhon\RouteGuardBundle\Security\Authorization\AuthorizationManager',
         ];
 
         $aliases = [
             'yarhon_route_guard.authorization_manager',
-            'Yarhon\LinkGuardBundle\Security\Authorization\AuthorizationManagerInterface',
+            'Yarhon\RouteGuardBundle\Security\Authorization\AuthorizationManagerInterface',
         ];
 
         $this->container->getCompilerPassConfig()->setOptimizationPasses([]);

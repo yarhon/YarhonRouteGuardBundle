@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Twig\TokenParser;
+namespace Yarhon\RouteGuardBundle\Twig\TokenParser;
 
 use Twig\Token;
 use Twig\Parser;
@@ -16,7 +16,7 @@ use Twig\TokenStream;
 use Twig\Node\Node;
 use Twig\Node\Expression\ArrayExpression;
 use Twig_Error_Syntax as SyntaxError; // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
-use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
+use Yarhon\RouteGuardBundle\Twig\Node\RouteExpression;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Security\Authorization;
+namespace Yarhon\RouteGuardBundle\Security\Authorization;
 
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 

@@ -8,11 +8,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Fixtures\Controller;
+namespace Yarhon\RouteGuardBundle\Tests\Fixtures\Controller;
 
-use Yarhon\LinkGuardBundle\Tests\Fixtures\Annotation\TestOne;
-use Yarhon\LinkGuardBundle\Tests\Fixtures\Annotation\TestTwo;
-use Yarhon\LinkGuardBundle\Tests\Fixtures\Annotation\TestThree;
+use Yarhon\RouteGuardBundle\Tests\Fixtures\Annotation\TestOne;
+use Yarhon\RouteGuardBundle\Tests\Fixtures\Annotation\TestTwo;
+use Yarhon\RouteGuardBundle\Tests\Fixtures\Annotation\TestThree;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

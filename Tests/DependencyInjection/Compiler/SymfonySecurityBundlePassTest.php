@@ -8,13 +8,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Compiler;
+namespace Yarhon\RouteGuardBundle\Tests\DependencyInjection\Compiler;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SymfonySecurityBundlePass;
-use Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider;
-use Yarhon\LinkGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
+use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\SymfonySecurityBundlePass;
+use Yarhon\RouteGuardBundle\Security\Provider\SymfonyAccessControlProvider;
+use Yarhon\RouteGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 
 /**

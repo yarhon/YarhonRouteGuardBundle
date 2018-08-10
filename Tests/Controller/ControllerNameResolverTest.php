@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Controller;
+namespace Yarhon\RouteGuardBundle\Tests\Controller;
 
 use PHPUnit\Framework\TestCase;
-use Yarhon\LinkGuardBundle\Controller\ControllerNameResolver;
-use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
-use Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController;
+use Yarhon\RouteGuardBundle\Controller\ControllerNameResolver;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
+use Yarhon\RouteGuardBundle\Tests\Fixtures\Controller\SimpleController;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -45,27 +45,27 @@ class ControllerNameResolverTest extends TestCase
         return [
             [
                 [SimpleController::class, 'index'],
-                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::index',
+                'Yarhon\RouteGuardBundle\Tests\Fixtures\Controller\SimpleController::index',
             ],
             [
                 [new SimpleController(), 'index'],
-                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::index',
+                'Yarhon\RouteGuardBundle\Tests\Fixtures\Controller\SimpleController::index',
             ],
             [
                 new SimpleController(),
-                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::__invoke',
+                'Yarhon\RouteGuardBundle\Tests\Fixtures\Controller\SimpleController::__invoke',
             ],
             [
                 'array_map',
                 false,
             ],
             [
-                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController',
-                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::__invoke',
+                'Yarhon\RouteGuardBundle\Tests\Fixtures\Controller\SimpleController',
+                'Yarhon\RouteGuardBundle\Tests\Fixtures\Controller\SimpleController::__invoke',
             ],
             [
-                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::index',
-                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::index',
+                'Yarhon\RouteGuardBundle\Tests\Fixtures\Controller\SimpleController::index',
+                'Yarhon\RouteGuardBundle\Tests\Fixtures\Controller\SimpleController::index',
             ],
         ];
     }

@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\CacheWarmer;
+namespace Yarhon\RouteGuardBundle\CacheWarmer;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
-use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
-use Yarhon\LinkGuardBundle\Exception\RuntimeException;
+use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
+use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

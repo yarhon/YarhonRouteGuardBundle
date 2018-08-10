@@ -9,5 +9,5 @@ Limitations:
    
 If someone redefined router service completely, and it's not extends from the basic one,
 (\Symfony\Component\Routing\Router), he has to set it's own UrlGeneratorConfigurator 
-(see \Yarhon\LinkGuardBundle\DependencyInjection\Configurator\UrlGeneratorConfigurator) for
+(see \Yarhon\RouteGuardBundle\DependencyInjection\Configurator\UrlGeneratorConfigurator) for
 this router service.

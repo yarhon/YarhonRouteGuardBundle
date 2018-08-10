@@ -8,16 +8,16 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Twig\TokenParser;
+namespace Yarhon\RouteGuardBundle\Tests\Twig\TokenParser;
 
 use Twig\Node\Node;
 use Twig\Node\TextNode;
 use Twig\Node\PrintNode;
 use Twig\Node\Expression\NameExpression;
 use Twig\Error\SyntaxError;
-use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteNode;
-use Yarhon\LinkGuardBundle\Twig\TokenParser\RouteTokenParser;
+use Yarhon\RouteGuardBundle\Tests\Twig\AbstractNodeTest;
+use Yarhon\RouteGuardBundle\Twig\Node\RouteNode;
+use Yarhon\RouteGuardBundle\Twig\TokenParser\RouteTokenParser;
 
 class RouteTokenParserTest extends AbstractNodeTest
 {

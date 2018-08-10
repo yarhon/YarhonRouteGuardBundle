@@ -8,11 +8,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\DependencyInjection\Compiler;
+namespace Yarhon\RouteGuardBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Yarhon\LinkGuardBundle\Security\Provider\SensioSecurityProvider;
+use Yarhon\RouteGuardBundle\Security\Provider\SensioSecurityProvider;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

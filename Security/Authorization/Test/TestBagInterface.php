@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Security\Authorization\Test;
+namespace Yarhon\RouteGuardBundle\Security\Authorization\Test;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

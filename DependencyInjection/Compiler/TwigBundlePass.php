@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\DependencyInjection\Compiler;
+namespace Yarhon\RouteGuardBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension;
-use Yarhon\LinkGuardBundle\Twig\RoutingRuntime;
+use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
+use Yarhon\RouteGuardBundle\Twig\RoutingRuntime;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Fixtures\Routing;
+namespace Yarhon\RouteGuardBundle\Tests\Fixtures\Routing;
 
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\RequestContext;

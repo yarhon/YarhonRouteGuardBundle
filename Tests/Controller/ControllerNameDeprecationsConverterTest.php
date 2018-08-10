@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Controller;
+namespace Yarhon\RouteGuardBundle\Tests\Controller;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
-use Yarhon\LinkGuardBundle\Controller\ControllerNameDeprecationsConverter;
-use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+use Yarhon\RouteGuardBundle\Controller\ControllerNameDeprecationsConverter;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -39,7 +39,7 @@ class ControllerNameDeprecationsConverterTest extends TestCase
         $bundle = $this->createMock(BundleInterface::class);
 
         $bundle->method('getNamespace')
-            ->willReturn('Yarhon\LinkGuardBundle\Tests\Fixtures');
+            ->willReturn('Yarhon\RouteGuardBundle\Tests\Fixtures');
 
         $this->kernel->method('getBundle')
             ->willReturn($bundle);
@@ -74,7 +74,7 @@ class ControllerNameDeprecationsConverterTest extends TestCase
             ],
             [
                 'Bundle:Simple:index',
-                'Yarhon\LinkGuardBundle\Tests\Fixtures\Controller\SimpleController::indexAction',
+                'Yarhon\RouteGuardBundle\Tests\Fixtures\Controller\SimpleController::indexAction',
             ],
         ];
     }

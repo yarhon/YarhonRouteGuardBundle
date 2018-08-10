@@ -8,9 +8,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Security\Authorization\Test;
+namespace Yarhon\RouteGuardBundle\Security\Authorization\Test;
 
-use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * Arguments is a "value object" class for storing arguments for AuthorizationChecker::isGranted() authorization test.

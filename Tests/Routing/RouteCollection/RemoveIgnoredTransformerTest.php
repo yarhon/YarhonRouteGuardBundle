@@ -8,11 +8,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Routing\RouteCollection;
+namespace Yarhon\RouteGuardBundle\Tests\Routing\RouteCollection;
 
 use PHPUnit\Framework\TestCase;
-use Yarhon\LinkGuardBundle\Tests\HelperTrait;
-use Yarhon\LinkGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer;
+use Yarhon\RouteGuardBundle\Tests\HelperTrait;
+use Yarhon\RouteGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

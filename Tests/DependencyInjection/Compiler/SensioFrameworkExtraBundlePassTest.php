@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Compiler;
+namespace Yarhon\RouteGuardBundle\Tests\DependencyInjection\Compiler;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SensioFrameworkExtraBundlePass;
-use Yarhon\LinkGuardBundle\Security\Provider\SensioSecurityProvider;
+use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\SensioFrameworkExtraBundlePass;
+use Yarhon\RouteGuardBundle\Security\Provider\SensioSecurityProvider;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

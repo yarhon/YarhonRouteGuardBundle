@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Security\Provider;
+namespace Yarhon\RouteGuardBundle\Security\Provider;
 
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -17,9 +17,9 @@ use Symfony\Component\Routing\Route;
 use Psr\Log\LoggerAwareTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
-use Yarhon\LinkGuardBundle\Annotations\ClassMethodAnnotationReader;
-use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBag;
-use Yarhon\LinkGuardBundle\Security\Authorization\Test\Arguments;
+use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReader;
+use Yarhon\RouteGuardBundle\Security\Authorization\Test\TestBag;
+use Yarhon\RouteGuardBundle\Security\Authorization\Test\Arguments;
 
 /**
  * SensioSecurityProvider processes Security & IsGranted annotations of Sensio FrameworkExtraBundle.

@@ -8,10 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Security\Http;
+namespace Yarhon\RouteGuardBundle\Security\Http;
 
 use Symfony\Component\HttpFoundation\Request;
-use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBagInterface;
+use Yarhon\RouteGuardBundle\Security\Authorization\Test\TestBagInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

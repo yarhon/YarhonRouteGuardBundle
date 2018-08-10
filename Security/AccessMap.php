@@ -7,7 +7,7 @@
 * file that was distributed with this source code.
 */
 
-namespace Yarhon\LinkGuardBundle\Security;
+namespace Yarhon\RouteGuardBundle\Security;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

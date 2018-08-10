@@ -8,10 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection;
+namespace Yarhon\RouteGuardBundle\Tests\DependencyInjection;
 
 use PHPUnit\Framework\TestCase;
-use Yarhon\LinkGuardBundle\DependencyInjection\Configuration;
+use Yarhon\RouteGuardBundle\DependencyInjection\Configuration;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Twig\Node;
+namespace Yarhon\RouteGuardBundle\Twig\Node;
 
 use Twig\Node\Node;
 use Twig\Node\Expression\AbstractExpression;

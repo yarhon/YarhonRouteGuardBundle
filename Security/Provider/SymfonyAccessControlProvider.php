@@ -8,17 +8,17 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Security\Provider;
+namespace Yarhon\RouteGuardBundle\Security\Provider;
 
 use Symfony\Component\Routing\Route;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Psr\Log\LoggerAwareTrait;
-use Yarhon\LinkGuardBundle\Security\Http\RequestConstraint;
-use Yarhon\LinkGuardBundle\Security\Http\RouteMatcher;
-use Yarhon\LinkGuardBundle\Security\Http\RequestMatcher;
-use Yarhon\LinkGuardBundle\Security\Authorization\Test\Arguments;
-use Yarhon\LinkGuardBundle\Security\Authorization\Test\TestBag;
-use Yarhon\LinkGuardBundle\Security\Http\TestBagMap;
+use Yarhon\RouteGuardBundle\Security\Http\RequestConstraint;
+use Yarhon\RouteGuardBundle\Security\Http\RouteMatcher;
+use Yarhon\RouteGuardBundle\Security\Http\RequestMatcher;
+use Yarhon\RouteGuardBundle\Security\Authorization\Test\Arguments;
+use Yarhon\RouteGuardBundle\Security\Authorization\Test\TestBag;
+use Yarhon\RouteGuardBundle\Security\Http\TestBagMap;
 
 /**
  * SymfonyAccessControlProvider processes access_control config of Symfony SecurityBundle.

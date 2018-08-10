@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Routing\RouteCollection;
+namespace Yarhon\RouteGuardBundle\Tests\Routing\RouteCollection;
 
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use Yarhon\LinkGuardBundle\Tests\HelperTrait;
-use Yarhon\LinkGuardBundle\Routing\RouteCollection\ControllerNameTransformer;
-use Yarhon\LinkGuardBundle\Controller\ContainerControllerNameResolver;
-use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+use Yarhon\RouteGuardBundle\Tests\HelperTrait;
+use Yarhon\RouteGuardBundle\Routing\RouteCollection\ControllerNameTransformer;
+use Yarhon\RouteGuardBundle\Controller\ContainerControllerNameResolver;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

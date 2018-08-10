@@ -8,11 +8,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection\Container;
+namespace Yarhon\RouteGuardBundle\Tests\DependencyInjection\Container;
 
 use PHPUnit\Framework\TestCase;
-use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap;
-use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+use Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

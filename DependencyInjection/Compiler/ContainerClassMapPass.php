@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\DependencyInjection\Compiler;
+namespace Yarhon\RouteGuardBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMap;
-use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMapBuilder;
+use Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap;
+use Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMapBuilder;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

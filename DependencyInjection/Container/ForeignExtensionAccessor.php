@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\DependencyInjection\Container;
+namespace Yarhon\RouteGuardBundle\DependencyInjection\Container;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ConfigurationExtensionInterface;
 use Symfony\Component\Config\Definition\Processor;
-use Yarhon\LinkGuardBundle\Exception\LogicException;
+use Yarhon\RouteGuardBundle\Exception\LogicException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

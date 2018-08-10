@@ -8,23 +8,23 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle;
+namespace Yarhon\RouteGuardBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
-use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SymfonySecurityBundlePass;
-use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\SensioFrameworkExtraBundlePass;
-use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\TwigBundlePass;
-use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\ContainerClassMapPass;
-use Yarhon\LinkGuardBundle\DependencyInjection\Compiler\InjectTaggedServicesPass;
-use Yarhon\LinkGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
-use Yarhon\LinkGuardBundle\DependencyInjection\Container\ClassMapBuilder;
+use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\SymfonySecurityBundlePass;
+use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\SensioFrameworkExtraBundlePass;
+use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\TwigBundlePass;
+use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\ContainerClassMapPass;
+use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\InjectTaggedServicesPass;
+use Yarhon\RouteGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
+use Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMapBuilder;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class YarhonLinkGuardBundle extends Bundle
+class YarhonRouteGuardBundle extends Bundle
 {
     public function build(ContainerBuilder $container)
     {

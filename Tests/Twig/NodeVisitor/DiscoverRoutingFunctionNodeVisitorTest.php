@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests\Twig\NodeVisitor;
+namespace Yarhon\RouteGuardBundle\Tests\Twig\NodeVisitor;
 
 use Twig\Node\Node;
 use Twig\Node\PrintNode;
@@ -17,11 +17,11 @@ use Twig\Node\Expression\ConstantExpression;
 use Twig\Node\Expression\NameExpression;
 use Twig\Error\SyntaxError;
 use Twig\TwigFunction;
-use Yarhon\LinkGuardBundle\Tests\Twig\AbstractNodeTest;
-use Yarhon\LinkGuardBundle\Twig\TokenParser\RouteTokenParser;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteNode;
-use Yarhon\LinkGuardBundle\Twig\Node\RouteExpression;
-use Yarhon\LinkGuardBundle\Twig\NodeVisitor\DiscoverRoutingFunctionNodeVisitor;
+use Yarhon\RouteGuardBundle\Tests\Twig\AbstractNodeTest;
+use Yarhon\RouteGuardBundle\Twig\TokenParser\RouteTokenParser;
+use Yarhon\RouteGuardBundle\Twig\Node\RouteNode;
+use Yarhon\RouteGuardBundle\Twig\Node\RouteExpression;
+use Yarhon\RouteGuardBundle\Twig\NodeVisitor\DiscoverRoutingFunctionNodeVisitor;
 
 class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
 {

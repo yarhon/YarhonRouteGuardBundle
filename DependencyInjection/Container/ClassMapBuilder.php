@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\DependencyInjection\Container;
+namespace Yarhon\RouteGuardBundle\DependencyInjection\Container;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 

@@ -8,11 +8,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Routing\RouteCollection;
+namespace Yarhon\RouteGuardBundle\Routing\RouteCollection;
 
 use Symfony\Component\Routing\RouteCollection;
-use Yarhon\LinkGuardBundle\Controller\ControllerNameResolverInterface;
-use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
+use Yarhon\RouteGuardBundle\Controller\ControllerNameResolverInterface;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

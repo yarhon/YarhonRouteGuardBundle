@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\LinkGuardBundle\Tests;
+namespace Yarhon\RouteGuardBundle\Tests;
 
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
