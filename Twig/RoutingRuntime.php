@@ -52,6 +52,11 @@ class RoutingRuntime implements RuntimeExtensionInterface
     public function link($name, $parameters = [], $method = 'GET', array $generateAs = [])
     {
         // TODO: transform $generateAs
+        $referenceType = null;
+
+        //if ($generateAs)
+
+        //var_dump($name, $parameters, $generateAs);
 
         return $this->generate($name, $parameters, $method, $referenceType);
     }

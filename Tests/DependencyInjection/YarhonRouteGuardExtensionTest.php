@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yarhon\RouteGuardBundle\DependencyInjection\YarhonRouteGuardExtension;
 use Yarhon\RouteGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer;
 use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
-use Yarhon\RouteGuardBundle\CacheWarmer\RouteCacheWarmer;
+use Yarhon\RouteGuardBundle\CacheWarmer\AccessMapCacheWarmer;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -57,7 +57,7 @@ class YarhonRouteGuardExtensionTest extends TestCase
         $argument = $this->container->getDefinition(RoutingExtension::class)->getArgument(0);
         $this->assertArraySubset(['tag_name' => 'test'], $argument);
 
-        $argument = $this->container->getDefinition(RouteCacheWarmer::class)->getArgument(1);
+        $argument = $this->container->getDefinition(AccessMapCacheWarmer::class)->getArgument(1);
         $this->assertEquals('test', $argument);
 
         $this->markTestIncomplete('Watch for config changes.');

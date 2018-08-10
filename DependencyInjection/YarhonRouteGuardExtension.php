@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\Config\FileLocator;
-use Yarhon\RouteGuardBundle\CacheWarmer\RouteCacheWarmer;
+use Yarhon\RouteGuardBundle\CacheWarmer\AccessMapCacheWarmer;
 use Yarhon\RouteGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer;
 use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
 use Yarhon\RouteGuardBundle\Twig\RoutingRuntime;
@@ -41,7 +41,7 @@ class YarhonRouteGuardExtension extends Extension
         $definition = $container->getDefinition(RoutingExtension::class);
         $definition->replaceArgument(0, $config['twig']);
 
-        $definition = $container->getDefinition(RouteCacheWarmer::class);
+        $definition = $container->getDefinition(AccessMapCacheWarmer::class);
         $definition->replaceArgument(1, $config['cache_dir']);
     }
 }

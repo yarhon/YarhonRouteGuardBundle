@@ -72,7 +72,7 @@
         <service id="yarhon_route_guard.authorization_manager" alias="Yarhon\RouteGuardBundle\Security\Authorization\AuthorizationManager" public="true"/>
         <service id="Yarhon\RouteGuardBundle\Security\Authorization\AuthorizationManagerInterface" alias="yarhon_route_guard.authorization_manager" />
 
-        <service id="Yarhon\RouteGuardBundle\CacheWarmer\RouteCacheWarmer">
+        <service id="Yarhon\RouteGuardBundle\CacheWarmer\AccessMapCacheWarmer">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
             <argument /><!-- cache dir -->
             <tag name="kernel.cache_warmer" />
