@@ -111,11 +111,11 @@ class AccessMapBuilder implements LoggerAwareInterface
             return;
         }
 
-        $this->injectLogger();
-
         if ($this->logger) {
             $this->logger->info('Build access map. Route collection count', ['count' => count($this->routeCollection)]);
         }
+
+        $this->injectLogger();
 
         $originalRoutes = array_keys($this->routeCollection->all());
         $routeCollection = $this->transformRouteCollection($this->routeCollection);
@@ -126,15 +126,13 @@ class AccessMapBuilder implements LoggerAwareInterface
             $this->logger->info('Ignored routes count', ['count' => count($ignoredRoutes)]);
         }
 
+        $this->onBuild();
+
         foreach ($routeCollection->all() as $name => $route) {
             foreach ($this->authorizationProviders as $provider) {
                 $testBag = $provider->getTests($route);
             }
         }
-
-        // For tests compatibility
-        $this->routeCollection = $routeCollection;
-        $this->ignoredRoutes = $ignoredRoutes;
     }
 
     /**
@@ -153,6 +151,13 @@ class AccessMapBuilder implements LoggerAwareInterface
         }
 
         return $routeCollection;
+    }
+
+    private function onBuild()
+    {
+        foreach ($this->authorizationProviders as $provider) {
+            $provider->onBuild();
+        }
     }
 
     private function injectLogger()

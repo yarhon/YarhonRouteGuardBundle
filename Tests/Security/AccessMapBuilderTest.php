@@ -12,10 +12,11 @@ namespace Yarhon\LinkGuardBundle\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\RouterInterface;
 use Yarhon\LinkGuardBundle\Tests\HelperTrait;
 use Yarhon\LinkGuardBundle\Security\AccessMapBuilder;
-use Yarhon\LinkGuardBundle\Security\Provider\SymfonyAccessControlProvider;
-use Yarhon\LinkGuardBundle\Routing\RouteCollection\ControllerNameTransformer;
+use Yarhon\LinkGuardBundle\Security\Provider\ProviderInterface;
+use Yarhon\LinkGuardBundle\Routing\RouteCollection\TransformerInterface;
 use Yarhon\LinkGuardBundle\Exception\InvalidArgumentException;
 
 /**
@@ -33,9 +34,6 @@ class AccessMapBuilderTest extends TestCase
     public function setUp()
     {
         $this->builder = new AccessMapBuilder();
-
-        $authorizationProvider = $this->createMock(SymfonyAccessControlProvider::class);
-        $this->builder->addAuthorizationProvider($authorizationProvider);
     }
 
     public function testSetRouteCollection()
@@ -49,28 +47,49 @@ class AccessMapBuilderTest extends TestCase
         $this->assertAttributeEquals($routeCollection, 'routeCollection', $this->builder);
     }
 
-    public function testTransformerCallException()
+    public function testImportRouteCollection()
     {
         $routeCollection = $this->createRouteCollection([
-            '/path1' => 'class',
+            '/path1' => 'class::method',
         ]);
 
-        $transformer = $this->createMock(ControllerNameTransformer::class);
+        $router = $this->createMock(RouterInterface::class);
+        $router->method('getRouteCollection')
+            ->willReturn($routeCollection);
 
-        $transformer->method('transform')
-            ->willThrowException(new InvalidArgumentException());
+        $this->builder->importRouteCollection($router);
 
-        $this->builder->addRouteCollectionTransformer($transformer);
-        $this->builder->setRouteCollection($routeCollection);
+        $this->assertAttributeEquals($routeCollection, 'routeCollection', $this->builder);
+    }
 
-        $this->expectException(InvalidArgumentException::class);
+    public function testSetAuthorizationProviders()
+    {
+        $provider1 = $this->createMock(ProviderInterface::class);
+        $provider2 = $this->createMock(ProviderInterface::class);
+        $providers = [$provider1, $provider2];
 
-        $this->builder->build();
+        $this->builder->setAuthorizationProviders($providers);
+
+        $this->assertAttributeSame($providers, 'authorizationProviders', $this->builder);
+    }
+
+    public function testSetRouteCollectionTransformers()
+    {
+        $transformer1 = $this->createMock(TransformerInterface::class);
+        $transformer2 = $this->createMock(TransformerInterface::class);
+        $transformers = [$transformer1, $transformer2];
+
+        $this->builder->setRouteCollectionTransformers($transformers);
+
+        $this->assertAttributeSame($transformers, 'routeCollectionTransformers', $this->builder);
     }
 
     public function testTransformerCalls()
     {
-        $transformer = $this->createMock(ControllerNameTransformer::class);
+        $authorizationProvider = $this->createMock(ProviderInterface::class);
+        $this->builder->addAuthorizationProvider($authorizationProvider);
+
+        $transformer = $this->createMock(TransformerInterface::class);
 
         $transformer->method('transform')
             ->willReturn(new RouteCollection());
@@ -87,12 +106,39 @@ class AccessMapBuilderTest extends TestCase
 
         $this->builder->build();
 
+        $this->markTestIncomplete('Check transformed route collection and ignored routes.');
+
         $this->assertAttributeEquals(new RouteCollection(), 'routeCollection', $this->builder);
         $this->assertAttributeEquals(['/path1'], 'ignoredRoutes', $this->builder);
+    }
+
+    public function testTransformerCallException()
+    {
+        $authorizationProvider = $this->createMock(ProviderInterface::class);
+        $this->builder->addAuthorizationProvider($authorizationProvider);
+
+        $routeCollection = $this->createRouteCollection([
+            '/path1' => 'class',
+        ]);
+
+        $transformer = $this->createMock(TransformerInterface::class);
+
+        $transformer->method('transform')
+            ->willThrowException(new InvalidArgumentException());
+
+        $this->builder->addRouteCollectionTransformer($transformer);
+        $this->builder->setRouteCollection($routeCollection);
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->builder->build();
     }
 
     public function testBuild()
     {
         $this->markTestIncomplete();
+
+        $authorizationProvider = $this->createMock(ProviderInterface::class);
+        $this->builder->addAuthorizationProvider($authorizationProvider);
     }
 }

@@ -50,6 +50,6 @@ class SymfonySecurityBundlePass implements CompilerPassInterface
         }
 
         $accessControlProvider = $container->getDefinition(SymfonyAccessControlProvider::class);
-        $accessControlProvider->addMethodCall('setRules', [$config['access_control']]);
+        $accessControlProvider->addMethodCall('importRules', [$config['access_control']]);
     }
 }

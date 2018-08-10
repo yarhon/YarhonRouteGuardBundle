@@ -54,7 +54,6 @@ class RouteTokenParser extends AbstractTokenParser
         $this->allowDiscover = $allowDiscover;
 
         $this->expressionParser = new RouteExpressionParser();
-
     }
 
     /**

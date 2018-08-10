@@ -57,6 +57,11 @@ class SensioSecurityProvider implements ProviderInterface
         $this->reader->addAnnotationClass(IsGrantedAnnotation::class);
     }
 
+    public function onBuild()
+    {
+
+    }
+
     /**
      * {@inheritdoc}
      */

@@ -35,13 +35,13 @@ class YarhonLinkGuardExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $definition = $container->getDefinition(RouteCacheWarmer::class);
-        $definition->replaceArgument(1, $config['cache_dir']);
-
         $definition = $container->getDefinition(RemoveIgnoredTransformer::class);
         $definition->replaceArgument(0, $config['ignore_controllers']);
 
         $definition = $container->getDefinition(RoutingExtension::class);
         $definition->replaceArgument(0, $config['twig']);
+
+        $definition = $container->getDefinition(RouteCacheWarmer::class);
+        $definition->replaceArgument(1, $config['cache_dir']);
     }
 }

@@ -36,7 +36,7 @@ class YarhonLinkGuardBundle extends Bundle
         $container->addCompilerPass(new SymfonySecurityBundlePass($foreignExtensionAccessor), PassConfig::TYPE_BEFORE_REMOVING, 100);
         $container->addCompilerPass(new SensioFrameworkExtraBundlePass(), PassConfig::TYPE_BEFORE_REMOVING, 101);
 
-        // We use same type and priority, as \Symfony\Bundle\TwigBundle\DependencyInjection\Compiler\ExtensionPass
+        // We use same type and priority as are used for \Symfony\Bundle\TwigBundle\DependencyInjection\Compiler\ExtensionPass
         $container->addCompilerPass(new TwigBundlePass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
 
         $container->addCompilerPass(new InjectTaggedServicesPass(), PassConfig::TYPE_BEFORE_REMOVING, 0);

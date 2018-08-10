@@ -102,7 +102,7 @@ class SymfonySecurityBundlePassTest extends TestCase
         $this->assertTrue($this->container->hasDefinition(SymfonyAccessControlProvider::class));
     }
 
-    public function testAddRule()
+    public function testImportRules()
     {
         $rules = [
             ['path' => '/path1'],
@@ -120,7 +120,7 @@ class SymfonySecurityBundlePassTest extends TestCase
         $this->assertCount(1, $methodCalls);
 
         list($name, $arguments) = $methodCalls[0];
-        $this->assertEquals('setRules', $name);
+        $this->assertEquals('importRules', $name);
         $this->assertEquals($rules, $arguments[0]);
     }
 }

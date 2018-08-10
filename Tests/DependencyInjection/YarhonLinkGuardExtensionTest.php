@@ -12,8 +12,10 @@ namespace Yarhon\LinkGuardBundle\Tests\DependencyInjection;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Yarhon\LinkGuardBundle\DependencyInjection\YarhonLinkGuardExtension;
+use Yarhon\LinkGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer;
+use Yarhon\LinkGuardBundle\Twig\Extension\RoutingExtension;
+use Yarhon\LinkGuardBundle\CacheWarmer\RouteCacheWarmer;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -28,14 +30,16 @@ class YarhonLinkGuardExtensionTest extends TestCase
     public function setUp()
     {
         $extension = new YarhonLinkGuardExtension();
-        $this->container = new ContainerBuilder(new ParameterBag([]));
+        $this->container = new ContainerBuilder();
         $this->container->registerExtension($extension);
 
         // TODO: remove this?
         $this->container->register('security.authorization_checker')->setSynthetic(true);
 
         $config = [
-            'cache_dir' => 'link-guard',
+            'cache_dir' => 'test',
+            'ignore_controllers' => ['test'],
+            'twig' => ['tag_name' => 'test'],
         ];
 
         $this->container->loadFromExtension($extension->getAlias(), $config);
@@ -43,13 +47,20 @@ class YarhonLinkGuardExtensionTest extends TestCase
 
     public function testConfigParametersAreSet()
     {
-        $this->markTestIncomplete('Watch for config changes.');
-
         $this->container->getCompilerPassConfig()->setOptimizationPasses([]);
         $this->container->getCompilerPassConfig()->setRemovingPasses([]);
         $this->container->compile();
 
-        // ..................
+        $argument = $this->container->getDefinition(RemoveIgnoredTransformer::class)->getArgument(0);
+        $this->assertArraySubset([0 => 'test'], $argument);
+
+        $argument = $this->container->getDefinition(RoutingExtension::class)->getArgument(0);
+        $this->assertArraySubset(['tag_name' => 'test'], $argument);
+
+        $argument = $this->container->getDefinition(RouteCacheWarmer::class)->getArgument(1);
+        $this->assertEquals('test', $argument);
+
+        $this->markTestIncomplete('Watch for config changes.');
     }
 
     public function testPrivateServices()
@@ -89,19 +100,6 @@ class YarhonLinkGuardExtensionTest extends TestCase
 
         foreach ($services as $id) {
             $this->assertTrue($this->container->hasDefinition($id), $id);
-        }
-    }
-
-    public function testParameters()
-    {
-        $parameters = [
-        ];
-
-        $this->container->compile();
-
-        foreach ($parameters as $key => $value) {
-            $this->assertTrue($this->container->hasParameter($key), $key);
-            $this->assertEquals($value, $this->container->getParameter($key), $key);
         }
     }
 

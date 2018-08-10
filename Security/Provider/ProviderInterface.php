@@ -26,4 +26,6 @@ interface ProviderInterface extends LoggerAwareInterface
      * @return TestBagInterface|RequestResolvableInterface|null
      */
     public function getTests(Route $route);
+
+    public function onBuild();
 }

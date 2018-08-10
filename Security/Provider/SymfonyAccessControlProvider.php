@@ -30,19 +30,25 @@ use Yarhon\LinkGuardBundle\Security\Http\TestBagMap;
 class SymfonyAccessControlProvider implements ProviderInterface
 {
     use LoggerAwareTrait;
+
     /**
      * @var array
      */
     private $rules = [];
 
-    /**
-     * @var bool
-     */
-    private $initialized = false;
-
-    public function setRules(array $rules)
+    public function importRules(array $rules)
     {
-        $this->rules = $rules;
+        foreach ($rules as $rule) {
+            $transformed = $this->transformRule($rule);
+            $this->addRule(...$transformed);
+        }
+    }
+
+    public function addRule(RequestConstraint $constraint, Arguments $arguments)
+    {
+        $routeMatcher = new RouteMatcher($constraint);
+
+        $this->rules[] = [$routeMatcher, $arguments, $constraint];
     }
 
     /**
@@ -53,7 +59,6 @@ class SymfonyAccessControlProvider implements ProviderInterface
     private function transformRule(array $rule)
     {
         $constraint = new RequestConstraint($rule['path'], $rule['host'], $rule['methods'], $rule['ips']);
-        $routeMatcher = new RouteMatcher($constraint);
 
         $attributes = $rule['roles'];
         if ($rule['allow_if'] && class_exists(Expression::class)) {
@@ -66,21 +71,12 @@ class SymfonyAccessControlProvider implements ProviderInterface
         $arguments = new Arguments($attributes);
         $arguments->setSubjectMetadata(Arguments::SUBJECT_CONTEXT_VARIABLE, 'request');
 
-        return [$routeMatcher, $arguments];
+        return [$constraint, $arguments];
     }
 
-    private function initialize()
+    public function onBuild()
     {
-        if ($this->initialized) {
-            return;
-        }
-
-        foreach ($this->rules as $index => $rule) {
-            $this->inspectRule($rule, $index);
-            $this->rules[$index] = $this->transformRule($rule);
-        }
-
-        $this->initialized = true;
+        $this->inspectRules();
     }
 
     /**
@@ -88,8 +84,6 @@ class SymfonyAccessControlProvider implements ProviderInterface
      */
     public function getTests(Route $route)
     {
-        $this->initialize();
-
         $matches = [];
 
         foreach ($this->rules as $rule) {
@@ -127,16 +121,25 @@ class SymfonyAccessControlProvider implements ProviderInterface
         return null;
     }
 
-    private function inspectRule(array $rule, $index)
+    private function inspectRules()
     {
         if (!$this->logger) {
             return;
         }
 
-        if ($rule['path'] && '^' !== $rule['path'][0]) {
-            $message = 'Access control rule #%s path pattern "%s" doesn\'t starts from "^" - that makes matching pattern to route static prefix impossible and reduces performance.';
-            $message = sprintf($message, $index, $rule['path']);
-            $this->logger->warning($message);
+        foreach ($this->rules as $index => $rule) {
+            /** @var RequestConstraint $constraint */
+            $constraint = $rule[2];
+
+            if (!$pathPatten = $constraint->getPathPattern()) {
+                continue;
+            }
+
+            if ('^' !== $pathPatten[0]) {
+                $message = 'Access control rule #%s path pattern "%s" doesn\'t starts from "^" - that makes matching pattern to route static prefix impossible and reduces performance.';
+                $message = sprintf($message, $index, $pathPatten);
+                $this->logger->warning($message);
+            }
         }
     }
 }

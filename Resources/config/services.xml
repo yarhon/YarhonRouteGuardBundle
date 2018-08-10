@@ -20,7 +20,7 @@
             <call method="setLogger">
                 <argument type="service" id="logger" on-invalid="ignore" />
             </call>
-            <tag name="monolog.logger" channel="link_guard" />
+            <tag name="monolog.logger" channel="route_guard" />
         </service>
 
         <!-- authorization providers -->
