@@ -12,10 +12,10 @@ namespace Yarhon\RouteGuardBundle\Tests\DependencyInjection\Compiler;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\Extension;
 use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\SymfonySecurityBundlePass;
 use Yarhon\RouteGuardBundle\Security\Provider\SymfonyAccessControlProvider;
 use Yarhon\RouteGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
-use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -47,7 +47,7 @@ class SymfonySecurityBundlePassTest extends TestCase
 
         $this->pass = new SymfonySecurityBundlePass($this->foreignExtensionAccessor);
 
-        $this->securityExtension = $this->createMock(SecurityExtension::class);
+        $this->securityExtension = $this->createMock(Extension::class);
 
         $this->securityExtension->method('getAlias')
             ->willReturn('security');

@@ -19,6 +19,7 @@ use Yarhon\RouteGuardBundle\Security\Http\RequestMatcher;
 use Yarhon\RouteGuardBundle\Security\Authorization\Test\Arguments;
 use Yarhon\RouteGuardBundle\Security\Authorization\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Http\TestBagMap;
+use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactoryInterface;
 
 /**
  * SymfonyAccessControlProvider processes access_control config of Symfony SecurityBundle.
@@ -35,6 +36,21 @@ class SymfonyAccessControlProvider implements ProviderInterface
      * @var array
      */
     private $rules = [];
+
+    /**
+     * @var ExpressionFactoryInterface
+     */
+    private $expressionFactory;
+
+    /**
+     * SymfonyAccessControlProvider constructor.
+     *
+     * @param ExpressionFactoryInterface $expressionFactory
+     */
+    public function __construct(ExpressionFactoryInterface $expressionFactory)
+    {
+        $this->expressionFactory = $expressionFactory;
+    }
 
     public function importRules(array $rules)
     {
@@ -61,10 +77,8 @@ class SymfonyAccessControlProvider implements ProviderInterface
         $constraint = new RequestConstraint($rule['path'], $rule['host'], $rule['methods'], $rule['ips']);
 
         $attributes = $rule['roles'];
-        if ($rule['allow_if'] && class_exists(Expression::class)) {
-            // When allow_if is specified, but ExpressionLanguage component is not installed,
-            // Symfony SecurityBundle would throw an exception, so we don't have to duplicate it.
-            $expression = new Expression($rule['allow_if']);
+        if ($rule['allow_if']) {
+            $expression = $this->expressionFactory->create($rule['allow_if'], ['request']);
             $attributes[] = $expression;
         }
 
@@ -137,8 +151,7 @@ class SymfonyAccessControlProvider implements ProviderInterface
 
             if ('^' !== $pathPatten[0]) {
                 $message = 'Access control rule #%s path pattern "%s" doesn\'t starts from "^" - that makes matching pattern to route static prefix impossible and reduces performance.';
-                $message = sprintf($message, $index, $pathPatten);
-                $this->logger->warning($message);
+                $this->logger->warning(sprintf($message, $index, $pathPatten));
             }
         }
     }

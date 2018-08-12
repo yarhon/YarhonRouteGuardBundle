@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Security;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Yarhon\RouteGuardBundle\Security\Provider\ProviderInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteCollection\TransformerInterface;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
@@ -23,8 +23,6 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
  */
 class AccessMapBuilder implements LoggerAwareInterface
 {
-    use LoggerAwareTrait;
-
     /**
      * @var RouteCollection
      */
@@ -39,6 +37,11 @@ class AccessMapBuilder implements LoggerAwareInterface
      * @var TransformerInterface[]
      */
     private $routeCollectionTransformers = [];
+
+    /**
+     * @var LoggerInterface;
+     */
+    private $logger;
 
     /**
      * @param ProviderInterface $provider
@@ -96,6 +99,20 @@ class AccessMapBuilder implements LoggerAwareInterface
         $this->setRouteCollection($router->getRouteCollection());
     }
 
+    ////////  not tested
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+
+        foreach ($this->authorizationProviders as $provider) {
+            $provider->setLogger($this->logger);
+        }
+    }
+
     /**
      * @throws InvalidArgumentException If exception in one of the RouteCollection transformers was thrown
      */
@@ -114,8 +131,6 @@ class AccessMapBuilder implements LoggerAwareInterface
         if ($this->logger) {
             $this->logger->info('Build access map. Route collection count', ['count' => count($this->routeCollection)]);
         }
-
-        $this->injectLogger();
 
         $originalRoutes = array_keys($this->routeCollection->all());
         $routeCollection = $this->transformRouteCollection($this->routeCollection);
@@ -157,17 +172,6 @@ class AccessMapBuilder implements LoggerAwareInterface
     {
         foreach ($this->authorizationProviders as $provider) {
             $provider->onBuild();
-        }
-    }
-
-    private function injectLogger()
-    {
-        if (!$this->logger) {
-            return;
-        }
-
-        foreach ($this->authorizationProviders as $provider) {
-            $provider->setLogger($this->logger);
         }
     }
 

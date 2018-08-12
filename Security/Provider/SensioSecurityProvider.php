@@ -20,6 +20,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnot
 use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReader;
 use Yarhon\RouteGuardBundle\Security\Authorization\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Authorization\Test\Arguments;
+use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactoryInterface;
 
 /**
  * SensioSecurityProvider processes Security & IsGranted annotations of Sensio FrameworkExtraBundle.
@@ -38,14 +39,22 @@ class SensioSecurityProvider implements ProviderInterface
     private $reader;
 
     /**
+     * @var ExpressionFactoryInterface
+     */
+    private $expressionFactory;
+
+    /**
      * SensioSecurityProvider constructor.
      *
-     * @param Reader|null $reader
+     * @param ExpressionFactoryInterface $expressionFactory
+     * @param Reader|null                $reader
      *
      * @throws AnnotationException
      */
-    public function __construct(Reader $reader = null)
+    public function __construct(ExpressionFactoryInterface $expressionFactory, Reader $reader = null)
     {
+        $this->expressionFactory = $expressionFactory;
+
         if (null === $reader) {
             // TODO: use CachedReader ?
             $reader = new AnnotationReader();
@@ -85,6 +94,7 @@ class SensioSecurityProvider implements ProviderInterface
             if ($annotation instanceof SecurityAnnotation) {
                 // TODO: !!! check how sensio expressions differ from access_control expressions
                 $expression = $annotation->getExpression();
+                $expression = $this->expressionFactory->create($expression);
                 $attributes[] = $expression;
             } elseif ($annotation instanceof IsGrantedAnnotation) {
                 // Despite of the name, $annotation->getAttributes() is a string (annotation value)
