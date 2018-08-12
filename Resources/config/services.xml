@@ -28,6 +28,7 @@
         <service id="Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactory">
             <argument type="service" id="security.expression_language" on-invalid="ignore" />
             <argument>null</argument>
+            <argument type="constant">Symfony\Component\HttpKernel\Kernel::VERSION_ID</argument>
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\Provider\SensioSecurityProvider">

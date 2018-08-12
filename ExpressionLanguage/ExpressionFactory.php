@@ -13,7 +13,6 @@ namespace Yarhon\RouteGuardBundle\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
-use Symfony\Component\HttpKernel\Kernel;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
@@ -32,10 +31,16 @@ class ExpressionFactory implements ExpressionFactoryInterface
     private $useExpressionLanguageCache;
 
     /**
+     * @var int
+     */
+    private $versionId;
+
+    /**
      * @param ExpressionLanguage|null $expressionLanguage
      * @param bool|null               $useExpressionLanguageCache
+     * @param int|null                $versionId
      */
-    public function __construct(ExpressionLanguage $expressionLanguage = null, $useExpressionLanguageCache = null)
+    public function __construct(ExpressionLanguage $expressionLanguage = null, $useExpressionLanguageCache = null, $versionId = null)
     {
         $this->expressionLanguage = $expressionLanguage;
 
@@ -47,11 +52,12 @@ class ExpressionFactory implements ExpressionFactoryInterface
         // In this case it's significant to provide exactly the same names list both to the ExpressionLanguage::parse
         // and ExpressionLanguage::evaluate calls, as names list is a part of the cache key.
 
-        if (null === $useExpressionLanguageCache) {
-            $useExpressionLanguageCache = Kernel::VERSION_ID >= 40100;
+        if (null === $useExpressionLanguageCache && null !== $versionId) {
+            $useExpressionLanguageCache = $versionId >= 40100;
         }
 
         $this->useExpressionLanguageCache = $useExpressionLanguageCache;
+        $this->versionId = $versionId;
     }
 
     /**
@@ -59,10 +65,6 @@ class ExpressionFactory implements ExpressionFactoryInterface
      */
     public function create($expression, array $names = [])
     {
-        //if (!class_exists(Expression::class)) {
-        //    throw new \RuntimeException('Unable to use expressions as the Symfony ExpressionLanguage component is not installed.');
-        //}
-
         if (!$this->expressionLanguage) {
             throw new RuntimeException('Can\'t create an Expression as ExpressionLanguage is not provided.');
         }
@@ -94,7 +96,7 @@ class ExpressionFactory implements ExpressionFactoryInterface
         $names = ['token', 'user', 'object', 'subject', 'roles', 'trust_resolver'];
 
         // TODO: check if it would be released in 4.2
-        if (Kernel::VERSION_ID >= 40200) {
+        if (null !== $this->versionId && $this->versionId >= 40200) {
             $names[] = ['auth_checker'];
         }
 
