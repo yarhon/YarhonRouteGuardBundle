@@ -29,4 +29,11 @@ trait HelperTrait
 
         return $routeCollection;
     }
+
+    private function requiresClass($class)
+    {
+        if (!class_exists($class, false)) {
+            $this->markTestSkipped(sprintf('Requires %s class.', $class));
+        }
+    }
 }

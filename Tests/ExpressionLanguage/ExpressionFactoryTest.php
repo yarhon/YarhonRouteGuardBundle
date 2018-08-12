@@ -15,24 +15,31 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactory;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
+use Yarhon\RouteGuardBundle\Tests\HelperTrait;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class ExpressionFactoryTest extends TestCase
 {
+    use HelperTrait;
 
     public function setUp()
     {
 
     }
 
+    /**
+     * @group requires package symfony/expression-language
+     */
     public function testCreate()
     {
         $this->markTestIncomplete();
+
+        $this->requiresClass(ExpressionLanguage::class);
     }
 
-    public function testCreateException()
+    public function testCreateWithoutExpressionLanguage()
     {
         $factory = new ExpressionFactory();
 
