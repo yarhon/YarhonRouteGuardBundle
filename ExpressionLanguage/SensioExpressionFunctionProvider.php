@@ -17,6 +17,8 @@ use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
  * @see \Sensio\Bundle\FrameworkExtraBundle\Security\ExpressionLanguage
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
+ *
+ * @codeCoverageIgnore
  */
 class SensioExpressionFunctionProvider implements ExpressionFunctionProviderInterface
 {

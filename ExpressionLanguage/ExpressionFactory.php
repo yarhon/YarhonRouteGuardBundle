@@ -26,38 +26,33 @@ class ExpressionFactory implements ExpressionFactoryInterface
     private $expressionLanguage;
 
     /**
+     * @var array
+     */
+    private $defaultNames;
+
+    /**
      * @var bool
      */
     private $useExpressionLanguageCache;
 
     /**
-     * @var int
-     */
-    private $versionId;
-
-    /**
+     * Prior to Symfony 4.1 "security.expression_language" service doesn't uses persistent cache adapter,
+     * so we should create ParsedExpression instance to avoid parsing at runtime (at ExpressionLanguage::evaluate call)
+     *
+     * Starting from Symfony 4.1 parsed expression would be saved in "security.expression_language" service persistent cache,
+     * so we can simply create Expression instance and rely on service cache (caching would be triggered by ExpressionLanguage::parse call).
+     * In this case it's significant to provide exactly the same names list both to the ExpressionLanguage::parse
+     * and ExpressionLanguage::evaluate calls, as names list is a part of the cache key.
+     *
      * @param ExpressionLanguage|null $expressionLanguage
+     * @param array|null              $defaultNames
      * @param bool|null               $useExpressionLanguageCache
-     * @param int|null                $versionId
      */
-    public function __construct(ExpressionLanguage $expressionLanguage = null, $useExpressionLanguageCache = null, $versionId = null)
+    public function __construct(ExpressionLanguage $expressionLanguage = null, array $defaultNames = null, $useExpressionLanguageCache = null)
     {
         $this->expressionLanguage = $expressionLanguage;
-
-        // Prior to Symfony 4.1 "security.expression_language" service doesn't uses persistent cache adapter,
-        // so we should create ParsedExpression instance to avoid parsing at runtime (at ExpressionLanguage::evaluate call)
-        //
-        // Starting from Symfony 4.1 parsed expression would be saved in "security.expression_language" service persistent cache,
-        // so we can simply create Expression instance and rely on service cache (caching would be triggered by ExpressionLanguage::parse call).
-        // In this case it's significant to provide exactly the same names list both to the ExpressionLanguage::parse
-        // and ExpressionLanguage::evaluate calls, as names list is a part of the cache key.
-
-        if (null === $useExpressionLanguageCache && null !== $versionId) {
-            $useExpressionLanguageCache = $versionId >= 40100;
-        }
-
+        $this->defaultNames = $defaultNames;
         $this->useExpressionLanguageCache = $useExpressionLanguageCache;
-        $this->versionId = $versionId;
     }
 
     /**
@@ -73,33 +68,14 @@ class ExpressionFactory implements ExpressionFactoryInterface
 
         // TODO: this would not work properly with string keys (string keys can be used for renaming variables in compiled code).
         // See \Symfony\Component\ExpressionLanguage\Parser::parse
-        $names = array_merge($this->getDefaultVariables(), $names);
+        $names = array_merge($this->defaultNames, $names);
 
         $parsedExpression = $this->expressionLanguage->parse($expression, $names);
-
-        //$ast = $parsedExpression->getNodes();
 
         if (!$this->useExpressionLanguageCache) {
             return $parsedExpression;
         }
 
         return $expression;
-    }
-
-    /**
-     * @see \Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter::getVariables
-     *
-     * @return array
-     */
-    protected function getDefaultVariables()
-    {
-        $names = ['token', 'user', 'object', 'subject', 'roles', 'trust_resolver'];
-
-        // TODO: check if it would be released in 4.2
-        if (null !== $this->versionId && $this->versionId >= 40200) {
-            $names[] = ['auth_checker'];
-        }
-
-        return $names;
     }
 }
