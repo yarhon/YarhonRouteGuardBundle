@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
- * Arguments is a "value object" class for storing arguments for AuthorizationChecker::isGranted() authorization test.
+ * TestArguments is a value object class for storing arguments for AuthorizationChecker::isGranted() authorization test.
  *
  * @see \Symfony\Component\Security\Core\Authorization\AuthorizationChecker::isGranted
  *
@@ -34,7 +34,7 @@ class TestArguments
     /**
      * List of possible variable names, to be used in setSubjectMetadata() with SUBJECT_CONTEXT_VARIABLE type.
      */
-    /* private */ const CONTEXT_VARIABLES = [
+    const CONTEXT_VARIABLES = [
         'request',
     ];
 

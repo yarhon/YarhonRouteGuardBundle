@@ -11,7 +11,6 @@
 namespace Yarhon\RouteGuardBundle\CacheWarmer;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
-use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Yarhon\RouteGuardBundle\Security\AccessMapBuilderInterface;
 
 /**
@@ -35,7 +34,7 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
     }
 
     /**
-     * @return false
+     * {@inheritdoc}
      */
     public function isOptional()
     {
