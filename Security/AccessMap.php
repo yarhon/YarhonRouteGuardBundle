@@ -21,4 +21,9 @@ class AccessMap
         $routePointer = &$this->map[$routeName];
         $routePointer[$providerName] = $testBag;
     }
+
+    public function get($routeName)
+    {
+        return isset($this->map[$routeName]) ? $this->map[$routeName] : null;
+    }
 }

@@ -94,20 +94,27 @@
 
         <service id="yarhon_route_guard.cache" class="Symfony\Component\Cache\Adapter\AdapterInterface">
             <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache" />
-            <argument>rg</argument> <!-- namespace -->
+            <argument /> <!-- namespace -->
             <argument>0</argument> <!-- default lifetime -->
             <argument>null</argument> <!-- version -->
             <argument>%kernel.cache_dir%/route-guard</argument>
             <argument type="service" id="logger" on-invalid="ignore" />
             <tag name="monolog.logger" channel="cache" />
-            <!--<tag name="cache.pool" clearer="cache.system_clearer" />-->
+            <tag name="cache.pool" clearer="cache.app_clearer" />
         </service>
 
         <!-- authorization services -->
 
-        <service id="Yarhon\RouteGuardBundle\Security\AuthorizationManager">
+        <service id="Yarhon\RouteGuardBundle\Security\AccessMapManager">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
-            <argument type="service" id="security.authorization_checker" on-invalid="ignore"/>
+            <argument type="service" id="request_stack" on-invalid="ignore" />
+        </service>
+        <service id="yarhon_route_guard.access_map_manager" alias="Yarhon\RouteGuardBundle\Security\AccessMapManager" public="true"/>
+        <!--<service id="Yarhon\RouteGuardBundle\Security\AccessMapManagerInterface" alias="yarhon_route_guard.access_map_manager" />-->
+
+        <service id="Yarhon\RouteGuardBundle\Security\AuthorizationManager">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapManager" />
+            <argument type="service" id="security.authorization_checker" on-invalid="ignore" />
         </service>
         <service id="yarhon_route_guard.authorization_manager" alias="Yarhon\RouteGuardBundle\Security\AuthorizationManager" public="true"/>
         <service id="Yarhon\RouteGuardBundle\Security\AuthorizationManagerInterface" alias="yarhon_route_guard.authorization_manager" />

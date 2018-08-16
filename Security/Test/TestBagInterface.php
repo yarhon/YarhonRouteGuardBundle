@@ -16,7 +16,7 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
 interface TestBagInterface extends \IteratorAggregate
 {
     /**
-     * @return TestArguments[]
+     * @param TestArguments $arguments
      */
-    public function toArray();
+    public function add(TestArguments $arguments);
 }

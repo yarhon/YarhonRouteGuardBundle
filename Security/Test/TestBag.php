@@ -35,6 +35,9 @@ class TestBag implements TestBagInterface
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function add(TestArguments $arguments)
     {
         $this->tests[] = $arguments;
@@ -43,10 +46,5 @@ class TestBag implements TestBagInterface
     public function getIterator()
     {
         return new \ArrayIterator($this->tests);
-    }
-
-    public function toArray()
-    {
-        return $this->tests;
     }
 }

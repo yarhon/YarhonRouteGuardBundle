@@ -10,13 +10,12 @@
 
 namespace Yarhon\RouteGuardBundle\Security\Http;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\IpUtils;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RequestMatcher
+class RequestContextMatcher
 {
     /**
      * @var RequestConstraint
@@ -33,21 +32,21 @@ class RequestMatcher
         $this->constraint = $constraint;
     }
 
-    public function matches(Request $request)
+    public function matches(RequestContext $requestContext)
     {
-        if ($this->constraint->getMethods() && !in_array($request->getMethod(), $this->constraint->getMethods(), true)) {
+        if ($this->constraint->getMethods() && !in_array($requestContext->getMethod(), $this->constraint->getMethods(), true)) {
             return false;
         }
 
-        if (null !== $this->constraint->getPathPattern() && !preg_match('{'.$this->constraint->getPathPattern().'}', rawurldecode($request->getPathInfo()))) {
+        if (null !== $this->constraint->getPathPattern() && !preg_match('{'.$this->constraint->getPathPattern().'}', rawurldecode($requestContext->getPathInfo()))) {
             return false;
         }
 
-        if (null !== $this->constraint->getHostPattern() && !preg_match('{'.$this->constraint->getHostPattern().'}i', $request->getHost())) {
+        if (null !== $this->constraint->getHostPattern() && !preg_match('{'.$this->constraint->getHostPattern().'}i', $requestContext->getHost())) {
             return false;
         }
 
-        if ($this->constraint->getIps() && !IpUtils::checkIp($request->getClientIp(), $this->constraint->getIps())) {
+        if ($this->constraint->getIps() && !IpUtils::checkIp($requestContext->getClientIp(), $this->constraint->getIps())) {
             return false;
         }
 

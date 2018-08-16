@@ -15,7 +15,7 @@ use Symfony\Component\ExpressionLanguage\Expression;
 use Psr\Log\LoggerAwareTrait;
 use Yarhon\RouteGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\RouteGuardBundle\Security\Http\RouteMatcher;
-use Yarhon\RouteGuardBundle\Security\Http\RequestMatcher;
+use Yarhon\RouteGuardBundle\Security\Http\RequestContextMatcher;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\Http\TestBagMap;
@@ -119,7 +119,7 @@ class SymfonyAccessControlProvider implements ProviderInterface
             }
 
             if ($matchResult instanceof RequestConstraint) {
-                $matches[] = [$testBag, new RequestMatcher($matchResult)];
+                $matches[] = [$testBag, new RequestContextMatcher($matchResult)];
                 continue;
             }
         }

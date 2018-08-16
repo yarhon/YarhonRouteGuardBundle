@@ -32,11 +32,6 @@ class YarhonRouteGuardExtensionTest extends TestCase
         $this->container = new ContainerBuilder();
         $this->container->registerExtension($extension);
 
-        $this->container->setParameter('kernel.cache_dir', 'test_cache_dir');
-
-        // TODO: remove this?
-        $this->container->register('security.authorization_checker')->setSynthetic(true);
-
         $config = [
             'ignore_controllers' => ['test'],
             'twig' => ['tag_name' => 'test'],
@@ -89,6 +84,11 @@ class YarhonRouteGuardExtensionTest extends TestCase
 
     public function testPublicServices()
     {
+        $this->container->setParameter('kernel.cache_dir', 'test_cache_dir');
+        //$this->container->register('security.authorization_checker')->setSynthetic(true);
+        //$this->container->register('request_stack')->setSynthetic(true);
+
+
         $services = [
             'yarhon_route_guard.authorization_manager',
         ];

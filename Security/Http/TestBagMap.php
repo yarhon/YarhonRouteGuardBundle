@@ -10,13 +10,12 @@
 
 namespace Yarhon\RouteGuardBundle\Security\Http;
 
-use Symfony\Component\HttpFoundation\Request;
 use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class TestBagMap implements RequestResolvableInterface
+class TestBagMap implements TestBagMapInterface
 {
     /**
      * @var array
@@ -36,26 +35,30 @@ class TestBagMap implements RequestResolvableInterface
     }
 
     /**
-     * @param TestBagInterface    $testBag
-     * @param RequestMatcher|null $requestMatcher
+     * {@inheritdoc}
      */
-    public function add(TestBagInterface $testBag, RequestMatcher $requestMatcher = null)
+    public function add(TestBagInterface $testBag, RequestContextMatcher $requestContextMatcher = null)
     {
-        $this->map[] = [$testBag, $requestMatcher];
+        $this->map[] = [$testBag, $requestContextMatcher];
+    }
+
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->map);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function resolve(Request $request)
+    public function resolve(RequestContext $requestContext)
     {
         $resolved = null;
 
         foreach ($this->map as $item) {
-            /** @var RequestMatcher $requestMatcher */
-            list($testBag, $requestMatcher) = $item;
+            /** @var RequestContextMatcher $requestContextMatcher */
+            list($testBag, $requestContextMatcher) = $item;
 
-            if (null === $requestMatcher || $requestMatcher->matches($request)) {
+            if (null === $requestContextMatcher || $requestContextMatcher->matches($requestContext)) {
                 $resolved = $testBag;
                 break;
             }

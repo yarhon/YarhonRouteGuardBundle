@@ -18,18 +18,18 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class AuthorizationManager implements AuthorizationManagerInterface
 {
     /**
-     * @var AccessMap
+     * @var AccessMapManager
      */
-    private $accessMap;
+    private $accessMapManager;
 
     /**
      * @var AuthorizationCheckerInterface
      */
     private $authorizationChecker;
 
-    public function __construct(AccessMapBuilderInterface $accessMapBuilder, AuthorizationCheckerInterface $authorizationChecker = null)
+    public function __construct(AccessMapManager $accessMapManager, AuthorizationCheckerInterface $authorizationChecker = null)
     {
-        $this->accessMap = $accessMapBuilder->build();
+        $this->accessMapManager = $accessMapManager;
         $this->authorizationChecker = $authorizationChecker;
     }
 
@@ -37,7 +37,7 @@ class AuthorizationManager implements AuthorizationManagerInterface
     {
         // TODO: check that authorizationChecker is passed
 
-        var_dump('isGranted call');
+        $tests = $this->accessMapManager->getTests($routeName);
 
         // get them from access map
         $roles = [];
