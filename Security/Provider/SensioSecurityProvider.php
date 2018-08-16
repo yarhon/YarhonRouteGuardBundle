@@ -18,8 +18,8 @@ use Psr\Log\LoggerAwareTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
 use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReader;
-use Yarhon\RouteGuardBundle\Security\Authorization\Test\TestBag;
-use Yarhon\RouteGuardBundle\Security\Authorization\Test\Arguments;
+use Yarhon\RouteGuardBundle\Security\Test\TestBag;
+use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactoryInterface;
 
 /**
@@ -102,9 +102,9 @@ class SensioSecurityProvider implements ProviderInterface
                 $subject = $annotation->getSubject();
             }
 
-            $arguments = new Arguments($attributes);
+            $arguments = new TestArguments($attributes);
             if ($subject) {
-                $arguments->setSubjectMetadata(Arguments::SUBJECT_CONTROLLER_ARGUMENT, $subject);
+                $arguments->setSubjectMetadata(TestArguments::SUBJECT_CONTROLLER_ARGUMENT, $subject);
             }
             $tests[] = $arguments;
         }

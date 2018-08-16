@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Security\Authorization\Test;
+namespace Yarhon\RouteGuardBundle\Security\Test;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -16,7 +16,7 @@ namespace Yarhon\RouteGuardBundle\Security\Authorization\Test;
 interface TestBagInterface extends \IteratorAggregate
 {
     /**
-     * @return Arguments[]
+     * @return TestArguments[]
      */
     public function toArray();
 }

@@ -27,7 +27,6 @@ class ConfigurationTest extends TestCase
         $config = $processor->processConfiguration(new Configuration(), [$input]);
 
         $defaults = [
-            'cache_dir' => 'link-guard',
             'ignore_controllers' => [
                 'Symfony\Bundle\TwigBundle\Controller\PreviewErrorController',
                 'Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController',

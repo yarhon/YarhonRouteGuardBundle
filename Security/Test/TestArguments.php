@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Security\Authorization\Test;
+namespace Yarhon\RouteGuardBundle\Security\Test;
 
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
@@ -19,7 +19,7 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class Arguments
+class TestArguments
 {
     /**
      * Indicates that subject is the name of the "context" variable (request, etc.).

@@ -14,7 +14,11 @@ namespace Yarhon\RouteGuardBundle\Security;
  */
 class AccessMap
 {
-    public function add($providerName, $routeName, $testBag)
+    private $map = [];
+
+    public function add($routeName, $providerName, $testBag)
     {
+        $routePointer = &$this->map[$routeName];
+        $routePointer[$providerName] = $testBag;
     }
 }

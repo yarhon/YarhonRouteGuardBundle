@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Security\Authorization;
+namespace Yarhon\RouteGuardBundle\Security;
 
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -18,24 +18,33 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class AuthorizationManager implements AuthorizationManagerInterface
 {
     /**
+     * @var AccessMap
+     */
+    private $accessMap;
+
+    /**
      * @var AuthorizationCheckerInterface
      */
     private $authorizationChecker;
 
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(AccessMapBuilderInterface $accessMapBuilder, AuthorizationCheckerInterface $authorizationChecker = null)
     {
-        //$this->accessMap = $accessMap;
+        $this->accessMap = $accessMapBuilder->build();
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function isGranted($routeName, $genereatedPath = null)
+    public function isGranted($routeName, $generatedPath = null)
     {
+        // TODO: check that authorizationChecker is passed
+
+        var_dump('isGranted call');
+
         // get them from access map
         $roles = [];
 
         // !!! pass a request as a subject
         $subject = null;
 
-        return $this->authorizationChecker->isGranted($roles, $subject);
+        //return $this->authorizationChecker->isGranted($roles, $subject);
     }
 }

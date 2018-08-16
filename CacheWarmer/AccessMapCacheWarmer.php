@@ -12,8 +12,7 @@ namespace Yarhon\RouteGuardBundle\CacheWarmer;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
-use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
-use Yarhon\RouteGuardBundle\Exception\RuntimeException;
+use Yarhon\RouteGuardBundle\Security\AccessMapBuilderInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -21,25 +20,18 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 class AccessMapCacheWarmer implements CacheWarmerInterface
 {
     /**
-     * @var AccessMapBuilder
+     * @var AccessMapBuilderInterface
      */
     private $accessMapBuilder;
 
     /**
-     * @var string
-     */
-    private $cacheDir;
-
-    /**
-     * RouteCacheWarmer constructor.
+     * AccessMapCacheWarmer constructor.
      *
-     * @param AccessMapBuilder $accessMapBuilder
-     * @param string           $cacheDir
+     * @param AccessMapBuilderInterface $accessMapBuilder
      */
-    public function __construct(AccessMapBuilder $accessMapBuilder, $cacheDir = null)
+    public function __construct(AccessMapBuilderInterface $accessMapBuilder)
     {
         $this->accessMapBuilder = $accessMapBuilder;
-        $this->cacheDir = $cacheDir;
     }
 
     /**
@@ -55,30 +47,6 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
      */
     public function warmUp($cacheDir)
     {
-        $cacheDir = $this->createCacheDir($cacheDir);
-
-        $this->accessMapBuilder->build();
-    }
-
-    /**
-     * @param string $baseDir
-     *
-     * @return string $cacheDir
-     *
-     * @throws RuntimeException
-     */
-    private function createCacheDir($baseDir)
-    {
-        $cacheDir = $baseDir.\DIRECTORY_SEPARATOR.$this->cacheDir;
-
-        if (!is_dir($cacheDir)) {
-            if (false === @mkdir($cacheDir, 0777, true)) {
-                throw new RuntimeException(sprintf('Unable to create the LinkGuard Bundle cache directory "%s".', $cacheDir));
-            }
-        } elseif (!is_writable($cacheDir)) {
-            throw new RuntimeException(sprintf('The LinkGuard Bundle cache directory "%s" is not writable for the current system user.', $cacheDir));
-        }
-
-        return $cacheDir;
+        $this->accessMapBuilder->build(true);
     }
 }

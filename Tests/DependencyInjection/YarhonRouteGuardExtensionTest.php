@@ -15,7 +15,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yarhon\RouteGuardBundle\DependencyInjection\YarhonRouteGuardExtension;
 use Yarhon\RouteGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer;
 use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
-use Yarhon\RouteGuardBundle\CacheWarmer\AccessMapCacheWarmer;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -33,11 +32,12 @@ class YarhonRouteGuardExtensionTest extends TestCase
         $this->container = new ContainerBuilder();
         $this->container->registerExtension($extension);
 
+        $this->container->setParameter('kernel.cache_dir', 'test_cache_dir');
+
         // TODO: remove this?
         $this->container->register('security.authorization_checker')->setSynthetic(true);
 
         $config = [
-            'cache_dir' => 'test',
             'ignore_controllers' => ['test'],
             'twig' => ['tag_name' => 'test'],
         ];
@@ -57,9 +57,6 @@ class YarhonRouteGuardExtensionTest extends TestCase
         $argument = $this->container->getDefinition(RoutingExtension::class)->getArgument(0);
         $this->assertArraySubset(['tag_name' => 'test'], $argument);
 
-        $argument = $this->container->getDefinition(AccessMapCacheWarmer::class)->getArgument(1);
-        $this->assertEquals('test', $argument);
-
         $this->markTestIncomplete('Watch for config changes.');
     }
 
@@ -67,12 +64,12 @@ class YarhonRouteGuardExtensionTest extends TestCase
     {
         $services = [
             'Yarhon\RouteGuardBundle\Security\AccessMapBuilder',
-            'Yarhon\RouteGuardBundle\Security\Authorization\AuthorizationManager',
+            'Yarhon\RouteGuardBundle\Security\AuthorizationManager',
         ];
 
         $aliases = [
             'yarhon_route_guard.authorization_manager',
-            'Yarhon\RouteGuardBundle\Security\Authorization\AuthorizationManagerInterface',
+            'Yarhon\RouteGuardBundle\Security\AuthorizationManagerInterface',
         ];
 
         $this->container->getCompilerPassConfig()->setOptimizationPasses([]);

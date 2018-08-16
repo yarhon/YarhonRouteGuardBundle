@@ -45,7 +45,6 @@ class Configuration implements ConfigurationInterface
                 })
             ->end()
             ->children()
-                ->scalarNode('cache_dir')->defaultValue('link-guard')->end()
                 ->arrayNode('ignore_controllers')
                     ->prototype('scalar')->end()
                 ->end()

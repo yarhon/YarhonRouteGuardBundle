@@ -8,6 +8,8 @@
         <defaults public="false" autowire="false" autoconfigure="false" />
 
         <service id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder">
+            <argument type="service" id="yarhon_route_guard.cache" />
+
             <call method="setRouteCollectionTransformers">
                 <argument type="collection" />
             </call>
@@ -26,7 +28,7 @@
         <!-- authorization providers -->
 
         <service id="Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactory">
-            <argument type="service" />
+            <argument type="service" id="security.expression_language" on-invalid="ignore"/>
             <argument type="collection" />
             <argument>null</argument><!--- false ? -->
         </service>
@@ -72,20 +74,7 @@
             <argument type="collection" /> <!-- map -->
         </service>
 
-        <!-- end route collection services -->
-
-        <service id="Yarhon\RouteGuardBundle\Security\Authorization\AuthorizationManager">
-            <!--<argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMap" />-->   <!-- access map should go here -->
-            <argument type="service" id="security.authorization_checker" />
-        </service>
-        <service id="yarhon_route_guard.authorization_manager" alias="Yarhon\RouteGuardBundle\Security\Authorization\AuthorizationManager" public="true"/>
-        <service id="Yarhon\RouteGuardBundle\Security\Authorization\AuthorizationManagerInterface" alias="yarhon_route_guard.authorization_manager" />
-
-        <service id="Yarhon\RouteGuardBundle\CacheWarmer\AccessMapCacheWarmer">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
-            <argument /><!-- cache dir -->
-            <tag name="kernel.cache_warmer" />
-        </service>
+        <!-- twig services -->
 
         <service id="Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension">
             <argument type="collection" /> <!-- options -->
@@ -95,6 +84,33 @@
         <service id="Yarhon\RouteGuardBundle\Twig\RoutingRuntime">
             <tag name="twig.runtime" />
         </service>
+
+        <!-- cache services -->
+
+        <service id="Yarhon\RouteGuardBundle\CacheWarmer\AccessMapCacheWarmer">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
+            <tag name="kernel.cache_warmer" />
+        </service>
+
+        <service id="yarhon_route_guard.cache" class="Symfony\Component\Cache\Adapter\AdapterInterface">
+            <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache" />
+            <argument>rg</argument> <!-- namespace -->
+            <argument>0</argument> <!-- default lifetime -->
+            <argument>null</argument> <!-- version -->
+            <argument>%kernel.cache_dir%/route-guard</argument>
+            <argument type="service" id="logger" on-invalid="ignore" />
+            <tag name="monolog.logger" channel="cache" />
+            <!--<tag name="cache.pool" clearer="cache.system_clearer" />-->
+        </service>
+
+        <!-- authorization services -->
+
+        <service id="Yarhon\RouteGuardBundle\Security\AuthorizationManager">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
+            <argument type="service" id="security.authorization_checker" on-invalid="ignore"/>
+        </service>
+        <service id="yarhon_route_guard.authorization_manager" alias="Yarhon\RouteGuardBundle\Security\AuthorizationManager" public="true"/>
+        <service id="Yarhon\RouteGuardBundle\Security\AuthorizationManagerInterface" alias="yarhon_route_guard.authorization_manager" />
 
     </services>
 </container>

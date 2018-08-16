@@ -14,6 +14,8 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Yarhon\RouteGuardBundle\Security\Provider\ProviderInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteCollection\TransformerInterface;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
@@ -21,7 +23,7 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class AccessMapBuilder implements LoggerAwareInterface
+class AccessMapBuilder implements AccessMapBuilderInterface, LoggerAwareInterface
 {
     /**
      * @var RouteCollection
@@ -42,6 +44,16 @@ class AccessMapBuilder implements LoggerAwareInterface
      * @var LoggerInterface;
      */
     private $logger;
+
+    /**
+     * @var CacheItemPoolInterface
+     */
+    private $cache;
+
+    public function __construct(CacheItemPoolInterface $cache = null)
+    {
+        $this->cache = $cache ?: new ArrayAdapter();
+    }
 
     /**
      * @param ProviderInterface $provider
@@ -114,9 +126,27 @@ class AccessMapBuilder implements LoggerAwareInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function build($force = false)
+    {
+        $cacheItem = $this->cache->getItem('map');
+
+        if ($force || null === $accessMap = $cacheItem->get()) {
+            $accessMap = $this->doBuild();
+            $cacheItem->set($accessMap);
+            $this->cache->save($cacheItem);
+        } else {
+            $this->logger->info('Using cached access map.');
+        }
+
+        return $accessMap;
+    }
+
+    /**
      * @throws InvalidArgumentException If exception in one of the RouteCollection transformers was thrown
      */
-    public function build()
+    private function doBuild()
     {
         if (!$this->routeCollection) {
             // TODO: warning or exception
@@ -135,7 +165,7 @@ class AccessMapBuilder implements LoggerAwareInterface
         $originalRoutes = array_keys($this->routeCollection->all());
         $routeCollection = $this->transformRouteCollection($this->routeCollection);
         $ignoredRoutes = array_diff($originalRoutes, array_keys($routeCollection->all()));
-        // TODO: check controllers format in case when no ControllerNameTransformer added ? $this->checkControllersFormat($routeCollection)
+        // TODO: check controllers format in case when no ControllerNameTransformer added ?
 
         if ($this->logger && count($ignoredRoutes)) {
             $this->logger->info('Ignored routes count', ['count' => count($ignoredRoutes)]);
@@ -143,11 +173,16 @@ class AccessMapBuilder implements LoggerAwareInterface
 
         $this->onBuild();
 
+        $accessMap = new AccessMap();
+
         foreach ($routeCollection->all() as $name => $route) {
             foreach ($this->authorizationProviders as $provider) {
                 $testBag = $provider->getTests($route);
+                $accessMap->add($name, get_class($provider), $testBag);
             }
         }
+
+        return $accessMap;
     }
 
     /**
@@ -174,33 +209,4 @@ class AccessMapBuilder implements LoggerAwareInterface
             $provider->onBuild();
         }
     }
-
-    /*
-     * @param RouteCollection $collection
-     *
-     * @throws \InvalidArgumentException If controller name is not a string in the class::method notation or boolean false
-
-    public function checkControllersFormat(RouteCollection $collection)
-    {
-
-        foreach ($collection as $name => $route) {
-            $controller = $route->getDefault('_controller');
-
-            if (false === $controller) {
-                continue;
-            }
-
-            if (is_string($controller)) {
-                $parts = explode('::', $controller);
-                if (2 == count($parts) && !in_array('', $parts, true)) {
-                    continue;
-                }
-            }
-
-            throw new \InvalidArgumentException(
-                sprintf('Invalid controller name for route "%s" - it should be either string in the class::method notation or boolean false.', $name)
-            );
-        }
-    }
-    */
 }

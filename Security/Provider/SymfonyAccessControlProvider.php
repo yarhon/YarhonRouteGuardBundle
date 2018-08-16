@@ -16,8 +16,8 @@ use Psr\Log\LoggerAwareTrait;
 use Yarhon\RouteGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\RouteGuardBundle\Security\Http\RouteMatcher;
 use Yarhon\RouteGuardBundle\Security\Http\RequestMatcher;
-use Yarhon\RouteGuardBundle\Security\Authorization\Test\Arguments;
-use Yarhon\RouteGuardBundle\Security\Authorization\Test\TestBag;
+use Yarhon\RouteGuardBundle\Security\Test\TestBag;
+use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\Http\TestBagMap;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactoryInterface;
 
@@ -60,7 +60,7 @@ class SymfonyAccessControlProvider implements ProviderInterface
         }
     }
 
-    public function addRule(RequestConstraint $constraint, Arguments $arguments)
+    public function addRule(RequestConstraint $constraint, TestArguments $arguments)
     {
         $routeMatcher = new RouteMatcher($constraint);
 
@@ -82,8 +82,8 @@ class SymfonyAccessControlProvider implements ProviderInterface
             $attributes[] = $expression;
         }
 
-        $arguments = new Arguments($attributes);
-        $arguments->setSubjectMetadata(Arguments::SUBJECT_CONTEXT_VARIABLE, 'request');
+        $arguments = new TestArguments($attributes);
+        $arguments->setSubjectMetadata(TestArguments::SUBJECT_CONTEXT_VARIABLE, 'request');
 
         return [$constraint, $arguments];
     }

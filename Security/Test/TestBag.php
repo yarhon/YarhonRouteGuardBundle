@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Security\Authorization\Test;
+namespace Yarhon\RouteGuardBundle\Security\Test;
 
 /**
  * TestBag holds a set of authorization tests (calls of AuthorizationChecker::isGranted()).
@@ -19,14 +19,14 @@ namespace Yarhon\RouteGuardBundle\Security\Authorization\Test;
 class TestBag implements TestBagInterface
 {
     /**
-     * @var Arguments[]
+     * @var TestArguments[]
      */
     private $tests;
 
     /**
      * TestBag constructor.
      *
-     * @param Arguments[] $tests
+     * @param TestArguments[] $tests
      */
     public function __construct(array $tests)
     {
@@ -35,7 +35,7 @@ class TestBag implements TestBagInterface
         }
     }
 
-    public function add(Arguments $arguments)
+    public function add(TestArguments $arguments)
     {
         $this->tests[] = $arguments;
     }

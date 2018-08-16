@@ -11,7 +11,7 @@
 namespace Yarhon\RouteGuardBundle\Security\Http;
 
 use Symfony\Component\HttpFoundation\Request;
-use Yarhon\RouteGuardBundle\Security\Authorization\Test\TestBagInterface;
+use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

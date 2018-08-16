@@ -8,17 +8,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Security\Authorization;
+namespace Yarhon\RouteGuardBundle\Security;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface AuthorizationManagerInterface
+interface AccessMapBuilderInterface
 {
-    /**
-     * @param $routeName
-     *
-     * @return ????
-     */
-    public function isGranted($routeName);
+    // TODO: add phpdoc
+    public function build($force = false);
 }

@@ -40,8 +40,5 @@ class YarhonRouteGuardExtension extends Extension
 
         $definition = $container->getDefinition(RoutingExtension::class);
         $definition->replaceArgument(0, $config['twig']);
-
-        $definition = $container->getDefinition(AccessMapCacheWarmer::class);
-        $definition->replaceArgument(1, $config['cache_dir']);
     }
 }

@@ -12,7 +12,7 @@ namespace Yarhon\RouteGuardBundle\Security\Provider;
 
 use Symfony\Component\Routing\Route;
 use Psr\Log\LoggerAwareInterface;
-use Yarhon\RouteGuardBundle\Security\Authorization\Test\TestBagInterface;
+use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Http\RequestResolvableInterface;
 
 /**
