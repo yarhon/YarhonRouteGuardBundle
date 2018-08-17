@@ -50,14 +50,14 @@ class ControllerArgumentResolver
      * @param Request            $request
      * @param ArgumentMetadata[] $argumentsMetadata
      *
-     * @return array
+     * @return array Array of arguments, indexed by argument name
      */
     public function getArguments(Request $request, array $argumentsMetadata)
     {
         $arguments = [];
 
         foreach ($argumentsMetadata as $argumentMetadata) {
-            $arguments[] = $this->getArguments($request, $argumentMetadata);
+            $arguments[$argumentMetadata->getName()] = $this->getArgument($request, $argumentMetadata);
         }
 
         return $arguments;
@@ -80,7 +80,6 @@ class ControllerArgumentResolver
 
         throw new RuntimeException(sprintf('Can\'t get metadata for argument "%s".', $argumentName));
     }
-
 
     /**
      * @param Request          $request

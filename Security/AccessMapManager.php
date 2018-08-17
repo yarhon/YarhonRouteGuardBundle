@@ -104,11 +104,6 @@ class AccessMapManager
         $request = $this->requestStack->getCurrentRequest();
 
         $arguments = $controllerArgumentResolver->getArguments($request, $metadata);
-        $namedArguments = [];
-
-        foreach ($metadata as $index => $argumentMetadata) {
-            $namedArguments[$argumentMetadata->getName()] = $arguments[$index];
-        }
 
         // For SensioSecurityProvider
         // See \Sensio\Bundle\FrameworkExtraBundle\Request\ArgumentNameConverter::getControllerArguments
@@ -117,6 +112,6 @@ class AccessMapManager
         // (via RequestAttributeValueResolver).
 
         $attributes = $request->attributes->all();
-        $namedArguments += $attributes;
+        $arguments += $attributes;
     }
 }
