@@ -11,25 +11,25 @@
 namespace Yarhon\RouteGuardBundle\Routing\RouteCollection;
 
 use Symfony\Component\Routing\RouteCollection;
-use Yarhon\RouteGuardBundle\Controller\ControllerNameDeprecationsConverterInterface;
+use Yarhon\RouteGuardBundle\Controller\ControllerNameConverter;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class ControllerNameDeprecationsTransformer implements TransformerInterface
+class ControllerNameConverterTransformer implements TransformerInterface
 {
     /**
-     * @var ControllerNameDeprecationsConverterInterface
+     * @var ControllerNameConverter
      */
     private $converter;
 
     /**
-     * ControllerNameTransformer constructor.
+     * ControllerNameConverterTransformer constructor.
      *
-     * @param ControllerNameDeprecationsConverterInterface $converter
+     * @param ControllerNameConverter $converter
      */
-    public function __construct(ControllerNameDeprecationsConverterInterface $converter)
+    public function __construct(ControllerNameConverter $converter)
     {
         $this->converter = $converter;
     }

@@ -14,16 +14,16 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
-use Yarhon\RouteGuardBundle\Controller\ControllerNameDeprecationsConverter;
+use Yarhon\RouteGuardBundle\Controller\ControllerNameConverter;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class ControllerNameDeprecationsConverterTest extends TestCase
+class ControllerNameConverterTest extends TestCase
 {
     /**
-     * @var ControllerNameDeprecationsConverter
+     * @var ControllerNameConverter
      */
     private $converter;
 
@@ -44,7 +44,7 @@ class ControllerNameDeprecationsConverterTest extends TestCase
         $this->kernel->method('getBundle')
             ->willReturn($bundle);
 
-        $this->converter = new ControllerNameDeprecationsConverter($this->kernel);
+        $this->converter = new ControllerNameConverter($this->kernel);
     }
 
     /**

@@ -42,12 +42,14 @@ class AccessMapManager
         // TODO: check that requestStack is passed
 
         $tests = [];
+        $requestContext = null;
 
         $testBags = $this->accessMap->get($routeName);
 
         foreach ($testBags as $testBag) {
             if ($testBag instanceof TestBagMapInterface) {
-                $testBag = $this->resolveTestBagMap($testBag);
+                $requestContext = $requestContext ?: $this->createRequestContext($method);
+                $testBag = $testBag->resolve($requestContext);
             }
 
             foreach ($testBag as $testArguments) {
@@ -58,12 +60,12 @@ class AccessMapManager
         return $tests;
     }
 
-    private function resolveTestBagMap(TestBagMapInterface $testBagMap)
+    private function createRequestContext($method = 'GET')
     {
         $request = $this->requestStack->getCurrentRequest();
-        $requestContext = new RequestContext();
+        $host = null;
 
-        return $testBagMap->resolve($requestContext);
+        return new RequestContext(null, $host, $method, $request->getClientIp());
     }
 
     private function resolveTestArguments(TestArguments $testArguments)
@@ -95,5 +97,26 @@ class AccessMapManager
     private function resolveControllerArgument($name)
     {
         return null;
+    }
+
+    private function getNamedArguments()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        $arguments = $controllerArgumentResolver->getArguments($request, $metadata);
+        $namedArguments = [];
+
+        foreach ($metadata as $index => $argumentMetadata) {
+            $namedArguments[$argumentMetadata->getName()] = $arguments[$index];
+        }
+
+        // For SensioSecurityProvider
+        // See \Sensio\Bundle\FrameworkExtraBundle\Request\ArgumentNameConverter::getControllerArguments
+        // It adds all Request attributes attributes->all(); as possible variables for subject and variables for expressions.
+        // While default Symfony behaviour is to consider Request attributes specified in controller method signature only
+        // (via RequestAttributeValueResolver).
+
+        $attributes = $request->attributes->all();
+        $namedArguments += $attributes;
     }
 }

@@ -24,7 +24,7 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
  *
  * @codeCoverageIgnore
  */
-class ControllerNameDeprecationsConverter implements ControllerNameDeprecationsConverterInterface
+class ControllerNameConverter
 {
     /**
      * @var KernelInterface

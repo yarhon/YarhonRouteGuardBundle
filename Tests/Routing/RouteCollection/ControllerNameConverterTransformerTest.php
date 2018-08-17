@@ -13,19 +13,19 @@ namespace Yarhon\RouteGuardBundle\Tests\Routing\RouteCollection;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use Yarhon\RouteGuardBundle\Tests\HelperTrait;
-use Yarhon\RouteGuardBundle\Routing\RouteCollection\ControllerNameDeprecationsTransformer;
-use Yarhon\RouteGuardBundle\Controller\ControllerNameDeprecationsConverter;
+use Yarhon\RouteGuardBundle\Routing\RouteCollection\ControllerNameConverterTransformer;
+use Yarhon\RouteGuardBundle\Controller\ControllerNameConverter;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class ControllerNameDeprecationsTransformerTest extends TestCase
+class ControllerNameConverterTransformerTest extends TestCase
 {
     use HelperTrait;
 
     /**
-     * @var ControllerNameDeprecationsTransformer
+     * @var ControllerNameConverterTransformer
      */
     private $transformer;
 
@@ -36,8 +36,8 @@ class ControllerNameDeprecationsTransformerTest extends TestCase
 
     public function setUp()
     {
-        $this->converter = $this->createMock(ControllerNameDeprecationsConverter::class);
-        $this->transformer = new ControllerNameDeprecationsTransformer($this->converter);
+        $this->converter = $this->createMock(ControllerNameConverter::class);
+        $this->transformer = new ControllerNameConverterTransformer($this->converter);
     }
 
     public function testTransform()

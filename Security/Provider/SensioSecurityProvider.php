@@ -22,6 +22,9 @@ use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactoryInterface;
 
+use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactoryInterface;
+use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactory;
+
 /**
  * SensioSecurityProvider processes Security & IsGranted annotations of Sensio FrameworkExtraBundle.
  *
@@ -77,11 +80,15 @@ class SensioSecurityProvider implements ProviderInterface
     public function getTests(Route $route)
     {
         $controller = $route->getDefault('_controller');
+
         if (!$controller && !is_string($controller)) {
             return null;
         }
 
         list($class, $method) = explode('::', $controller);
+
+        // $argumentMetadataFactory = new ArgumentMetadataFactory();
+        // $metadata = $argumentMetadataFactory->createArgumentMetadata([$class, $method]);
 
         $annotations = $this->reader->read($class, $method);
 

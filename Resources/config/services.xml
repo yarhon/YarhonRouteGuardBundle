@@ -46,8 +46,8 @@
 
         <!-- route collection services -->
 
-        <service id="Yarhon\RouteGuardBundle\Routing\RouteCollection\ControllerNameDeprecationsTransformer">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerNameDeprecationsConverter" />
+        <service id="Yarhon\RouteGuardBundle\Routing\RouteCollection\ControllerNameConverterTransformer">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerNameConverter" />
             <tag name="yarhon_route_guard.route_collection_transformer" priority="1024" />
         </service>
 
@@ -65,7 +65,7 @@
             <argument type="service" id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" />
         </service>
 
-        <service id="Yarhon\RouteGuardBundle\Controller\ControllerNameDeprecationsConverter">
+        <service id="Yarhon\RouteGuardBundle\Controller\ControllerNameConverter">
             <argument type="service" id="kernel" />
         </service>
 
