@@ -14,13 +14,13 @@ use Symfony\Component\HttpKernel\KernelInterface;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
- * ControllerNameDeprecationsConverter holds convert methods for controller names in deprecated formats.
+ * ControllerNameConverter holds convert methods for controller names in deprecated formats.
  * We can't just use the original code for the following reasons:
  * - convertBundleNotation: in order not to tie to symfony/framework-bundle (it's optional)
  * - convertServiceNotation: no separate converter exists in symfony/http-kernel.
  *
- * @author Fabien Potencier <fabien@symfony.com>
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
+ * @author Fabien Potencier <fabien@symfony.com>
  *
  * @codeCoverageIgnore
  */
@@ -32,7 +32,7 @@ class ControllerNameConverter
     private $kernel;
 
     /**
-     * ControllerNameDeprecationsConverter constructor.
+     * ControllerNameConverter constructor.
      *
      * @param KernelInterface $kernel
      */
@@ -42,7 +42,9 @@ class ControllerNameConverter
     }
 
     /**
-     * {@inheritdoc}
+     * @param mixed $controller
+     *
+     * @return mixed
      */
     public function convert($controller)
     {
@@ -107,9 +109,6 @@ class ControllerNameConverter
     private function parseBundleNotation($controller)
     {
         $parts = explode(':', $controller);
-        if (3 !== count($parts) || in_array('', $parts, true)) {
-            throw new \InvalidArgumentException(sprintf('The "%s" controller is not a valid "a:b:c" controller string.', $controller));
-        }
 
         $originalController = $controller;
         list($bundleName, $controller, $action) = $parts;
@@ -130,8 +129,8 @@ class ControllerNameConverter
         }
 
         throw new \InvalidArgumentException(sprintf(
-                'The _controller value "%s:%s:%s" maps to a "%s" class, but this class was not found. Create this class or check the spelling of the class and its namespace.',
-                $bundleName, $controller, $action, $try)
+            'The _controller value "%s:%s:%s" maps to a "%s" class, but this class was not found. Create this class or check the spelling of the class and its namespace.',
+            $bundleName, $controller, $action, $try)
         );
     }
 }

@@ -38,10 +38,10 @@ class RequestContext
     /**
      * RequestContext constructor.
      *
-     * @param string|null $pathInfo
-     * @param string|null $host
-     * @param string|null $method
-     * @param string|null $clientIp
+     * @param string|\Closure|null $pathInfo
+     * @param string|\Closure|null $host
+     * @param string|null          $method
+     * @param string|null          $clientIp
      */
     public function __construct($pathInfo = null, $host = null, $method = null, $clientIp = null)
     {
@@ -56,6 +56,10 @@ class RequestContext
      */
     public function getPathInfo()
     {
+        if ($this->pathInfo instanceof \Closure) {
+            $this->pathInfo = $this->pathInfo->__invoke();
+        }
+
         return $this->pathInfo;
     }
 
@@ -64,6 +68,10 @@ class RequestContext
      */
     public function getHost()
     {
+        if ($this->host instanceof \Closure) {
+            $this->host = $this->host->__invoke();
+        }
+
         return $this->host;
     }
 

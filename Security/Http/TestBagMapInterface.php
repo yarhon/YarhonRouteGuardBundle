@@ -26,7 +26,7 @@ interface TestBagMapInterface extends \IteratorAggregate
     /**
      * @param RequestContext $requestContext
      *
-     * @return TestBagInterface
+     * @return TestBagInterface|null
      */
     public function resolve(RequestContext $requestContext);
 }

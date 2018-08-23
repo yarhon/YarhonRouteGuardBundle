@@ -11,10 +11,11 @@
 namespace Yarhon\RouteGuardBundle\Security;
 
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Yarhon\RouteGuardBundle\Routing\UrlDeferredInterface;
 use Yarhon\RouteGuardBundle\Security\Http\TestBagMapInterface;
-use Yarhon\RouteGuardBundle\Security\Http\RequestContext;
+use Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
+use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -27,29 +28,34 @@ class AccessMapManager
     private $accessMap;
 
     /**
+     * @var RequestContextFactory
+     */
+    private $requestContextFactory;
+
+    /**
      * @var RequestStack
      */
     private $requestStack;
 
-    public function __construct(AccessMapBuilderInterface $accessMapBuilder, RequestStack $requestStack = null)
+    public function __construct(AccessMapBuilderInterface $accessMapBuilder, RequestContextFactory $requestContextFactory, RequestStack $requestStack = null)
     {
         $this->accessMap = $accessMapBuilder->build();
+        $this->requestContextFactory = $requestContextFactory;
         $this->requestStack = $requestStack;
     }
 
-    public function getTests($routeName, $parameters = [], $method = 'GET', $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
+    public function getTests($routeName, $method = 'GET', UrlDeferredInterface $urlDeferred = null)
     {
-        // TODO: check that requestStack is passed
-
         $tests = [];
-        $requestContext = null;
 
         $testBags = $this->accessMap->get($routeName);
 
         foreach ($testBags as $testBag) {
             if ($testBag instanceof TestBagMapInterface) {
-                $requestContext = $requestContext ?: $this->createRequestContext($method);
-                $testBag = $testBag->resolve($requestContext);
+                $testBag = $this->resolveTestBagMap($testBag, $method, $urlDeferred);
+                if (null === $testBag) {
+                    continue;
+                };
             }
 
             foreach ($testBag as $testArguments) {
@@ -60,13 +66,21 @@ class AccessMapManager
         return $tests;
     }
 
-    private function createRequestContext($method = 'GET')
+    private function resolveTestBagMap(TestBagMapInterface $testBagMap, $method, UrlDeferredInterface $urlDeferred = null)
     {
-        $request = $this->requestStack->getCurrentRequest();
-        $host = null;
+        if (null === $this->requestContextFactory) {
+            throw new RuntimeException('Unable to resolve TestBagMapInterface instance because RequestContextFactory service is not provided.');
+        }
 
-        return new RequestContext(null, $host, $method, $request->getClientIp());
+        if (null === $urlDeferred) {
+            throw new RuntimeException('Unable to resolve TestBagMapInterface instance because UrlDeferredInterface parameter is not provided.');
+        }
+
+        $requestContext = $this->requestContextFactory->create($urlDeferred, $method);
+
+        return $testBagMap->resolve($requestContext);
     }
+
 
     private function resolveTestArguments(TestArguments $testArguments)
     {

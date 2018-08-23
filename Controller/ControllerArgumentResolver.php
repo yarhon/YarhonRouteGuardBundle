@@ -12,13 +12,8 @@ namespace Yarhon\RouteGuardBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestAttributeValueResolver;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestValueResolver;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver\SessionValueResolver;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
@@ -43,7 +38,7 @@ class ControllerArgumentResolver
      */
     public function __construct($argumentValueResolvers = [])
     {
-        $this->argumentValueResolvers = $argumentValueResolvers ?: self::getDefaultArgumentValueResolvers();
+        $this->argumentValueResolvers = $argumentValueResolvers ?: ArgumentResolver::getDefaultArgumentValueResolvers();
     }
 
     /**
@@ -109,19 +104,7 @@ class ControllerArgumentResolver
             }
         }
 
-        $message = 'Argument "$%s" can\'t be resolved. Either the argument is nullable and no null value has been provided, no default value has been provided or because there is a non optional argument after this one.';
+        $message = 'Argument "%s" can\'t be resolved. Either the argument is nullable and no null value has been provided, no default value has been provided or because there is a non optional argument after this one.';
         throw new RuntimeException(sprintf($message, $argumentMetadata->getName()));
-    }
-
-    public static function getDefaultArgumentValueResolvers()
-    {
-        return [
-            new RequestAttributeValueResolver(),
-            new RequestValueResolver(),
-            new SessionValueResolver(),
-            // new ServiceValueResolver($container),
-            new DefaultValueResolver(),
-            new VariadicValueResolver(),
-        ];
     }
 }

@@ -34,19 +34,21 @@ class RequestContextMatcher
 
     public function matches(RequestContext $requestContext)
     {
-        if ($this->constraint->getMethods() && !in_array($requestContext->getMethod(), $this->constraint->getMethods(), true)) {
+        $constraint = $this->constraint;
+
+        if ($constraint->getMethods() && !in_array($requestContext->getMethod(), $constraint->getMethods(), true)) {
             return false;
         }
 
-        if (null !== $this->constraint->getPathPattern() && !preg_match('{'.$this->constraint->getPathPattern().'}', rawurldecode($requestContext->getPathInfo()))) {
+        if ($constraint->getIps() && !IpUtils::checkIp($requestContext->getClientIp(), $constraint->getIps())) {
             return false;
         }
 
-        if (null !== $this->constraint->getHostPattern() && !preg_match('{'.$this->constraint->getHostPattern().'}i', $requestContext->getHost())) {
+        if (null !== $constraint->getHostPattern() && !preg_match('{'.$constraint->getHostPattern().'}i', $requestContext->getHost())) {
             return false;
         }
 
-        if ($this->constraint->getIps() && !IpUtils::checkIp($requestContext->getClientIp(), $this->constraint->getIps())) {
+        if (null !== $constraint->getPathPattern() && !preg_match('{'.$constraint->getPathPattern().'}', rawurldecode($requestContext->getPathInfo()))) {
             return false;
         }
 
