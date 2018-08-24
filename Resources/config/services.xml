@@ -115,11 +115,25 @@
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory" />
         </service>
 
+        <!-- test resolvers -->
+
+        <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver">
+            <tag name="yarhon_route_guard.test_resolver" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver">
+            <argument type="service" id="request_stack" />
+            <tag name="yarhon_route_guard.test_resolver" />
+        </service>
+
         <!-- authorization services -->
 
         <service id="Yarhon\RouteGuardBundle\Security\AccessMapManager">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\Http\TestBagMapResolver" />
+            <call method="setTestResolvers">
+                <argument type="collection" />
+            </call>
         </service>
         <service id="yarhon_route_guard.access_map_manager" alias="Yarhon\RouteGuardBundle\Security\AccessMapManager" public="true"/>
         <!--<service id="Yarhon\RouteGuardBundle\Security\AccessMapManagerInterface" alias="yarhon_route_guard.access_map_manager" />-->

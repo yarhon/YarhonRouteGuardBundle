@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\SymfonySecurityBundlePass;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
+use Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver;
 use Yarhon\RouteGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
 
 /**
@@ -53,6 +54,7 @@ class SymfonySecurityBundlePassTest extends TestCase
             ->willReturn('security');
 
         $this->container->register(SymfonyAccessControlProvider::class);
+        $this->container->register(SymfonyAccessControlResolver::class);
     }
 
     public function testWithoutSecurityBundle()
@@ -60,6 +62,7 @@ class SymfonySecurityBundlePassTest extends TestCase
         $this->pass->process($this->container);
 
         $this->assertFalse($this->container->hasDefinition(SymfonyAccessControlProvider::class));
+        $this->assertFalse($this->container->hasDefinition(SymfonyAccessControlResolver::class));
     }
 
     public function testWithSecurityBundleNoAccessControl()
@@ -72,6 +75,7 @@ class SymfonySecurityBundlePassTest extends TestCase
         $this->pass->process($this->container);
 
         $this->assertFalse($this->container->hasDefinition(SymfonyAccessControlProvider::class));
+        $this->assertFalse($this->container->hasDefinition(SymfonyAccessControlResolver::class));
     }
 
     public function testWithSecurityBundleEmptyAccessControl()
@@ -84,6 +88,7 @@ class SymfonySecurityBundlePassTest extends TestCase
         $this->pass->process($this->container);
 
         $this->assertFalse($this->container->hasDefinition(SymfonyAccessControlProvider::class));
+        $this->assertFalse($this->container->hasDefinition(SymfonyAccessControlResolver::class));
     }
 
     public function testWithAccessControl()
@@ -100,6 +105,7 @@ class SymfonySecurityBundlePassTest extends TestCase
         $this->pass->process($this->container);
 
         $this->assertTrue($this->container->hasDefinition(SymfonyAccessControlProvider::class));
+        $this->assertTrue($this->container->hasDefinition(SymfonyAccessControlResolver::class));
     }
 
     public function testImportRules()

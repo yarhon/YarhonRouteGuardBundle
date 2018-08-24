@@ -77,6 +77,17 @@ class SensioSecurityProvider implements TestProviderInterface
         $this->argumentMetadataFactory = $argumentMetadataFactory ?: new ArgumentMetadataFactory();
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getName() {
+
+        return 'sensio_security';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function onBuild()
     {
 

@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Reference;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
+use Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver;
 use Yarhon\RouteGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactory;
 
@@ -44,6 +45,7 @@ class SymfonySecurityBundlePass implements CompilerPassInterface
     {
         if (!$container->hasExtension('security')) {
             $container->removeDefinition(SymfonyAccessControlProvider::class);
+            $container->removeDefinition(SymfonyAccessControlResolver::class);
 
             return;
         }
@@ -58,6 +60,7 @@ class SymfonySecurityBundlePass implements CompilerPassInterface
 
         if (!isset($config['access_control']) || 0 === count($config['access_control'])) {
             $container->removeDefinition(SymfonyAccessControlProvider::class);
+            $container->removeDefinition(SymfonyAccessControlResolver::class);
 
             return;
         }
@@ -66,6 +69,7 @@ class SymfonySecurityBundlePass implements CompilerPassInterface
         $accessControlProvider->addMethodCall('importRules', [$config['access_control']]);
     }
 
+    //  TODO: remove this?
     private function processExpressionLanguage(ContainerBuilder $container)
     {
         $serviceId = 'security.expression_language';

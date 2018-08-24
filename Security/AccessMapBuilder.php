@@ -178,7 +178,7 @@ class AccessMapBuilder implements AccessMapBuilderInterface, LoggerAwareInterfac
         foreach ($routeCollection->all() as $name => $route) {
             foreach ($this->testProviders as $provider) {
                 $testBag = $provider->getTests($route);
-                $accessMap->add($name, get_class($provider), $testBag);
+                $accessMap->add($name, $provider->getName(), $testBag);
             }
         }
 

@@ -24,6 +24,6 @@ class AccessMap
 
     public function get($routeName)
     {
-        return isset($this->map[$routeName]) ? $this->map[$routeName] : null;
+        return isset($this->map[$routeName]) ? $this->map[$routeName] : [];
     }
 }

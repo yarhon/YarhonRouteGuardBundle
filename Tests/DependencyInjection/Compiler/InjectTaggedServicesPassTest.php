@@ -14,6 +14,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\InjectTaggedServicesPass;
 use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
+use Yarhon\RouteGuardBundle\Security\AccessMapManager;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -34,6 +35,7 @@ class InjectTaggedServicesPassTest extends TestCase
     {
         $this->container = new ContainerBuilder();
         $this->container->register(AccessMapBuilder::class);
+        $this->container->register(AccessMapManager::class);
         $this->pass = new InjectTaggedServicesPass();
     }
 
@@ -78,6 +80,10 @@ class InjectTaggedServicesPassTest extends TestCase
             [
                 [AccessMapBuilder::class, 'setTestProviders'],
                 'yarhon_route_guard.test_provider',
+            ],
+            [
+                [AccessMapManager::class, 'setTestResolvers'],
+                'yarhon_route_guard.test_resolver',
             ],
         ];
     }

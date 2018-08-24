@@ -14,6 +14,7 @@ use Yarhon\RouteGuardBundle\Routing\UrlDeferredInterface;
 use Yarhon\RouteGuardBundle\Security\Http\TestBagMapInterface;
 use Yarhon\RouteGuardBundle\Security\Http\TestBagMapResolverInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
+use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
@@ -25,6 +26,11 @@ class AccessMapManager
      * @var AccessMap
      */
     private $accessMap;
+
+    /**
+     * @var TestResolverInterface[]
+     */
+    private $testResolvers;
 
     /**
      * @var TestBagMapResolverInterface
@@ -43,7 +49,7 @@ class AccessMapManager
 
         $testBags = $this->accessMap->get($routeName);
 
-        foreach ($testBags as $testBag) {
+        foreach ($testBags as $providerName => $testBag) {
             if ($testBag instanceof TestBagMapInterface) {
                 if (null === $this->testBagMapResolver) {
                     throw new RuntimeException('Unable to resolve TestBagMapInterface instance because TestBagMapResolver service is not provided.');
@@ -55,58 +61,36 @@ class AccessMapManager
                 };
             }
 
-            foreach ($testBag as $testArguments) {
-                $tests[] = $this->resolveTestArguments($testArguments);
+            if (!isset($this->testResolvers[$providerName])) {
+                throw new RuntimeException(sprintf('No resolver exists for provider "%"', $providerName));
             }
+
+            $resolver = $this->testResolvers[$providerName];
+
+            $tests = array_merge($tests, $resolver->resolve($testBag));
         }
 
         return $tests;
     }
 
-    private function resolveTestArguments(TestArguments $testArguments)
+    /**
+     * @param TestResolverInterface $resolver
+     */
+    public function addTestResolver(TestResolverInterface $resolver)
     {
-        $arguments = [];
-        $arguments[] = $testArguments->getAttributes();
+        $this->testResolvers[$resolver->getName()] = $resolver;
+    }
 
-        if ($testArguments->requiresSubject()) {
-            $arguments[] = $this->resolveSubject(...$testArguments->getSubjectMetadata());
+    /**
+     * @param TestResolverInterface[] $resolvers
+     */
+    public function setTestResolvers(array $resolvers)
+    {
+        $this->testResolvers = [];
+
+        foreach ($resolvers as $resolver) {
+            $this->addTestResolver($resolver);
         }
-
-        return $arguments;
     }
 
-    private function resolveSubject($type, $name)
-    {
-        $subject = null;
-
-        if (TestArguments::SUBJECT_CONTEXT_VARIABLE == $type) {
-            $request = $this->requestStack->getCurrentRequest();
-            $subject = $request;
-        } elseif (TestArguments::SUBJECT_CONTROLLER_ARGUMENT == $type) {
-            $subject = $this->resolveControllerArgument($name);
-        }
-
-        return $subject;
-    }
-
-    private function resolveControllerArgument($name)
-    {
-        return null;
-    }
-
-    private function getNamedArguments()
-    {
-        $request = $this->requestStack->getCurrentRequest();
-
-        $arguments = $controllerArgumentResolver->getArguments($request, $metadata);
-
-        // For SensioSecurityProvider
-        // See \Sensio\Bundle\FrameworkExtraBundle\Request\ArgumentNameConverter::getControllerArguments
-        // It adds all Request attributes attributes->all(); as possible variables for subject and variables for expressions.
-        // While default Symfony behaviour is to consider Request attributes specified in controller method signature only
-        // (via RequestAttributeValueResolver).
-
-        $attributes = $request->attributes->all();
-        $arguments += $attributes;
-    }
 }

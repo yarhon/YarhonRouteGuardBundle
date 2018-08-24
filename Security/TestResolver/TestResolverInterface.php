@@ -8,26 +8,21 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Security\TestProvider;
+namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 
-use Symfony\Component\Routing\Route;
-use Psr\Log\LoggerAwareInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
-use Yarhon\RouteGuardBundle\Security\Http\TestBagMapInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface TestProviderInterface extends LoggerAwareInterface
+interface TestResolverInterface
 {
     /**
-     * @param Route $route
+     * @param TestBagInterface $testBag
      *
-     * @return TestBagInterface|TestBagMapInterface|null
+     * @return ???
      */
-    public function getTests(Route $route);
-
-    public function onBuild();
+    public function resolve(TestBagInterface $testBag);
 
     /**
      * @return string
