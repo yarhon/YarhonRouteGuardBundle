@@ -37,17 +37,7 @@ class RemoveIgnoredTransformer implements TransformerInterface
      */
     public function transform(RouteCollection $routeCollection)
     {
-        $this->removeIgnored($routeCollection);
-
-        return $routeCollection;
-    }
-
-    /**
-     * @param RouteCollection $collection
-     */
-    private function removeIgnored(RouteCollection $collection)
-    {
-        foreach ($collection as $name => $route) {
+        foreach ($routeCollection as $name => $route) {
             // Note: for some controllers (i.e, functions as controllers), $controllerName would be false
             $controllerName = $route->getDefault('_controller');
 
@@ -55,8 +45,10 @@ class RemoveIgnoredTransformer implements TransformerInterface
                 continue;
             }
 
-            $collection->remove($name);
+            $routeCollection->remove($name);
         }
+
+        return $routeCollection;
     }
 
     /**

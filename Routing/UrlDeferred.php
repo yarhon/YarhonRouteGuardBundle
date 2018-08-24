@@ -21,19 +21,9 @@ class UrlDeferred implements UrlDeferredInterface
 {
 
     /**
-     * @var string
+     * @var UrlPrototypeInterface
      */
-    private $name;
-
-    /**
-     * @var array
-     */
-    private $parameters;
-
-    /**
-     * @var int
-     */
-    private $referenceType;
+    private $urlPrototype;
 
     /**
      * @var string
@@ -58,11 +48,9 @@ class UrlDeferred implements UrlDeferredInterface
     /**
      * {@inheritdoc}
      */
-    public function __construct($name, array $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
+    public function __construct(UrlPrototypeInterface $urlPrototype)
     {
-        $this->name = $name;
-        $this->parameters = $parameters;
-        $this->referenceType = $referenceType;
+        $this->urlPrototype = $urlPrototype;
     }
 
     /**
@@ -74,18 +62,18 @@ class UrlDeferred implements UrlDeferredInterface
             return $this;
         }
 
-        $referenceType = $this->referenceType;
+        $referenceType = $this->urlPrototype->getReferenceType();
 
         if (UrlGeneratorInterface::ABSOLUTE_PATH !== $referenceType && UrlGeneratorInterface::NETWORK_PATH !== $referenceType) {
             $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH;
         }
 
-        $url = $urlGenerator->generate($this->name, $this->parameters, $referenceType);
+        $url = $urlGenerator->generate($this->urlPrototype->getName(), $this->urlPrototype->getParameters(), $referenceType);
 
         $this->parseUrl($url, $urlGenerator->getContext());
 
         // TODO: produce generated url with original $referenceType for relative reference types
-        if ($referenceType === $this->referenceType) {
+        if ($referenceType === $this->urlPrototype->getReferenceType()) {
             $this->generatedUrl = $url;
         }
 
@@ -107,6 +95,14 @@ class UrlDeferred implements UrlDeferredInterface
         }
 
         $this->pathInfo = $pathInfo;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPrototype()
+    {
+        return $this->urlPrototype;
     }
 
     /**

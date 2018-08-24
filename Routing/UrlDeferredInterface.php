@@ -19,11 +19,9 @@ use Yarhon\RouteGuardBundle\Exception\LogicException;
 interface UrlDeferredInterface
 {
     /**
-     * @param string $name
-     * @param array  $parameters
-     * @param int    $referenceType
+     * @param UrlPrototypeInterface $urlPrototype
      */
-    public function __construct($name, array $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH);
+    public function __construct(UrlPrototypeInterface $urlPrototype);
 
     /**
      * @param UrlGeneratorInterface $urlGenerator
@@ -31,6 +29,11 @@ interface UrlDeferredInterface
      * @return self
      */
     public function generate(UrlGeneratorInterface $urlGenerator);
+
+    /**
+     * @return UrlPrototypeInterface
+     */
+    public function getPrototype();
 
     /**
      * @return string

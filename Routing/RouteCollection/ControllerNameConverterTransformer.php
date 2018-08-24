@@ -39,19 +39,7 @@ class ControllerNameConverterTransformer implements TransformerInterface
      */
     public function transform(RouteCollection $routeCollection)
     {
-        $this->convertControllers($routeCollection);
-
-        return $routeCollection;
-    }
-
-    /**
-     * @param RouteCollection $collection
-     *
-     * @throws InvalidArgumentException If unable to resolve controller name (when ControllerNameResolver is set)
-     */
-    private function convertControllers(RouteCollection $collection)
-    {
-        foreach ($collection as $name => $route) {
+        foreach ($routeCollection as $name => $route) {
             $controller = $route->getDefault('_controller');
 
             if (!is_string($controller)) {
@@ -66,5 +54,7 @@ class ControllerNameConverterTransformer implements TransformerInterface
                     $name, $e->getMessage()), 0, $e);
             }
         }
+
+        return $routeCollection;
     }
 }
