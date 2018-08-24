@@ -15,7 +15,7 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 use Yarhon\RouteGuardBundle\Tests\HelperTrait;
 use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
-use Yarhon\RouteGuardBundle\Security\Provider\ProviderInterface;
+use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteCollection\TransformerInterface;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
@@ -62,15 +62,15 @@ class AccessMapBuilderTest extends TestCase
         $this->assertAttributeEquals($routeCollection, 'routeCollection', $this->builder);
     }
 
-    public function testSetAuthorizationProviders()
+    public function testSetTestProviders()
     {
-        $provider1 = $this->createMock(ProviderInterface::class);
-        $provider2 = $this->createMock(ProviderInterface::class);
+        $provider1 = $this->createMock(TestProviderInterface::class);
+        $provider2 = $this->createMock(TestProviderInterface::class);
         $providers = [$provider1, $provider2];
 
-        $this->builder->setAuthorizationProviders($providers);
+        $this->builder->setTestProviders($providers);
 
-        $this->assertAttributeSame($providers, 'authorizationProviders', $this->builder);
+        $this->assertAttributeSame($providers, 'testProviders', $this->builder);
     }
 
     public function testSetRouteCollectionTransformers()
@@ -86,8 +86,8 @@ class AccessMapBuilderTest extends TestCase
 
     public function testTransformerCalls()
     {
-        $authorizationProvider = $this->createMock(ProviderInterface::class);
-        $this->builder->addAuthorizationProvider($authorizationProvider);
+        $testProvider = $this->createMock(TestProviderInterface::class);
+        $this->builder->addTestProvider($testProvider);
 
         $transformer = $this->createMock(TransformerInterface::class);
 
@@ -114,8 +114,8 @@ class AccessMapBuilderTest extends TestCase
 
     public function testTransformerCallException()
     {
-        $authorizationProvider = $this->createMock(ProviderInterface::class);
-        $this->builder->addAuthorizationProvider($authorizationProvider);
+        $testProvider = $this->createMock(TestProviderInterface::class);
+        $this->builder->addTestProvider($testProvider);
 
         $routeCollection = $this->createRouteCollection([
             '/path1' => 'class',
@@ -138,7 +138,7 @@ class AccessMapBuilderTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        $authorizationProvider = $this->createMock(ProviderInterface::class);
-        $this->builder->addAuthorizationProvider($authorizationProvider);
+        $testProvider = $this->createMock(ProviderInterface::class);
+        $this->builder->addTestProvider($testProvider);
     }
 }

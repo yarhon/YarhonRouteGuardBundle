@@ -37,9 +37,9 @@ class TestBagMap implements TestBagMapInterface
     /**
      * {@inheritdoc}
      */
-    public function add(TestBagInterface $testBag, RequestContextMatcher $requestContextMatcher = null)
+    public function add(TestBagInterface $testBag, RequestConstraintInterface $requestConstraint = null)
     {
-        $this->map[] = [$testBag, $requestContextMatcher];
+        $this->map[] = [$testBag, $requestConstraint];
     }
 
     public function getIterator()
@@ -47,23 +47,4 @@ class TestBagMap implements TestBagMapInterface
         return new \ArrayIterator($this->map);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function resolve(RequestContext $requestContext)
-    {
-        $resolved = null;
-
-        foreach ($this->map as $item) {
-            /** @var RequestContextMatcher $requestContextMatcher */
-            list($testBag, $requestContextMatcher) = $item;
-
-            if (null === $requestContextMatcher || $requestContextMatcher->matches($requestContext)) {
-                $resolved = $testBag;
-                break;
-            }
-        }
-
-        return $resolved;
-    }
 }

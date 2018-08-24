@@ -8,12 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Security\Provider;
+namespace Yarhon\RouteGuardBundle\Security\TestProvider;
 
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationException;
 use Symfony\Component\Routing\Route;
+use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactoryInterface;
+use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactory;
 use Psr\Log\LoggerAwareTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
@@ -22,8 +24,6 @@ use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactoryInterface;
 
-use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactoryInterface;
-use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactory;
 
 /**
  * SensioSecurityProvider processes Security & IsGranted annotations of Sensio FrameworkExtraBundle.
@@ -32,7 +32,7 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactory;
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SensioSecurityProvider implements ProviderInterface
+class SensioSecurityProvider implements TestProviderInterface
 {
     use LoggerAwareTrait;
 
@@ -47,14 +47,20 @@ class SensioSecurityProvider implements ProviderInterface
     private $expressionFactory;
 
     /**
+     * @var ArgumentMetadataFactoryInterface
+     */
+    private $argumentMetadataFactory;
+
+    /**
      * SensioSecurityProvider constructor.
      *
      * @param ExpressionFactoryInterface $expressionFactory
      * @param Reader|null                $reader
+     * @param ArgumentMetadataFactoryInterface $argumentMetadataFactory
      *
      * @throws AnnotationException
      */
-    public function __construct(ExpressionFactoryInterface $expressionFactory, Reader $reader = null)
+    public function __construct(ExpressionFactoryInterface $expressionFactory, Reader $reader = null, ArgumentMetadataFactoryInterface $argumentMetadataFactory = null)
     {
         $this->expressionFactory = $expressionFactory;
 
@@ -67,6 +73,8 @@ class SensioSecurityProvider implements ProviderInterface
 
         $this->reader->addAnnotationClass(SecurityAnnotation::class);
         $this->reader->addAnnotationClass(IsGrantedAnnotation::class);
+
+        $this->argumentMetadataFactory = $argumentMetadataFactory ?: new ArgumentMetadataFactory();
     }
 
     public function onBuild()
@@ -122,4 +130,6 @@ class SensioSecurityProvider implements ProviderInterface
 
         return null;
     }
+
+
 }

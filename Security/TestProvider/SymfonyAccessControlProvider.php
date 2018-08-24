@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Security\Provider;
+namespace Yarhon\RouteGuardBundle\Security\TestProvider;
 
 use Symfony\Component\Routing\Route;
 use Symfony\Component\ExpressionLanguage\Expression;
@@ -28,7 +28,7 @@ use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactoryInterface;
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SymfonyAccessControlProvider implements ProviderInterface
+class SymfonyAccessControlProvider implements TestProviderInterface
 {
     use LoggerAwareTrait;
 
@@ -119,7 +119,7 @@ class SymfonyAccessControlProvider implements ProviderInterface
             }
 
             if ($matchResult instanceof RequestConstraint) {
-                $matches[] = [$testBag, new RequestContextMatcher($matchResult)];
+                $matches[] = [$testBag, $matchResult];
                 continue;
             }
         }

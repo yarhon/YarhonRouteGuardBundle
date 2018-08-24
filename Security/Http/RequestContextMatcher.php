@@ -18,24 +18,13 @@ use Symfony\Component\HttpFoundation\IpUtils;
 class RequestContextMatcher
 {
     /**
-     * @var RequestConstraint
-     */
-    private $constraint;
-
-    /**
-     * RequestMatcher constructor.
+     * @param RequestContext             $requestContext
+     * @param RequestConstraintInterface $constraint
      *
-     * @param RequestConstraint $constraint
+     * @return bool
      */
-    public function __construct(RequestConstraint $constraint)
+    public function matches(RequestContext $requestContext, RequestConstraintInterface $constraint)
     {
-        $this->constraint = $constraint;
-    }
-
-    public function matches(RequestContext $requestContext)
-    {
-        $constraint = $this->constraint;
-
         if ($constraint->getMethods() && !in_array($requestContext->getMethod(), $constraint->getMethods(), true)) {
             return false;
         }

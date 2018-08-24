@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Tests\Security\Provider;
+namespace Yarhon\RouteGuardBundle\Tests\Security\TestProvider;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
-use Yarhon\RouteGuardBundle\Security\Provider\SymfonyAccessControlProvider;
-use Yarhon\RouteGuardBundle\Security\Authorization\Test\Arguments;
-use Yarhon\RouteGuardBundle\Security\Authorization\Test\TestBag;
+use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
+use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
+use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Http\TestBagMap;
 use Yarhon\RouteGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\RouteGuardBundle\Security\Http\RouteMatcher;

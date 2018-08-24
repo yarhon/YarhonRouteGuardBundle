@@ -12,7 +12,7 @@ namespace Yarhon\RouteGuardBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Yarhon\RouteGuardBundle\Security\Provider\SensioSecurityProvider;
+use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

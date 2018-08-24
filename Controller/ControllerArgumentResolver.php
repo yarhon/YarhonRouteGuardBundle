@@ -17,6 +17,12 @@ use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
+use Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestAttributeValueResolver;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestValueResolver;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolver\SessionValueResolver;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver;
+
 /**
  * Responsible for resolving the arguments passed to an action.
  *
@@ -106,5 +112,16 @@ class ControllerArgumentResolver
 
         $message = 'Argument "%s" can\'t be resolved. Either the argument is nullable and no null value has been provided, no default value has been provided or because there is a non optional argument after this one.';
         throw new RuntimeException(sprintf($message, $argumentMetadata->getName()));
+    }
+
+    public static function getDefaultArgumentValueResolvers()
+    {
+        return array(
+            new RequestAttributeValueResolver(),
+            new RequestValueResolver(),
+            new SessionValueResolver(),
+            new DefaultValueResolver(),
+            new VariadicValueResolver(),
+        );
     }
 }

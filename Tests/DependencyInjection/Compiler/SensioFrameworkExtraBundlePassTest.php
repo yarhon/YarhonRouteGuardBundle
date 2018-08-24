@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Tests\DependencyInjection\Compiler;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\SensioFrameworkExtraBundlePass;
-use Yarhon\RouteGuardBundle\Security\Provider\SensioSecurityProvider;
+use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

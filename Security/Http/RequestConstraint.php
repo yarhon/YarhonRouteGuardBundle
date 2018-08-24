@@ -19,7 +19,7 @@ namespace Yarhon\RouteGuardBundle\Security\Http;
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RequestConstraint
+class RequestConstraint implements RequestConstraintInterface
 {
     /**
      * @var string
@@ -62,7 +62,7 @@ class RequestConstraint
     }
 
     /**
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getPathPattern()
     {
@@ -70,7 +70,7 @@ class RequestConstraint
     }
 
     /**
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getHostPattern()
     {
@@ -78,7 +78,7 @@ class RequestConstraint
     }
 
     /**
-     * @return array|null
+     * {@inheritdoc}
      */
     public function getMethods()
     {
@@ -86,7 +86,7 @@ class RequestConstraint
     }
 
     /**
-     * @return array|null
+     * {@inheritdoc}
      */
     public function getIps()
     {

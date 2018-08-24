@@ -16,7 +16,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Yarhon\RouteGuardBundle\Security\Provider\ProviderInterface;
+use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteCollection\TransformerInterface;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
@@ -31,9 +31,9 @@ class AccessMapBuilder implements AccessMapBuilderInterface, LoggerAwareInterfac
     private $routeCollection;
 
     /**
-     * @var ProviderInterface[]
+     * @var TestProviderInterface[]
      */
-    private $authorizationProviders = [];
+    private $testProviders = [];
 
     /**
      * @var TransformerInterface[]
@@ -56,11 +56,11 @@ class AccessMapBuilder implements AccessMapBuilderInterface, LoggerAwareInterfac
     }
 
     /**
-     * @param ProviderInterface $provider
+     * @param TestProviderInterface $provider
      */
-    public function addAuthorizationProvider(ProviderInterface $provider)
+    public function addTestProvider(TestProviderInterface $provider)
     {
-        $this->authorizationProviders[] = $provider;
+        $this->testProviders[] = $provider;
     }
 
     /**
@@ -72,14 +72,14 @@ class AccessMapBuilder implements AccessMapBuilderInterface, LoggerAwareInterfac
     }
 
     /**
-     * @param ProviderInterface[] $providers
+     * @param TestProviderInterface[] $providers
      */
-    public function setAuthorizationProviders(array $providers)
+    public function setTestProviders(array $providers)
     {
-        $this->authorizationProviders = [];
+        $this->testProviders = [];
 
         foreach ($providers as $provider) {
-            $this->addAuthorizationProvider($provider);
+            $this->addTestProvider($provider);
         }
     }
 
@@ -120,7 +120,7 @@ class AccessMapBuilder implements AccessMapBuilderInterface, LoggerAwareInterfac
     {
         $this->logger = $logger;
 
-        foreach ($this->authorizationProviders as $provider) {
+        foreach ($this->testProviders as $provider) {
             $provider->setLogger($this->logger);
         }
     }
@@ -153,7 +153,7 @@ class AccessMapBuilder implements AccessMapBuilderInterface, LoggerAwareInterfac
             return;
         }
 
-        if (0 === count($this->authorizationProviders)) {
+        if (0 === count($this->testProviders)) {
             // TODO: warning or exception
             return;
         }
@@ -176,7 +176,7 @@ class AccessMapBuilder implements AccessMapBuilderInterface, LoggerAwareInterfac
         $accessMap = new AccessMap();
 
         foreach ($routeCollection->all() as $name => $route) {
-            foreach ($this->authorizationProviders as $provider) {
+            foreach ($this->testProviders as $provider) {
                 $testBag = $provider->getTests($route);
                 $accessMap->add($name, get_class($provider), $testBag);
             }
@@ -205,7 +205,7 @@ class AccessMapBuilder implements AccessMapBuilderInterface, LoggerAwareInterfac
 
     private function onBuild()
     {
-        foreach ($this->authorizationProviders as $provider) {
+        foreach ($this->testProviders as $provider) {
             $provider->onBuild();
         }
     }

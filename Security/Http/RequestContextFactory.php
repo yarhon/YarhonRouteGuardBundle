@@ -30,7 +30,7 @@ class RequestContextFactory
     private $requestStack;
 
     /**
-     * TestBagMapResolver constructor.
+     * RequestContextFactory constructor.
      *
      * @param UrlGeneratorInterface $urlGenerator
      * @param RequestStack          $requestStack

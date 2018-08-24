@@ -13,7 +13,7 @@
             <call method="setRouteCollectionTransformers">
                 <argument type="collection" />
             </call>
-            <call method="setAuthorizationProviders">
+            <call method="setTestProviders">
                 <argument type="collection" />
             </call>
             <call method="setLogger">
@@ -25,7 +25,7 @@
             <tag name="monolog.logger" channel="route_guard" />
         </service>
 
-        <!-- authorization providers -->
+        <!-- test providers -->
 
         <service id="Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactory">
             <argument type="service" id="security.expression_language" on-invalid="ignore"/>
@@ -33,15 +33,15 @@
             <argument>null</argument><!--- false ? -->
         </service>
 
-        <service id="Yarhon\RouteGuardBundle\Security\Provider\SensioSecurityProvider">
+        <service id="Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider">
             <argument type="service" id="Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactory" />
             <argument>null</argument>
-            <tag name="yarhon_route_guard.authorization_provider" priority="1024" />
+            <tag name="yarhon_route_guard.test_provider" priority="1024" />
         </service>
 
-        <service id="Yarhon\RouteGuardBundle\Security\Provider\SymfonyAccessControlProvider">
+        <service id="Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider">
             <argument type="service" id="Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactory" />
-            <tag name="yarhon_route_guard.authorization_provider" priority="1023" />
+            <tag name="yarhon_route_guard.test_provider" priority="1023" />
         </service>
 
         <!-- route collection services -->
@@ -103,18 +103,23 @@
             <tag name="cache.pool" clearer="cache.app_clearer" />
         </service>
 
-        <!-- authorization services -->
+        <!-- HTTP dependent test bags services -->
 
         <!-- to do: optional external services -->
         <service id="Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory">
-            <argument type="service" id="router" />
-            <argument type="service" id="request_stack" />
+            <argument type="service" id="router" on-invalid="ignore" />
+            <argument type="service" id="request_stack" on-invalid="ignore" />
         </service>
+
+        <service id="Yarhon\RouteGuardBundle\Security\Http\TestBagMapResolver">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory" />
+        </service>
+
+        <!-- authorization services -->
 
         <service id="Yarhon\RouteGuardBundle\Security\AccessMapManager">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory" />
-            <argument type="service" id="request_stack" on-invalid="ignore" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\Http\TestBagMapResolver" />
         </service>
         <service id="yarhon_route_guard.access_map_manager" alias="Yarhon\RouteGuardBundle\Security\AccessMapManager" public="true"/>
         <!--<service id="Yarhon\RouteGuardBundle\Security\AccessMapManagerInterface" alias="yarhon_route_guard.access_map_manager" />-->

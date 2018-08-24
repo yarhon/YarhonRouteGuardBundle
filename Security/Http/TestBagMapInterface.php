@@ -18,15 +18,9 @@ use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 interface TestBagMapInterface extends \IteratorAggregate
 {
     /**
-     * @param TestBagInterface           $testBag
-     * @param RequestContextMatcher|null $requestContextMatcher
+     * @param TestBagInterface                $testBag
+     * @param RequestConstraintInterface|null $requestConstraint
      */
-    public function add(TestBagInterface $testBag, RequestContextMatcher $requestContextMatcher = null);
+    public function add(TestBagInterface $testBag, RequestConstraintInterface $requestConstraint = null);
 
-    /**
-     * @param RequestContext $requestContext
-     *
-     * @return TestBagInterface|null
-     */
-    public function resolve(RequestContext $requestContext);
 }
