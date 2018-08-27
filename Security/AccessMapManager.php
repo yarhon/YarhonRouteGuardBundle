@@ -11,8 +11,6 @@
 namespace Yarhon\RouteGuardBundle\Security;
 
 use Yarhon\RouteGuardBundle\Routing\UrlDeferredInterface;
-use Yarhon\RouteGuardBundle\Security\Http\TestBagMapInterface;
-use Yarhon\RouteGuardBundle\Security\Http\TestBagMapResolverInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
@@ -32,15 +30,9 @@ class AccessMapManager
      */
     private $testResolvers;
 
-    /**
-     * @var TestBagMapResolverInterface
-     */
-    private $testBagMapResolver;
-
-    public function __construct(AccessMapBuilderInterface $accessMapBuilder, TestBagMapResolverInterface $testBagMapResolver = null)
+    public function __construct(AccessMapBuilderInterface $accessMapBuilder)
     {
         $this->accessMap = $accessMapBuilder->build(); // TODO: process exceptions during build
-        $this->testBagMapResolver = $testBagMapResolver;
     }
 
     public function getTests($routeName, $method = 'GET', UrlDeferredInterface $urlDeferred = null)
@@ -50,16 +42,6 @@ class AccessMapManager
         $testBags = $this->accessMap->get($routeName);
 
         foreach ($testBags as $providerName => $testBag) {
-            if ($testBag instanceof TestBagMapInterface) {
-                if (null === $this->testBagMapResolver) {
-                    throw new RuntimeException('Unable to resolve TestBagMapInterface instance because TestBagMapResolver service is not provided.');
-                }
-
-                $testBag = $this->testBagMapResolver->resolve($testBag, $method, $urlDeferred);
-                if (null === $testBag) {
-                    continue;
-                };
-            }
 
             if (!isset($this->testResolvers[$providerName])) {
                 throw new RuntimeException(sprintf('No resolver exists for provider "%"', $providerName));
@@ -67,6 +49,7 @@ class AccessMapManager
 
             $resolver = $this->testResolvers[$providerName];
 
+            // TODO: pass $method, $urlDeferred
             $tests = array_merge($tests, $resolver->resolve($testBag));
         }
 

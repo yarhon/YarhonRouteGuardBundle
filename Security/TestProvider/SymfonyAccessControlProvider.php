@@ -83,7 +83,6 @@ class SymfonyAccessControlProvider implements TestProviderInterface
         }
 
         $arguments = new TestArguments($attributes);
-        $arguments->setSubjectMetadata(TestArguments::SUBJECT_CONTEXT_VARIABLE, 'request');
 
         return [$constraint, $arguments];
     }

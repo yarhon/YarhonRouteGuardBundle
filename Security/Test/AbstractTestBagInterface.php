@@ -13,10 +13,7 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface TestBagInterface extends AbstractTestBagInterface
+interface AbstractTestBagInterface extends \IteratorAggregate, \Countable
 {
-    /**
-     * @param TestArguments $arguments
-     */
-    public function add(TestArguments $arguments);
+
 }

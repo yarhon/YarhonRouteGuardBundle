@@ -12,8 +12,7 @@ namespace Yarhon\RouteGuardBundle\Security\TestProvider;
 
 use Symfony\Component\Routing\Route;
 use Psr\Log\LoggerAwareInterface;
-use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
-use Yarhon\RouteGuardBundle\Security\Http\TestBagMapInterface;
+use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -23,14 +22,14 @@ interface TestProviderInterface extends LoggerAwareInterface
     /**
      * @param Route $route
      *
-     * @return TestBagInterface|TestBagMapInterface|null
+     * @return AbstractTestBagInterface|null
      */
     public function getTests(Route $route);
-
-    public function onBuild();
 
     /**
      * @return string
      */
     public function getName();
+
+    public function onBuild();
 }

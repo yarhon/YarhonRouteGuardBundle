@@ -16,13 +16,8 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class TestBag implements TestBagInterface
+class TestBag extends AbstractTestBag implements TestBagInterface
 {
-    /**
-     * @var TestArguments[]
-     */
-    private $tests;
-
     /**
      * TestBag constructor.
      *
@@ -40,11 +35,6 @@ class TestBag implements TestBagInterface
      */
     public function add(TestArguments $arguments)
     {
-        $this->tests[] = $arguments;
-    }
-
-    public function getIterator()
-    {
-        return new \ArrayIterator($this->tests);
+        $this->elements[] = $arguments;
     }
 }

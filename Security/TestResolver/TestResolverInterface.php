@@ -10,7 +10,8 @@
 
 namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 
-use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
+use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
+use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -18,11 +19,11 @@ use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 interface TestResolverInterface
 {
     /**
-     * @param TestBagInterface $testBag
+     * @param AbstractTestBagInterface $testBag
      *
-     * @return ???
+     * @return TestArguments[]
      */
-    public function resolve(TestBagInterface $testBag);
+    public function resolve(AbstractTestBagInterface $testBag);
 
     /**
      * @return string

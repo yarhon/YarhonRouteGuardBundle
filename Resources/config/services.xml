@@ -123,6 +123,7 @@
 
         <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver">
             <argument type="service" id="request_stack" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\Http\TestBagMapResolver" />
             <tag name="yarhon_route_guard.test_resolver" />
         </service>
 
@@ -130,7 +131,6 @@
 
         <service id="Yarhon\RouteGuardBundle\Security\AccessMapManager">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\Http\TestBagMapResolver" />
             <call method="setTestResolvers">
                 <argument type="collection" />
             </call>

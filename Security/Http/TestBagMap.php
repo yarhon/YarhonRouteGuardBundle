@@ -10,18 +10,14 @@
 
 namespace Yarhon\RouteGuardBundle\Security\Http;
 
+use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class TestBagMap implements TestBagMapInterface
+class TestBagMap extends AbstractTestBag implements TestBagMapInterface
 {
-    /**
-     * @var array
-     */
-    private $map;
-
     /**
      * TestBagMap constructor.
      *
@@ -37,14 +33,9 @@ class TestBagMap implements TestBagMapInterface
     /**
      * {@inheritdoc}
      */
-    public function add(TestBagInterface $testBag, RequestConstraintInterface $requestConstraint = null)
+    public function add(TestBagInterface $testBag, RequestConstraintInterface $constraint = null)
     {
-        $this->map[] = [$testBag, $requestConstraint];
-    }
-
-    public function getIterator()
-    {
-        return new \ArrayIterator($this->map);
+        $this->elements[] = [$testBag, $constraint];
     }
 
 }

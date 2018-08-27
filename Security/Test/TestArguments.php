@@ -10,8 +10,6 @@
 
 namespace Yarhon\RouteGuardBundle\Security\Test;
 
-use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
-
 /**
  * TestArguments is a value object class for storing arguments for AuthorizationChecker::isGranted() authorization test.
  *
@@ -22,23 +20,6 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 class TestArguments
 {
     /**
-     * Indicates that subject is the name of the "context" variable (request, etc.).
-     */
-    const SUBJECT_CONTEXT_VARIABLE = 1;
-
-    /**
-     * Indicates that subject is the name of controller argument.
-     */
-    const SUBJECT_CONTROLLER_ARGUMENT = 2;
-
-    /**
-     * List of possible variable names, to be used in setSubjectMetadata() with SUBJECT_CONTEXT_VARIABLE type.
-     */
-    const CONTEXT_VARIABLES = [
-        'request',
-    ];
-
-    /**
      * @var mixed[]
      */
     private $attributes = [];
@@ -47,6 +28,11 @@ class TestArguments
      * @var array
      */
     private $subjectMetadata;
+
+    /**
+     * @var mixed
+     */
+    private $subject;
 
     /**
      * @param mixed[] $attributes
@@ -65,28 +51,12 @@ class TestArguments
     }
 
     /**
-     * Sets name and type of the subject argument.
-     * Depending on $type, subject can be one of the "context" variables, or one of the controller arguments.
-     *
-     * @see \Symfony\Component\Security\Http\Firewall\AccessListener::handle  "Context" variable case (Request object as the subject)
-     * @see \Sensio\Bundle\FrameworkExtraBundle\EventListener\IsGrantedListener::onKernelControllerArguments    Controller argument case (Sensio FrameworkExtraBundle @IsGranted annotation)
-     *
-     * @param int    $type One of self::SUBJECT_* constants
-     * @param string $name Subject variable / argument name
-     *
-     * @throws InvalidArgumentException
+     * @param string $name
+     * @param mixed  $metadata
      */
-    public function setSubjectMetadata($type, $name)
+    public function setSubjectMetadata($name, $metadata)
     {
-        if (!in_array($type, [self::SUBJECT_CONTEXT_VARIABLE, self::SUBJECT_CONTROLLER_ARGUMENT], true)) {
-            throw new InvalidArgumentException(sprintf('Invalid subject type: %s', $type));
-        }
-
-        if (self::SUBJECT_CONTEXT_VARIABLE === $type && !in_array($name, self::CONTEXT_VARIABLES, true)) {
-            throw new InvalidArgumentException(sprintf('Unknown subject context variable name: %s', $name));
-        }
-
-        $this->subjectMetadata = [$type, $name];
+        $this->subjectMetadata = [$name, $metadata];
     }
 
     /**
@@ -103,5 +73,21 @@ class TestArguments
     public function getSubjectMetadata()
     {
         return $this->subjectMetadata;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSubject()
+    {
+        return $this->subject;
+    }
+
+    /**
+     * @param mixed $subject
+     */
+    public function setSubject($subject)
+    {
+        $this->subject = $subject;
     }
 }

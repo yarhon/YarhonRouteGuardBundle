@@ -10,17 +10,17 @@
 
 namespace Yarhon\RouteGuardBundle\Security\Http;
 
+use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface TestBagMapInterface extends \IteratorAggregate
+interface TestBagMapInterface extends AbstractTestBagInterface
 {
     /**
      * @param TestBagInterface                $testBag
      * @param RequestConstraintInterface|null $requestConstraint
      */
     public function add(TestBagInterface $testBag, RequestConstraintInterface $requestConstraint = null);
-
 }

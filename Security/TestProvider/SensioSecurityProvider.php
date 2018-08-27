@@ -115,7 +115,7 @@ class SensioSecurityProvider implements TestProviderInterface
 
         foreach ($annotations as $annotation) {
             $attributes = [];
-            $subject = null;
+            $subjectName = null;
 
             if ($annotation instanceof SecurityAnnotation) {
                 // TODO: !!! check how sensio expressions differ from access_control expressions
@@ -125,12 +125,13 @@ class SensioSecurityProvider implements TestProviderInterface
             } elseif ($annotation instanceof IsGrantedAnnotation) {
                 // Despite of the name, $annotation->getAttributes() is a string (annotation value)
                 $attributes[] = $annotation->getAttributes();
-                $subject = $annotation->getSubject();
+                $subjectName = $annotation->getSubject();
             }
 
             $arguments = new TestArguments($attributes);
-            if ($subject) {
-                $arguments->setSubjectMetadata(TestArguments::SUBJECT_CONTROLLER_ARGUMENT, $subject);
+            if ($subjectName) {
+                $metadata = null; // TODO: add metadata
+                $arguments->setSubjectMetadata($subjectName, $metadata);
             }
             $tests[] = $arguments;
         }
