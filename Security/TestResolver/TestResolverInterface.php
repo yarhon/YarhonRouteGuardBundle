@@ -11,6 +11,7 @@
 namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
+use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 
 /**
@@ -23,7 +24,7 @@ interface TestResolverInterface
      *
      * @return TestArguments[]
      */
-    public function resolve(AbstractTestBagInterface $testBag);
+    public function resolve(AbstractTestBagInterface $testBag, RouteContextInterface $routeContext);
 
     /**
      * @return string

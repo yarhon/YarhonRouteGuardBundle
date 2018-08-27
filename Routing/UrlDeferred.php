@@ -21,9 +21,19 @@ class UrlDeferred implements UrlDeferredInterface
 {
 
     /**
-     * @var UrlPrototypeInterface
+     * @var string
      */
-    private $urlPrototype;
+    private $name;
+
+    /**
+     * @var array
+     */
+    private $parameters;
+
+    /**
+     * @var int
+     */
+    private $referenceType;
 
     /**
      * @var string
@@ -46,11 +56,15 @@ class UrlDeferred implements UrlDeferredInterface
     private $generated = false;
 
     /**
-     * {@inheritdoc}
+     * @param string $name
+     * @param array  $parameters
+     * @param int    $referenceType
      */
-    public function __construct(UrlPrototypeInterface $urlPrototype)
+    public function __construct($name, array $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
-        $this->urlPrototype = $urlPrototype;
+        $this->name = $name;
+        $this->parameters = $parameters;
+        $this->referenceType = $referenceType;
     }
 
     /**
@@ -62,18 +76,18 @@ class UrlDeferred implements UrlDeferredInterface
             return $this;
         }
 
-        $referenceType = $this->urlPrototype->getReferenceType();
+        $referenceType = $this->referenceType;
 
         if (UrlGeneratorInterface::ABSOLUTE_PATH !== $referenceType && UrlGeneratorInterface::NETWORK_PATH !== $referenceType) {
             $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH;
         }
 
-        $url = $urlGenerator->generate($this->urlPrototype->getName(), $this->urlPrototype->getParameters(), $referenceType);
+        $url = $urlGenerator->generate($this->name, $this->parameters, $referenceType);
 
         $this->parseUrl($url, $urlGenerator->getContext());
 
         // TODO: produce generated url with original $referenceType for relative reference types
-        if ($referenceType === $this->urlPrototype->getReferenceType()) {
+        if ($referenceType === $this->referenceType) {
             $this->generatedUrl = $url;
         }
 
@@ -95,14 +109,6 @@ class UrlDeferred implements UrlDeferredInterface
         }
 
         $this->pathInfo = $pathInfo;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPrototype()
-    {
-        return $this->urlPrototype;
     }
 
     /**

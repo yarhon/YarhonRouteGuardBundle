@@ -10,6 +10,8 @@
 
 namespace Yarhon\RouteGuardBundle\Security\Http;
 
+use Symfony\Component\HttpFoundation\IpUtils;
+
 /**
  * RequestConstraint holds a set of request requirements:
  * - path pattern
@@ -91,5 +93,29 @@ class RequestConstraint implements RequestConstraintInterface
     public function getIps()
     {
         return $this->ips;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function matches(RequestContext $requestContext)
+    {
+        if ($this->getMethods() && !in_array($requestContext->getMethod(), $this->getMethods(), true)) {
+            return false;
+        }
+
+        if ($this->getIps() && !IpUtils::checkIp($requestContext->getClientIp(), $this->getIps())) {
+            return false;
+        }
+
+        if (null !== $this->getHostPattern() && !preg_match('{'.$this->getHostPattern().'}i', $requestContext->getHost())) {
+            return false;
+        }
+
+        if (null !== $this->getPathPattern() && !preg_match('{'.$this->getPathPattern().'}', rawurldecode($requestContext->getPathInfo()))) {
+            return false;
+        }
+
+        return true;
     }
 }

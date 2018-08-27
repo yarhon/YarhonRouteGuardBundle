@@ -11,11 +11,13 @@
 namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Http\TestBagMapInterface;
-use Yarhon\RouteGuardBundle\Security\Http\TestBagMapResolverInterface;
+use Yarhon\RouteGuardBundle\Security\Http\RequestContext;
+use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 
 /**
@@ -23,22 +25,21 @@ use Yarhon\RouteGuardBundle\Exception\LogicException;
  */
 class SymfonyAccessControlResolver implements TestResolverInterface
 {
-
     /**
      * @var RequestStack
      */
     private $requestStack;
 
     /**
-     * @var TestBagMapResolverInterface
+     * @var UrlGeneratorInterface
      */
-    private $testBagMapResolver;
+    private $urlGenerator;
 
 
-    public function __construct(RequestStack $requestStack, TestBagMapResolverInterface $testBagMapResolver)
+    public function __construct(RequestStack $requestStack, UrlGeneratorInterface $urlGenerator)
     {
         $this->requestStack = $requestStack;
-        $this->testBagMapResolver = $testBagMapResolver;
+        $this->urlGenerator = $urlGenerator;
     }
 
     /**
@@ -52,14 +53,15 @@ class SymfonyAccessControlResolver implements TestResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function resolve(AbstractTestBagInterface $testBag)
+    public function resolve(AbstractTestBagInterface $testBag, RouteContextInterface $routeContext)
     {
         if (!($testBag instanceof TestBagInterface) || !($testBag instanceof TestBagMapInterface)) {
             throw new LogicException(sprintf('%s expects instance of %s or %s.', __CLASS__, TestBagInterface::class, TestBagMapInterface::class));
         }
 
         if ($testBag instanceof TestBagMapInterface) {
-            $testBag = $this->testBagMapResolver->resolve($testBag, $method, $urlDeferred);
+            $requestContext = $this->createRequestContext($routeContext);
+            $testBag = $testBag->resolve($requestContext);
             if (null === $testBag) {
                 return [];
             };
@@ -76,5 +78,32 @@ class SymfonyAccessControlResolver implements TestResolverInterface
         }
 
         return $tests;
+    }
+
+    /**
+     * @param RouteContextInterface $routeContext
+     *
+     * @return RequestContext
+     */
+    private function createRequestContext(RouteContextInterface $routeContext)
+    {
+        $urlGenerator = $this->urlGenerator;
+
+        $urlDeferred = $routeContext->getUrlDeferred();
+
+        $pathInfoClosure = function() use ($urlDeferred, $urlGenerator) {
+            return $urlDeferred->generate($urlGenerator)->getPathInfo();
+        };
+
+        // TODO: set host as string to $requestContext if possible (route has no host, or route has static host)
+        $hostClosure = function() use ($urlDeferred, $urlGenerator) {
+            return $urlDeferred->generate($urlGenerator)->getHost();
+        };
+
+        $request = $this->requestStack->getCurrentRequest();
+
+        $requestContext = new RequestContext($pathInfoClosure, $hostClosure, $routeContext->getMethod(), $request->getClientIp());
+
+        return $requestContext;
     }
 }

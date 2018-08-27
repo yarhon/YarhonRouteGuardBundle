@@ -19,21 +19,11 @@ use Yarhon\RouteGuardBundle\Exception\LogicException;
 interface UrlDeferredInterface
 {
     /**
-     * @param UrlPrototypeInterface $urlPrototype
-     */
-    public function __construct(UrlPrototypeInterface $urlPrototype);
-
-    /**
      * @param UrlGeneratorInterface $urlGenerator
      *
      * @return self
      */
     public function generate(UrlGeneratorInterface $urlGenerator);
-
-    /**
-     * @return UrlPrototypeInterface
-     */
-    public function getPrototype();
 
     /**
      * @return string

@@ -13,6 +13,7 @@ namespace Yarhon\RouteGuardBundle\Security;
 use Yarhon\RouteGuardBundle\Routing\UrlDeferredInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
+use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
@@ -35,11 +36,11 @@ class AccessMapManager
         $this->accessMap = $accessMapBuilder->build(); // TODO: process exceptions during build
     }
 
-    public function getTests($routeName, $method = 'GET', UrlDeferredInterface $urlDeferred = null)
+    public function getTests(RouteContextInterface $routeContext)
     {
         $tests = [];
 
-        $testBags = $this->accessMap->get($routeName);
+        $testBags = $this->accessMap->get($routeContext->getName());
 
         foreach ($testBags as $providerName => $testBag) {
 
@@ -50,7 +51,7 @@ class AccessMapManager
             $resolver = $this->testResolvers[$providerName];
 
             // TODO: pass $method, $urlDeferred
-            $tests = array_merge($tests, $resolver->resolve($testBag));
+            $tests = array_merge($tests, $resolver->resolve($testBag, $routeContext));
         }
 
         return $tests;

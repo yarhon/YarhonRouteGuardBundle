@@ -103,18 +103,6 @@
             <tag name="cache.pool" clearer="cache.app_clearer" />
         </service>
 
-        <!-- HTTP dependent test bags services -->
-
-        <!-- to do: optional external services -->
-        <service id="Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory">
-            <argument type="service" id="router" on-invalid="ignore" />
-            <argument type="service" id="request_stack" on-invalid="ignore" />
-        </service>
-
-        <service id="Yarhon\RouteGuardBundle\Security\Http\TestBagMapResolver">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory" />
-        </service>
-
         <!-- test resolvers -->
 
         <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver">
@@ -122,8 +110,8 @@
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver">
-            <argument type="service" id="request_stack" />
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\Http\TestBagMapResolver" />
+            <argument type="service" id="request_stack" /><!-- to do: optional external services -->
+            <argument type="service" id="router" /><!-- to do: optional external services -->
             <tag name="yarhon_route_guard.test_resolver" />
         </service>
 

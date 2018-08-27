@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class UrlPrototype implements UrlPrototypeInterface
+class RouteContext implements RouteContextInterface
 {
 
     /**
@@ -29,17 +29,31 @@ class UrlPrototype implements UrlPrototypeInterface
     private $parameters;
 
     /**
+     * @var string
+     */
+    private $method;
+
+    /**
      * @var int
      */
     private $referenceType;
 
     /**
-     * {@inheritdoc}
+     * @var UrlDeferredInterface
      */
-    public function __construct($name, array $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
+    private $urlDeferred;
+
+    /**
+     * @param string $name
+     * @param array  $parameters
+     * @param string $method
+     * @param int    $referenceType
+     */
+    public function __construct($name, array $parameters = [], $method = 'GET', $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
         $this->name = $name;
         $this->parameters = $parameters;
+        $this->method = $method;
         $this->referenceType = $referenceType;
     }
 
@@ -62,8 +76,29 @@ class UrlPrototype implements UrlPrototypeInterface
     /**
      * {@inheritdoc}
      */
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getReferenceType()
     {
         return $this->referenceType;
     }
+
+    /**
+     * @return UrlDeferredInterface
+     */
+    public function getUrlDeferred()
+    {
+        if (!$this->urlDeferred) {
+            $this->urlDeferred = new UrlDeferred($this->name, $this->parameters, $this->referenceType);
+        }
+
+        return $this->urlDeferred;
+    }
+
 }

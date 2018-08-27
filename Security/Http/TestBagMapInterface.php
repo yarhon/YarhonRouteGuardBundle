@@ -23,4 +23,11 @@ interface TestBagMapInterface extends AbstractTestBagInterface
      * @param RequestConstraintInterface|null $requestConstraint
      */
     public function add(TestBagInterface $testBag, RequestConstraintInterface $requestConstraint = null);
+
+    /**
+     * @param RequestContext $requestContext
+     *
+     * @return TestBagInterface|null
+     */
+    public function resolve(RequestContext $requestContext);
 }

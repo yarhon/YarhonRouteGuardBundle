@@ -34,4 +34,11 @@ interface RequestConstraintInterface
      * @return array|null
      */
     public function getIps();
+
+    /**
+     * @param RequestContext $requestContext
+     *
+     * @return bool
+     */
+    public function matches(RequestContext $requestContext);
 }

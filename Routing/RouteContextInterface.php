@@ -10,20 +10,11 @@
 
 namespace Yarhon\RouteGuardBundle\Routing;
 
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface UrlPrototypeInterface
+interface RouteContextInterface
 {
-    /**
-     * @param string $name
-     * @param array  $parameters
-     * @param int    $referenceType
-     */
-    public function __construct($name, array $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH);
-
     /**
      * @return string
      */
@@ -35,7 +26,17 @@ interface UrlPrototypeInterface
     public function getParameters();
 
     /**
+     * @return string
+     */
+    public function getMethod();
+
+    /**
      * @return int
      */
     public function getReferenceType();
+
+    /**
+     * @return UrlDeferredInterface
+     */
+    public function getUrlDeferred();
 }

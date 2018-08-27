@@ -12,6 +12,7 @@ namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
+use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 
 /**
@@ -30,7 +31,7 @@ class SensioSecurityResolver implements TestResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function resolve(AbstractTestBagInterface $testBag)
+    public function resolve(AbstractTestBagInterface $testBag, RouteContextInterface $routeContext)
     {
         if (!($testBag instanceof TestBagInterface)) {
             throw new LogicException(sprintf('%s expects instance of %s.', __CLASS__, TestBagInterface::class));
