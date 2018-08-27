@@ -50,7 +50,6 @@ class AccessMapManager
 
             $resolver = $this->testResolvers[$providerName];
 
-            // TODO: pass $method, $urlDeferred
             $tests = array_merge($tests, $resolver->resolve($testBag, $routeContext));
         }
 

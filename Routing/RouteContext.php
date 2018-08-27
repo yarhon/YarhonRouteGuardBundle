@@ -17,7 +17,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class RouteContext implements RouteContextInterface
 {
-
     /**
      * @var string
      */
@@ -100,5 +99,4 @@ class RouteContext implements RouteContextInterface
 
         return $this->urlDeferred;
     }
-
 }

@@ -45,8 +45,8 @@ class SymfonyAccessControlResolver implements TestResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function getName() {
-
+    public function getName()
+    {
         return 'symfony_access_control';
     }
 

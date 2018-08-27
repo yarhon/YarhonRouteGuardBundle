@@ -23,6 +23,8 @@ use Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestValueResolve
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver\SessionValueResolver;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver;
 
+use Symfony\Component\HttpFoundation\ParameterBag;
+
 /**
  * Responsible for resolving the arguments passed to an action.
  *
@@ -47,17 +49,11 @@ class ControllerArgumentResolver
         $this->argumentValueResolvers = $argumentValueResolvers ?: ArgumentResolver::getDefaultArgumentValueResolvers();
     }
 
-    /**
-     * @param Request            $request
-     * @param ArgumentMetadata[] $argumentsMetadata
-     *
-     * @return array Array of arguments, indexed by argument name
-     */
-    public function getArguments(Request $request, array $argumentsMetadata)
+    public function getArguments(ControllerMetadata $controllerMetadata, ParameterBag $routeAttributes, Request $request)
     {
         $arguments = [];
 
-        foreach ($argumentsMetadata as $argumentMetadata) {
+        foreach ($controllerMetadata->getArguments() as $name => $argumentMetadata) {
             $arguments[$argumentMetadata->getName()] = $this->getArgument($request, $argumentMetadata);
         }
 

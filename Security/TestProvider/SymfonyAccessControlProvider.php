@@ -90,8 +90,8 @@ class SymfonyAccessControlProvider implements TestProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getName() {
-
+    public function getName()
+    {
         return 'symfony_access_control';
     }
 

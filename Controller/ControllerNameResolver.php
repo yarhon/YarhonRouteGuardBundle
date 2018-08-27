@@ -56,6 +56,8 @@ class ControllerNameResolver implements ControllerNameResolverInterface
 
     protected function resolveClass($class)
     {
+        // TODO: can controller class start from  "\" symbol ?
+
         return $class;
     }
 }

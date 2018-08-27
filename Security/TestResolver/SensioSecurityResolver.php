@@ -23,8 +23,8 @@ class SensioSecurityResolver implements TestResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function getName() {
-
+    public function getName()
+    {
         return 'sensio_security';
     }
 

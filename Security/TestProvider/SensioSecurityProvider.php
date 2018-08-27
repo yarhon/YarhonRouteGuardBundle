@@ -80,8 +80,8 @@ class SensioSecurityProvider implements TestProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getName() {
-
+    public function getName()
+    {
         return 'sensio_security';
     }
 

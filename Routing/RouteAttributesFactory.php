@@ -32,7 +32,7 @@ class RouteAttributesFactory
 
         unset($defaults['_canonical_route'], $defaults['_controller']);
 
-        // Other special parameters returned: _format, _fragment, _locale
+        // Other special parameters returned (if present): _format, _fragment, _locale
 
         // See \Symfony\Component\Routing\Matcher\UrlMatcher::mergeDefaults
         foreach ($parameters as $key => $value) {
