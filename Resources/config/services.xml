@@ -105,7 +105,18 @@
 
         <!-- test resolvers -->
 
+        <service id="Yarhon\RouteGuardBundle\Routing\RouteAttributesFactory">
+            <argument type="service" id="router" /><!-- to do: optional external services -->
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver">
+            <argument type="collection" />
+        </service>
+
         <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver">
+            <argument type="service" id="request_stack" /><!-- to do: optional external services -->
+            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RouteAttributesFactory" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver" />
             <tag name="yarhon_route_guard.test_resolver" />
         </service>
 
@@ -132,6 +143,33 @@
         </service>
         <service id="yarhon_route_guard.authorization_manager" alias="Yarhon\RouteGuardBundle\Security\AuthorizationManager" public="true"/>
         <service id="Yarhon\RouteGuardBundle\Security\AuthorizationManagerInterface" alias="yarhon_route_guard.authorization_manager" />
+
+        <!-- controller argument resolvers -->
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ArgumentResolver\RequestAttributeValueResolver">
+            <tag name="yarhon_route_guard.argument_value_resolver" priority="100" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ArgumentResolver\RequestValueResolver">
+            <tag name="yarhon_route_guard.argument_value_resolver" priority="50" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ArgumentResolver\SessionValueResolver">
+            <tag name="yarhon_route_guard.argument_value_resolver" priority="50" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ServiceValueResolver">
+            <argument type="service" id="service_container"/>
+            <tag name="yarhon_route_guard.argument_value_resolver" priority="-50" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ArgumentResolver\DefaultValueResolver">
+            <tag name="yarhon_route_guard.argument_value_resolver" priority="-100" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ArgumentResolver\VariadicValueResolver">
+            <tag name="yarhon_route_guard.argument_value_resolver" priority="-150" />
+        </service>
 
     </services>
 </container>

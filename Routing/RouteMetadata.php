@@ -42,6 +42,11 @@ class RouteMetadata
      */
     private $staticHost;
 
+    /**
+     * RouteMetadata constructor.
+     *
+     * @param Route $route
+     */
     public function __construct(Route $route)
     {
         $compiledRoute = $route->compile();

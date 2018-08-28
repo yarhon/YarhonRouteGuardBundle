@@ -58,6 +58,17 @@ class ControllerMetadata
         return $this->arguments;
     }
 
+    public function hasArgument($name)
+    {
+        return isset($this->arguments[$name]);
+    }
+
+    // TODO: add an exception
+    public function getArgument($name)
+    {
+        return $this->arguments[$name];
+    }
+
     private function addArgument(ArgumentMetadata $argument)
     {
         $this->arguments[$argument->getName()] = $argument;

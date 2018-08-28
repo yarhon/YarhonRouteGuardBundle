@@ -10,27 +10,16 @@
 
 namespace Yarhon\RouteGuardBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
+use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentValueResolverInterface;
+use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContextInterface;
+use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
-use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
-
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestAttributeValueResolver;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver\RequestValueResolver;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver\SessionValueResolver;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver\VariadicValueResolver;
-
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Responsible for resolving the arguments passed to an action.
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
- *
- * // TODO: add the controller name in thrown exceptions
  */
 class ControllerArgumentResolver
 {
@@ -40,84 +29,36 @@ class ControllerArgumentResolver
     private $argumentValueResolvers;
 
     /**
-     * ArgumentResolver constructor.
+     * ControllerArgumentResolver constructor.
      *
      * @param ArgumentValueResolverInterface[] $argumentValueResolvers
      */
     public function __construct($argumentValueResolvers = [])
     {
-        $this->argumentValueResolvers = $argumentValueResolvers ?: ArgumentResolver::getDefaultArgumentValueResolvers();
-    }
-
-    public function getArguments(ControllerMetadata $controllerMetadata, ParameterBag $routeAttributes, Request $request)
-    {
-        $arguments = [];
-
-        foreach ($controllerMetadata->getArguments() as $name => $argumentMetadata) {
-            $arguments[$argumentMetadata->getName()] = $this->getArgument($request, $argumentMetadata);
-        }
-
-        return $arguments;
+        $this->argumentValueResolvers = $argumentValueResolvers;
     }
 
     /**
-     * @param Request            $request
-     * @param ArgumentMetadata[] $argumentsMetadata
-     * @param string             $argumentName
+     * @param ArgumentResolverContextInterface $context
+     * @param ArgumentMetadata                 $argumentMetadata
      *
      * @return mixed
-     */
-    public function getArgumentByName(Request $request, array $argumentsMetadata, $argumentName)
-    {
-        foreach ($argumentsMetadata as $argumentMetadata) {
-            if ($argumentMetadata->getName() == $argumentName) {
-                return $this->getArgument($request, $argumentMetadata);
-            }
-        }
-
-        throw new RuntimeException(sprintf('Can\'t get metadata for argument "%s".', $argumentName));
-    }
-
-    /**
-     * @param Request          $request
-     * @param ArgumentMetadata $argumentMetadata
      *
-     * @return mixed
+     * @throws ExceptionInterface
      */
-    public function getArgument(Request $request, ArgumentMetadata $argumentMetadata)
+    public function getArgument(ArgumentResolverContextInterface $context, ArgumentMetadata $argumentMetadata)
     {
         foreach ($this->argumentValueResolvers as $resolver) {
-            if (!$resolver->supports($request, $argumentMetadata)) {
+            if (!$resolver->supports($context, $argumentMetadata)) {
                 continue;
             }
 
-            $resolved = $resolver->resolve($request, $argumentMetadata);
+            $resolved = $resolver->resolve($context, $argumentMetadata);
 
-            if (!$resolved instanceof \Generator) {
-                throw new InvalidArgumentException(sprintf('%s::resolve() must yield at least one value.', \get_class($resolver)));
-            }
-
-            $argument = iterator_to_array($resolved, false);
-
-            if (!$argumentMetadata->isVariadic()) {
-                return $argument[0];
-            } else {
-                return $argument;
-            }
+            return $resolved;
         }
 
-        $message = 'Argument "%s" can\'t be resolved. Either the argument is nullable and no null value has been provided, no default value has been provided or because there is a non optional argument after this one.';
-        throw new RuntimeException(sprintf($message, $argumentMetadata->getName()));
-    }
-
-    public static function getDefaultArgumentValueResolvers()
-    {
-        return array(
-            new RequestAttributeValueResolver(),
-            new RequestValueResolver(),
-            new SessionValueResolver(),
-            new DefaultValueResolver(),
-            new VariadicValueResolver(),
-        );
+        $message = 'Controller "%s" requires that you provide a value for the "$%s" argument. Either the argument is nullable and no null value has been provided, no default value has been provided or because there is a non optional argument after this one.';
+        throw new RuntimeException(sprintf($message, $context->getControllerName(), $argumentMetadata->getName()));
     }
 }
