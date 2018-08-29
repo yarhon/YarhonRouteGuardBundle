@@ -54,7 +54,7 @@ class TestArguments
      * @param string $name
      * @param mixed  $metadata
      */
-    public function setSubjectMetadata($name, $metadata)
+    public function setSubjectMetadata($name, $metadata = null)
     {
         $this->subjectMetadata = [$name, $metadata];
     }

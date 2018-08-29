@@ -24,10 +24,10 @@ use Yarhon\RouteGuardBundle\ExpressionLanguage\DecoratedExpression;
  */
 class DecoratedExpressionVoter extends Voter
 {
-    private $expressionLanguage;
-    private $trustResolver;
-    private $authChecker;
-    private $roleHierarchy;
+    protected $expressionLanguage;
+    protected $trustResolver;
+    protected $authChecker;
+    protected $roleHierarchy;
 
     public function __construct(ExpressionLanguage $expressionLanguage, AuthenticationTrustResolverInterface $trustResolver, AuthorizationCheckerInterface $authChecker, RoleHierarchyInterface $roleHierarchy = null)
     {
@@ -53,7 +53,6 @@ class DecoratedExpressionVoter extends Voter
         /** @var DecoratedExpression $attribute */
 
         $variables = $this->getVariables($token, $subject);
-
         $expressionVariables = $attribute->getVariables();
 
         // TODO: do something with overlapped variables
@@ -65,7 +64,7 @@ class DecoratedExpressionVoter extends Voter
         return $this->expressionLanguage->evaluate($attribute, $variables);
     }
 
-    private function findOverlappedVariables(array $primary, array $secondary)
+    protected function findOverlappedVariables(array $primary, array $secondary)
     {
         $overlapped = array_intersect(array_keys($primary), array_keys($secondary));
         foreach ($overlapped as $key => $variableName) {
@@ -80,7 +79,7 @@ class DecoratedExpressionVoter extends Voter
     /**
      * @codeCoverageIgnore
      */
-    private function getVariables(TokenInterface $token, $subject)
+    protected function getVariables(TokenInterface $token, $subject)
     {
         if (null !== $this->roleHierarchy) {
             $roles = $this->roleHierarchy->getReachableRoles($token->getRoles());

@@ -11,7 +11,7 @@
 namespace Yarhon\RouteGuardBundle\Controller\ArgumentResolver;
 
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
-use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
+use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
  * Responsible for resolving the value of an argument based on its metadata.
@@ -39,7 +39,7 @@ interface ArgumentValueResolverInterface
      *
      * @return mixed
      *
-     * @throws ExceptionInterface
+     * @throws RuntimeException
      */
     public function resolve(ArgumentResolverContextInterface $context, ArgumentMetadata $argument);
 }

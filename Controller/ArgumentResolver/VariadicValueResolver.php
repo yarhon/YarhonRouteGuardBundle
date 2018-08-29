@@ -11,7 +11,7 @@
 namespace Yarhon\RouteGuardBundle\Controller\ArgumentResolver;
 
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
-use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
+use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
  * Returns a variadic argument's values from the request attributes.
@@ -37,7 +37,7 @@ final class VariadicValueResolver implements ArgumentValueResolverInterface
         $values = $context->getAttributes()->get($argument->getName());
 
         if (!\is_array($values)) {
-            throw new InvalidArgumentException(sprintf('The action argument "...$%1$s" is required to be an array, the request attribute "%1$s" contains a type of "%2$s" instead.', $argument->getName(), \gettype($values)));
+            throw new RuntimeException(sprintf('The action argument "...$%1$s" is required to be an array, the request attribute "%1$s" contains a type of "%2$s" instead.', $argument->getName(), \gettype($values)));
         }
 
         return $values;

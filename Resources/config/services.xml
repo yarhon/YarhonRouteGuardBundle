@@ -36,6 +36,7 @@
         <service id="Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider">
             <argument type="service" id="Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactory" />
             <argument>null</argument>
+            <argument type="service" id="argument_metadata_factory" on-invalid="ignore" /> <!-- optional always! -->
             <tag name="yarhon_route_guard.test_provider" priority="1024" />
         </service>
 

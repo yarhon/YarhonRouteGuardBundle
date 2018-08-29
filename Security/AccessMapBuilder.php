@@ -165,6 +165,7 @@ class AccessMapBuilder implements AccessMapBuilderInterface, LoggerAwareInterfac
         $originalRoutes = array_keys($this->routeCollection->all());
         $routeCollection = $this->transformRouteCollection($this->routeCollection);
         $ignoredRoutes = array_diff($originalRoutes, array_keys($routeCollection->all()));
+
         // TODO: check controllers format in case when no ControllerNameTransformer added ?
 
         if ($this->logger && count($ignoredRoutes)) {

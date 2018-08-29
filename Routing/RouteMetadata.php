@@ -18,6 +18,11 @@ use Symfony\Component\Routing\Route;
 class RouteMetadata
 {
     /**
+     * @var string
+     */
+    private $controllerName;
+
+    /**
      * @var array
      */
     private $defaults;
@@ -49,13 +54,23 @@ class RouteMetadata
      */
     public function __construct(Route $route)
     {
-        $compiledRoute = $route->compile();
-
+        $this->controllerName = $route->getDefault('_controller');
         $this->defaults = $route->getDefaults();
+
+        $compiledRoute = $route->compile();
         $this->variables = $compiledRoute->getVariables();
+
         $this->hasHost = (bool) $route->getHost();
         $this->hasStaticHost = $this->hasHost && !$compiledRoute->getHostVariables();
         $this->staticHost = $this->hasStaticHost ? $route->getHost() : null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getControllerName()
+    {
+        return $this->controllerName;
     }
 
     /**

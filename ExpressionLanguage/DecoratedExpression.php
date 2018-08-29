@@ -85,8 +85,5 @@ class DecoratedExpression
         if (count($unknown)) {
             throw new InvalidArgumentException(sprintf('Unknown variables: %s', implode(', ', $unknown)));
         }
-
-        $this->variables = $variables;
     }
-
 }

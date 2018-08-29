@@ -12,7 +12,7 @@ namespace Yarhon\RouteGuardBundle\Routing;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
+use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -43,7 +43,7 @@ class RouteAttributesFactory
      *
      * @return ParameterBag
      *
-     * @throws InvalidArgumentException
+     * @throws RuntimeException
      */
     public function getAttributes(RouteMetadata $routeMetadata, array $parameters)
     {
@@ -76,7 +76,7 @@ class RouteAttributesFactory
 
         if ($diff = array_diff_key($variables, $attributes)) {
             $missing = implode('", "', array_keys($diff));
-            throw new InvalidArgumentException(sprintf('Some mandatory parameters are missing ("%s") to get attributes for route.', $missing));
+            throw new RuntimeException(sprintf('Some mandatory parameters are missing ("%s") to get attributes for route.', $missing));
         }
 
         return new ParameterBag($attributes);

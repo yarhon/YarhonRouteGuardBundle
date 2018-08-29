@@ -13,7 +13,6 @@ namespace Yarhon\RouteGuardBundle\Controller;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentValueResolverInterface;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContextInterface;
-use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
@@ -44,7 +43,7 @@ class ControllerArgumentResolver
      *
      * @return mixed
      *
-     * @throws ExceptionInterface
+     * @throws RuntimeException
      */
     public function getArgument(ArgumentResolverContextInterface $context, ArgumentMetadata $argumentMetadata)
     {
