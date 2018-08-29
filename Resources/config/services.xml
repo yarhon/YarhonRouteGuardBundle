@@ -171,5 +171,14 @@
             <tag name="yarhon_route_guard.argument_value_resolver" priority="-150" />
         </service>
 
+        <!-- decorated expression voter -->
+
+        <service id="Yarhon\RouteGuardBundle\Security\Authorization\DecoratedExpressionVoter">
+            <argument type="service" id="sensio_framework_extra.security.expression_language.default" /><!-- to do use default security.expression_language ? -->
+            <argument type="service" id="security.authentication.trust_resolver" />
+            <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="security.role_hierarchy" on-invalid="ignore" />
+        </service>
+
     </services>
 </container>
