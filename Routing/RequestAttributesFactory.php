@@ -17,7 +17,7 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RouteAttributesFactory
+class RequestAttributesFactory
 {
     /**
      * @var array
@@ -25,7 +25,7 @@ class RouteAttributesFactory
     private $contextParameters;
 
     /**
-     * RouteAttributesFactory constructor.
+     * RequestAttributesFactory constructor.
      *
      * @param UrlGeneratorInterface $urlGenerator
      */
@@ -38,14 +38,14 @@ class RouteAttributesFactory
      * @see \Symfony\Component\Routing\Matcher\UrlMatcher::getAttributes
      * @see \Symfony\Component\HttpKernel\EventListener\RouterListener::onKernelRequest
      *
-     * @param RouteMetadata $routeMetadata
-     * @param array $parameters
+     * @param RouteMetadataInterface $routeMetadata
+     * @param array                  $parameters
      *
      * @return ParameterBag
      *
      * @throws RuntimeException
      */
-    public function getAttributes(RouteMetadata $routeMetadata, array $parameters)
+    public function getAttributes(RouteMetadataInterface $routeMetadata, array $parameters)
     {
         $defaults = $routeMetadata->getDefaults();
 
@@ -68,8 +68,8 @@ class RouteAttributesFactory
 
         $variables = array_flip($routeMetadata->getVariables());
 
-        /// We should add only context parameters being used as route variables, others wouldn't be presented in generated url,
-        /// and therefore wouldn't be returned by UrlMatcher.
+        // We should add only context parameters being used as route variables, others wouldn't be presented in generated url,
+        // and therefore wouldn't be returned by the UrlMatcher.
         $contextParameters = array_intersect_key($this->contextParameters, $variables);
 
         $attributes = array_replace($defaults, $contextParameters, $parameters);

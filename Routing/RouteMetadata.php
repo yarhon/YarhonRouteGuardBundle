@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Route;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RouteMetadata
+class RouteMetadata implements RouteMetadataInterface
 {
     /**
      * @var string
@@ -66,7 +66,7 @@ class RouteMetadata
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getControllerName()
     {
@@ -74,7 +74,7 @@ class RouteMetadata
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getDefaults()
     {
@@ -82,7 +82,7 @@ class RouteMetadata
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getVariables()
     {
@@ -90,7 +90,7 @@ class RouteMetadata
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function hasHost()
     {
@@ -98,7 +98,7 @@ class RouteMetadata
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function hasStaticHost()
     {
@@ -106,7 +106,7 @@ class RouteMetadata
     }
 
     /**
-     * @return string|null
+     * {@inheritdoc}
      */
     public function getStaticHost()
     {

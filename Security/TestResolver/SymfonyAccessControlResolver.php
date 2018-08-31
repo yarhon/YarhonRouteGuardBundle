@@ -18,6 +18,7 @@ use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Http\TestBagMapInterface;
 use Yarhon\RouteGuardBundle\Security\Http\RequestContext;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
+use Yarhon\RouteGuardBundle\Routing\RouteMetadataInterface;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 
 /**
@@ -60,7 +61,8 @@ class SymfonyAccessControlResolver implements TestResolverInterface
         }
 
         if ($testBag instanceof TestBagMapInterface) {
-            $requestContext = $this->createRequestContext($routeContext);
+            $routeMetadata = $testBag->getMetadata();
+            $requestContext = $this->createRequestContext($routeContext, $routeMetadata);
             $testBag = $testBag->resolve($requestContext);
             if (null === $testBag) {
                 return [];
@@ -81,11 +83,12 @@ class SymfonyAccessControlResolver implements TestResolverInterface
     }
 
     /**
-     * @param RouteContextInterface $routeContext
+     * @param RouteContextInterface  $routeContext
+     * @param RouteMetadataInterface $routeMetadata
      *
      * @return RequestContext
      */
-    private function createRequestContext(RouteContextInterface $routeContext)
+    private function createRequestContext(RouteContextInterface $routeContext, RouteMetadataInterface $routeMetadata)
     {
         $urlGenerator = $this->urlGenerator;
 

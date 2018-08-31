@@ -13,9 +13,9 @@ namespace Yarhon\RouteGuardBundle\Security\TestProvider;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Psr\Log\LoggerAwareTrait;
+use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
 use Yarhon\RouteGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\RouteGuardBundle\Security\Http\RouteMatcher;
-use Yarhon\RouteGuardBundle\Security\Http\RequestContextMatcher;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\Http\TestBagMap;
@@ -134,15 +134,22 @@ class SymfonyAccessControlProvider implements TestProviderInterface
             }
         }
 
+        if (!count($matches)) {
+            return null;
+        }
+
         if (1 == count($matches) && null === $matches[0][1]) {
             // Always matching rule was found, and there were no possibly matching rules found before,
             // so we don't need a TestBagMap for resolving it by RequestContext in runtime.
-            return $matches[0][0];
-        } elseif (count($matches)) {
-            return new TestBagMap($matches);
+            $testBag = $matches[0][0];
+        } else {
+            $testBag = new TestBagMap($matches);
+
+            $routeMetadata = new RouteMetadata($route);
+            $testBag->setMetadata($routeMetadata);
         }
 
-        return null;
+        return $testBag;
     }
 
     private function inspectRules()

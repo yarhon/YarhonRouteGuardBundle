@@ -57,6 +57,8 @@ class ControllerMetadata
      * @param $name
      *
      * @return ArgumentMetadata
+     *
+     * @throws InvalidArgumentException
      */
     public function get($name)
     {

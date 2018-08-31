@@ -15,7 +15,7 @@ use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
-use Yarhon\RouteGuardBundle\Routing\RouteAttributesFactory;
+use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContext;
@@ -35,19 +35,19 @@ class SensioSecurityResolver implements TestResolverInterface
     private $requestStack;
 
     /**
-     * @var RouteAttributesFactory
+     * @var RequestAttributesFactory
      */
-    private $routeAttributesFactory;
+    private $requestAttributesFactory;
 
     /**
      * @var ControllerArgumentResolver
      */
     private $controllerArgumentResolver;
 
-    public function __construct(RequestStack $requestStack, RouteAttributesFactory $routeAttributesFactory, ControllerArgumentResolver $controllerArgumentResolver)
+    public function __construct(RequestStack $requestStack, RequestAttributesFactory $requestAttributesFactory, ControllerArgumentResolver $controllerArgumentResolver)
     {
         $this->requestStack = $requestStack;
-        $this->routeAttributesFactory = $routeAttributesFactory;
+        $this->requestAttributesFactory = $requestAttributesFactory;
         $this->controllerArgumentResolver = $controllerArgumentResolver;
     }
 
@@ -71,8 +71,7 @@ class SensioSecurityResolver implements TestResolverInterface
             throw new LogicException(sprintf('%s expects instance of %s.', __CLASS__, TestBagInterface::class));
         }
 
-        $routeMetadata = null;
-        $controllerMetadata = null;
+        list($routeMetadata, $controllerMetadata) = $testBag->getMetadata();
 
         $variableNames = $this->collectVariableNames($testBag);
 
@@ -149,17 +148,17 @@ class SensioSecurityResolver implements TestResolverInterface
     {
         $variables = [];
 
-        $routeAttributes = $this->routeAttributesFactory->getAttributes($routeMetadata, $routeContext->getParameters());
+        $requestAttributes = $this->requestAttributesFactory->getAttributes($routeMetadata, $routeContext->getParameters());
 
         $request = $this->requestStack->getCurrentRequest();
-        $argumentResolverContext = new ArgumentResolverContext($request, $routeAttributes, $routeMetadata->getControllerName());
+        $argumentResolverContext = new ArgumentResolverContext($request, $requestAttributes, $routeMetadata->getControllerName());
 
         foreach ($names as $name) {
             if ($controllerMetadata->has($name)) {
                 $argumentMetadata = $controllerMetadata->get($name);
                 $variables[$name] = $this->controllerArgumentResolver->getArgument($argumentResolverContext, $argumentMetadata);
-            } elseif ($routeAttributes->has($name)) {
-                $variables[$name] = $routeAttributes->get($name);
+            } elseif ($requestAttributes->has($name)) {
+                $variables[$name] = $requestAttributes->get($name);
             } else {
                 throw new RuntimeException(sprintf('Cannot resolve variable "%s" - it neither a controller argument nor route attribute.'));
             }

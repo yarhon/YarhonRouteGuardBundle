@@ -17,6 +17,8 @@ abstract class AbstractTestBag implements AbstractTestBagInterface
 {
     protected $elements;
 
+    protected $metadata;
+
     /**
      * {@inheritdoc}
      */
@@ -25,8 +27,27 @@ abstract class AbstractTestBag implements AbstractTestBagInterface
         return new \ArrayIterator($this->elements);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function count()
     {
         return count($this->elements);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setMetadata($metadata)
+    {
+        $this->metadata = $metadata;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMetadata()
+    {
+        return $this->metadata;
     }
 }

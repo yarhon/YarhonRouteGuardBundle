@@ -21,6 +21,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotat
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
 use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReader;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
+use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactoryInterface;
@@ -137,16 +138,18 @@ class SensioSecurityProvider implements TestProviderInterface
             $tests[] = $arguments;
         }
 
-        if (count($tests)) {
-            $arguments = $this->argumentMetadataFactory->createArgumentMetadata([$class, $method]);
-            $controllerMetadata = new ControllerMetadata($arguments);
-
-
-            return new TestBag($tests);
+        if (!count($tests)) {
+            return null;
         }
 
-        return null;
-    }
+        $arguments = $this->argumentMetadataFactory->createArgumentMetadata([$class, $method]);
+        $routeMetadata = new RouteMetadata($route);
+        $controllerMetadata = new ControllerMetadata($arguments);
 
+        $testBag = new TestBag($tests);
+        $testBag->setMetadata([$routeMetadata, $controllerMetadata]);
+
+        return $testBag;
+    }
 
 }

@@ -106,7 +106,7 @@
 
         <!-- test resolvers -->
 
-        <service id="Yarhon\RouteGuardBundle\Routing\RouteAttributesFactory">
+        <service id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory">
             <argument type="service" id="router" /><!-- to do: optional external services -->
         </service>
 
@@ -116,7 +116,7 @@
 
         <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver">
             <argument type="service" id="request_stack" /><!-- to do: optional external services -->
-            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RouteAttributesFactory" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver" />
             <tag name="yarhon_route_guard.test_resolver" />
         </service>
