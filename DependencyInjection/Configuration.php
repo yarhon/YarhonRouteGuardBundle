@@ -41,6 +41,7 @@ class Configuration implements ConfigurationInterface
                 ->always(function ($node) {
                     $node['ignore_controllers'] = array_merge($node['ignore_controllers'], $node['ignore_controllers_symfony']);
                     unset($node['ignore_controllers_symfony']);
+
                     return $node;
                 })
             ->end()

@@ -36,7 +36,7 @@ class DiscoveredFunctions
      * @param string $functionName
      * @param Node[] $functionArguments
      *
-     * @return array Array of 2 elements: RouteExpression arguments and generateAs parameters.
+     * @return array array of 2 elements: RouteExpression arguments and generateAs parameters
      */
     public function resolveArguments($functionName, $functionArguments)
     {

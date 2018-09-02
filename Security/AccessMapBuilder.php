@@ -116,7 +116,7 @@ class AccessMapBuilder implements LoggerAwareInterface
     /**
      * @param AccessMap $accessMap
      *
-     * @throws InvalidArgumentException If exception in one of the RouteCollection transformers was thrown
+     * @throws InvalidArgumentException            If exception in one of the RouteCollection transformers was thrown
      * @throws \Psr\Cache\InvalidArgumentException
      */
     public function build(AccessMap $accessMap)

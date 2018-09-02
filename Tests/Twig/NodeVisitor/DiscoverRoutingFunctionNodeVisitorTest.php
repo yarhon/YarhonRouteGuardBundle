@@ -27,7 +27,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
 {
     private $tagName = 'routewithdiscover';
 
-    private  $referenceVarName = 'ref';
+    private $referenceVarName = 'ref';
 
     public function setUp()
     {

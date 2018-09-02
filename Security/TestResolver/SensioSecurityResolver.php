@@ -112,12 +112,11 @@ class SensioSecurityResolver implements TestResolverInterface
     {
         foreach ($testBag as $testArguments) {
             /** @var TestArguments $testArguments */
-
             if ($testArguments->requiresSubject()) {
                 $name = $testArguments->getSubjectMetadata()[0];
                 try {
                     $value = $this->resolveVariable($name);
-                } catch (RuntimeException $e ) {
+                } catch (RuntimeException $e) {
                     // TODO: add details about variable that caused exception
                     throw $e;
                 }
@@ -130,7 +129,7 @@ class SensioSecurityResolver implements TestResolverInterface
                     foreach ($attribute->getNames() as $name) {
                         try {
                             $values[$name] = $this->resolveVariable($name);
-                        } catch (RuntimeException $e ) {
+                        } catch (RuntimeException $e) {
                             // TODO: add details about variable that caused exception
                             throw $e;
                         }
@@ -155,6 +154,7 @@ class SensioSecurityResolver implements TestResolverInterface
 
         if ($controllerMetadata->has($name)) {
             $argumentMetadata = $controllerMetadata->get($name);
+
             return $resolved = $this->controllerArgumentResolver->getArgument($argumentResolverContext, $argumentMetadata);
         } elseif ($requestAttributes->has($name)) {
             return $resolved = $requestAttributes->get($name);

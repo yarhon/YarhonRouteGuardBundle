@@ -27,7 +27,7 @@ class ControllerMetadata
      * ControllerMetadata constructor.
      *
      * @param ArgumentMetadata[] $arguments
-    */
+     */
     public function __construct(array $arguments = [])
     {
         foreach ($arguments as $argument) {

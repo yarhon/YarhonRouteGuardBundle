@@ -26,7 +26,6 @@ use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactoryInterface;
 
-
 /**
  * SensioSecurityProvider processes Security & IsGranted annotations of Sensio FrameworkExtraBundle.
  *
@@ -56,8 +55,8 @@ class SensioSecurityProvider implements TestProviderInterface
     /**
      * SensioSecurityProvider constructor.
      *
-     * @param ExpressionFactoryInterface $expressionFactory
-     * @param Reader|null                $reader
+     * @param ExpressionFactoryInterface       $expressionFactory
+     * @param Reader|null                      $reader
      * @param ArgumentMetadataFactoryInterface $argumentMetadataFactory
      *
      * @throws AnnotationException
@@ -92,7 +91,6 @@ class SensioSecurityProvider implements TestProviderInterface
      */
     public function onBuild()
     {
-
     }
 
     /**
@@ -148,5 +146,4 @@ class SensioSecurityProvider implements TestProviderInterface
 
         return $testBag;
     }
-
 }

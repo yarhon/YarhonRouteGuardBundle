@@ -37,7 +37,7 @@ class ExpressionFactory implements ExpressionFactoryInterface
 
     /**
      * Prior to Symfony 4.1 "security.expression_language" service doesn't uses persistent cache adapter,
-     * so we should create ParsedExpression instance to avoid parsing at runtime (at ExpressionLanguage::evaluate call)
+     * so we should create ParsedExpression instance to avoid parsing at runtime (at ExpressionLanguage::evaluate call).
      *
      * Starting from Symfony 4.1 parsed expression would be saved in "security.expression_language" service persistent cache,
      * so we can simply create Expression instance and rely on service cache (caching would be triggered by ExpressionLanguage::parse call).

@@ -88,7 +88,6 @@ class YarhonRouteGuardExtensionTest extends TestCase
         //$this->container->register('security.authorization_checker')->setSynthetic(true);
         //$this->container->register('request_stack')->setSynthetic(true);
 
-
         $services = [
             'yarhon_route_guard.authorization_manager',
         ];

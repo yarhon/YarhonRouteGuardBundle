@@ -19,7 +19,6 @@ use Yarhon\RouteGuardBundle\Exception\LogicException;
  */
 class UrlDeferred implements UrlDeferredInterface
 {
-
     /**
      * @var string
      */
@@ -142,5 +141,4 @@ class UrlDeferred implements UrlDeferredInterface
     {
         return $this->generatedUrl;
     }
-
 }

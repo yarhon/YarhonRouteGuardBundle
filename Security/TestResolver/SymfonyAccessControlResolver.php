@@ -36,7 +36,6 @@ class SymfonyAccessControlResolver implements TestResolverInterface
      */
     private $urlGenerator;
 
-
     public function __construct(RequestStack $requestStack, UrlGeneratorInterface $urlGenerator)
     {
         $this->requestStack = $requestStack;
@@ -66,7 +65,7 @@ class SymfonyAccessControlResolver implements TestResolverInterface
             $testBag = $testBag->resolve($requestContext);
             if (null === $testBag) {
                 return [];
-            };
+            }
         }
 
         $tests = [];
@@ -74,7 +73,7 @@ class SymfonyAccessControlResolver implements TestResolverInterface
         $request = $this->requestStack->getCurrentRequest();
 
         foreach ($testBag as $testArguments) {
-            /** @var TestArguments $testArguments */
+            /* @var TestArguments $testArguments */
             $testArguments->setSubject($request); // See \Symfony\Component\Security\Http\Firewall\AccessListener::handle
             $tests[] = $testArguments;
         }
@@ -94,12 +93,12 @@ class SymfonyAccessControlResolver implements TestResolverInterface
 
         $urlDeferred = $routeContext->getUrlDeferred();
 
-        $pathInfoClosure = function() use ($urlDeferred, $urlGenerator) {
+        $pathInfoClosure = function () use ($urlDeferred, $urlGenerator) {
             return $urlDeferred->generate($urlGenerator)->getPathInfo();
         };
 
         // TODO: set host as string to $requestContext if possible (route has no host, or route has static host)
-        $hostClosure = function() use ($urlDeferred, $urlGenerator) {
+        $hostClosure = function () use ($urlDeferred, $urlGenerator) {
             return $urlDeferred->generate($urlGenerator)->getHost();
         };
 

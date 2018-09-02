@@ -90,5 +90,4 @@ class RequestContext
     {
         return $this->clientIp;
     }
-
 }

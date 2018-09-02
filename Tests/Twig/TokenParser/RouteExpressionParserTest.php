@@ -66,7 +66,6 @@ class RouteExpressionParserTest extends AbstractNodeTest
                     ])
                 ))->setGenerateAs('url', false),
             ],
-
         ];
     }
 

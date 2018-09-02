@@ -43,5 +43,4 @@ interface UrlDeferredInterface
      * @return string
      */
     public function getGeneratedUrl();
-
 }

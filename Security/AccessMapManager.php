@@ -41,7 +41,6 @@ class AccessMapManager
         $testBags = $this->accessMap->get($routeContext->getName());
 
         foreach ($testBags as $providerName => $testBag) {
-
             if (!isset($this->testResolvers[$providerName])) {
                 throw new RuntimeException(sprintf('No resolver exists for provider "%"', $providerName));
             }
@@ -73,5 +72,4 @@ class AccessMapManager
             $this->addTestResolver($resolver);
         }
     }
-
 }

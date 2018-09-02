@@ -26,7 +26,6 @@ class ExpressionFactoryTest extends TestCase
 
     public function setUp()
     {
-
     }
 
     /**
@@ -48,5 +47,4 @@ class ExpressionFactoryTest extends TestCase
 
         $factory->create('var == 5', ['var']);
     }
-
 }

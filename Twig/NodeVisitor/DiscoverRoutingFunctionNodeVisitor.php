@@ -54,8 +54,8 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
     /**
      * DiscoverRoutingFunctionNodeVisitor constructor.
      *
-     * @param string              $referenceVarName
-     * @param string              $tagName
+     * @param string $referenceVarName
+     * @param string $tagName
      */
     public function __construct($referenceVarName, $tagName)
     {

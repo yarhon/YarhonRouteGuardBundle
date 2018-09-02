@@ -51,9 +51,9 @@ class DecoratedExpressionVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         /** @var DecoratedExpression $attribute */
+        $expressionVariables = $attribute->getVariables();
 
         $variables = $this->getVariables($token, $subject);
-        $expressionVariables = $attribute->getVariables();
 
         // TODO: do something with overlapped variables
         // $overlapped = $this->findOverlappedVariables($variables, $expressionVariables);
