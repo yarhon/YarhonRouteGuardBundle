@@ -10,8 +10,6 @@
 
 namespace Yarhon\RouteGuardBundle\Security;
 
-use Yarhon\RouteGuardBundle\Routing\UrlDeferredInterface;
-use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
@@ -31,9 +29,9 @@ class AccessMapManager
      */
     private $testResolvers;
 
-    public function __construct(AccessMapBuilderInterface $accessMapBuilder)
+    public function __construct(AccessMap $accessMap)
     {
-        $this->accessMap = $accessMapBuilder->build(); // TODO: process exceptions during build
+        $this->accessMap = $accessMap;
     }
 
     public function getTests(RouteContextInterface $routeContext)

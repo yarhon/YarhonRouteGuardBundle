@@ -60,4 +60,12 @@ class ControllerArgumentResolver
         $message = 'Controller "%s" requires that you provide a value for the "$%s" argument. Either the argument is nullable and no null value has been provided, no default value has been provided or because there is a non optional argument after this one.';
         throw new RuntimeException(sprintf($message, $context->getControllerName(), $argumentMetadata->getName()));
     }
+
+    public function createContext($routeMetadata, $parameters)
+    {
+        $requestAttributes = $this->requestAttributesFactory->getAttributes($routeMetadata, $parameters);
+
+        $request = $this->requestStack->getCurrentRequest();
+        $argumentResolverContext = new ArgumentResolverContext($request, $requestAttributes, $routeMetadata->getControllerName());
+    }
 }

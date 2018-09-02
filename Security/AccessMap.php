@@ -9,21 +9,63 @@
 
 namespace Yarhon\RouteGuardBundle\Security;
 
+use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
+
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class AccessMap
 {
-    private $map = [];
+    /**
+     * @var CacheItemPoolInterface
+     */
+    private $cache;
 
-    public function add($routeName, $providerName, $testBag)
+    public function __construct(CacheItemPoolInterface $cache = null)
     {
-        $routePointer = &$this->map[$routeName];
-        $routePointer[$providerName] = $testBag;
+        $this->cache = $cache ?: new ArrayAdapter();
     }
 
+    /**
+     * @param string                   $routeName
+     * @param string                   $providerName
+     * @param AbstractTestBagInterface $testBag
+     *
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
+    public function add($routeName, $providerName, $testBag)
+    {
+        $cacheItem = $this->cache->getItem($routeName);
+
+        $testBags = $cacheItem->isHit() ? $cacheItem->get() : [];
+        $testBags[$providerName] = $testBag;
+
+        $cacheItem->set($testBags);
+        $this->cache->save($cacheItem);
+    }
+
+    /**
+     * @param string $routeName
+     *
+     * @return AbstractTestBagInterface[]
+     *
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
     public function get($routeName)
     {
-        return isset($this->map[$routeName]) ? $this->map[$routeName] : [];
+        $cacheItem = $this->cache->getItem($routeName);
+
+        if ($cacheItem->isHit()) {
+            return $cacheItem->get();
+        }
+
+        return [];
+    }
+
+    public function clear()
+    {
+        $this->cache->clear();
     }
 }

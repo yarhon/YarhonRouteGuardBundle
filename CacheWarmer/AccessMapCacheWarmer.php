@@ -11,7 +11,8 @@
 namespace Yarhon\RouteGuardBundle\CacheWarmer;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
-use Yarhon\RouteGuardBundle\Security\AccessMapBuilderInterface;
+use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
+use Yarhon\RouteGuardBundle\Security\AccessMap;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -19,18 +20,25 @@ use Yarhon\RouteGuardBundle\Security\AccessMapBuilderInterface;
 class AccessMapCacheWarmer implements CacheWarmerInterface
 {
     /**
-     * @var AccessMapBuilderInterface
+     * @var AccessMapBuilder
      */
     private $accessMapBuilder;
 
     /**
+     * @var AccessMapBuilder
+     */
+    private $accessMap;
+
+    /**
      * AccessMapCacheWarmer constructor.
      *
-     * @param AccessMapBuilderInterface $accessMapBuilder
+     * @param AccessMapBuilder $accessMapBuilder
+     * @param AccessMap        $accessMap
      */
-    public function __construct(AccessMapBuilderInterface $accessMapBuilder)
+    public function __construct(AccessMapBuilder $accessMapBuilder, AccessMap $accessMap)
     {
         $this->accessMapBuilder = $accessMapBuilder;
+        $this->accessMap = $accessMap;
     }
 
     /**
@@ -46,6 +54,7 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
      */
     public function warmUp($cacheDir)
     {
-        $this->accessMapBuilder->build(true);
+        $this->accessMap->clear();
+        $this->accessMapBuilder->build($this->accessMap);
     }
 }

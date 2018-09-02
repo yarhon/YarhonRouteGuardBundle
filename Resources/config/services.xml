@@ -8,8 +8,6 @@
         <defaults public="false" autowire="false" autoconfigure="false" />
 
         <service id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder">
-            <argument type="service" id="yarhon_route_guard.cache" />
-
             <call method="setRouteCollectionTransformers">
                 <argument type="collection" />
             </call>
@@ -86,10 +84,34 @@
             <tag name="twig.runtime" />
         </service>
 
+        <!-- test resolvers -->
+
+        <service id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory">
+            <argument type="service" id="router" /><!-- to do: optional external services -->
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver">
+            <argument type="collection" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver" />
+            <argument type="service" id="request_stack" /><!-- to do: optional external services -->
+            <tag name="yarhon_route_guard.test_resolver" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver">
+            <argument type="service" id="request_stack" /><!-- to do: optional external services -->
+            <argument type="service" id="router" /><!-- to do: optional external services -->
+            <tag name="yarhon_route_guard.test_resolver" />
+        </service>
+
         <!-- cache services -->
 
         <service id="Yarhon\RouteGuardBundle\CacheWarmer\AccessMapCacheWarmer">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMap" />
             <tag name="kernel.cache_warmer" />
         </service>
 
@@ -104,33 +126,14 @@
             <tag name="cache.pool" clearer="cache.app_clearer" />
         </service>
 
-        <!-- test resolvers -->
-
-        <service id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory">
-            <argument type="service" id="router" /><!-- to do: optional external services -->
-        </service>
-
-        <service id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver">
-            <argument type="collection" />
-        </service>
-
-        <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver">
-            <argument type="service" id="request_stack" /><!-- to do: optional external services -->
-            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
-            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver" />
-            <tag name="yarhon_route_guard.test_resolver" />
-        </service>
-
-        <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver">
-            <argument type="service" id="request_stack" /><!-- to do: optional external services -->
-            <argument type="service" id="router" /><!-- to do: optional external services -->
-            <tag name="yarhon_route_guard.test_resolver" />
-        </service>
-
         <!-- authorization services -->
 
+        <service id="Yarhon\RouteGuardBundle\Security\AccessMap">
+            <argument type="service" id="yarhon_route_guard.cache" />
+        </service>
+
         <service id="Yarhon\RouteGuardBundle\Security\AccessMapManager">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMap" />
             <call method="setTestResolvers">
                 <argument type="collection" />
             </call>

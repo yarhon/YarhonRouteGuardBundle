@@ -14,8 +14,6 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
-use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteCollection\TransformerInterface;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
@@ -23,7 +21,7 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class AccessMapBuilder implements AccessMapBuilderInterface, LoggerAwareInterface
+class AccessMapBuilder implements LoggerAwareInterface
 {
     /**
      * @var RouteCollection
@@ -44,16 +42,6 @@ class AccessMapBuilder implements AccessMapBuilderInterface, LoggerAwareInterfac
      * @var LoggerInterface;
      */
     private $logger;
-
-    /**
-     * @var CacheItemPoolInterface
-     */
-    private $cache;
-
-    public function __construct(CacheItemPoolInterface $cache = null)
-    {
-        $this->cache = $cache ?: new ArrayAdapter();
-    }
 
     /**
      * @param TestProviderInterface $provider
@@ -126,27 +114,12 @@ class AccessMapBuilder implements AccessMapBuilderInterface, LoggerAwareInterfac
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function build($force = false)
-    {
-        $cacheItem = $this->cache->getItem('map');
-
-        if ($force || null === $accessMap = $cacheItem->get()) {
-            $accessMap = $this->doBuild();
-            $cacheItem->set($accessMap);
-            $this->cache->save($cacheItem);
-        } else {
-            $this->logger->info('Using cached access map.');
-        }
-
-        return $accessMap;
-    }
-
-    /**
+     * @param AccessMap $accessMap
+     *
      * @throws InvalidArgumentException If exception in one of the RouteCollection transformers was thrown
+     * @throws \Psr\Cache\InvalidArgumentException
      */
-    private function doBuild()
+    public function build(AccessMap $accessMap)
     {
         if (!$this->routeCollection) {
             // TODO: warning or exception
@@ -174,16 +147,14 @@ class AccessMapBuilder implements AccessMapBuilderInterface, LoggerAwareInterfac
 
         $this->onBuild();
 
-        $accessMap = new AccessMap();
-
         foreach ($routeCollection->all() as $name => $route) {
             foreach ($this->testProviders as $provider) {
                 $testBag = $provider->getTests($route);
-                $accessMap->add($name, $provider->getName(), $testBag);
+                if (null !== $testBag) {
+                    $accessMap->add($name, $provider->getName(), $testBag);
+                }
             }
         }
-
-        return $accessMap;
     }
 
     /**

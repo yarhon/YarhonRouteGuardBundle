@@ -108,9 +108,6 @@ class SensioSecurityProvider implements TestProviderInterface
 
         list($class, $method) = explode('::', $controller);
 
-        // $argumentMetadataFactory = new ArgumentMetadataFactory();
-        // $metadata = $argumentMetadataFactory->createArgumentMetadata([$class, $method]);
-
         $annotations = $this->reader->read($class, $method);
 
         $tests = [];

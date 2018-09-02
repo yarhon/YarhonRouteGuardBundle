@@ -15,6 +15,7 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 use Yarhon\RouteGuardBundle\Tests\HelperTrait;
 use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
+use Yarhon\RouteGuardBundle\Security\AccessMap;
 use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteCollection\TransformerInterface;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
@@ -104,7 +105,7 @@ class AccessMapBuilderTest extends TestCase
         $this->builder->addRouteCollectionTransformer($transformer);
         $this->builder->setRouteCollection($routeCollection);
 
-        $this->builder->build();
+        $this->builder->build(new AccessMap());
 
         $this->markTestIncomplete('Check transformed route collection and ignored routes.');
 
@@ -131,7 +132,7 @@ class AccessMapBuilderTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
 
-        $this->builder->build();
+        $this->builder->build(new AccessMap());
     }
 
     public function testBuild()
