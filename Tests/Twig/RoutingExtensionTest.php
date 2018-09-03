@@ -25,7 +25,7 @@ class RoutingExtensionTest extends TestCase
         $extension = new RoutingExtension();
 
         $functions = [
-            new TwigFunction('route_guard_link', [RoutingRuntime::class, 'link']),
+            new TwigFunction('route_guard_route', [RoutingRuntime::class, 'route']),
             new TwigFunction('route_guard_path', [RoutingRuntime::class, 'path']),
             new TwigFunction('route_guard_url', [RoutingRuntime::class, 'url']),
         ];

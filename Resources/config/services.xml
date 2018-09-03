@@ -18,7 +18,7 @@
                 <argument type="service" id="logger" on-invalid="ignore" />
             </call>
             <call method="importRouteCollection">
-                <argument type="service" id="router" on-invalid="ignore" />
+                <argument type="service" id="router.default" on-invalid="ignore" />
             </call>
             <tag name="monolog.logger" channel="route_guard" />
         </service>
@@ -82,13 +82,16 @@
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Twig\RoutingRuntime">
+            <argument type="service" id="router.default" />
+            <argument type="service" id="router.default" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AuthorizationManager" />
             <tag name="twig.runtime" />
         </service>
 
         <!-- test resolvers -->
 
         <service id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory">
-            <argument type="service" id="router" /><!-- to do: optional external services -->
+            <argument type="service" id="router.default" /><!-- to do: optional external services -->
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver">
@@ -104,7 +107,7 @@
 
         <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver">
             <argument type="service" id="request_stack" /><!-- to do: optional external services -->
-            <argument type="service" id="router" /><!-- to do: optional external services -->
+            <argument type="service" id="router.default" /><!-- to do: optional external services -->
             <tag name="yarhon_route_guard.test_resolver" />
         </service>
 

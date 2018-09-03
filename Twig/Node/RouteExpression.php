@@ -44,7 +44,7 @@ class RouteExpression extends FunctionExpression
 
         $this->addDefaultArguments($arguments);
 
-        parent::__construct('route_guard_link', $arguments, $line);
+        parent::__construct('route_guard_route', $arguments, $line);
 
         // Set default generateAs parameters.
         // We call this function after parent constructor call to allow it to rely on internal structure

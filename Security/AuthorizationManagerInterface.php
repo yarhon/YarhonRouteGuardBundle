@@ -15,10 +15,5 @@ namespace Yarhon\RouteGuardBundle\Security;
  */
 interface AuthorizationManagerInterface
 {
-    /**
-     * @param $routeName
-     *
-     * @return ????
-     */
-    public function isGranted($routeName);
+
 }

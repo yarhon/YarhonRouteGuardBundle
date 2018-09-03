@@ -41,7 +41,7 @@ abstract class AbstractNodeTest extends TestCase
         $this->environment = new Environment($loader, ['cache' => false, 'autoescape' => false, 'optimizations' => 0]);
 
         $this->environment->addTokenParser(new RouteTokenParser($this->tagName, false));
-        $this->environment->addFunction(new TwigFunction('route_guard_link', function () {}));
+        $this->environment->addFunction(new TwigFunction('route_guard_route', function () {}));
 
         RouteNode::setReferenceVarName($this->referenceVarName);
     }

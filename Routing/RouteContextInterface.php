@@ -38,5 +38,10 @@ interface RouteContextInterface
     /**
      * @return UrlDeferredInterface
      */
+    public function createUrlDeferred();
+
+    /**
+     * @return UrlDeferredInterface|null
+     */
     public function getUrlDeferred();
 }

@@ -91,7 +91,7 @@ class SymfonyAccessControlResolver implements TestResolverInterface
     {
         $urlGenerator = $this->urlGenerator;
 
-        $urlDeferred = $routeContext->getUrlDeferred();
+        $urlDeferred = $routeContext->createUrlDeferred();
 
         $pathInfoClosure = function () use ($urlDeferred, $urlGenerator) {
             return $urlDeferred->generate($urlGenerator)->getPathInfo();

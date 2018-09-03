@@ -18,8 +18,9 @@ use Yarhon\RouteGuardBundle\Security\AccessMapResolver;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
 
 /**
- * Injects tagged services collection as a method call argument.
- * Method call should initially contain one argument - empty collection (i.e. <argument type="collection" />).
+ * Injects tagged services collection as a service argument / service method call argument.
+ * Service argument must be an empty  collection.
+ * Service method call must contain one argument - empty collection (i.e. <argument type="collection" />).
  *
  * We use CompilerPass to inject tagged services for compatibility with Symfony 3.3.
  * Starting from Symfony 3.4 we can use <argument type="tagged" tag="..." /> and remove this CompilerPass.
@@ -69,6 +70,5 @@ class InjectTaggedServicesPass implements CompilerPassInterface
         if ($argument === []) {
             $definition->replaceArgument($destination[1], $services);
         }
-
     }
 }

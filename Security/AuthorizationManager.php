@@ -11,6 +11,8 @@
 namespace Yarhon\RouteGuardBundle\Security;
 
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
+use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -33,18 +35,21 @@ class AuthorizationManager implements AuthorizationManagerInterface
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function isGranted($routeName, $generatedPath = null)
+    public function isGranted(RouteContextInterface $routeContext)
     {
         // TODO: check that authorizationChecker is passed
 
-        $tests = $this->accessMapManager->getTests($routeName);
+        $tests = $this->accessMapResolver->getTests($routeContext);
 
-        // get them from access map
-        $roles = [];
+        foreach ($tests as $testArguments) {
+            /** @var TestArguments $testArguments */
+            $result = $this->authorizationChecker->isGranted($testArguments->getAttributes(), $testArguments->getSubject());
 
-        // !!! pass a request as a subject
-        $subject = null;
+            if (!$result) {
+                return false;
+            }
+        }
 
-        //return $this->authorizationChecker->isGranted($roles, $subject);
+        return true;
     }
 }

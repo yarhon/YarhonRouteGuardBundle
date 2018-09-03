@@ -89,14 +89,22 @@ class RouteContext implements RouteContextInterface
     }
 
     /**
-     * @return UrlDeferredInterface
+     * {@inheritdoc}
      */
-    public function getUrlDeferred()
+    public function createUrlDeferred()
     {
         if (!$this->urlDeferred) {
             $this->urlDeferred = new UrlDeferred($this->name, $this->parameters, $this->referenceType);
         }
 
+        return $this->urlDeferred;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getUrlDeferred()
+    {
         return $this->urlDeferred;
     }
 }
