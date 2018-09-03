@@ -32,6 +32,7 @@
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
             <argument type="service" id="Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactory" />
             <argument>null</argument>
             <argument type="service" id="argument_metadata_factory" on-invalid="ignore" /> <!-- optional always! -->
@@ -132,17 +133,17 @@
             <argument type="service" id="yarhon_route_guard.cache" />
         </service>
 
-        <service id="Yarhon\RouteGuardBundle\Security\AccessMapManager">
+        <service id="Yarhon\RouteGuardBundle\Security\AccessMapResolver">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMap" />
             <call method="setTestResolvers">
                 <argument type="collection" />
             </call>
         </service>
-        <service id="yarhon_route_guard.access_map_manager" alias="Yarhon\RouteGuardBundle\Security\AccessMapManager" public="true"/>
+        <service id="yarhon_route_guard.access_map_manager" alias="Yarhon\RouteGuardBundle\Security\AccessMapResolver" public="true"/>
         <!--<service id="Yarhon\RouteGuardBundle\Security\AccessMapManagerInterface" alias="yarhon_route_guard.access_map_manager" />-->
 
         <service id="Yarhon\RouteGuardBundle\Security\AuthorizationManager">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapManager" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapResolver" />
             <argument type="service" id="security.authorization_checker" on-invalid="ignore" />
         </service>
         <service id="yarhon_route_guard.authorization_manager" alias="Yarhon\RouteGuardBundle\Security\AuthorizationManager" public="true"/>
@@ -177,7 +178,7 @@
 
         <!-- decorated expression voter -->
 
-        <service id="Yarhon\RouteGuardBundle\Security\Authorization\DecoratedExpressionVoter">
+        <service id="Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter">
             <argument type="service" id="sensio_framework_extra.security.expression_language.default" /><!-- to do use default security.expression_language ? -->
             <argument type="service" id="security.authentication.trust_resolver" />
             <argument type="service" id="security.authorization_checker" />

@@ -22,8 +22,19 @@ use Yarhon\RouteGuardBundle\ExpressionLanguage\DecoratedExpression;
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  * @author Fabien Potencier <fabien@symfony.com>
  */
-class DecoratedExpressionVoter extends Voter
+class SensioSecurityExpressionVoter extends Voter
 {
+    const VARIABLES = [
+        'token',
+        'user',
+        'object',
+        'subject',
+        'roles',
+        'trust_resolver',
+        'auth_checker',
+        'request', // TODO: this variable is conditionally passed to evaluate
+    ];
+
     protected $expressionLanguage;
     protected $trustResolver;
     protected $authChecker;

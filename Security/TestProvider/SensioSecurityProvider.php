@@ -52,6 +52,8 @@ class SensioSecurityProvider implements TestProviderInterface
      */
     private $argumentMetadataFactory;
 
+    private $test;
+
     /**
      * SensioSecurityProvider constructor.
      *
@@ -61,8 +63,10 @@ class SensioSecurityProvider implements TestProviderInterface
      *
      * @throws AnnotationException
      */
-    public function __construct(ExpressionFactoryInterface $expressionFactory, Reader $reader = null, ArgumentMetadataFactoryInterface $argumentMetadataFactory = null)
+    public function __construct($test, ExpressionFactoryInterface $expressionFactory, Reader $reader = null, ArgumentMetadataFactoryInterface $argumentMetadataFactory = null)
     {
+        $this->test = $test;
+
         $this->expressionFactory = $expressionFactory;
 
         if (null === $reader) {
@@ -106,6 +110,19 @@ class SensioSecurityProvider implements TestProviderInterface
 
         list($class, $method) = explode('::', $controller);
 
+        $arguments = $this->argumentMetadataFactory->createArgumentMetadata([$class, $method]);
+        $routeMetadata = new RouteMetadata($route);
+        $controllerMetadata = new ControllerMetadata($arguments);
+
+        //////////////////
+        if ($route->getPath() == '/secure1/{page}') {
+            $this->test->getAttributeNames($routeMetadata);
+        }
+
+
+        /////////////////////////
+
+
         $annotations = $this->reader->read($class, $method);
 
         $tests = [];
@@ -136,10 +153,6 @@ class SensioSecurityProvider implements TestProviderInterface
         if (!count($tests)) {
             return null;
         }
-
-        $arguments = $this->argumentMetadataFactory->createArgumentMetadata([$class, $method]);
-        $routeMetadata = new RouteMetadata($route);
-        $controllerMetadata = new ControllerMetadata($arguments);
 
         $testBag = new TestBag($tests);
         $testBag->setMetadata([$routeMetadata, $controllerMetadata]);

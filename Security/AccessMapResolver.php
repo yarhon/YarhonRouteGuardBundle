@@ -17,7 +17,7 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class AccessMapManager
+class AccessMapResolver
 {
     /**
      * @var AccessMap

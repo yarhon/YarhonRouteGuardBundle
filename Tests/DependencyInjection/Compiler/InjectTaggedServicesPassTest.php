@@ -14,7 +14,8 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\InjectTaggedServicesPass;
 use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
-use Yarhon\RouteGuardBundle\Security\AccessMapManager;
+use Yarhon\RouteGuardBundle\Security\AccessMapResolver;
+use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -34,31 +35,43 @@ class InjectTaggedServicesPassTest extends TestCase
     public function setUp()
     {
         $this->container = new ContainerBuilder();
-        $this->container->register(AccessMapBuilder::class);
-        $this->container->register(AccessMapManager::class);
+
+        $this->container->register(AccessMapBuilder::class)
+            ->addMethodCall('setRouteCollectionTransformers', [[]])
+            ->addMethodCall('setTestProviders', [[]]);
+
+        $this->container->register(AccessMapResolver::class)
+            ->addMethodCall('setTestResolvers', [[]]);
+
+        $this->container->register(ControllerArgumentResolver::class)->addArgument([]);
+
         $this->pass = new InjectTaggedServicesPass();
     }
 
     /**
-     * @dataProvider processDataProvider
+     * @dataProvider injectMethodCallsDataProvider
      */
-    public function testProcess($destination, $tagName)
+    public function testInjectMethodCalls($destination, $tagName)
     {
         $this->container->register('test1')->addTag($tagName, ['priority' => 10]);
         $this->container->register('test2')->addTag($tagName, ['priority' => 20]);
 
-        $definition = $this->container->getDefinition($destination[0]);
-        $definition->addMethodCall($destination[1], [[]]);
-
         $this->pass->process($this->container);
 
+        $definition = $this->container->getDefinition($destination[0]);
         $methodCalls = $definition->getMethodCalls();
 
-        //var_dump('m', $methodCalls);
+        $target = null;
 
-        $this->assertCount(1, $methodCalls);
+        foreach ($methodCalls as $methodCall) {
+            if ($methodCall[0] == $destination[1]) {
+                $target = $methodCall;
+            }
+        }
 
-        list($methodName, $arguments) = $methodCalls[0];
+        $this->assertInternalType('array', $target);
+
+        list($methodName, $arguments) = $target;
 
         $this->assertEquals($destination[1], $methodName);
         $this->assertCount(1, $arguments);
@@ -68,9 +81,10 @@ class InjectTaggedServicesPassTest extends TestCase
 
         $this->assertEquals('test2', (string) $argument[0]);
         $this->assertEquals('test1', (string) $argument[1]);
+
     }
 
-    public function processDataProvider()
+    public function injectMethodCallsDataProvider()
     {
         return [
             [
@@ -82,8 +96,38 @@ class InjectTaggedServicesPassTest extends TestCase
                 'yarhon_route_guard.test_provider',
             ],
             [
-                [AccessMapManager::class, 'setTestResolvers'],
+                [AccessMapResolver::class, 'setTestResolvers'],
                 'yarhon_route_guard.test_resolver',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider injectArgumentsDataProvider
+     */
+    public function testInjectArguments($destination, $tagName)
+    {
+        $this->container->register('test1')->addTag($tagName, ['priority' => 10]);
+        $this->container->register('test2')->addTag($tagName, ['priority' => 20]);
+
+        $this->pass->process($this->container);
+
+        $definition = $this->container->getDefinition($destination[0]);
+
+        $argument = $definition->getArgument($destination[1]);
+
+        $this->assertInternalType('array', $argument);
+
+        $this->assertEquals('test2', (string) $argument[0]);
+        $this->assertEquals('test1', (string) $argument[1]);
+    }
+
+    public function injectArgumentsDataProvider()
+    {
+        return [
+            [
+                [ControllerArgumentResolver::class, 0],
+                'yarhon_route_guard.argument_value_resolver',
             ],
         ];
     }

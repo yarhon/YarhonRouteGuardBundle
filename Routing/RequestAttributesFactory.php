@@ -76,9 +76,23 @@ class RequestAttributesFactory
 
         if ($diff = array_diff_key($variables, $attributes)) {
             $missing = implode('", "', array_keys($diff));
+            // TODO: don't throw this exception, because url generator would do this instead?
             throw new RuntimeException(sprintf('Some mandatory parameters are missing ("%s") to get attributes for route.', $missing));
         }
 
         return new ParameterBag($attributes);
+    }
+
+    /**
+     * @param RouteMetadataInterface $routeMetadata
+     *
+     * @return array
+     */
+    public function getAttributeNames(RouteMetadataInterface $routeMetadata)
+    {
+        $defaults = $routeMetadata->getDefaults();
+        unset($defaults['_canonical_route'], $defaults['_controller']);
+        //$defaults = array_keys()
+
     }
 }

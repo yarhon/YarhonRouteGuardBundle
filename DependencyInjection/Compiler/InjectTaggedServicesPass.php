@@ -14,7 +14,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
 use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
-use Yarhon\RouteGuardBundle\Security\AccessMapManager;
+use Yarhon\RouteGuardBundle\Security\AccessMapResolver;
+use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
 
 /**
  * Injects tagged services collection as a method call argument.
@@ -34,12 +35,14 @@ class InjectTaggedServicesPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $this->inject($container, [AccessMapBuilder::class, 'setRouteCollectionTransformers'], 'yarhon_route_guard.route_collection_transformer');
-        $this->inject($container, [AccessMapBuilder::class, 'setTestProviders'], 'yarhon_route_guard.test_provider');
-        $this->inject($container, [AccessMapManager::class, 'setTestResolvers'], 'yarhon_route_guard.test_resolver');
+        $this->injectAsMethodCall($container, [AccessMapBuilder::class, 'setRouteCollectionTransformers'], 'yarhon_route_guard.route_collection_transformer');
+        $this->injectAsMethodCall($container, [AccessMapBuilder::class, 'setTestProviders'], 'yarhon_route_guard.test_provider');
+        $this->injectAsMethodCall($container, [AccessMapResolver::class, 'setTestResolvers'], 'yarhon_route_guard.test_resolver');
+
+        $this->injectAsArgument($container, [ControllerArgumentResolver::class, 0], 'yarhon_route_guard.argument_value_resolver');
     }
 
-    private function inject(ContainerBuilder $container, $destination, $tagName)
+    private function injectAsMethodCall(ContainerBuilder $container, $destination, $tagName)
     {
         $services = $this->findAndSortTaggedServices($tagName, $container);
 
@@ -54,5 +57,18 @@ class InjectTaggedServicesPass implements CompilerPassInterface
         }
 
         $definition->setMethodCalls($methodCalls);
+    }
+
+    private function injectAsArgument(ContainerBuilder $container, $destination, $tagName)
+    {
+        $services = $this->findAndSortTaggedServices($tagName, $container);
+
+        $definition = $container->getDefinition($destination[0]);
+
+        $argument = $definition->getArgument($destination[1]);
+        if ($argument === []) {
+            $definition->replaceArgument($destination[1], $services);
+        }
+
     }
 }

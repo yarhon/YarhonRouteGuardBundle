@@ -18,18 +18,18 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 class AuthorizationManager implements AuthorizationManagerInterface
 {
     /**
-     * @var AccessMapManager
+     * @var AccessMapResolver
      */
-    private $accessMapManager;
+    private $accessMapResolver;
 
     /**
      * @var AuthorizationCheckerInterface
      */
     private $authorizationChecker;
 
-    public function __construct(AccessMapManager $accessMapManager, AuthorizationCheckerInterface $authorizationChecker = null)
+    public function __construct(AccessMapResolver $accessMapResolver, AuthorizationCheckerInterface $authorizationChecker = null)
     {
-        $this->accessMapManager = $accessMapManager;
+        $this->accessMapResolver = $accessMapResolver;
         $this->authorizationChecker = $authorizationChecker;
     }
 

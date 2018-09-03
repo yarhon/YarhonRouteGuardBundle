@@ -64,6 +64,19 @@ class AccessMap
         return [];
     }
 
+    /**
+     * @param string $routeName
+     *
+     * @return bool
+     *
+     * @throws \Psr\Cache\InvalidArgumentException
+     */
+    public function has($routeName)
+    {
+        return $this->cache->hasItem($routeName);
+    }
+
+
     public function clear()
     {
         $this->cache->clear();
