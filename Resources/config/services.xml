@@ -69,8 +69,8 @@
             <argument type="service" id="kernel" />
         </service>
 
-        <!-- is set as public only to be available for TYPE_REMOVE compiler pass -->
-        <service id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" public="true">
+
+        <service id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" public="true"> <!-- is set as public only to be available for TYPE_REMOVE compiler pass -->
             <argument type="collection" /> <!-- map -->
         </service>
 
@@ -82,9 +82,7 @@
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Twig\RoutingRuntime">
-            <argument type="service" id="router.default" />
-            <argument type="service" id="router.default" />
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AuthorizationManager" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\AuthorizedUrlGenerator" />
             <tag name="twig.runtime" />
         </service>
 
@@ -142,8 +140,6 @@
                 <argument type="collection" />
             </call>
         </service>
-        <service id="yarhon_route_guard.access_map_manager" alias="Yarhon\RouteGuardBundle\Security\AccessMapResolver" public="true"/>
-        <!--<service id="Yarhon\RouteGuardBundle\Security\AccessMapManagerInterface" alias="yarhon_route_guard.access_map_manager" />-->
 
         <service id="Yarhon\RouteGuardBundle\Security\AuthorizationManager">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapResolver" />
@@ -151,6 +147,12 @@
         </service>
         <service id="yarhon_route_guard.authorization_manager" alias="Yarhon\RouteGuardBundle\Security\AuthorizationManager" public="true"/>
         <service id="Yarhon\RouteGuardBundle\Security\AuthorizationManagerInterface" alias="yarhon_route_guard.authorization_manager" />
+
+        <service id="Yarhon\RouteGuardBundle\Routing\AuthorizedUrlGenerator">
+            <argument type="service" id="router.default" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AuthorizationManager" />
+            <argument type="service" id="router.default" />
+        </service>
 
         <!-- controller argument resolvers -->
 
