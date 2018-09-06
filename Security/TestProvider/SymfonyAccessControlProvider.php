@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Security\TestProvider;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Psr\Log\LoggerAwareTrait;
-use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
+use Yarhon\RouteGuardBundle\Security\Http\RouteMetadata;
 use Yarhon\RouteGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\RouteGuardBundle\Security\Http\RouteMatcher;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;

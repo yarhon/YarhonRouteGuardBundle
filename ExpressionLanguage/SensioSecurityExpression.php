@@ -16,7 +16,7 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class DecoratedExpression
+class SensioSecurityExpression
 {
     /**
      * @var Expression;
@@ -34,7 +34,7 @@ class DecoratedExpression
     private $variables = [];
 
     /**
-     * DecoratedExpression constructor.
+     * SensioSecurityExpression constructor.
      *
      * @param Expression $expression
      * @param array      $names

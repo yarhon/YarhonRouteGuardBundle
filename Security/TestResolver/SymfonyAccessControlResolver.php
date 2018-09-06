@@ -17,8 +17,8 @@ use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Http\TestBagMapInterface;
 use Yarhon\RouteGuardBundle\Security\Http\RequestContext;
+use Yarhon\RouteGuardBundle\Security\Http\RouteMetadata;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
-use Yarhon\RouteGuardBundle\Routing\RouteMetadataInterface;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 
 /**
@@ -82,12 +82,12 @@ class SymfonyAccessControlResolver implements TestResolverInterface
     }
 
     /**
-     * @param RouteContextInterface  $routeContext
-     * @param RouteMetadataInterface $routeMetadata
+     * @param RouteContextInterface $routeContext
+     * @param RouteMetadata         $routeMetadata
      *
      * @return RequestContext
      */
-    private function createRequestContext(RouteContextInterface $routeContext, RouteMetadataInterface $routeMetadata)
+    private function createRequestContext(RouteContextInterface $routeContext, RouteMetadata $routeMetadata)
     {
         $urlGenerator = $this->urlGenerator;
 

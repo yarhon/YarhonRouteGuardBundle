@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\ExpressionLanguage;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Yarhon\RouteGuardBundle\ExpressionLanguage\DecoratedExpression;
+use Yarhon\RouteGuardBundle\ExpressionLanguage\SensioSecurityExpression;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -53,7 +53,7 @@ class SensioSecurityExpressionVoter extends Voter
      */
     protected function supports($attribute, $subject)
     {
-        return $attribute instanceof DecoratedExpression;
+        return $attribute instanceof SensioSecurityExpression;
     }
 
     /**
@@ -61,7 +61,7 @@ class SensioSecurityExpressionVoter extends Voter
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        /** @var DecoratedExpression $attribute */
+        /** @var SensioSecurityExpression $attribute */
         $expressionVariables = $attribute->getVariables();
 
         $variables = $this->getVariables($token, $subject);
@@ -72,7 +72,7 @@ class SensioSecurityExpressionVoter extends Voter
         // In case of overlap, built-in variables win.
         $variables = array_merge($expressionVariables, $variables);
 
-        return $this->expressionLanguage->evaluate($attribute, $variables);
+        return $this->expressionLanguage->evaluate($attribute->getExpression(), $variables);
     }
 
     protected function findOverlappedVariables(array $primary, array $secondary)

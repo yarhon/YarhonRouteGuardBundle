@@ -44,6 +44,14 @@ class ControllerMetadata
     }
 
     /**
+     * @return string[]
+     */
+    public function keys()
+    {
+        return array_keys($this->arguments);
+    }
+
+    /**
      * @param $name
      *
      * @return bool

@@ -14,14 +14,19 @@ use Symfony\Component\Routing\Route;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactoryInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactory;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Psr\Log\LoggerAwareTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
 use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReaderInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
+use Yarhon\RouteGuardBundle\ExpressionLanguage\SensioSecurityExpression;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
+use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter;
+use Yarhon\RouteGuardBundle\Exception\LogicException;
+use Yarhon\RouteGuardBundle\Exception\TestProviderException;
 
 /**
  * SensioSecurityProvider processes Security & IsGranted annotations of Sensio FrameworkExtraBundle.
@@ -49,10 +54,6 @@ class SensioSecurityProvider implements TestProviderInterface
      */
     private $argumentMetadataFactory;
 
-
-
-    private $test;
-
     /**
      * SensioSecurityProvider constructor.
      *
@@ -62,8 +63,6 @@ class SensioSecurityProvider implements TestProviderInterface
      */
     public function __construct(ClassMethodAnnotationReaderInterface $reader, ExpressionLanguage $expressionLanguage = null, ArgumentMetadataFactoryInterface $argumentMetadataFactory = null)
     {
-        // $this->test = $test;
-
         $this->reader = $reader;
         $this->expressionLanguage = $expressionLanguage;
 
@@ -104,7 +103,7 @@ class SensioSecurityProvider implements TestProviderInterface
 
         //////////////////
         if ($route->getPath() == '/secure1/{page}') {
-            $this->test->getAttributeNames($routeMetadata);
+          // $this->test->test();
         }
 
 
@@ -120,10 +119,20 @@ class SensioSecurityProvider implements TestProviderInterface
             $subjectName = null;
 
             if ($annotation instanceof SecurityAnnotation) {
-                // TODO: !!! check how sensio expressions differ from access_control expressions
+
                 $expression = $annotation->getExpression();
-                $expression = $this->expressionFactory->create($expression);
+
+                try {
+                    // At first try to create expression without any controller/route specific variable names
+                    $expression = $this->createExpression($expression);
+                } catch (TestProviderException $e) {
+                    $names = [];
+                    $expression = $this->createExpression($expression, $names);
+                }
+
                 $attributes[] = $expression;
+
+
             } elseif ($annotation instanceof IsGrantedAnnotation) {
                 // Despite of the name, $annotation->getAttributes() is a string (annotation value)
                 $attributes[] = $annotation->getAttributes();
@@ -146,5 +155,34 @@ class SensioSecurityProvider implements TestProviderInterface
         $testBag->setMetadata([$routeMetadata, $controllerMetadata]);
 
         return $testBag;
+    }
+
+    /**
+     * @param string $expression
+     * @param array $names
+     *
+     * @return SensioSecurityExpression
+     *
+     * @throws LogicException
+     * @throws TestProviderException
+     */
+    private function createExpression($expression, array $names = [])
+    {
+        if (!$this->expressionLanguage) {
+            throw new LogicException('Cannot create expression because ExpressionLanguage is not provided.');
+        }
+
+        $defaultNames = SensioSecurityExpressionVoter::VARIABLES;
+        $names = array_merge($defaultNames, $names);
+
+        try {
+            $parsed = $this->expressionLanguage->parse($expression, $names);
+        } catch (SyntaxError $e) {
+            throw new TestProviderException(sprintf('Cannot parse expression "%s" with following variables: "%s".', $expression, implode('", "', $names)), 0, $e);
+        }
+
+        $expression = new SensioSecurityExpression($parsed, $names);
+
+        return $expression;
     }
 }

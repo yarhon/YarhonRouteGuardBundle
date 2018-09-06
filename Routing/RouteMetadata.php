@@ -33,21 +33,6 @@ class RouteMetadata implements RouteMetadataInterface
     private $variables;
 
     /**
-     * @var bool
-     */
-    private $hasHost;
-
-    /**
-     * @var bool
-     */
-    private $hasStaticHost;
-
-    /**
-     * @var string|null
-     */
-    private $staticHost;
-
-    /**
      * RouteMetadata constructor.
      *
      * @param Route $route
@@ -59,10 +44,6 @@ class RouteMetadata implements RouteMetadataInterface
 
         $compiledRoute = $route->compile();
         $this->variables = $compiledRoute->getVariables();
-
-        $this->hasHost = (bool) $route->getHost();
-        $this->hasStaticHost = $this->hasHost && !$compiledRoute->getHostVariables();
-        $this->staticHost = $this->hasStaticHost ? $route->getHost() : null;
     }
 
     /**
@@ -87,29 +68,5 @@ class RouteMetadata implements RouteMetadataInterface
     public function getVariables()
     {
         return $this->variables;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasHost()
-    {
-        return $this->hasHost;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasStaticHost()
-    {
-        return $this->hasStaticHost;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getStaticHost()
-    {
-        return $this->staticHost;
     }
 }

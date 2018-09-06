@@ -49,13 +49,6 @@ class RequestAttributesFactory
     {
         $defaults = $routeMetadata->getDefaults();
 
-        /*
-        if (isset($defaults['_canonical_route'])) {
-            $name = $defaults['_canonical_route'];
-        }
-        $parameters['_route'] = $name;
-        */
-
         unset($defaults['_canonical_route'], $defaults['_controller']);
         // Other special parameters returned (if present): _format, _fragment, _locale
 
@@ -86,15 +79,19 @@ class RequestAttributesFactory
     /**
      * @param RouteMetadataInterface $routeMetadata
      *
-     * @return array
+     * @return ParameterBag
      */
-    public function getAttributeNames(RouteMetadataInterface $routeMetadata)
+    public function getAttributesPrototype(RouteMetadataInterface $routeMetadata)
     {
         $defaults = $routeMetadata->getDefaults();
+
         unset($defaults['_canonical_route'], $defaults['_controller']);
-        //$defaults = array_keys()
+        // Other special parameters returned (if present): _format, _fragment, _locale
 
-        var_dump('p');
+        $attributes = array_unique(array_merge(array_keys($defaults), $routeMetadata->getVariables()));
 
+        $attributes = array_fill_keys($attributes, null);
+
+        return new ParameterBag($attributes);
     }
 }

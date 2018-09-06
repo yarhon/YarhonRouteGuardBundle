@@ -30,18 +30,4 @@ interface RouteMetadataInterface
      */
     public function getVariables();
 
-    /**
-     * @return bool
-     */
-    public function hasHost();
-
-    /**
-     * @return bool
-     */
-    public function hasStaticHost();
-
-    /**
-     * @return string|null
-     */
-    public function getStaticHost();
 }
