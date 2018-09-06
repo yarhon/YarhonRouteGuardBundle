@@ -23,7 +23,10 @@
             <tag name="monolog.logger" channel="route_guard" />
         </service>
 
-        <!-- test providers -->
+        <!-- test providers utility services -->
+
+        <service id="Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReader">
+        </service>
 
         <service id="Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactory">
             <argument type="service" id="security.expression_language" on-invalid="ignore"/>
@@ -31,11 +34,14 @@
             <argument>null</argument><!--- false ? -->
         </service>
 
+        <!-- test providers -->
+
         <service id="Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
-            <argument type="service" id="Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactory" />
-            <argument>null</argument>
+            <argument type="service" id="Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReader" />
+            <argument type="service" id="sensio_framework_extra.security.expression_language.default" on-invalid="ignore"/><!-- optional always! -->
             <argument type="service" id="argument_metadata_factory" on-invalid="ignore" /> <!-- optional always! -->
+
+            <!--<argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />-->
             <tag name="yarhon_route_guard.test_provider" priority="1024" />
         </service>
 
@@ -72,18 +78,6 @@
 
         <service id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" public="true"> <!-- is set as public only to be available for TYPE_REMOVE compiler pass -->
             <argument type="collection" /> <!-- map -->
-        </service>
-
-        <!-- twig services -->
-
-        <service id="Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension">
-            <argument type="collection" /> <!-- options -->
-            <tag name="twig.extension" />
-        </service>
-
-        <service id="Yarhon\RouteGuardBundle\Twig\RoutingRuntime">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\AuthorizedUrlGenerator" />
-            <tag name="twig.runtime" />
         </service>
 
         <!-- test resolvers -->
@@ -154,6 +148,18 @@
             <argument type="service" id="router.default" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker" />
             <argument type="service" id="router.default" />
+        </service>
+
+        <!-- twig services -->
+
+        <service id="Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension">
+            <argument type="collection" /> <!-- options -->
+            <tag name="twig.extension" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Twig\RoutingRuntime">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\AuthorizedUrlGenerator" />
+            <tag name="twig.runtime" />
         </service>
 
         <!-- controller argument resolvers -->

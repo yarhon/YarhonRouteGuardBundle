@@ -16,17 +16,13 @@ namespace Yarhon\RouteGuardBundle\Annotations;
 interface ClassMethodAnnotationReaderInterface
 {
     /**
-     * @param string $annotationClass
-     */
-    public function addAnnotationClass($annotationClass);
-
-    /**
      * @param string $class
      * @param string $method
+     * @param array  $annotationClasses
      *
      * @return array Parsed annotations
      *
      * @throws \ReflectionException
      */
-    public function read($class, $method);
+    public function read($class, $method, array $annotationClasses);
 }

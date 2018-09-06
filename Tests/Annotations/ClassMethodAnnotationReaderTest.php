@@ -29,10 +29,12 @@ class ClassMethodAnnotationReaderTest extends TestCase
         $reader = new AnnotationReader();
         $reader = new ClassMethodAnnotationReader($reader);
 
-        $reader->addAnnotationClass(TestOne::class);
-        $reader->addAnnotationClass(TestTwo::class);
+        $classes = [
+            TestOne::class,
+            TestTwo::class,
+        ];
 
-        $annotations = $reader->read(AnnotatedController::class, 'show1');
+        $annotations = $reader->read(AnnotatedController::class, 'show1', $classes);
 
         $expected = [
             new TestOne(['value' => 'v1']),
@@ -40,7 +42,7 @@ class ClassMethodAnnotationReaderTest extends TestCase
 
         $this->assertEquals($expected, $annotations);
 
-        $annotations = $reader->read(AnnotatedController::class, 'show2');
+        $annotations = $reader->read(AnnotatedController::class, 'show2', $classes);
 
         $expected = [
             new TestOne(['value' => 'v1']),

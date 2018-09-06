@@ -10,21 +10,18 @@
 
 namespace Yarhon\RouteGuardBundle\Security\TestProvider;
 
-use Doctrine\Common\Annotations\Reader;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Doctrine\Common\Annotations\AnnotationException;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactoryInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactory;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Psr\Log\LoggerAwareTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
-use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReader;
+use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReaderInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
-use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactoryInterface;
 
 /**
  * SensioSecurityProvider processes Security & IsGranted annotations of Sensio FrameworkExtraBundle.
@@ -38,46 +35,37 @@ class SensioSecurityProvider implements TestProviderInterface
     use LoggerAwareTrait;
 
     /**
-     * @var ClassMethodAnnotationReader
+     * @var ClassMethodAnnotationReaderInterface
      */
     private $reader;
 
     /**
-     * @var ExpressionFactoryInterface
+     * @var ExpressionLanguage
      */
-    private $expressionFactory;
+    private $expressionLanguage;
 
     /**
      * @var ArgumentMetadataFactoryInterface
      */
     private $argumentMetadataFactory;
 
+
+
     private $test;
 
     /**
      * SensioSecurityProvider constructor.
      *
-     * @param ExpressionFactoryInterface       $expressionFactory
-     * @param Reader|null                      $reader
-     * @param ArgumentMetadataFactoryInterface $argumentMetadataFactory
-     *
-     * @throws AnnotationException
+     * @param ClassMethodAnnotationReaderInterface  $reader
+     * @param ExpressionLanguage|null               $expressionLanguage
+     * @param ArgumentMetadataFactoryInterface|null $argumentMetadataFactory
      */
-    public function __construct($test, ExpressionFactoryInterface $expressionFactory, Reader $reader = null, ArgumentMetadataFactoryInterface $argumentMetadataFactory = null)
+    public function __construct(ClassMethodAnnotationReaderInterface $reader, ExpressionLanguage $expressionLanguage = null, ArgumentMetadataFactoryInterface $argumentMetadataFactory = null)
     {
-        $this->test = $test;
+        // $this->test = $test;
 
-        $this->expressionFactory = $expressionFactory;
-
-        if (null === $reader) {
-            // TODO: use CachedReader ?
-            $reader = new AnnotationReader();
-        }
-
-        $this->reader = new ClassMethodAnnotationReader($reader);
-
-        $this->reader->addAnnotationClass(SecurityAnnotation::class);
-        $this->reader->addAnnotationClass(IsGrantedAnnotation::class);
+        $this->reader = $reader;
+        $this->expressionLanguage = $expressionLanguage;
 
         $this->argumentMetadataFactory = $argumentMetadataFactory ?: new ArgumentMetadataFactory();
     }
@@ -123,7 +111,7 @@ class SensioSecurityProvider implements TestProviderInterface
         /////////////////////////
 
 
-        $annotations = $this->reader->read($class, $method);
+        $annotations = $this->reader->read($class, $method, [SecurityAnnotation::class, IsGrantedAnnotation::class]);
 
         $tests = [];
 

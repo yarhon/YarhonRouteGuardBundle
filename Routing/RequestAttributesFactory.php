@@ -94,5 +94,7 @@ class RequestAttributesFactory
         unset($defaults['_canonical_route'], $defaults['_controller']);
         //$defaults = array_keys()
 
+        var_dump('p');
+
     }
 }
