@@ -17,6 +17,8 @@ abstract class AbstractTestBag implements AbstractTestBagInterface
 {
     protected $elements;
 
+    protected $provideName;
+
     protected $metadata;
 
     /**
@@ -33,6 +35,22 @@ abstract class AbstractTestBag implements AbstractTestBagInterface
     public function count()
     {
         return count($this->elements);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setProviderName($name)
+    {
+        $this->provideName = $name;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProviderName()
+    {
+        return $this->provideName;
     }
 
     /**

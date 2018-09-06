@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\InjectTaggedServicesPass;
 use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
-use Yarhon\RouteGuardBundle\Security\AccessMapResolver;
+use Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
 
 /**
@@ -40,10 +40,9 @@ class InjectTaggedServicesPassTest extends TestCase
             ->addMethodCall('setRouteCollectionTransformers', [[]])
             ->addMethodCall('setTestProviders', [[]]);
 
-        $this->container->register(AccessMapResolver::class)
-            ->addMethodCall('setTestResolvers', [[]]);
-
         $this->container->register(ControllerArgumentResolver::class)->addArgument([]);
+
+        $this->container->register(DelegatingTestResolver::class)->addArgument([]);
 
         $this->pass = new InjectTaggedServicesPass();
     }
@@ -95,10 +94,6 @@ class InjectTaggedServicesPassTest extends TestCase
                 [AccessMapBuilder::class, 'setTestProviders'],
                 'yarhon_route_guard.test_provider',
             ],
-            [
-                [AccessMapResolver::class, 'setTestResolvers'],
-                'yarhon_route_guard.test_resolver',
-            ],
         ];
     }
 
@@ -128,6 +123,10 @@ class InjectTaggedServicesPassTest extends TestCase
             [
                 [ControllerArgumentResolver::class, 0],
                 'yarhon_route_guard.argument_value_resolver',
+            ],
+            [
+                [DelegatingTestResolver::class, 0],
+                'yarhon_route_guard.test_resolver',
             ],
         ];
     }

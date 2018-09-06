@@ -30,17 +30,16 @@ class AccessMap
 
     /**
      * @param string                   $routeName
-     * @param string                   $providerName
      * @param AbstractTestBagInterface $testBag
      *
      * @throws \Psr\Cache\InvalidArgumentException
      */
-    public function add($routeName, $providerName, $testBag)
+    public function add($routeName, $testBag)
     {
         $cacheItem = $this->cache->getItem($routeName);
 
         $testBags = $cacheItem->isHit() ? $cacheItem->get() : [];
-        $testBags[$providerName] = $testBag;
+        $testBags[] = $testBag;
 
         $cacheItem->set($testBags);
         $this->cache->save($cacheItem);

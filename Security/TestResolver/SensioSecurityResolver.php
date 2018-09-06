@@ -157,6 +157,7 @@ class SensioSecurityResolver implements TestResolverInterface
 
             return $resolved = $this->controllerArgumentResolver->getArgument($argumentResolverContext, $argumentMetadata);
         } elseif ($requestAttributes->has($name)) {
+
             return $resolved = $requestAttributes->get($name);
         }
 

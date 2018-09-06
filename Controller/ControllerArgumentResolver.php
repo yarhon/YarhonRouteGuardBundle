@@ -16,7 +16,7 @@ use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContextI
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
- * Responsible for resolving the arguments passed to an action.
+ * Responsible for resolving the argument passed to an action.
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
@@ -61,11 +61,4 @@ class ControllerArgumentResolver
         throw new RuntimeException(sprintf($message, $context->getControllerName(), $argumentMetadata->getName()));
     }
 
-    public function createContext($routeMetadata, $parameters)
-    {
-        $requestAttributes = $this->requestAttributesFactory->getAttributes($routeMetadata, $parameters);
-
-        $request = $this->requestStack->getCurrentRequest();
-        $argumentResolverContext = new ArgumentResolverContext($request, $requestAttributes, $routeMetadata->getControllerName());
-    }
 }

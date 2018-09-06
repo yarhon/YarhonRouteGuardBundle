@@ -109,6 +109,10 @@
             <tag name="yarhon_route_guard.test_resolver" />
         </service>
 
+        <service id="Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver">
+            <argument type="collection" />
+        </service>
+
         <!-- cache services -->
 
         <service id="Yarhon\RouteGuardBundle\CacheWarmer\AccessMapCacheWarmer">
@@ -134,23 +138,21 @@
             <argument type="service" id="yarhon_route_guard.cache" />
         </service>
 
-        <service id="Yarhon\RouteGuardBundle\Security\AccessMapResolver">
+        <service id="Yarhon\RouteGuardBundle\Security\RouteTestResolver">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMap" />
-            <call method="setTestResolvers">
-                <argument type="collection" />
-            </call>
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver" />
         </service>
 
-        <service id="Yarhon\RouteGuardBundle\Security\AuthorizationManager">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapResolver" />
+        <service id="Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\RouteTestResolver" />
             <argument type="service" id="security.authorization_checker" on-invalid="ignore" />
         </service>
-        <service id="yarhon_route_guard.authorization_manager" alias="Yarhon\RouteGuardBundle\Security\AuthorizationManager" public="true"/>
-        <service id="Yarhon\RouteGuardBundle\Security\AuthorizationManagerInterface" alias="yarhon_route_guard.authorization_manager" />
+        <service id="yarhon_route_guard.authorization_checker" alias="Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker" public="true"/>
+        <service id="Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface" alias="yarhon_route_guard.authorization_checker" />
 
         <service id="Yarhon\RouteGuardBundle\Routing\AuthorizedUrlGenerator">
             <argument type="service" id="router.default" />
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AuthorizationManager" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker" />
             <argument type="service" id="router.default" />
         </service>
 
@@ -181,13 +183,14 @@
             <tag name="yarhon_route_guard.argument_value_resolver" priority="-150" />
         </service>
 
-        <!-- decorated expression voter -->
+        <!-- decorated expression voter --> <!-- to do:: rename!!! -->
 
         <service id="Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter">
             <argument type="service" id="sensio_framework_extra.security.expression_language.default" /><!-- to do use default security.expression_language ? -->
             <argument type="service" id="security.authentication.trust_resolver" />
             <argument type="service" id="security.authorization_checker" />
             <argument type="service" id="security.role_hierarchy" on-invalid="ignore" />
+            <tag name="security.voter" />
         </service>
 
     </services>

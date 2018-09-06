@@ -59,12 +59,12 @@ class YarhonRouteGuardExtensionTest extends TestCase
     {
         $services = [
             'Yarhon\RouteGuardBundle\Security\AccessMapBuilder',
-            'Yarhon\RouteGuardBundle\Security\AuthorizationManager',
+            'Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker',
         ];
 
         $aliases = [
-            'yarhon_route_guard.authorization_manager',
-            'Yarhon\RouteGuardBundle\Security\AuthorizationManagerInterface',
+            'yarhon_route_guard.authorization_checker',
+            'Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface',
         ];
 
         $this->container->getCompilerPassConfig()->setOptimizationPasses([]);
@@ -89,7 +89,7 @@ class YarhonRouteGuardExtensionTest extends TestCase
         //$this->container->register('request_stack')->setSynthetic(true);
 
         $services = [
-            'yarhon_route_guard.authorization_manager',
+            'yarhon_route_guard.authorization_checker',
         ];
 
         $this->container->compile();

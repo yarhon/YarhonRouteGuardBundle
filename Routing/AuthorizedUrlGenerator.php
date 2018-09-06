@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Routing;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\RouteCollection;
-use Yarhon\RouteGuardBundle\Security\AuthorizationManager;
+use Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -26,19 +26,19 @@ class AuthorizedUrlGenerator implements AuthorizedUrlGeneratorInterface
     protected $delegate;
 
     /**
-     * @var AuthorizationManager
+     * @var RouteAuthorizationCheckerInterface
      */
-    protected $authorizationManager;
+    protected $authorizationChecker;
 
     /**
      * @var RouteCollection
      */
     protected $routes;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator, AuthorizationManager $authorizationManager, RouterInterface $router)
+    public function __construct(UrlGeneratorInterface $urlGenerator, RouteAuthorizationCheckerInterface $authorizationChecker, RouterInterface $router)
     {
         $this->delegate = $urlGenerator;
-        $this->authorizationManager = $authorizationManager;
+        $this->authorizationChecker = $authorizationChecker;
         $this->routes = $router->getRouteCollection();
     }
 
@@ -56,7 +56,7 @@ class AuthorizedUrlGenerator implements AuthorizedUrlGeneratorInterface
 
         $routeContext = new RouteContext($localizedName ?: $name, $parameters, $method, $referenceType);
 
-        $isGranted = $this->authorizationManager->isGranted($routeContext);
+        $isGranted = $this->authorizationChecker->isGranted($routeContext);
 
         if (!$isGranted) {
             return false;

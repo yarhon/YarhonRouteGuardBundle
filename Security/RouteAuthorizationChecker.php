@@ -17,29 +17,32 @@ use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class AuthorizationManager implements AuthorizationManagerInterface
+class RouteAuthorizationChecker implements RouteAuthorizationCheckerInterface
 {
     /**
-     * @var AccessMapResolver
+     * @var RouteTestResolver
      */
-    private $accessMapResolver;
+    private $routeTestResolver;
 
     /**
      * @var AuthorizationCheckerInterface
      */
     private $authorizationChecker;
 
-    public function __construct(AccessMapResolver $accessMapResolver, AuthorizationCheckerInterface $authorizationChecker = null)
+    public function __construct(RouteTestResolver $routeTestResolver, AuthorizationCheckerInterface $authorizationChecker = null)
     {
-        $this->accessMapResolver = $accessMapResolver;
+        $this->routeTestResolver = $routeTestResolver;
         $this->authorizationChecker = $authorizationChecker;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function isGranted(RouteContextInterface $routeContext)
     {
         // TODO: check that authorizationChecker is passed
 
-        $tests = $this->accessMapResolver->getTests($routeContext);
+        $tests = $this->routeTestResolver->getTests($routeContext);
 
         foreach ($tests as $testArguments) {
             /** @var TestArguments $testArguments */

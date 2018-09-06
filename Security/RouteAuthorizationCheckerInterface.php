@@ -10,10 +10,17 @@
 
 namespace Yarhon\RouteGuardBundle\Security;
 
+use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
+
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface AuthorizationManagerInterface
+interface RouteAuthorizationCheckerInterface
 {
-
+    /**
+     * @param RouteContextInterface $routeContext
+     *
+     * @return bool
+     */
+    public function isGranted(RouteContextInterface $routeContext);
 }

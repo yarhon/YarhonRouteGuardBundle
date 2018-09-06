@@ -151,7 +151,8 @@ class AccessMapBuilder implements LoggerAwareInterface
             foreach ($this->testProviders as $provider) {
                 $testBag = $provider->getTests($route);
                 if (null !== $testBag) {
-                    $accessMap->add($name, $provider->getName(), $testBag);
+                    $testBag->setProviderName($provider->getName());
+                    $accessMap->add($name, $testBag);
                 }
             }
         }
