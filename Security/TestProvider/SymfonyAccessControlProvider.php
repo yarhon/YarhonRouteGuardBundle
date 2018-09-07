@@ -49,7 +49,7 @@ class SymfonyAccessControlProvider implements TestProviderInterface
     /**
      * SymfonyAccessControlProvider constructor.
      *
-     * @param ExpressionLanguage $expressionLanguage
+     * @param ExpressionLanguage|null $expressionLanguage
      */
     public function __construct(ExpressionLanguage $expressionLanguage = null)
     {

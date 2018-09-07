@@ -29,7 +29,7 @@ class RouteAuthorizationChecker implements RouteAuthorizationCheckerInterface
      */
     private $authorizationChecker;
 
-    public function __construct(RouteTestResolver $routeTestResolver, AuthorizationCheckerInterface $authorizationChecker = null)
+    public function __construct(RouteTestResolver $routeTestResolver, AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->routeTestResolver = $routeTestResolver;
         $this->authorizationChecker = $authorizationChecker;
@@ -40,8 +40,6 @@ class RouteAuthorizationChecker implements RouteAuthorizationCheckerInterface
      */
     public function isGranted(RouteContextInterface $routeContext)
     {
-        // TODO: check that authorizationChecker is passed
-
         $tests = $this->routeTestResolver->getTests($routeContext);
 
         foreach ($tests as $testArguments) {

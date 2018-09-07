@@ -31,14 +31,14 @@
         <service id="Yarhon\RouteGuardBundle\Security\Sensio\VariableResolver">
             <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver" />
-            <argument type="service" id="request_stack" /><!-- to do: optional external services -->
+            <argument type="service" id="request_stack" />
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider">
             <argument type="service" id="Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReader" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\Sensio\VariableResolver" />
-            <argument type="service" id="sensio_framework_extra.security.expression_language.default" on-invalid="ignore"/><!-- optional always! -->
-            <argument type="service" id="argument_metadata_factory" on-invalid="ignore" /> <!-- optional always! -->
+            <argument type="service" id="sensio_framework_extra.security.expression_language.default" on-invalid="ignore"/>
+            <argument type="service" id="argument_metadata_factory" on-invalid="ignore" />
             <tag name="yarhon_route_guard.test_provider" priority="1024" />
         </service>
 
@@ -80,7 +80,7 @@
         <!-- test resolvers -->
 
         <service id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory">
-            <argument type="service" id="router.default" /><!-- to do: optional external services -->
+            <argument type="service" id="router.default" />
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver">
@@ -93,8 +93,8 @@
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver">
-            <argument type="service" id="request_stack" /><!-- to do: optional external services -->
-            <argument type="service" id="router.default" /><!-- to do: optional external services -->
+            <argument type="service" id="request_stack" />
+            <argument type="service" id="router.default" />
             <tag name="yarhon_route_guard.test_resolver" />
         </service>
 
@@ -133,11 +133,12 @@
             <call method="setLogger">
                 <argument type="service" id="logger" on-invalid="ignore" />
             </call>
+            <tag name="monolog.logger" channel="route_guard" />
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\RouteTestResolver" />
-            <argument type="service" id="security.authorization_checker" on-invalid="ignore" />
+            <argument type="service" id="security.authorization_checker" />
         </service>
         <service id="yarhon_route_guard.authorization_checker" alias="Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker" public="true"/>
         <service id="Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface" alias="yarhon_route_guard.authorization_checker" />
@@ -187,10 +188,10 @@
             <tag name="yarhon_route_guard.argument_value_resolver" priority="-150" />
         </service>
 
-        <!-- decorated expression voter --> <!-- to do:: rename!!! -->
+        <!-- sensio security expression voter -->
 
         <service id="Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter">
-            <argument type="service" id="sensio_framework_extra.security.expression_language.default" /><!-- to do use default security.expression_language ? -->
+            <argument type="service" id="sensio_framework_extra.security.expression_language.default" />
             <argument type="service" id="security.authentication.trust_resolver" />
             <argument type="service" id="security.authorization_checker" />
             <argument type="service" id="security.role_hierarchy" on-invalid="ignore" />
