@@ -24,7 +24,7 @@ use Yarhon\RouteGuardBundle\ExpressionLanguage\SensioSecurityExpression;
  */
 class SensioSecurityExpressionVoter extends Voter
 {
-    const VARIABLES = [
+    protected static $variableNames = [
         'token',
         'user',
         'object',
@@ -46,6 +46,11 @@ class SensioSecurityExpressionVoter extends Voter
         $this->trustResolver = $trustResolver;
         $this->authChecker = $authChecker;
         $this->roleHierarchy = $roleHierarchy;
+    }
+
+    public static function getVariableNames()
+    {
+        return self::$variableNames;
     }
 
     /**

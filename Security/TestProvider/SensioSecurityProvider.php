@@ -19,6 +19,7 @@ use Psr\Log\LoggerAwareTrait;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
 use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReaderInterface;
+use Yarhon\RouteGuardBundle\Security\Sensio\VariableResolver;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\SensioSecurityExpression;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
@@ -26,7 +27,7 @@ use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
-use Yarhon\RouteGuardBundle\Exception\TestProviderException;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * SensioSecurityProvider processes Security & IsGranted annotations of Sensio FrameworkExtraBundle.
@@ -45,6 +46,11 @@ class SensioSecurityProvider implements TestProviderInterface
     private $reader;
 
     /**
+     * @var VariableResolver
+     */
+    private $variableResolver;
+
+    /**
      * @var ExpressionLanguage
      */
     private $expressionLanguage;
@@ -58,12 +64,14 @@ class SensioSecurityProvider implements TestProviderInterface
      * SensioSecurityProvider constructor.
      *
      * @param ClassMethodAnnotationReaderInterface  $reader
+     * @param VariableResolver                      $variableResolver
      * @param ExpressionLanguage|null               $expressionLanguage
      * @param ArgumentMetadataFactoryInterface|null $argumentMetadataFactory
      */
-    public function __construct(ClassMethodAnnotationReaderInterface $reader, ExpressionLanguage $expressionLanguage = null, ArgumentMetadataFactoryInterface $argumentMetadataFactory = null)
+    public function __construct(ClassMethodAnnotationReaderInterface $reader, VariableResolver $variableResolver, ExpressionLanguage $expressionLanguage = null, ArgumentMetadataFactoryInterface $argumentMetadataFactory = null)
     {
         $this->reader = $reader;
+        $this->variableResolver = $variableResolver;
         $this->expressionLanguage = $expressionLanguage;
 
         $this->argumentMetadataFactory = $argumentMetadataFactory ?: new ArgumentMetadataFactory();
@@ -100,15 +108,7 @@ class SensioSecurityProvider implements TestProviderInterface
         $arguments = $this->argumentMetadataFactory->createArgumentMetadata([$class, $method]);
         $routeMetadata = new RouteMetadata($route);
         $controllerMetadata = new ControllerMetadata($arguments);
-
-        //////////////////
-        if ($route->getPath() == '/secure1/{page}') {
-          // $this->test->test();
-        }
-
-
-        /////////////////////////
-
+        $variableNames = $this->variableResolver->getVariableNames($routeMetadata, $controllerMetadata);
 
         $annotations = $this->reader->read($class, $method, [SecurityAnnotation::class, IsGrantedAnnotation::class]);
 
@@ -120,29 +120,36 @@ class SensioSecurityProvider implements TestProviderInterface
 
             if ($annotation instanceof SecurityAnnotation) {
 
+                if (!$this->expressionLanguage) {
+                    throw new LogicException('Cannot create expression because ExpressionLanguage is not provided.');
+                }
+
                 $expression = $annotation->getExpression();
 
                 try {
-                    // At first try to create expression without any controller/route specific variable names
+                    // At first try to create expression without any variable names
                     $expression = $this->createExpression($expression);
-                } catch (TestProviderException $e) {
-                    $names = [];
-                    $expression = $this->createExpression($expression, $names);
+                } catch (InvalidArgumentException $e) {
+                    $expression = $this->createExpression($expression, $variableNames);
                 }
 
                 $attributes[] = $expression;
 
-
             } elseif ($annotation instanceof IsGrantedAnnotation) {
                 // Despite of the name, $annotation->getAttributes() is a string (annotation value)
                 $attributes[] = $annotation->getAttributes();
+
                 $subjectName = $annotation->getSubject();
+
+                if ($subjectName && !in_array($subjectName, $variableNames)) {
+                    throw new InvalidArgumentException(sprintf('Unknown subject variable "%s". Known variables: "%s"', $subjectName, implode('", "', $variableNames)));
+                }
             }
 
             $arguments = new TestArguments($attributes);
+
             if ($subjectName) {
-                $metadata = null; // TODO: add metadata
-                $arguments->setSubjectMetadata($subjectName, $metadata);
+                $arguments->setSubjectMetadata($subjectName);
             }
             $tests[] = $arguments;
         }
@@ -163,22 +170,17 @@ class SensioSecurityProvider implements TestProviderInterface
      *
      * @return SensioSecurityExpression
      *
-     * @throws LogicException
-     * @throws TestProviderException
+     * @throws InvalidArgumentException
      */
     private function createExpression($expression, array $names = [])
     {
-        if (!$this->expressionLanguage) {
-            throw new LogicException('Cannot create expression because ExpressionLanguage is not provided.');
-        }
-
-        $defaultNames = SensioSecurityExpressionVoter::VARIABLES;
+        $defaultNames = SensioSecurityExpressionVoter::getVariableNames();
         $names = array_merge($defaultNames, $names);
 
         try {
             $parsed = $this->expressionLanguage->parse($expression, $names);
         } catch (SyntaxError $e) {
-            throw new TestProviderException(sprintf('Cannot parse expression "%s" with following variables: "%s".', $expression, implode('", "', $names)), 0, $e);
+            throw new InvalidArgumentException(sprintf('Cannot parse expression "%s" with following variables: "%s".', $expression, implode('", "', $names)), 0, $e);
         }
 
         $expression = new SensioSecurityExpression($parsed, $names);

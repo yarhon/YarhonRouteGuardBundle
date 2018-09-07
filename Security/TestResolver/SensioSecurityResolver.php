@@ -10,16 +10,12 @@
 
 namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 
-use Symfony\Component\HttpFoundation\RequestStack;
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
+use Yarhon\RouteGuardBundle\Security\Sensio\VariableResolver;
+use Yarhon\RouteGuardBundle\Security\Sensio\VariableResolverContext;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
-use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
-use Yarhon\RouteGuardBundle\Routing\RouteMetadataInterface;
-use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
-use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContext;
-use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\SensioSecurityExpression;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
@@ -30,30 +26,13 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 class SensioSecurityResolver implements TestResolverInterface
 {
     /**
-     * @var RequestAttributesFactory
+     * @var VariableResolver
      */
-    private $requestAttributesFactory;
+    private $variableResolver;
 
-    /**
-     * @var ControllerArgumentResolver
-     */
-    private $controllerArgumentResolver;
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
-    /**
-     * @var array
-     */
-    private $context;
-
-    public function __construct(RequestAttributesFactory $requestAttributesFactory, ControllerArgumentResolver $controllerArgumentResolver, RequestStack $requestStack)
+    public function __construct(VariableResolver $variableResolver)
     {
-        $this->requestAttributesFactory = $requestAttributesFactory;
-        $this->controllerArgumentResolver = $controllerArgumentResolver;
-        $this->requestStack = $requestStack;
+        $this->variableResolver = $variableResolver;
     }
 
     /**
@@ -75,9 +54,9 @@ class SensioSecurityResolver implements TestResolverInterface
 
         list($routeMetadata, $controllerMetadata) = $testBag->getMetadata();
 
-        $this->createContext($routeMetadata, $controllerMetadata, $routeContext->getParameters());
+        $context = $this->variableResolver->createContext($routeMetadata, $controllerMetadata, $routeContext->getParameters());
 
-        $this->resolveVariables($testBag);
+        $this->resolveVariables($testBag, $context);
 
         $tests = [];
 
@@ -88,33 +67,31 @@ class SensioSecurityResolver implements TestResolverInterface
         return $tests;
     }
 
-    private function createContext(RouteMetadataInterface $routeMetadata, ControllerMetadata $controllerMetadata, array $parameters)
-    {
-        $requestAttributes = $this->requestAttributesFactory->getAttributes($routeMetadata, $parameters);
-        $argumentResolverContext = new ArgumentResolverContext($this->requestStack->getCurrentRequest(), $requestAttributes, $routeMetadata->getControllerName());
-
-        $this->context = [
-            'controllerMetadata' => $controllerMetadata,
-            'requestAttributes' => $requestAttributes,
-            'argumentResolverContext' => $argumentResolverContext,
-            'resolved' => [],
-        ];
-    }
-
     /**
-     * @param TestBagInterface $testBag
+     * @param TestBagInterface        $testBag
+     * @param VariableResolverContext $context
      */
-    private function resolveVariables(TestBagInterface $testBag)
+    private function resolveVariables(TestBagInterface $testBag, VariableResolverContext $context)
     {
+        $resolved = [];
+
+        $resolve = function ($name) use ($context, &$resolved) {
+            if (!array_key_exists($name, $resolved)) {
+                $resolved[$name] = $this->variableResolver->getVariable($context, $name);
+            }
+
+            return $resolved[$name];
+        };
+
         foreach ($testBag as $testArguments) {
             /** @var TestArguments $testArguments */
             if ($testArguments->requiresSubject()) {
                 $name = $testArguments->getSubjectMetadata()[0];
                 try {
-                    $value = $this->resolveVariable($name);
+                    $value = $resolve($name);
                 } catch (RuntimeException $e) {
-                    // TODO: add details about variable that caused exception
-                    throw $e;
+                    $message = sprintf('Cannot resolve subject variable "%s". %s', $name, $e->getMessage());
+                    throw new RuntimeException($message, 0, $e);
                 }
                 $testArguments->setSubject($value);
             }
@@ -124,45 +101,16 @@ class SensioSecurityResolver implements TestResolverInterface
                     $values = [];
                     foreach ($attribute->getNames() as $name) {
                         try {
-                            $values[$name] = $this->resolveVariable($name);
+                            $values[$name] = $resolve($name);
                         } catch (RuntimeException $e) {
-                            // TODO: add details about variable that caused exception
-                            throw $e;
+                            $message = sprintf('Cannot resolve expression variable "%s" of expression "%s". %s', $name, (string) $attribute->getExpression(), $e->getMessage());
+                            throw new RuntimeException($message, 0, $e);
                         }
                     }
                     $attribute->setVariables($values);
                 }
             }
         }
-    }
-
-    /**
-     * @see \Sensio\Bundle\FrameworkExtraBundle\EventListener\IsGrantedListener::onKernelControllerArguments
-     * @see \Sensio\Bundle\FrameworkExtraBundle\EventListener\SecurityListener::onKernelControllerArguments
-     */
-    private function resolveVariable($name)
-    {
-        $resolved = &$this->context['resolved'];
-
-        if (array_key_exists($name, $resolved)) {
-            return $resolved[$name];
-        }
-
-        $controllerMetadata = $this->context['controllerMetadata'];
-        $argumentResolverContext = $this->context['argumentResolverContext'];
-        $requestAttributes = $this->context['requestAttributes'];
-
-        if ($controllerMetadata->has($name)) {
-            $argumentMetadata = $controllerMetadata->get($name);
-
-            return $resolved[$name] = $this->controllerArgumentResolver->getArgument($argumentResolverContext, $argumentMetadata);
-
-        } elseif ($requestAttributes->has($name)) {
-
-            return $resolved[$name] = $requestAttributes->get($name);
-        }
-
-        throw new RuntimeException(sprintf('Cannot resolve variable "%s" - it is neither a controller argument nor request attribute.', $name));
     }
 
 }

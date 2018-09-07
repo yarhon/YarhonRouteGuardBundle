@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 interface ArgumentResolverContextInterface
 {
     /**
-     * @return Request
+     * @return Request|null
      */
     public function getRequest();
 

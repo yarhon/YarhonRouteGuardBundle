@@ -40,6 +40,7 @@ class RouteMetadata implements RouteMetadataInterface
     public function __construct(Route $route)
     {
         $this->controllerName = $route->getDefault('_controller');
+
         $this->defaults = $route->getDefaults();
 
         $compiledRoute = $route->compile();
@@ -69,4 +70,5 @@ class RouteMetadata implements RouteMetadataInterface
     {
         return $this->variables;
     }
+
 }

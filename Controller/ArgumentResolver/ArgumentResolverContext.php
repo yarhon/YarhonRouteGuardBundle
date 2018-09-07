@@ -40,7 +40,7 @@ class ArgumentResolverContext implements ArgumentResolverContextInterface
      * @param ParameterBag $attributes
      * @param string       $controllerName
      */
-    public function __construct(Request $request = null, ParameterBag $attributes, $controllerName)
+    public function __construct(ParameterBag $attributes, $controllerName, Request $request = null)
     {
         $this->request = $request;
         $this->attributes = $attributes;

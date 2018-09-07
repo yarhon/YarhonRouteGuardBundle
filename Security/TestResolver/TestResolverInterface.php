@@ -13,6 +13,7 @@ namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
+use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -24,6 +25,8 @@ interface TestResolverInterface
      * @param RouteContextInterface    $routeContext
      *
      * @return TestArguments[]
+     *
+     * @throws RuntimeException
      */
     public function resolve(AbstractTestBagInterface $testBag, RouteContextInterface $routeContext);
 
