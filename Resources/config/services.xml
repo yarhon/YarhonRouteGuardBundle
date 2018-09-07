@@ -51,7 +51,7 @@
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider">
-            <argument type="service" id="Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactory" />
+            <argument type="service" id="security.expression_language" on-invalid="ignore" />
             <tag name="yarhon_route_guard.test_provider" priority="1023" />
         </service>
 

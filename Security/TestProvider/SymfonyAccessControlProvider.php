@@ -11,7 +11,9 @@
 namespace Yarhon\RouteGuardBundle\Security\TestProvider;
 
 use Symfony\Component\Routing\Route;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Psr\Log\LoggerAwareTrait;
 use Yarhon\RouteGuardBundle\Security\Http\RouteMetadata;
 use Yarhon\RouteGuardBundle\Security\Http\RequestConstraint;
@@ -19,7 +21,9 @@ use Yarhon\RouteGuardBundle\Security\Http\RouteMatcher;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\Http\TestBagMap;
-use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactoryInterface;
+use Yarhon\RouteGuardBundle\Security\Authorization\ExpressionVoter;
+use Yarhon\RouteGuardBundle\Exception\LogicException;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * SymfonyAccessControlProvider processes access_control config of Symfony SecurityBundle.
@@ -38,18 +42,18 @@ class SymfonyAccessControlProvider implements TestProviderInterface
     private $rules = [];
 
     /**
-     * @var ExpressionFactoryInterface
+     * @var ExpressionLanguage
      */
-    private $expressionFactory;
+    private $expressionLanguage;
 
     /**
      * SymfonyAccessControlProvider constructor.
      *
-     * @param ExpressionFactoryInterface $expressionFactory
+     * @param ExpressionLanguage $expressionLanguage
      */
-    public function __construct(ExpressionFactoryInterface $expressionFactory)
+    public function __construct(ExpressionLanguage $expressionLanguage = null)
     {
-        $this->expressionFactory = $expressionFactory;
+        $this->expressionLanguage = $expressionLanguage;
     }
 
     public function importRules(array $rules)
@@ -78,7 +82,12 @@ class SymfonyAccessControlProvider implements TestProviderInterface
 
         $attributes = $rule['roles'];
         if ($rule['allow_if']) {
-            $expression = $this->expressionFactory->create($rule['allow_if'], ['request']);
+
+            if (!$this->expressionLanguage) {
+                throw new LogicException('Cannot create expression because ExpressionLanguage is not provided.');
+            }
+
+            $expression = $this->createExpression($rule['allow_if']);
             $attributes[] = $expression;
         }
 
@@ -150,6 +159,26 @@ class SymfonyAccessControlProvider implements TestProviderInterface
         }
 
         return $testBag;
+    }
+
+    /**
+     * @param string $expression
+     *
+     * @return Expression
+     *
+     * @throws InvalidArgumentException
+     */
+    private function createExpression($expression)
+    {
+        $names = ExpressionVoter::getVariableNames();
+
+        try {
+            $parsed = $this->expressionLanguage->parse($expression, $names);
+        } catch (SyntaxError $e) {
+            throw new InvalidArgumentException(sprintf('Cannot parse expression "%s" with following variables: "%s".', $expression, implode('", "', $names)), 0, $e);
+        }
+
+        return $parsed;
     }
 
     private function inspectRules()

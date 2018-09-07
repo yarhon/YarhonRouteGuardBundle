@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\ExpressionLanguage;
+namespace Yarhon\RouteGuardBundle\Security\Sensio;
 
 use Symfony\Component\ExpressionLanguage\Expression;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
@@ -16,7 +16,7 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SensioSecurityExpression
+class ExpressionDecorator
 {
     /**
      * @var Expression;
@@ -34,7 +34,7 @@ class SensioSecurityExpression
     private $variables = [];
 
     /**
-     * SensioSecurityExpression constructor.
+     * ExpressionDecorator constructor.
      *
      * @param Expression $expression
      * @param array      $names

@@ -20,8 +20,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotat
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
 use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReaderInterface;
 use Yarhon\RouteGuardBundle\Security\Sensio\VariableResolver;
+use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
-use Yarhon\RouteGuardBundle\ExpressionLanguage\SensioSecurityExpression;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
@@ -168,7 +168,7 @@ class SensioSecurityProvider implements TestProviderInterface
      * @param string $expression
      * @param array $names
      *
-     * @return SensioSecurityExpression
+     * @return ExpressionDecorator
      *
      * @throws InvalidArgumentException
      */
@@ -183,7 +183,7 @@ class SensioSecurityProvider implements TestProviderInterface
             throw new InvalidArgumentException(sprintf('Cannot parse expression "%s" with following variables: "%s".', $expression, implode('", "', $names)), 0, $e);
         }
 
-        $expression = new SensioSecurityExpression($parsed, $names);
+        $expression = new ExpressionDecorator($parsed, $names);
 
         return $expression;
     }

@@ -16,7 +16,7 @@ use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\Sensio\VariableResolver;
 use Yarhon\RouteGuardBundle\Security\Sensio\VariableResolverContext;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
-use Yarhon\RouteGuardBundle\ExpressionLanguage\SensioSecurityExpression;
+use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
@@ -97,7 +97,7 @@ class SensioSecurityResolver implements TestResolverInterface
             }
 
             foreach ($testArguments->getAttributes() as $attribute) {
-                if ($attribute instanceof SensioSecurityExpression) {
+                if ($attribute instanceof ExpressionDecorator) {
                     $values = [];
                     foreach ($attribute->getNames() as $name) {
                         try {

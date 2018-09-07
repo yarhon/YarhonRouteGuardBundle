@@ -16,7 +16,6 @@ use Symfony\Component\DependencyInjection\Reference;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
 use Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver;
 use Yarhon\RouteGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
-use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactory;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -28,10 +27,6 @@ class SymfonySecurityBundlePass implements CompilerPassInterface
      */
     private $extensionAccessor;
 
-    /**
-     * @var int
-     */
-    private $versionId;
 
     public function __construct(ForeignExtensionAccessor $extensionAccessor)
     {
@@ -51,7 +46,6 @@ class SymfonySecurityBundlePass implements CompilerPassInterface
         }
 
         $this->processAccessControl($container);
-        $this->processExpressionLanguage($container);
     }
 
     private function processAccessControl(ContainerBuilder $container)
@@ -67,29 +61,5 @@ class SymfonySecurityBundlePass implements CompilerPassInterface
 
         $accessControlProvider = $container->getDefinition(SymfonyAccessControlProvider::class);
         $accessControlProvider->addMethodCall('importRules', [$config['access_control']]);
-    }
-
-    //  TODO: remove this?
-    private function processExpressionLanguage(ContainerBuilder $container)
-    {
-        $serviceId = 'security.expression_language';
-
-        if (!$container->hasDefinition($serviceId)) {
-            return;
-        }
-
-        $expressionLanguage = $container->getDefinition($serviceId);
-        $useExpressionLanguageCache = isset($expressionLanguage->getArguments()[0]);
-
-        // See \Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter::getVariables
-        $defaultNames = ['token', 'user', 'object', 'subject', 'roles', 'trust_resolver'];
-        if ($this->versionId >= 40200) {
-            $defaultNames[] = 'auth_checker';
-        }
-
-        $expressionFactory = $container->getDefinition(ExpressionFactory::class);
-        $expressionFactory->replaceArgument(0, new Reference($serviceId));
-        $expressionFactory->replaceArgument(1, $defaultNames);
-        $expressionFactory->replaceArgument(2, $useExpressionLanguageCache);
     }
 }

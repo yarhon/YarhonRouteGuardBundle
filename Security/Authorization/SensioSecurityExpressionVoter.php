@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\ExpressionLanguage;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Yarhon\RouteGuardBundle\ExpressionLanguage\SensioSecurityExpression;
+use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -58,7 +58,7 @@ class SensioSecurityExpressionVoter extends Voter
      */
     protected function supports($attribute, $subject)
     {
-        return $attribute instanceof SensioSecurityExpression;
+        return $attribute instanceof ExpressionDecorator;
     }
 
     /**
@@ -66,7 +66,7 @@ class SensioSecurityExpressionVoter extends Voter
      */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        /** @var SensioSecurityExpression $attribute */
+        /** @var ExpressionDecorator $attribute */
         $expressionVariables = $attribute->getVariables();
 
         $variables = $this->getVariables($token, $subject);
