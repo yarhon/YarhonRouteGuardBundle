@@ -10,6 +10,9 @@
 namespace Yarhon\RouteGuardBundle\Security\Authorization;
 
 /**
+ * ExpressionVoter is responsible for storing information about variables used by
+ * \Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter (there's no way to retrieve it from the original class).
+ *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class ExpressionVoter
@@ -33,5 +36,4 @@ class ExpressionVoter
     {
         self::$variableNames = array_merge(self::$variableNames, $names);
     }
-
 }

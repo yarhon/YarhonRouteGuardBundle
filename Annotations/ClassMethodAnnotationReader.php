@@ -33,12 +33,7 @@ class ClassMethodAnnotationReader implements ClassMethodAnnotationReaderInterfac
      */
     public function __construct(Reader $reader = null)
     {
-        if (null === $reader) {
-            // TODO: use CachedReader ?
-            $reader = new AnnotationReader();
-        }
-
-        $this->delegate = $reader;
+        $this->delegate = $reader ?: new AnnotationReader();
     }
 
     /**

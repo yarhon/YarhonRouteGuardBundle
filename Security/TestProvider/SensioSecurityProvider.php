@@ -119,7 +119,6 @@ class SensioSecurityProvider implements TestProviderInterface
             $subjectName = null;
 
             if ($annotation instanceof SecurityAnnotation) {
-
                 if (!$this->expressionLanguage) {
                     throw new LogicException('Cannot create expression because ExpressionLanguage is not provided.');
                 }
@@ -134,7 +133,6 @@ class SensioSecurityProvider implements TestProviderInterface
                 }
 
                 $attributes[] = $expression;
-
             } elseif ($annotation instanceof IsGrantedAnnotation) {
                 // Despite of the name, $annotation->getAttributes() is a string (annotation value)
                 $attributes[] = $annotation->getAttributes();
@@ -166,7 +164,7 @@ class SensioSecurityProvider implements TestProviderInterface
 
     /**
      * @param string $expression
-     * @param array $names
+     * @param array  $names
      *
      * @return ExpressionDecorator
      *

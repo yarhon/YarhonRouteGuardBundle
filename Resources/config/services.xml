@@ -23,14 +23,6 @@
             <tag name="monolog.logger" channel="route_guard" />
         </service>
 
-        <!-- test providers utility services -->
-
-        <service id="Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionFactory">
-            <argument type="service" id="security.expression_language" on-invalid="ignore"/>
-            <argument type="collection" />
-            <argument>null</argument><!--- false ? -->
-        </service>
-
         <!-- test providers -->
 
         <service id="Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReader">
@@ -138,6 +130,9 @@
         <service id="Yarhon\RouteGuardBundle\Security\RouteTestResolver">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMap" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver" />
+            <call method="setLogger">
+                <argument type="service" id="logger" on-invalid="ignore" />
+            </call>
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker">

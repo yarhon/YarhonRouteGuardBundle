@@ -80,7 +80,6 @@ class InjectTaggedServicesPassTest extends TestCase
 
         $this->assertEquals('test2', (string) $argument[0]);
         $this->assertEquals('test1', (string) $argument[1]);
-
     }
 
     public function injectMethodCallsDataProvider()

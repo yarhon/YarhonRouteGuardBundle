@@ -17,7 +17,7 @@ interface AbstractTestBagInterface extends \IteratorAggregate, \Countable
 {
     /**
      * @param string $name
-    */
+     */
     public function setProviderName($name);
 
     /**

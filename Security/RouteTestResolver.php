@@ -10,6 +10,8 @@
 
 namespace Yarhon\RouteGuardBundle\Security;
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
@@ -17,8 +19,10 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RouteTestResolver
+class RouteTestResolver implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var AccessMap
      */
@@ -43,6 +47,10 @@ class RouteTestResolver
 
         foreach ($testBags as $testBag) {
             $tests = array_merge($tests, $this->testResolver->resolve($testBag, $routeContext));
+        }
+
+        if ($this->logger) {
+            // ....................
         }
 
         return $tests;

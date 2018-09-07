@@ -112,5 +112,4 @@ class SensioSecurityResolver implements TestResolverInterface
             }
         }
     }
-
 }

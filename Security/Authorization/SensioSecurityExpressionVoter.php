@@ -19,6 +19,12 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
 
 /**
+ * Sensio FrameworkExtraBundle executes security expressions in place, bypassing the traditional flow to
+ * \Symfony\Component\Security\Core\Authorization\AuthorizationChecker and further to the Voter(s).
+ * SensioSecurityExpressionVoter is intended to execute those security expressions using traditional flow.
+ *
+ * @see \Sensio\Bundle\FrameworkExtraBundle\EventListener\SecurityListener
+ *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  * @author Fabien Potencier <fabien@symfony.com>
  */

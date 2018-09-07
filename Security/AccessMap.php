@@ -75,7 +75,6 @@ class AccessMap
         return $this->cache->hasItem($routeName);
     }
 
-
     public function clear()
     {
         $this->cache->clear();

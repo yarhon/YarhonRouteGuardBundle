@@ -29,5 +29,4 @@ interface RouteMetadataInterface
      * @return array
      */
     public function getVariables();
-
 }

@@ -82,7 +82,6 @@ class SymfonyAccessControlProvider implements TestProviderInterface
 
         $attributes = $rule['roles'];
         if ($rule['allow_if']) {
-
             if (!$this->expressionLanguage) {
                 throw new LogicException('Cannot create expression because ExpressionLanguage is not provided.');
             }

@@ -70,5 +70,4 @@ class RouteMetadata implements RouteMetadataInterface
     {
         return $this->variables;
     }
-
 }

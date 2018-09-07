@@ -27,7 +27,6 @@ class SymfonySecurityBundlePass implements CompilerPassInterface
      */
     private $extensionAccessor;
 
-
     public function __construct(ForeignExtensionAccessor $extensionAccessor)
     {
         $this->extensionAccessor = $extensionAccessor;

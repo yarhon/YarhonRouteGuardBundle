@@ -34,7 +34,6 @@ class VariableResolverContext
      */
     private $requestAttributes;
 
-
     public function __construct(RouteMetadataInterface $routeMetadata, ControllerMetadata $controllerMetadata, ParameterBag $requestAttributes)
     {
         $this->routeMetadata = $routeMetadata;
@@ -65,5 +64,4 @@ class VariableResolverContext
     {
         return $this->requestAttributes;
     }
-
 }
