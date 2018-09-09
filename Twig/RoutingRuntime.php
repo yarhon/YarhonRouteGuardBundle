@@ -50,7 +50,7 @@ class RoutingRuntime implements RuntimeExtensionInterface
         } elseif ('url' === $generateAs[0]) {
             $referenceType = $generateAs[1] ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL;
         } else {
-            throw new InvalidArgumentException(sprintf('Invalid reference type: "%s"', $generateAs));
+            throw new InvalidArgumentException(sprintf('Invalid reference type: "%s"', $generateAs[0]));
         }
 
         return $this->urlGenerator->generate($name, $parameters, $method, $referenceType);

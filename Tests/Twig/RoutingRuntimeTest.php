@@ -32,38 +32,131 @@ class RoutingRuntimeTest extends TestCase
         $this->runtime = new RoutingRuntime($this->generator);
     }
 
-    public function testUrl()
+    /**
+     * @dataProvider urlDataProvider
+     */
+    public function testUrl($arguments, $expectedReferenceType)
     {
-        $this->generator->expects($this->at(0))
+        $expectedArguments = array_slice($arguments, 0, 3);
+        $expectedArguments += [1 => [], 2 => 'GET', 3 => $expectedReferenceType];
+
+        $this->generator->expects($this->once())
             ->method('generate')
-            ->with('route1', ['page' => 1], 'POST', UrlGeneratorInterface::ABSOLUTE_URL)
+            ->with(...$expectedArguments)
             ->willReturn('/url1');
 
-        $this->generator->expects($this->at(1))
-            ->method('generate')
-            ->with('route1', ['page' => 1], 'POST', UrlGeneratorInterface::NETWORK_PATH)
-            ->willReturn('/url2');
-
-
-        $this->assertEquals('/url1', $this->runtime->url('route1', ['page' => 1], 'POST'));
-        $this->assertEquals('/url2', $this->runtime->url('route1', ['page' => 1], 'POST', true));
+        $this->assertEquals('/url1', $this->runtime->url(...$arguments));
     }
 
-    public function testPath()
+    public function urlDataProvider()
     {
-        $this->generator->expects($this->at(0))
+        return [
+            [
+                ['route1', ['page' => 1], 'POST'],
+                UrlGeneratorInterface::ABSOLUTE_URL,
+            ],
+
+            [
+                ['route1', ['page' => 1], 'POST', true],
+                UrlGeneratorInterface::NETWORK_PATH,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider pathDataProvider
+     */
+    public function testPath($arguments, $expectedReferenceType)
+    {
+        $expectedArguments = array_slice($arguments, 0, 3);
+        $expectedArguments += [1 => [], 2 => 'GET', 3 => $expectedReferenceType];
+
+        $this->generator->expects($this->once())
             ->method('generate')
-            ->with('route1', ['page' => 1], 'POST', UrlGeneratorInterface::ABSOLUTE_PATH)
+            ->with(...$expectedArguments)
             ->willReturn('/url1');
 
-        $this->generator->expects($this->at(1))
+        $this->assertEquals('/url1', $this->runtime->path(...$arguments));
+    }
+
+    public function pathDataProvider()
+    {
+        return [
+            [
+                ['route1', ['page' => 1], 'POST'],
+                UrlGeneratorInterface::ABSOLUTE_PATH,
+            ],
+
+            [
+                ['route1', ['page' => 1], 'POST', true],
+                UrlGeneratorInterface::RELATIVE_PATH,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider routeDataProvider
+     */
+    public function testRoute($arguments, $expectedReferenceType)
+    {
+        $expectedArguments = array_slice($arguments, 0, 3);
+        $expectedArguments += [1 => [], 2 => 'GET', 3 => $expectedReferenceType];
+
+        $this->generator->expects($this->once())
             ->method('generate')
-            ->with('route1', ['page' => 1], 'POST', UrlGeneratorInterface::RELATIVE_PATH)
-            ->willReturn('/url2');
+            ->with(...$expectedArguments)
+            ->willReturn('/url1');
 
+        $this->assertEquals('/url1', $this->runtime->route(...$arguments));
+    }
 
-        $this->assertEquals('/url1', $this->runtime->path('route1', ['page' => 1], 'POST'));
-        $this->assertEquals('/url2', $this->runtime->path('route1', ['page' => 1], 'POST', true));
+    public function routeDataProvider()
+    {
+        return [
+            [
+                ['route1', ['page' => 1], 'POST'],
+                UrlGeneratorInterface::ABSOLUTE_PATH,
+            ],
+
+            [
+                ['route1', ['page' => 1], 'POST', ['path']],
+                UrlGeneratorInterface::ABSOLUTE_PATH,
+            ],
+
+            [
+                ['route1', ['page' => 1], 'POST', ['path', false]],
+                UrlGeneratorInterface::ABSOLUTE_PATH,
+            ],
+
+            [
+                ['route1', ['page' => 1], 'POST', ['path', true]],
+                UrlGeneratorInterface::RELATIVE_PATH,
+            ],
+
+            [
+                ['route1', ['page' => 1], 'POST', ['url']],
+                UrlGeneratorInterface::ABSOLUTE_URL,
+            ],
+
+            [
+                ['route1', ['page' => 1], 'POST', ['url', false]],
+                UrlGeneratorInterface::ABSOLUTE_URL,
+            ],
+
+            [
+                ['route1', ['page' => 1], 'POST', ['url', true]],
+                UrlGeneratorInterface::NETWORK_PATH,
+            ],
+
+        ];
+    }
+
+    public function testRouteException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid reference type: "qwerty"');
+
+        $this->runtime->route('route1', ['page' => 1], 'POST', ['qwerty']);
     }
 
 
