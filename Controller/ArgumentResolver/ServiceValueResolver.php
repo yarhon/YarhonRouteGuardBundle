@@ -11,8 +11,8 @@
 namespace Yarhon\RouteGuardBundle\Controller\ArgumentResolver;
 
 use Psr\Container\ContainerInterface;
-use Symfony\Component\DependencyInjection\Exception\RuntimeException as ContainerRuntimeException;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\DependencyInjection\Exception\RuntimeException as ContainerRuntimeException;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
