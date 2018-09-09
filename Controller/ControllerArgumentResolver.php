@@ -23,14 +23,14 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 class ControllerArgumentResolver
 {
     /**
-     * @var ArgumentValueResolverInterface[]
+     * @var \Traversable|ArgumentValueResolverInterface[]
      */
     private $argumentValueResolvers;
 
     /**
      * ControllerArgumentResolver constructor.
      *
-     * @param ArgumentValueResolverInterface[] $argumentValueResolvers
+     * @param \Traversable|ArgumentValueResolverInterface[] $argumentValueResolvers
      */
     public function __construct($argumentValueResolvers = [])
     {
@@ -57,7 +57,7 @@ class ControllerArgumentResolver
             return $resolved;
         }
 
-        $message = 'Controller "%s" requires that you provide a value for the "$%s" argument. Either the argument is nullable and no null value has been provided, no default value has been provided or because there is a non optional argument after this one.';
+        $message = 'Controller "%s" requires that you provide a value for the "$%s" argument.';
         throw new RuntimeException(sprintf($message, $context->getControllerName(), $argumentMetadata->getName()));
     }
 }

@@ -20,11 +20,16 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 class DelegatingTestResolver implements TestResolverInterface
 {
     /**
-     * @var TestResolverInterface[]
+     * @var \Traversable|TestResolverInterface[]
      */
     private $resolvers;
 
-    public function __construct(array $resolvers)
+    /**
+     * DelegatingTestResolver constructor.
+     *
+     * @param \Traversable|TestResolverInterface[] $resolvers
+     */
+    public function __construct($resolvers = [])
     {
         foreach ($resolvers as $resolver) {
             $this->addResolver($resolver);

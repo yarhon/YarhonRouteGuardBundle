@@ -40,7 +40,7 @@ class ControllerMetadata
      */
     public function all()
     {
-        return $this->arguments;
+        return array_values($this->arguments);
     }
 
     /**
