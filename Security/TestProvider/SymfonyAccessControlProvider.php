@@ -10,11 +10,11 @@
 
 namespace Yarhon\RouteGuardBundle\Security\TestProvider;
 
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
-use Psr\Log\LoggerAwareTrait;
 use Yarhon\RouteGuardBundle\Security\Http\RouteMetadata;
 use Yarhon\RouteGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\RouteGuardBundle\Security\Http\RouteMatcher;

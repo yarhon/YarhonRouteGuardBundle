@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yarhon\RouteGuardBundle\DependencyInjection\YarhonRouteGuardExtension;
 use Yarhon\RouteGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer;
 use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
+use Yarhon\RouteGuardBundle\YarhonRouteGuardBundle;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -32,16 +33,22 @@ class YarhonRouteGuardExtensionTest extends TestCase
         $this->container = new ContainerBuilder();
         $this->container->registerExtension($extension);
 
+        $this->container->loadFromExtension($extension->getAlias());
+
+        // $bundle = new YarhonRouteGuardBundle();
+        // $bundle->build($this->container);
+    }
+
+    public function testSetConfigParameters()
+    {
         $config = [
             'ignore_controllers' => ['test'],
             'twig' => ['tag_name' => 'test'],
         ];
 
+        $extension = new YarhonRouteGuardExtension();
         $this->container->loadFromExtension($extension->getAlias(), $config);
-    }
 
-    public function testConfigParametersAreSet()
-    {
         $this->container->getCompilerPassConfig()->setOptimizationPasses([]);
         $this->container->getCompilerPassConfig()->setRemovingPasses([]);
         $this->container->compile();
@@ -63,7 +70,7 @@ class YarhonRouteGuardExtensionTest extends TestCase
         ];
 
         $aliases = [
-            'yarhon_route_guard.authorization_checker',
+            'yarhon_route_guard.route_authorization_checker',
             'Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface',
         ];
 
@@ -86,18 +93,24 @@ class YarhonRouteGuardExtensionTest extends TestCase
     {
         $this->container->setParameter('kernel.cache_dir', 'test_cache_dir');
 
-        //$this->container->register('security.authorization_checker')->setSynthetic(true);
-        //$this->container->register('request_stack')->setSynthetic(true);
+        $this->container->register('router.default')->setSynthetic(true);
+        $this->container->register('security.authorization_checker')->setSynthetic(true);
 
         $services = [
-            'yarhon_route_guard.authorization_checker',
+            'yarhon_route_guard.route_authorization_checker',
+            'yarhon_route_guard.route_test_resolver',
+            'yarhon_route_guard.authorized_url_generator',
         ];
 
+        //$this->container->getCompilerPassConfig()->setOptimizationPasses([]);
+        //$this->container->getCompilerPassConfig()->setRemovingPasses([]);
         $this->container->compile();
 
         foreach ($services as $id) {
-            $this->assertTrue($this->container->hasDefinition($id), $id);
+            $this->assertTrue($this->container->has($id), $id);
         }
+
+        $this->markTestIncomplete('Watch for service changes.');
     }
 
     private function getDefinitions()

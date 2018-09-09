@@ -16,7 +16,7 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 /**
  * ControllerNameConverter holds convert methods for controller names in deprecated formats.
  * We can't just use the original code for the following reasons:
- * - convertBundleNotation: in order not to tie to symfony/framework-bundle (it's optional)
+ * - convertBundleNotation: in order not to use classes from symfony/framework-bundle
  * - convertServiceNotation: no separate converter exists in symfony/http-kernel.
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

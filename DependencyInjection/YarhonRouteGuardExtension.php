@@ -35,6 +35,11 @@ class YarhonRouteGuardExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $this->setConfigParameters($config, $container);
+    }
+
+    private function setConfigParameters(array $config, ContainerBuilder $container)
+    {
         $definition = $container->getDefinition(RemoveIgnoredTransformer::class);
         $definition->replaceArgument(0, $config['ignore_controllers']);
 

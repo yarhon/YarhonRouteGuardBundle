@@ -80,7 +80,7 @@ class VariableResolver
 
             return $this->controllerArgumentResolver->getArgument($argumentResolverContext, $argumentMetadata);
         } elseif ($context->getRequestAttributes()->has($name)) {
-            return $resolved[$name] = $context->getRequestAttributes()->get($name);
+            return $context->getRequestAttributes()->get($name);
         }
 
         throw new RuntimeException(sprintf('Variable is neither a controller argument nor request attribute.'));

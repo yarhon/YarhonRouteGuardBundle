@@ -19,7 +19,7 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RouteTestResolver implements LoggerAwareInterface
+class RouteTestResolver implements RouteTestResolverInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -39,8 +39,13 @@ class RouteTestResolver implements LoggerAwareInterface
         $this->testResolver = $testResolver;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getTests(RouteContextInterface $routeContext)
     {
+        // TODO: add @throws to interface doc
+
         $tests = [];
 
         $testBags = $this->accessMap->get($routeContext->getName());

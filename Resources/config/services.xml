@@ -135,19 +135,23 @@
             </call>
             <tag name="monolog.logger" channel="route_guard" />
         </service>
+        <service id="yarhon_route_guard.route_test_resolver" alias="Yarhon\RouteGuardBundle\Security\RouteTestResolver" public="true"/>
+        <service id="Yarhon\RouteGuardBundle\Security\RouteTestResolverInterface" alias="yarhon_route_guard.route_test_resolver" />
 
         <service id="Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\RouteTestResolver" />
             <argument type="service" id="security.authorization_checker" />
         </service>
-        <service id="yarhon_route_guard.authorization_checker" alias="Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker" public="true"/>
-        <service id="Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface" alias="yarhon_route_guard.authorization_checker" />
+        <service id="yarhon_route_guard.route_authorization_checker" alias="Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker" public="true"/>
+        <service id="Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface" alias="yarhon_route_guard.route_authorization_checker" />
 
         <service id="Yarhon\RouteGuardBundle\Routing\AuthorizedUrlGenerator">
             <argument type="service" id="router.default" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker" />
             <argument type="service" id="router.default" />
         </service>
+        <service id="yarhon_route_guard.authorized_url_generator" alias="Yarhon\RouteGuardBundle\Routing\AuthorizedUrlGenerator" public="true"/>
+        <service id="Yarhon\RouteGuardBundle\Routing\AuthorizedUrlGeneratorInterface" alias="yarhon_route_guard.authorized_url_generator" />
 
         <!-- twig services -->
 
