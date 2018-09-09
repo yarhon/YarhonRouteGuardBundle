@@ -11,8 +11,8 @@
 namespace Yarhon\RouteGuardBundle\Tests\Twig;
 
 use PHPUnit\Framework\TestCase;
-use Yarhon\RouteGuardBundle\Twig\RoutingRuntime;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Yarhon\RouteGuardBundle\Twig\RoutingRuntime;
 use Yarhon\RouteGuardBundle\Routing\AuthorizedUrlGeneratorInterface;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 

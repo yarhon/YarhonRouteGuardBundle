@@ -11,11 +11,11 @@
 namespace Yarhon\RouteGuardBundle\Tests\Controller\ArgumentResolver;
 
 use PHPUnit\Framework\TestCase;
-use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\SessionValueResolver;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\SessionValueResolver;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContext;
 
 /**

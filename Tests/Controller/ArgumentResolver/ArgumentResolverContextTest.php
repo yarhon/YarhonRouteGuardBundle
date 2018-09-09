@@ -11,9 +11,9 @@
 namespace Yarhon\RouteGuardBundle\Tests\Controller\ArgumentResolver;
 
 use PHPUnit\Framework\TestCase;
-use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContext;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

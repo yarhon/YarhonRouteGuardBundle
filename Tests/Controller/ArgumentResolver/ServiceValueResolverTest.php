@@ -12,9 +12,9 @@ namespace Yarhon\RouteGuardBundle\Tests\Controller\ArgumentResolver;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
-use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ServiceValueResolver;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException as ContainerRuntimeException;
+use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ServiceValueResolver;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContext;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 

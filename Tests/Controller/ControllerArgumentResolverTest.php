@@ -11,8 +11,8 @@
 namespace Yarhon\RouteGuardBundle\Tests\Controller;
 
 use PHPUnit\Framework\TestCase;
-use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentValueResolverInterface;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContextInterface;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;

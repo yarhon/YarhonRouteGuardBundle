@@ -54,6 +54,10 @@ class AuthorizedUrlGenerator implements AuthorizedUrlGeneratorInterface
     {
         $localizedName = $this->detectLocalizedRoute($name, $parameters);
 
+        if ($localizedName) {
+            unset($parameters['_locale']);
+        }
+
         $routeContext = new RouteContext($localizedName ?: $name, $parameters, $method, $referenceType);
 
         $isGranted = $this->authorizationChecker->isGranted($routeContext);
