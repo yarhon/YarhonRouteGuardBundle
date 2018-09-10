@@ -12,6 +12,7 @@ namespace Yarhon\RouteGuardBundle\Routing;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\Routing\RequestContext;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
@@ -20,9 +21,9 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 class RequestAttributesFactory
 {
     /**
-     * @var array
+     * @var RequestContext
      */
-    private $contextParameters;
+    private $generatorContext;
 
     /**
      * RequestAttributesFactory constructor.
@@ -31,7 +32,7 @@ class RequestAttributesFactory
      */
     public function __construct(UrlGeneratorInterface $urlGenerator)
     {
-        $this->contextParameters = $urlGenerator->getContext()->getParameters();
+        $this->generatorContext = $urlGenerator->getContext();
     }
 
     /**
@@ -61,11 +62,13 @@ class RequestAttributesFactory
 
         $variables = array_flip($routeMetadata->getVariables());
 
-        // We should add only context parameters being used as route variables, others wouldn't be presented in generated url,
-        // and therefore wouldn't be returned by the UrlMatcher.
-        $contextParameters = array_intersect_key($this->contextParameters, $variables);
+        $parameters = array_replace($this->generatorContext->getParameters(), $parameters);
 
-        $attributes = array_replace($defaults, $contextParameters, $parameters);
+        // We should add only parameters being used as route variables, others wouldn't be presented in generated url,
+        // and therefore wouldn't be returned by the UrlMatcher.
+        $parameters = array_intersect_key($parameters, $variables);
+
+        $attributes = array_replace($defaults, $parameters);
 
         if ($diff = array_diff_key($variables, $attributes)) {
             $missing = implode('", "', array_keys($diff));
@@ -88,7 +91,7 @@ class RequestAttributesFactory
         unset($defaults['_canonical_route'], $defaults['_controller']);
         // Other special parameters returned (if present): _format, _fragment, _locale
 
-        $attributes = array_unique(array_merge(array_keys($defaults), $routeMetadata->getVariables()));
+        $attributes = array_unique(array_merge($routeMetadata->getVariables(), array_keys($defaults)));
 
         $attributes = array_fill_keys($attributes, null);
 

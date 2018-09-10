@@ -26,9 +26,11 @@ use Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface;
 class AuthorizedUrlGeneratorTest extends TestCase
 {
     private $generatorDelegate;
+
     private $generatorDelegateContext;
+
     private $authorizationChecker;
-    private $router;
+
     private $routeCollection;
 
     private $generator;
@@ -38,7 +40,6 @@ class AuthorizedUrlGeneratorTest extends TestCase
         $this->generatorDelegate = $this->createMock(UrlGeneratorInterface::class);
         $this->generatorDelegateContext = $this->createMock(RequestContext::class);
         $this->authorizationChecker = $this->createMock(RouteAuthorizationCheckerInterface::class);
-        $this->router = $this->createMock(RouterInterface::class);
 
         $this->generatorDelegate->method('getContext')
             ->willReturn($this->generatorDelegateContext);
@@ -49,10 +50,12 @@ class AuthorizedUrlGeneratorTest extends TestCase
 
         $this->routeCollection = $this->createMock(RouteCollection::class);
 
-        $this->router->method('getRouteCollection')
+        $router = $this->createMock(RouterInterface::class);
+
+        $router->method('getRouteCollection')
             ->willReturn($this->routeCollection);
 
-        $this->generator = new AuthorizedUrlGenerator($this->generatorDelegate, $this->authorizationChecker, $this->router);
+        $this->generator = new AuthorizedUrlGenerator($this->generatorDelegate, $this->authorizationChecker, $router);
     }
 
     public function testGenerateRouteContext()

@@ -84,7 +84,7 @@ class AuthorizedUrlGenerator implements AuthorizedUrlGeneratorInterface
      *
      * @return string|null
      */
-    protected function detectLocalizedRoute($name, array $parameters = [])
+    protected function detectLocalizedRoute($name, array $parameters)
     {
         $defaultLocale = null;
         $contextLocale = $this->delegate->getContext()->getParameter('_locale');

@@ -77,15 +77,25 @@ class UrlDeferred implements UrlDeferredInterface
 
         $referenceType = $this->referenceType;
 
-        if (UrlGeneratorInterface::ABSOLUTE_PATH !== $referenceType && UrlGeneratorInterface::NETWORK_PATH !== $referenceType) {
-            $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH;
+        // We need to parse path and host from the generated url, that depends on reference type.
+        // When using ABSOLUTE_URL or NETWORK_PATH, generated url will contain both path and host.
+        // When using ABSOLUTE_PATH, generated url will contain only host.
+        // If route has some specific host assigned, the UrlGenerator will force reference type to ABSOLUTE_URL or NETWORK_PATH,
+        // that would produce url with host.
+        // So, with ABSOLUTE_PATH and RELATIVE_PATH, if generated url does not contains host, we can be sure
+        // that the host is the "current" host, and grab it from UrlGenerator context.
+        // Finally, with RELATIVE_PATH we can't simply determine path, so we use ABSOLUTE_URL,
+        // and don't save the generated url.
+
+        if (UrlGeneratorInterface::RELATIVE_PATH === $referenceType) {
+            $referenceType = UrlGeneratorInterface::ABSOLUTE_URL;
         }
 
         $url = $urlGenerator->generate($this->name, $this->parameters, $referenceType);
 
         $this->parseUrl($url, $urlGenerator->getContext());
 
-        // TODO: produce generated url with original $referenceType for relative reference types
+        // TODO: produce generated url with original $referenceType for RELATIVE_PATH
         if ($referenceType === $this->referenceType) {
             $this->generatedUrl = $url;
         }
@@ -97,7 +107,7 @@ class UrlDeferred implements UrlDeferredInterface
 
     private function parseUrl($url, RequestContext $urlContext)
     {
-        $this->host = parse_url($url, PHP_URL_HOST);
+        $this->host = parse_url($url, PHP_URL_HOST) ?: $urlContext->getHost();
 
         $pathInfo = parse_url($url, PHP_URL_PATH);
 
