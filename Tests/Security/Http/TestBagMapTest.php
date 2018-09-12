@@ -51,7 +51,7 @@ class TestBagMapTest extends TestCase
 
         $testBagMap = new TestBagMap($map);
 
-        $this->assertAttributeEquals($map, 'elements', $testBagMap);
+        $this->assertEquals($map, iterator_to_array($testBagMap));
     }
 
     public function testResolveWhenConstraintMatches()

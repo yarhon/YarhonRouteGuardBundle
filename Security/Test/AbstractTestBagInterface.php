@@ -16,14 +16,14 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
 interface AbstractTestBagInterface extends \IteratorAggregate, \Countable
 {
     /**
-     * @param string $name
+     * @param string $class
      */
-    public function setProviderName($name);
+    public function setProviderClass($class);
 
     /**
      * @return string
      */
-    public function getProviderName();
+    public function getProviderClass();
 
     /**
      * @param mixed $metadata

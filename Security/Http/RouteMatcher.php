@@ -106,7 +106,7 @@ class RouteMatcher
         // but for route /secure1/ static prefix is /secure1/
 
         if ('^' != $pattern[0]) {
-            // TODO: issue some warning in debug, because in this case we can't rely on static prefix
+
         }
 
         if (!preg_match('{'.$pattern.'}', $staticPrefix)) {
@@ -139,5 +139,23 @@ class RouteMatcher
     private function matchHostPattern(Route $route, $pattern)
     {
         return 0;
+    }
+
+    private static function determineStaticPrefix(Route $route, array $tokens): string
+    {
+
+
+
+        if ('text' !== $tokens[0][0]) {
+            return ('/' !== $tokens[0][1] && false === $route->hasDefault($tokens[0][3])) ? $tokens[0][1] : '' ;
+        }
+
+        $prefix = $tokens[0][1];
+
+        if (isset($tokens[1][1]) && '/' !== $tokens[1][1] && false === $route->hasDefault($tokens[1][3])) {
+            $prefix .= $tokens[1][1];
+        }
+
+        return $prefix;
     }
 }

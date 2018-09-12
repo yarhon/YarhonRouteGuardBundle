@@ -49,11 +49,11 @@ class DelegatingTestResolver implements TestResolverInterface
      */
     public function resolve(AbstractTestBagInterface $testBag, RouteContextInterface $routeContext)
     {
-        if (!isset($this->testResolvers[$testBag->getProviderName()])) {
-            throw new RuntimeException(sprintf('No resolver exists for provider "%"', $testBag->getProviderName()));
+        if (!isset($this->testResolvers[$testBag->getProviderClass()])) {
+            throw new RuntimeException(sprintf('No resolver exists for provider "%"', $testBag->getProviderClass()));
         }
 
-        $resolver = $this->resolvers[$testBag->getProviderName()];
+        $resolver = $this->resolvers[$testBag->getProviderClass()];
 
         return $resolver->resolve($testBag, $routeContext);
     }
@@ -63,6 +63,6 @@ class DelegatingTestResolver implements TestResolverInterface
      */
     private function addResolver(TestResolverInterface $resolver)
     {
-        $this->resolvers[$resolver->getName()] = $resolver;
+        $this->resolvers[$resolver->getProviderClass()] = $resolver;
     }
 }

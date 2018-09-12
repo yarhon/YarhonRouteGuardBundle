@@ -18,6 +18,7 @@ use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Http\TestBagMapInterface;
 use Yarhon\RouteGuardBundle\Security\Http\RequestContext;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
+use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 
 /**
@@ -44,9 +45,9 @@ class SymfonyAccessControlResolver implements TestResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getProviderClass()
     {
-        return 'symfony_access_control';
+        return SymfonyAccessControlProvider::class;
     }
 
     /**

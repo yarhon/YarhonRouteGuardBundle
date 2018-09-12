@@ -17,6 +17,7 @@ use Yarhon\RouteGuardBundle\Security\Sensio\VariableResolver;
 use Yarhon\RouteGuardBundle\Security\Sensio\VariableResolverContext;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
+use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
@@ -38,9 +39,9 @@ class SensioSecurityResolver implements TestResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getProviderClass()
     {
-        return 'sensio_security';
+        return SensioSecurityProvider::class;
     }
 
     /**
@@ -85,12 +86,11 @@ class SensioSecurityResolver implements TestResolverInterface
 
         foreach ($testBag as $testArguments) {
             /** @var TestArguments $testArguments */
-            if ($testArguments->requiresSubject()) {
-                $name = $testArguments->getSubjectMetadata()[0];
+            if ($subjectName = $testArguments->getMetadata()) {
                 try {
-                    $value = $resolve($name);
+                    $value = $resolve($subjectName);
                 } catch (RuntimeException $e) {
-                    $message = sprintf('Cannot resolve subject variable "%s". %s', $name, $e->getMessage());
+                    $message = sprintf('Cannot resolve subject variable "%s". %s', $subjectName, $e->getMessage());
                     throw new RuntimeException($message, 0, $e);
                 }
                 $testArguments->setSubject($value);

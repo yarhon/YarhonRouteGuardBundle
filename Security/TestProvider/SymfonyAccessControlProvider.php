@@ -97,14 +97,6 @@ class SymfonyAccessControlProvider implements TestProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return 'symfony_access_control';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function onBuild()
     {
         $this->inspectRules();

@@ -25,9 +25,9 @@ class TestArguments
     private $attributes = [];
 
     /**
-     * @var array
+     * @var mixed
      */
-    private $subjectMetadata;
+    private $metadata;
 
     /**
      * @var mixed
@@ -51,28 +51,19 @@ class TestArguments
     }
 
     /**
-     * @param string $name
-     * @param mixed  $metadata
+     * @param mixed $metadata
      */
-    public function setSubjectMetadata($name, $metadata = null)
+    public function setMetadata($metadata)
     {
-        $this->subjectMetadata = [$name, $metadata];
+        $this->metadata = $metadata;
     }
 
     /**
-     * @return bool
+     * @return mixed
      */
-    public function requiresSubject()
+    public function getMetadata()
     {
-        return null !== $this->subjectMetadata;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSubjectMetadata()
-    {
-        return $this->subjectMetadata;
+        return $this->metadata;
     }
 
     /**

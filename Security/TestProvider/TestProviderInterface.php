@@ -31,10 +31,5 @@ interface TestProviderInterface extends LoggerAwareInterface
      */
     public function getTests(Route $route);
 
-    /**
-     * @return string
-     */
-    public function getName();
-
     public function onBuild();
 }

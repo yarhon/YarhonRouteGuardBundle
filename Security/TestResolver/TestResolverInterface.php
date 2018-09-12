@@ -33,5 +33,5 @@ interface TestResolverInterface
     /**
      * @return string
      */
-    public function getName();
+    public function getProviderClass();
 }

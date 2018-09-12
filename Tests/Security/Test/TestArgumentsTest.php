@@ -1,0 +1,43 @@
+<?php
+
+/*
+ *
+ * (c) Yaroslav Honcharuk <yaroslav.xs@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Yarhon\RouteGuardBundle\Tests\Security\Test;
+
+use PHPUnit\Framework\TestCase;
+use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
+
+/**
+ * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
+ */
+class TestArgumentsTest extends TestCase
+{
+    public function testConstruct()
+    {
+        $arguments = new TestArguments(['foo', 'bar']);
+
+        $this->assertSame(['foo', 'bar'], $arguments->getAttributes());
+    }
+
+    public function testSubject()
+    {
+        $arguments = new TestArguments([]);
+
+        $arguments->setSubject('foo');
+        $this->assertSame('foo', $arguments->getSubject());
+    }
+
+    public function testMetadata()
+    {
+        $arguments = new TestArguments([]);
+
+        $arguments->setMetadata('foo');
+        $this->assertSame('foo', $arguments->getMetadata());
+    }
+}

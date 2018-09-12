@@ -80,14 +80,6 @@ class SensioSecurityProvider implements TestProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return 'sensio_security';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function onBuild()
     {
     }
@@ -109,7 +101,6 @@ class SensioSecurityProvider implements TestProviderInterface
         $routeMetadata = new RouteMetadata($route);
         $controllerMetadata = new ControllerMetadata($arguments);
         $variableNames = $this->variableResolver->getVariableNames($routeMetadata, $controllerMetadata);
-        // TODO: warning if some variable names overlaps with SensioSecurityExpressionVoter variables
 
         $annotations = $this->reader->read($class, $method, [SecurityAnnotation::class, IsGrantedAnnotation::class]);
 
@@ -127,7 +118,7 @@ class SensioSecurityProvider implements TestProviderInterface
                 $expression = $annotation->getExpression();
 
                 try {
-                    // At first try to create expression without any variable names
+                    // At first try to create expression without any variable names to save time during expression resolving
                     $expression = $this->createExpression($expression);
                 } catch (InvalidArgumentException $e) {
                     $expression = $this->createExpression($expression, $variableNames);
@@ -175,6 +166,8 @@ class SensioSecurityProvider implements TestProviderInterface
     {
         $defaultNames = SensioSecurityExpressionVoter::getVariableNames();
         $names = array_merge($defaultNames, $names);
+
+        // TODO: warning if some variable names overlaps with SensioSecurityExpressionVoter variables
 
         try {
             $parsed = $this->expressionLanguage->parse($expression, $names);

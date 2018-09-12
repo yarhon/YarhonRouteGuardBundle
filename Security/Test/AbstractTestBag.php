@@ -15,9 +15,9 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
  */
 abstract class AbstractTestBag implements AbstractTestBagInterface
 {
-    protected $elements;
+    protected $elements = [];
 
-    protected $provideName;
+    protected $providerClass;
 
     protected $metadata;
 
@@ -40,17 +40,17 @@ abstract class AbstractTestBag implements AbstractTestBagInterface
     /**
      * {@inheritdoc}
      */
-    public function setProviderName($name)
+    public function setProviderClass($class)
     {
-        $this->provideName = $name;
+        $this->providerClass = $class;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getProviderName()
+    public function getProviderClass()
     {
-        return $this->provideName;
+        return $this->providerClass;
     }
 
     /**
