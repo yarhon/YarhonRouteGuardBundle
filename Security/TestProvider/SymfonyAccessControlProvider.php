@@ -15,7 +15,6 @@ use Symfony\Component\Routing\Route;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
-use Yarhon\RouteGuardBundle\Security\Http\RouteMetadata;
 use Yarhon\RouteGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\RouteGuardBundle\Security\Http\RouteMatcher;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
@@ -152,9 +151,6 @@ class SymfonyAccessControlProvider implements TestProviderInterface
             $testBag = $matches[0][0];
         } else {
             $testBag = new TestBagMap($matches);
-
-            $routeMetadata = new RouteMetadata($route);
-            $testBag->setMetadata($routeMetadata);
         }
 
         return $testBag;

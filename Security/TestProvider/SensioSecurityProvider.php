@@ -109,6 +109,7 @@ class SensioSecurityProvider implements TestProviderInterface
         $routeMetadata = new RouteMetadata($route);
         $controllerMetadata = new ControllerMetadata($arguments);
         $variableNames = $this->variableResolver->getVariableNames($routeMetadata, $controllerMetadata);
+        // TODO: warning if some variable names overlaps with SensioSecurityExpressionVoter variables
 
         $annotations = $this->reader->read($class, $method, [SecurityAnnotation::class, IsGrantedAnnotation::class]);
 

@@ -15,8 +15,5 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
  */
 interface TestBagInterface extends AbstractTestBagInterface
 {
-    /**
-     * @param TestArguments $arguments
-     */
-    public function add(TestArguments $arguments);
+
 }

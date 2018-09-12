@@ -19,12 +19,6 @@ use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 interface TestBagMapInterface extends AbstractTestBagInterface
 {
     /**
-     * @param TestBagInterface                $testBag
-     * @param RequestConstraintInterface|null $requestConstraint
-     */
-    public function add(TestBagInterface $testBag, RequestConstraintInterface $requestConstraint = null);
-
-    /**
      * @param RequestContext $requestContext
      *
      * @return TestBagInterface|null

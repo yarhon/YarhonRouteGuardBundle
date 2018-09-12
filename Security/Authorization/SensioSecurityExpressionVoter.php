@@ -77,25 +77,10 @@ class SensioSecurityExpressionVoter extends Voter
 
         $variables = $this->getVariables($token, $subject);
 
-        // TODO: do something with overlapped variables
-        // $overlapped = $this->findOverlappedVariables($variables, $expressionVariables);
-
         // In case of overlap, built-in variables win.
         $variables = array_merge($expressionVariables, $variables);
 
         return $this->expressionLanguage->evaluate($attribute->getExpression(), $variables);
-    }
-
-    protected function findOverlappedVariables(array $primary, array $secondary)
-    {
-        $overlapped = array_intersect(array_keys($primary), array_keys($secondary));
-        foreach ($overlapped as $key => $variableName) {
-            if ($primary[$variableName] === $secondary[$variableName]) {
-                unset($overlapped[$key]);
-            }
-        }
-
-        return $overlapped;
     }
 
     /**

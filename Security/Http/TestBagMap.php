@@ -33,14 +33,6 @@ class TestBagMap extends AbstractTestBag implements TestBagMapInterface
     /**
      * {@inheritdoc}
      */
-    public function add(TestBagInterface $testBag, RequestConstraintInterface $constraint = null)
-    {
-        $this->elements[] = [$testBag, $constraint];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function resolve(RequestContext $requestContext)
     {
         $resolved = null;
@@ -56,5 +48,14 @@ class TestBagMap extends AbstractTestBag implements TestBagMapInterface
         }
 
         return $resolved;
+    }
+
+    /**
+     * @param TestBagInterface                $testBag
+     * @param RequestConstraintInterface|null $constraint
+     */
+    private function add(TestBagInterface $testBag, RequestConstraintInterface $constraint = null)
+    {
+        $this->elements[] = [$testBag, $constraint];
     }
 }

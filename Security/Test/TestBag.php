@@ -31,9 +31,9 @@ class TestBag extends AbstractTestBag implements TestBagInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param TestArguments $arguments
      */
-    public function add(TestArguments $arguments)
+    private function add(TestArguments $arguments)
     {
         $this->elements[] = $arguments;
     }

@@ -17,7 +17,6 @@ use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Http\TestBagMapInterface;
 use Yarhon\RouteGuardBundle\Security\Http\RequestContext;
-use Yarhon\RouteGuardBundle\Security\Http\RouteMetadata;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 
@@ -60,8 +59,7 @@ class SymfonyAccessControlResolver implements TestResolverInterface
         }
 
         if ($testBag instanceof TestBagMapInterface) {
-            $routeMetadata = $testBag->getMetadata();
-            $requestContext = $this->createRequestContext($routeContext, $routeMetadata);
+            $requestContext = $this->createRequestContext($routeContext);
             $testBag = $testBag->resolve($requestContext);
             if (null === $testBag) {
                 return [];
@@ -83,11 +81,10 @@ class SymfonyAccessControlResolver implements TestResolverInterface
 
     /**
      * @param RouteContextInterface $routeContext
-     * @param RouteMetadata         $routeMetadata
      *
      * @return RequestContext
      */
-    private function createRequestContext(RouteContextInterface $routeContext, RouteMetadata $routeMetadata)
+    private function createRequestContext(RouteContextInterface $routeContext)
     {
         $urlGenerator = $this->urlGenerator;
 
@@ -97,7 +94,6 @@ class SymfonyAccessControlResolver implements TestResolverInterface
             return $urlDeferred->generate($urlGenerator)->getPathInfo();
         };
 
-        // TODO: set host as string to $requestContext if possible (route has no host, or route has static host)
         $hostClosure = function () use ($urlDeferred, $urlGenerator) {
             return $urlDeferred->generate($urlGenerator)->getHost();
         };
