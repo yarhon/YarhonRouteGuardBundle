@@ -77,13 +77,13 @@ class ExpressionDecorator
         $missed = array_diff($this->names, array_keys($variables));
 
         if (count($missed)) {
-            throw new InvalidArgumentException(sprintf('Missed variables: %s', implode(', ', $missed)));
+            throw new InvalidArgumentException(sprintf('Missed variables: "%s".', implode('", "', $missed)));
         }
 
         $unknown = array_diff(array_keys($variables), $this->names);
 
         if (count($unknown)) {
-            throw new InvalidArgumentException(sprintf('Unknown variables: %s', implode(', ', $unknown)));
+            throw new InvalidArgumentException(sprintf('Unknown variables: "%s".', implode('", "', $unknown)));
         }
 
         $this->variables = $variables;

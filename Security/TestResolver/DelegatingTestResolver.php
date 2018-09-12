@@ -39,7 +39,7 @@ class DelegatingTestResolver implements TestResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getProviderClass()
     {
         return '';
     }

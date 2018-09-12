@@ -18,7 +18,7 @@ use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
  */
 class TestArgumentsTest extends TestCase
 {
-    public function testConstruct()
+    public function testAttributes()
     {
         $arguments = new TestArguments(['foo', 'bar']);
 
