@@ -13,7 +13,6 @@ namespace Yarhon\RouteGuardBundle\Security\Sensio;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
-use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContext;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
@@ -95,11 +94,10 @@ class VariableResolver
     public function getVariableNames(RouteMetadataInterface $routeMetadata, ControllerMetadata $controllerMetadata)
     {
         $requestAttributes = $this->requestAttributesFactory->getAttributesPrototype($routeMetadata);
-        // $argumentResolverContext = new ArgumentResolverContext($requestAttributes, $routeMetadata->getControllerName());
 
         $names = [];
 
-        foreach ($controllerMetadata as $name => $argumentMetadata) {
+        foreach ($controllerMetadata->keys() as $name) {
             $isResolvable = true; // TODO: determine $isResolvable
 
             if ($isResolvable) {
