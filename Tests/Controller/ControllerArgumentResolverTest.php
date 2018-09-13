@@ -11,7 +11,10 @@
 namespace Yarhon\RouteGuardBundle\Tests\Controller;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentValueResolverInterface;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContextInterface;
@@ -22,6 +25,14 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
  */
 class ControllerArgumentResolverTest extends TestCase
 {
+    private $requestStack;
+
+    public function setUp()
+    {
+        $this->requestStack = $this->createMock(RequestStack::class);
+    }
+
+
     public function testGetArgument()
     {
         $valueResolverOne = $this->createMock(ArgumentValueResolverInterface::class);
@@ -46,7 +57,7 @@ class ControllerArgumentResolverTest extends TestCase
             ->method('resolve')
             ->with($context, $metadata);
 
-        $argumentResolver = new ControllerArgumentResolver([$valueResolverOne, $valueResolverTwo]);
+        $argumentResolver = new ControllerArgumentResolver($this->requestStack, [$valueResolverOne, $valueResolverTwo]);
 
         $context = $this->createMock(ArgumentResolverContextInterface::class);
         $metadata = $this->createMock(ArgumentMetadata::class);
@@ -67,11 +78,29 @@ class ControllerArgumentResolverTest extends TestCase
         $metadata->method('getName')
             ->willReturn('page');
 
-        $argumentResolver = new ControllerArgumentResolver();
+        $argumentResolver = new ControllerArgumentResolver($this->requestStack);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Controller "a::b" requires that you provide a value for the "$page" argument.');
 
         $argumentResolver->getArgument($context, $metadata);
+    }
+
+    public function testCreateContext()
+    {
+        $request = $this->createMock(Request::class);
+
+        $this->requestStack->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $requestAttributes = $this->createMock(ParameterBag::class);
+
+        $argumentResolver = new ControllerArgumentResolver($this->requestStack);
+
+        $context = $argumentResolver->createContext($requestAttributes, 'a::b');
+
+        $this->assertEquals($requestAttributes, $context->getAttributes());
+        $this->assertEquals('a::b', $context->getControllerName());
+        $this->assertEquals($request, $context->getRequest());
     }
 }

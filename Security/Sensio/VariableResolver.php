@@ -76,7 +76,7 @@ class VariableResolver
     {
         if ($context->getControllerMetadata()->has($name)) {
             $argumentMetadata = $context->getControllerMetadata()->get($name);
-            $argumentResolverContext = new ArgumentResolverContext($context->getRequestAttributes(), $context->getRouteMetadata()->getControllerName(), $this->requestStack->getCurrentRequest());
+            $argumentResolverContext = $this->controllerArgumentResolver->createContext($context->getRequestAttributes(), $context->getRouteMetadata()->getControllerName());
 
             return $this->controllerArgumentResolver->getArgument($argumentResolverContext, $argumentMetadata);
         } elseif ($context->getRequestAttributes()->has($name)) {

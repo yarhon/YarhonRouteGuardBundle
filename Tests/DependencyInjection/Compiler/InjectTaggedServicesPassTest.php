@@ -40,7 +40,7 @@ class InjectTaggedServicesPassTest extends TestCase
             ->addMethodCall('setRouteCollectionTransformers', [[]])
             ->addMethodCall('setTestProviders', [[]]);
 
-        $this->container->register(ControllerArgumentResolver::class)->addArgument([]);
+        $this->container->register(ControllerArgumentResolver::class)->setArguments([null, []]);
 
         $this->container->register(DelegatingTestResolver::class)->addArgument([]);
 
@@ -120,7 +120,7 @@ class InjectTaggedServicesPassTest extends TestCase
     {
         return [
             [
-                [ControllerArgumentResolver::class, 0],
+                [ControllerArgumentResolver::class, 1],
                 'yarhon_route_guard.argument_value_resolver',
             ],
             [

@@ -10,7 +10,10 @@
 
 namespace Yarhon\RouteGuardBundle\Controller;
 
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContext;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentValueResolverInterface;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContextInterface;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
@@ -23,6 +26,11 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 class ControllerArgumentResolver
 {
     /**
+     * @var RequestStack
+     */
+    private $requestStack;
+
+    /**
      * @var \Traversable|ArgumentValueResolverInterface[]
      */
     private $argumentValueResolvers;
@@ -30,10 +38,12 @@ class ControllerArgumentResolver
     /**
      * ControllerArgumentResolver constructor.
      *
+     * @param RequestStack                                  $requestStack
      * @param \Traversable|ArgumentValueResolverInterface[] $argumentValueResolvers
      */
-    public function __construct($argumentValueResolvers = [])
+    public function __construct(RequestStack $requestStack, $argumentValueResolvers = [])
     {
+        $this->requestStack = $requestStack;
         $this->argumentValueResolvers = $argumentValueResolvers;
     }
 
@@ -59,5 +69,18 @@ class ControllerArgumentResolver
 
         $message = 'Controller "%s" requires that you provide a value for the "$%s" argument.';
         throw new RuntimeException(sprintf($message, $context->getControllerName(), $argumentMetadata->getName()));
+    }
+
+    /**
+     * @param ParameterBag $requestAttributes
+     * @param string       $controllerName
+     *
+     * @return ArgumentResolverContext
+     */
+    public function createContext(ParameterBag $requestAttributes, $controllerName)
+    {
+        $context = new ArgumentResolverContext($requestAttributes, $controllerName, $this->requestStack->getCurrentRequest());
+
+        return $context;
     }
 }

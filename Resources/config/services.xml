@@ -84,6 +84,7 @@
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver">
+            <argument type="service" id="request_stack" />
             <argument type="collection" />
         </service>
 
