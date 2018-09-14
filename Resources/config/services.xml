@@ -37,13 +37,17 @@
         <service id="Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider">
             <argument type="service" id="Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReader" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\Sensio\VariableResolver" />
-            <argument type="service" id="sensio_framework_extra.security.expression_language.default" on-invalid="ignore"/>
             <argument type="service" id="argument_metadata_factory" on-invalid="ignore" />
+            <call method="setExpressionLanguage">
+                <argument type="service" id="sensio_framework_extra.security.expression_language.default" on-invalid="ignore"/>
+            </call>
             <tag name="yarhon_route_guard.test_provider" priority="1024" />
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider">
-            <argument type="service" id="security.expression_language" on-invalid="ignore" />
+            <call method="setExpressionLanguage">
+                <argument type="service" id="security.expression_language" on-invalid="ignore"/>
+            </call>
             <tag name="yarhon_route_guard.test_provider" priority="1023" />
         </service>
 

@@ -49,8 +49,8 @@ class DelegatingTestResolver implements TestResolverInterface
      */
     public function resolve(AbstractTestBagInterface $testBag, RouteContextInterface $routeContext)
     {
-        if (!isset($this->testResolvers[$testBag->getProviderClass()])) {
-            throw new RuntimeException(sprintf('No resolver exists for provider "%"', $testBag->getProviderClass()));
+        if (!isset($this->resolvers[$testBag->getProviderClass()])) {
+            throw new RuntimeException(sprintf('No resolver exists for provider "%s".', $testBag->getProviderClass()));
         }
 
         $resolver = $this->resolvers[$testBag->getProviderClass()];

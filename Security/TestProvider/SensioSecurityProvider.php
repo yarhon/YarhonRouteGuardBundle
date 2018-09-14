@@ -65,16 +65,22 @@ class SensioSecurityProvider implements TestProviderInterface
      *
      * @param ClassMethodAnnotationReaderInterface  $reader
      * @param VariableResolver                      $variableResolver
-     * @param ExpressionLanguage|null               $expressionLanguage
      * @param ArgumentMetadataFactoryInterface|null $argumentMetadataFactory
      */
-    public function __construct(ClassMethodAnnotationReaderInterface $reader, VariableResolver $variableResolver, ExpressionLanguage $expressionLanguage = null, ArgumentMetadataFactoryInterface $argumentMetadataFactory = null)
+    public function __construct(ClassMethodAnnotationReaderInterface $reader, VariableResolver $variableResolver, ArgumentMetadataFactoryInterface $argumentMetadataFactory = null)
     {
         $this->reader = $reader;
         $this->variableResolver = $variableResolver;
-        $this->expressionLanguage = $expressionLanguage;
 
         $this->argumentMetadataFactory = $argumentMetadataFactory ?: new ArgumentMetadataFactory();
+    }
+
+    /**
+     * @param ExpressionLanguage $expressionLanguage
+     */
+    public function setExpressionLanguage(ExpressionLanguage $expressionLanguage)
+    {
+        $this->expressionLanguage = $expressionLanguage;
     }
 
     /**

@@ -18,7 +18,6 @@ use Yarhon\RouteGuardBundle\Security\Sensio\VariableResolverContext;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
-use Yarhon\RouteGuardBundle\Exception\LogicException;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
