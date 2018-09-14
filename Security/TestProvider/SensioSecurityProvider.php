@@ -139,7 +139,7 @@ class SensioSecurityProvider implements TestProviderInterface
             $arguments = new TestArguments($attributes);
 
             if ($subjectName) {
-                $arguments->setSubjectMetadata($subjectName);
+                $arguments->setMetadata($subjectName);
             }
             $tests[] = $arguments;
         }

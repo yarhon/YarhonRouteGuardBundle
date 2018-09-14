@@ -93,9 +93,14 @@
             <tag name="yarhon_route_guard.test_resolver" />
         </service>
 
-        <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver">
+        <service id="Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory">
             <argument type="service" id="request_stack" />
             <argument type="service" id="router.default" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver">
+            <argument type="service" id="request_stack" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory" />
             <tag name="yarhon_route_guard.test_resolver" />
         </service>
 

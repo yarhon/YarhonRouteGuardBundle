@@ -49,10 +49,6 @@ class SensioSecurityResolver implements TestResolverInterface
      */
     public function resolve(AbstractTestBagInterface $testBag, RouteContextInterface $routeContext)
     {
-        if (!($testBag instanceof TestBagInterface)) {
-            throw new LogicException(sprintf('%s expects instance of %s.', __CLASS__, TestBagInterface::class));
-        }
-
         list($routeMetadata, $controllerMetadata) = $testBag->getMetadata();
 
         $context = $this->variableResolver->createContext($routeMetadata, $controllerMetadata, $routeContext->getParameters());
