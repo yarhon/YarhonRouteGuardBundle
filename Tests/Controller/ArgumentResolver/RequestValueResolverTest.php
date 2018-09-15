@@ -77,5 +77,4 @@ class RequestValueResolverTest extends TestCase
 
 class RequestChild extends Request
 {
-
 }

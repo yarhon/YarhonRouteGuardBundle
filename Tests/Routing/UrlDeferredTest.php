@@ -45,8 +45,8 @@ class UrlDeferredTest extends TestCase
     {
         $urlDeferred = new UrlDeferred(...$arguments);
 
-        $urlGeneratorArguments = array_slice($arguments,0, 2);
-        $urlGeneratorArguments += [1 => [], 2 => $expectedReferenceType ];
+        $urlGeneratorArguments = array_slice($arguments, 0, 2);
+        $urlGeneratorArguments += [1 => [], 2 => $expectedReferenceType];
 
         $this->urlGenerator->expects($this->once())
             ->method('generate')
@@ -119,27 +119,27 @@ class UrlDeferredTest extends TestCase
             [
                 'http://example.com/dir/file',
                 '',
-                '/dir/file'
+                '/dir/file',
             ],
             [
                 'http://example.com/dir/file',
                 '/dir',
-                '/file'
+                '/file',
             ],
             [
                 'http://example.com/dir/file',
                 '/dir/file',
-                '/'
+                '/',
             ],
             [
                 '/dir/file',
                 '',
-                '/dir/file'
+                '/dir/file',
             ],
             [
                 '//example.com/dir/file',
                 '',
-                '/dir/file'
+                '/dir/file',
             ],
         ];
     }
@@ -168,17 +168,17 @@ class UrlDeferredTest extends TestCase
             [
                 'http://example.com/dir/file',
                 '',
-                'example.com'
+                'example.com',
             ],
             [
                 '//example.com/dir/file',
                 '',
-                'example.com'
+                'example.com',
             ],
             [
                 '/dir/file',
                 'example.com',
-                'example.com'
+                'example.com',
             ],
         ];
     }

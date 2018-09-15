@@ -136,7 +136,7 @@ class SensioSecurityProvider implements TestProviderInterface
                 $subjectName = $annotation->getSubject();
 
                 if ($subjectName && !in_array($subjectName, $variableNames)) {
-                    throw new InvalidArgumentException(sprintf('Unknown subject variable "%s". Known variables: "%s"', $subjectName, implode('", "', $variableNames)));
+                    throw new InvalidArgumentException(sprintf('Unknown subject variable "%s". Known variables: "%s".', $subjectName, implode('", "', $variableNames)));
                 }
             }
 

@@ -15,5 +15,4 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
  */
 interface TestBagInterface extends AbstractTestBagInterface
 {
-
 }

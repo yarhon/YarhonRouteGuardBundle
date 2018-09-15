@@ -26,7 +26,6 @@ class RequestContextTest extends TestCase
         $this->assertNull($context->getHost());
         $this->assertNull($context->getMethod());
         $this->assertNull($context->getClientIp());
-
     }
 
     public function testConstructAllValues()
@@ -41,13 +40,13 @@ class RequestContextTest extends TestCase
 
     public function testPathInfoClosure()
     {
-        $context = new RequestContext(function() { return '/foo'; });
+        $context = new RequestContext(function () { return '/foo'; });
         $this->assertEquals('/foo', $context->getPathInfo());
     }
 
     public function testHostClosure()
     {
-        $context = new RequestContext(null, function() { return 'site.com'; });
+        $context = new RequestContext(null, function () { return 'site.com'; });
         $this->assertEquals('site.com', $context->getHost());
     }
 }

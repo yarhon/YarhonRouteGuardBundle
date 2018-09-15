@@ -20,7 +20,6 @@ use Yarhon\RouteGuardBundle\Security\AccessMap;
  */
 class AccessMapCacheWarmerTest extends TestCase
 {
-
     public function testWarmUp()
     {
         $accessMap = $this->createMock(AccessMap::class);

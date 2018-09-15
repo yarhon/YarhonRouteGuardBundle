@@ -11,58 +11,207 @@
 namespace Yarhon\RouteGuardBundle\Tests\Security\TestProvider;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestMatcher;
-use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
-use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
-use Yarhon\RouteGuardBundle\Security\Test\TestBag;
-use Yarhon\RouteGuardBundle\Security\Http\TestBagMap;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Yarhon\RouteGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\RouteGuardBundle\Security\Http\RouteMatcher;
-use Symfony\Component\Routing\Route;
-use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
+use Yarhon\RouteGuardBundle\Security\Test\TestBag;
+use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
+use Yarhon\RouteGuardBundle\Security\Http\TestBagMap;
+use Yarhon\RouteGuardBundle\Security\Authorization\ExpressionVoter;
+use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
+use Yarhon\RouteGuardBundle\Exception\LogicException;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class SymfonyAccessControlProviderTest extends TestCase
 {
-    public function testMatcher()
+    private $expressionLanguage;
+
+    private $routeMatcher;
+
+    private $provider;
+
+    private $route;
+
+    public function setUp()
     {
-        $this->markTestIncomplete();
+        $this->expressionLanguage = $this->createMock(ExpressionLanguage::class);
 
-        $route = new Route('/secure1/{page}', ['page' => 10], ['page' => '\d+'], ['utf8' => false]);
+        $this->routeMatcher = $this->createMock(RouteMatcher::class);
 
-        $compiled = $route->compile();
+        $this->provider = new SymfonyAccessControlProvider($this->routeMatcher);
 
-        $prefix = $compiled->getStaticPrefix();
+        $this->route = $this->createMock(Route::class);
+    }
 
-        //var_dump($prefix);
+    public function testGetTestsWithOneMatch()
+    {
+        $testArgumentsOne = new TestArguments(['ROLE_ADMIN']);
+        $testArgumentsTwo = new TestArguments(['ROLE_USER']);
 
-        $a = new AccessMapBuilder();
+        $this->provider->addRule(new RequestConstraint(), $testArgumentsOne);
+        $this->provider->addRule(new RequestConstraint(), $testArgumentsTwo);
 
-        //var_dump(isset($a[0]));
+        $this->routeMatcher->method('matches')
+            ->willReturnOnConsecutiveCalls(false, true);
 
-        //var_dump($compiled->getRegex());
-        //$test1 = "hello";
-        //var_dump(preg_match('//u', $test1));
+        $testBag = $this->provider->getTests($this->route, 'a::b');
 
-        //$test2 = mb_convert_encoding("привет", "UTF-8",  "Windows-1251");
-        //var_dump(preg_match('//u', $test2));
+        $this->assertInstanceOf(TestBag::class, $testBag);
+        $testArguments = iterator_to_array($testBag)[0];
 
-        //var_dump(preg_match('#^/secure1/приветі.{2}/#', '/secure1/приветії/10'));
+        $this->assertSame($testArguments, $testArgumentsTwo);
+    }
 
-        // $pattern = '/Component';
-        // $useUtf8 = preg_match('//u', $pattern);
-        // var_dump('useUtf8', $useUtf8);
+    public function testGetTestsWithSeveralMatches()
+    {
+        $testArgumentsOne = new TestArguments(['ROLE_ADMIN']);
+        $testArgumentsTwo = new TestArguments(['ROLE_USER']);
 
-        /*
-        $route = new Route('/secure1/{page}', [], ['page' => "\d+"]);
+        $this->provider->addRule(new RequestConstraint(), $testArgumentsOne);
+        $this->provider->addRule(new RequestConstraint(), $testArgumentsTwo);
 
-        $constraint = new RequestConstraint('/secure1');
-        $matcher = new RouteMatcher($constraint);
+        $requestConstraintForMap = new RequestConstraint();
 
-        // $r = $matcher->matches($route);
-        */
+        $this->routeMatcher->method('matches')
+            ->willReturnOnConsecutiveCalls($requestConstraintForMap, true);
+
+        $testBag = $this->provider->getTests($this->route, 'a::b');
+
+        $this->assertInstanceOf(TestBagMap::class, $testBag);
+        $map = iterator_to_array($testBag);
+
+        $this->assertCount(2, $map);
+
+        list($firstItem, $secondItem) = $map;
+
+        $this->assertEquals($firstItem[1], $requestConstraintForMap);
+        $this->assertNull($secondItem[1]);
+
+        $this->assertSame($testArgumentsOne, iterator_to_array($firstItem[0])[0]);
+        $this->assertSame($testArgumentsTwo, iterator_to_array($secondItem[0])[0]);
+    }
+
+    public function testGetTestsWithoutMatches()
+    {
+        $testBag = $this->provider->getTests($this->route, 'a::b');
+
+        $this->assertNull($testBag);
+    }
+
+    public function testImportRules()
+    {
+        $rule = [
+            'path' => '/foo',
+            'host' => 'site.com',
+            'methods' => ['GET'],
+            'ips' => ['127.0.0.1'],
+            'allow_if' => null,
+            'roles' => ['ROLE_ADMIN'],
+        ];
+
+        $expectedConstraint = new RequestConstraint($rule['path'], $rule['host'], $rule['methods'], $rule['ips']);
+        $expectedTestArguments = new TestArguments($rule['roles']);
+
+        $this->provider->importRules([$rule]);
+
+        $expectedRules = [[$expectedConstraint, $expectedTestArguments]];
+        $this->assertAttributeEquals($expectedRules, 'rules', $this->provider);
+    }
+
+    public function testImportRulesWithExpression()
+    {
+        $rule = [
+            'path' => '/foo',
+            'host' => null,
+            'methods' => null,
+            'ips' => null,
+
+            'roles' => ['ROLE_ADMIN'],
+            'allow_if' => 'request.getClientIp() == "127.0.0.1',
+        ];
+
+        $expression = $this->createMock(Expression::class);
+        $names = ExpressionVoter::getVariableNames();
+
+        $this->expressionLanguage->expects($this->once())
+            ->method('parse')
+            ->with($rule['allow_if'], $names)
+            ->willReturn($expression);
+
+        $this->provider->setExpressionLanguage($this->expressionLanguage);
+
+        $expectedConstraint = new RequestConstraint($rule['path'], $rule['host'], $rule['methods'], $rule['ips']);
+        $expectedAttributes = $rule['roles'];
+        $expectedAttributes[] = $expression;
+        $expectedTestArguments = new TestArguments($expectedAttributes);
+
+        $this->provider->importRules([$rule]);
+
+        $expectedRules = [[$expectedConstraint, $expectedTestArguments]];
+        $this->assertAttributeEquals($expectedRules, 'rules', $this->provider);
+    }
+
+    public function testImportRulesWithInvalidExpressionException()
+    {
+        $rule = [
+            'path' => '/foo',
+            'host' => null,
+            'methods' => null,
+            'ips' => null,
+
+            'roles' => ['ROLE_ADMIN'],
+            'allow_if' => 'request.getClientIp() == "127.0.0.1',
+        ];
+
+        $this->expressionLanguage->method('parse')
+            ->willThrowException(new SyntaxError('syntax'));
+
+        $this->provider->setExpressionLanguage($this->expressionLanguage);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot parse expression "request.getClientIp() == "127.0.0.1" with following variables: "token", "user", "object", "subject", "roles", "trust_resolver", "request".');
+
+        $this->provider->importRules([$rule]);
+    }
+
+    public function testImportRulesWithExpressionWithoutExpressionLanguage()
+    {
+        $rule = [
+            'path' => '/foo',
+            'host' => null,
+            'methods' => null,
+            'ips' => null,
+
+            'roles' => ['ROLE_ADMIN'],
+            'allow_if' => 'request.getClientIp() == "127.0.0.1',
+        ];
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Cannot create expression because ExpressionLanguage is not provided.');
+
+        $this->provider->importRules([$rule]);
+    }
+
+    public function testInspectRules()
+    {
+        $this->provider->addRule(new RequestConstraint('^/foo'), new TestArguments([]));
+        $this->provider->addRule(new RequestConstraint('/foo'), new TestArguments([]));
+
+        $logger = $this->createMock(LoggerInterface::class);
+
+        $this->provider->setLogger($logger);
+
+        $logger->expects($this->once())
+            ->method('warning')
+            ->with('Access control rule #1 path pattern "/foo" does not starts from "^" - that makes matching pattern to route static prefix impossible and reduces performance.');
+
+        $this->provider->onBuild();
     }
 }

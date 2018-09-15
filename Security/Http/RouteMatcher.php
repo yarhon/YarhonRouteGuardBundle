@@ -20,36 +20,24 @@ use Symfony\Component\Routing\Route;
 class RouteMatcher
 {
     /**
-     * @var array
-     */
-    private $parameters;
-
-    /**
-     * RouteMatcher constructor.
-     *
+     * @param Route             $route
      * @param RequestConstraint $constraint
+     *
+     * @return bool|RequestConstraint Boolean true/false if route would always/never match RequestConstraint
+     *                                A fresh RequestConstraint instance if route would possibly match RequestConstraint
      */
-    public function __construct(RequestConstraint $constraint)
+    public function matches(Route $route, RequestConstraint $constraint)
     {
         // Note: order of parameters should be equal to the order of RequestConstraint constructor arguments.
-        $this->parameters = [
+        $originalParameters = [
             'pathPattern' => $constraint->getPathPattern(),
             'hostPattern' => $constraint->getHostPattern(),
             'methods' => $constraint->getMethods(),
             'ips' => $constraint->getIps(),
         ];
-    }
 
-    /**
-     * @param Route $route
-     *
-     * @return bool|RequestConstraint Boolean true/false if route would always/never match RequestConstraint
-     *                                A fresh RequestConstraint instance if route would possibly match RequestConstraint
-     */
-    public function matches(Route $route)
-    {
         // All parameters equal to false (like nulls, empty strings and arrays) would be filtered out.
-        $parameters = array_filter($this->parameters);
+        $parameters = array_filter($originalParameters);
 
         if (0 === count($parameters)) {
             // If all parameters are empty, route would always match
@@ -73,7 +61,7 @@ class RouteMatcher
             return true;
         }
 
-        $parameters = $this->parameters;
+        $parameters = $originalParameters;
 
         // Set always matching parameters to null to avoid theirs further unnecessary matching.
         foreach (array_keys($matchResults, 1, true) as $parameter) {
@@ -106,7 +94,6 @@ class RouteMatcher
         // but for route /secure1/ static prefix is /secure1/
 
         if ('^' != $pattern[0]) {
-
         }
 
         if (!preg_match('{'.$pattern.'}', $staticPrefix)) {
@@ -143,11 +130,8 @@ class RouteMatcher
 
     private static function determineStaticPrefix(Route $route, array $tokens): string
     {
-
-
-
         if ('text' !== $tokens[0][0]) {
-            return ('/' !== $tokens[0][1] && false === $route->hasDefault($tokens[0][3])) ? $tokens[0][1] : '' ;
+            return ('/' !== $tokens[0][1] && false === $route->hasDefault($tokens[0][3])) ? $tokens[0][1] : '';
         }
 
         $prefix = $tokens[0][1];

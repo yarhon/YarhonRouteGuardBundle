@@ -24,10 +24,10 @@ class RequestConstraintTest extends TestCase
     {
         $constraint = new RequestConstraint();
 
-        $this->assertEquals(null, $constraint->getPathPattern());
-        $this->assertEquals(null, $constraint->getHostPattern());
-        $this->assertEquals(null, $constraint->getMethods());
-        $this->assertEquals(null, $constraint->getIps());
+        $this->assertNull($constraint->getPathPattern());
+        $this->assertNull($constraint->getHostPattern());
+        $this->assertNull($constraint->getMethods());
+        $this->assertNull($constraint->getIps());
     }
 
     public function testConstructAllValues()
@@ -97,17 +97,17 @@ class RequestConstraintTest extends TestCase
             [
                 '.*\.site\.com',
                 '.site.com',
-                true
+                true,
             ],
             [
                 '.*\.site\.com',
                 'img.site.COM',
-                true
+                true,
             ],
             [
                 '.*\.site\.com',
                 'site.net',
-                false
+                false,
             ],
         ];
     }
@@ -133,24 +133,23 @@ class RequestConstraintTest extends TestCase
             [
                 ['get', 'post'],
                 'GET',
-                true
+                true,
             ],
             [
                 ['GET', 'POST'],
                 'GET',
-                true
+                true,
             ],
             [
                 ['get', 'post'],
                 'get',
-                false
+                false,
             ],
             [
                 ['GET', 'POST'],
                 'PUT',
-                false
+                false,
             ],
-
         ];
     }
 
@@ -175,12 +174,12 @@ class RequestConstraintTest extends TestCase
             [
                 ['127.0.0.1', '127.0.0.2'],
                 '127.0.0.1',
-                true
+                true,
             ],
             [
                 ['127.0.0.1', '127.0.0.2'],
                 '127.0.0.3',
-                false
+                false,
             ],
         ];
     }

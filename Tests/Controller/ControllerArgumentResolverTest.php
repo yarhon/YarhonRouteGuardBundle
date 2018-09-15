@@ -32,7 +32,6 @@ class ControllerArgumentResolverTest extends TestCase
         $this->requestStack = $this->createMock(RequestStack::class);
     }
 
-
     public function testGetArgument()
     {
         $valueResolverOne = $this->createMock(ArgumentValueResolverInterface::class);

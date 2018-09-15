@@ -33,21 +33,19 @@ class ExpressionVoterTest extends TestCase
         $this->assertSame($expected, ExpressionVoter::getVariableNames());
     }
 
-    public function testAddVariableNames()
+    public function testSetVariableNames()
     {
-        $expected = [
-            'token',
-            'user',
-            'object',
-            'subject',
-            'roles',
-            'trust_resolver',
-            'request',
-            'new'
+        $default = ExpressionVoter::getVariableNames();
+
+        $new = [
+            'foo',
+            'bar',
         ];
 
-        ExpressionVoter::addVariableNames(['new']);
+        ExpressionVoter::setVariableNames($new);
 
-        $this->assertSame($expected, ExpressionVoter::getVariableNames());
+        $this->assertSame($new, ExpressionVoter::getVariableNames());
+
+        ExpressionVoter::setVariableNames($default);
     }
 }

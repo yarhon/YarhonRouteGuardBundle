@@ -147,7 +147,6 @@ class RoutingRuntimeTest extends TestCase
                 ['route1', ['page' => 1], 'POST', ['url', true]],
                 UrlGeneratorInterface::NETWORK_PATH,
             ],
-
         ];
     }
 
@@ -158,6 +157,4 @@ class RoutingRuntimeTest extends TestCase
 
         $this->runtime->route('route1', ['page' => 1], 'POST', ['qwerty']);
     }
-
-
 }

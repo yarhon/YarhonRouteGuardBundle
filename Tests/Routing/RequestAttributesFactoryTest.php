@@ -149,7 +149,6 @@ class RequestAttributesFactoryTest extends TestCase
         $attributesPrototype = $this->factory->getAttributesPrototype($this->routeMetadata);
 
         $this->assertSame($expected, $attributesPrototype->keys());
-
     }
 
     public function getAttributesPrototypeDataProvider()

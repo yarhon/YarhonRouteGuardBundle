@@ -21,8 +21,6 @@ use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter;
 
 /**
- * @group requires-expression-language
- *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class SensioSecurityExpressionVoterTest extends TestCase

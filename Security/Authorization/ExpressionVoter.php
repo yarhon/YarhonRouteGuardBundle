@@ -32,8 +32,8 @@ class ExpressionVoter
         return self::$variableNames;
     }
 
-    public static function addVariableNames(array $names)
+    public static function setVariableNames(array $names)
     {
-        self::$variableNames = array_merge(self::$variableNames, $names);
+        self::$variableNames = $names;
     }
 }

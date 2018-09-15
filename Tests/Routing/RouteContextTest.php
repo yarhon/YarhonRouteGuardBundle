@@ -59,8 +59,7 @@ class RouteContextTest extends TestCase
         $urlDeferredTwo = $context->createUrlDeferred();
         $urlDeferredThree = $context->getUrlDeferred();
 
-        $this->assertSame($urlDeferred,$urlDeferredTwo);
+        $this->assertSame($urlDeferred, $urlDeferredTwo);
         $this->assertSame($urlDeferred, $urlDeferredThree);
     }
-
 }

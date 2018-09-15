@@ -64,7 +64,6 @@ class SessionValueResolverTest extends TestCase
         $this->assertFalse($resolver->supports($this->context, $this->argument));
     }
 
-
     public function testSupportsWithSession()
     {
         $resolver = new SessionValueResolver();
@@ -134,7 +133,4 @@ class SessionValueResolverTest extends TestCase
 
 class SessionChild extends Session
 {
-
 }
-
-

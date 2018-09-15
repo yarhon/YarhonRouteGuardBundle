@@ -36,6 +36,11 @@ class SymfonyAccessControlProvider implements TestProviderInterface
     use LoggerAwareTrait;
 
     /**
+     * @var RouteMatcher
+     */
+    private $routeMatcher;
+
+    /**
      * @var array
      */
     private $rules = [];
@@ -47,9 +52,12 @@ class SymfonyAccessControlProvider implements TestProviderInterface
 
     /**
      * SymfonyAccessControlProvider constructor.
+     *
+     * @param RouteMatcher $routeMatcher
      */
-    public function __construct()
+    public function __construct(RouteMatcher $routeMatcher)
     {
+        $this->routeMatcher = $routeMatcher;
     }
 
     /**
@@ -70,9 +78,7 @@ class SymfonyAccessControlProvider implements TestProviderInterface
 
     public function addRule(RequestConstraint $constraint, TestArguments $arguments)
     {
-        $routeMatcher = new RouteMatcher($constraint);
-
-        $this->rules[] = [$routeMatcher, $arguments, $constraint];
+        $this->rules[] = [$constraint, $arguments];
     }
 
     /**
@@ -115,19 +121,17 @@ class SymfonyAccessControlProvider implements TestProviderInterface
         $matches = [];
 
         foreach ($this->rules as $rule) {
-            /** @var RouteMatcher $routeMatcher */
-            list($routeMatcher, $arguments) = $rule;
+            list($constraint, $arguments) = $rule;
 
-            $matchResult = $routeMatcher->matches($route);
+            $matchResult = $this->routeMatcher->matches($route, $constraint);
 
             if (false === $matchResult) {
                 continue;
             }
 
-            // TODO: create TestBag in the addRule method? (make sure that one TestBag instance can be shared across different routes)
             $testBag = new TestBag([$arguments]);
 
-            if (true == $matchResult) {
+            if (true === $matchResult) {
                 $matches[] = [$testBag, null];
                 break;
             }
@@ -142,7 +146,7 @@ class SymfonyAccessControlProvider implements TestProviderInterface
             return null;
         }
 
-        if (1 == count($matches) && null === $matches[0][1]) {
+        if (1 === count($matches) && null === $matches[0][1]) {
             // Always matching rule was found, and there were no possibly matching rules found before,
             // so we don't need a TestBagMap for resolving it by RequestContext in runtime.
             $testBag = $matches[0][0];
@@ -181,14 +185,14 @@ class SymfonyAccessControlProvider implements TestProviderInterface
 
         foreach ($this->rules as $index => $rule) {
             /** @var RequestConstraint $constraint */
-            $constraint = $rule[2];
+            $constraint = $rule[0];
 
             if (!$pathPatten = $constraint->getPathPattern()) {
                 continue;
             }
 
             if ('^' !== $pathPatten[0]) {
-                $message = 'Access control rule #%s path pattern "%s" doesn\'t starts from "^" - that makes matching pattern to route static prefix impossible and reduces performance.';
+                $message = 'Access control rule #%s path pattern "%s" does not starts from "^" - that makes matching pattern to route static prefix impossible and reduces performance.';
                 $this->logger->warning(sprintf($message, $index, $pathPatten));
             }
         }

@@ -45,8 +45,8 @@ class TestBagMapTest extends TestCase
     public function testConstruct()
     {
         $map = [
-            [ $this->testBagOne, $this->constraintOne ],
-            [ $this->testBagTwo, null ],
+            [$this->testBagOne, $this->constraintOne],
+            [$this->testBagTwo, null],
         ];
 
         $testBagMap = new TestBagMap($map);
@@ -63,8 +63,8 @@ class TestBagMapTest extends TestCase
             ->willReturn(true);
 
         $map = [
-            [ $this->testBagOne, $this->constraintOne ],
-            [ $this->testBagTwo, $this->constraintTwo ],
+            [$this->testBagOne, $this->constraintOne],
+            [$this->testBagTwo, $this->constraintTwo],
         ];
 
         $testBagMap = new TestBagMap($map);
@@ -81,8 +81,8 @@ class TestBagMapTest extends TestCase
             ->willReturn(false);
 
         $map = [
-            [ $this->testBagOne, $this->constraintOne ],
-            [ $this->testBagTwo, $this->constraintTwo ],
+            [$this->testBagOne, $this->constraintOne],
+            [$this->testBagTwo, $this->constraintTwo],
         ];
 
         $testBagMap = new TestBagMap($map);
@@ -96,8 +96,8 @@ class TestBagMapTest extends TestCase
             ->willReturn(false);
 
         $map = [
-            [ $this->testBagOne, $this->constraintOne ],
-            [ $this->testBagTwo, null ],
+            [$this->testBagOne, $this->constraintOne],
+            [$this->testBagTwo, null],
         ];
 
         $testBagMap = new TestBagMap($map);
