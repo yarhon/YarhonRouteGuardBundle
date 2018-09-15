@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Tests\DependencyInjection;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yarhon\RouteGuardBundle\DependencyInjection\YarhonRouteGuardExtension;
-use Yarhon\RouteGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer;
+use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
 use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
 use Yarhon\RouteGuardBundle\YarhonRouteGuardBundle;
 
@@ -53,8 +53,8 @@ class YarhonRouteGuardExtensionTest extends TestCase
         $this->container->getCompilerPassConfig()->setRemovingPasses([]);
         $this->container->compile();
 
-        $argument = $this->container->getDefinition(RemoveIgnoredTransformer::class)->getArgument(0);
-        $this->assertArraySubset([0 => 'test'], $argument);
+        //$argument = $this->container->getDefinition(AccessMapBuilder::class)->getArgument(0);
+        //$this->assertArraySubset([0 => 'test'], $argument);
 
         $argument = $this->container->getDefinition(RoutingExtension::class)->getArgument(0);
         $this->assertArraySubset(['tag_name' => 'test'], $argument);

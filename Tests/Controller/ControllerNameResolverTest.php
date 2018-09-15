@@ -12,6 +12,7 @@ namespace Yarhon\RouteGuardBundle\Tests\Controller;
 
 use PHPUnit\Framework\TestCase;
 use Yarhon\RouteGuardBundle\Controller\ControllerNameResolver;
+use Yarhon\RouteGuardBundle\Controller\ControllerNameConverter;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 use Yarhon\RouteGuardBundle\Tests\Fixtures\Controller\SimpleController;
 
@@ -75,5 +76,18 @@ class ControllerNameResolverTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $resolved = $this->resolver->resolve([]);
+    }
+
+    public function testConverterCall()
+    {
+        $converter = $this->createMock(ControllerNameConverter::class);
+
+        $this->resolver->setConverter($converter);
+
+        $converter->expects($this->once())
+            ->method('convert')
+            ->with('a::b');
+
+        $this->resolver->resolve('a::b');
     }
 }

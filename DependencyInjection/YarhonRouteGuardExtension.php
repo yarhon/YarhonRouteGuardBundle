@@ -14,10 +14,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\Config\FileLocator;
-use Yarhon\RouteGuardBundle\CacheWarmer\AccessMapCacheWarmer;
-use Yarhon\RouteGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer;
+use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
 use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
-use Yarhon\RouteGuardBundle\Twig\RoutingRuntime;
+
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -40,8 +39,8 @@ class YarhonRouteGuardExtension extends Extension
 
     private function setConfigParameters(array $config, ContainerBuilder $container)
     {
-        $definition = $container->getDefinition(RemoveIgnoredTransformer::class);
-        $definition->replaceArgument(0, $config['ignore_controllers']);
+        //$definition = $container->getDefinition(AccessMapBuilder::class);
+        //$definition->addMethodCall('setIgnoredControllers', [$config['ignore_controllers']]);
 
         $definition = $container->getDefinition(RoutingExtension::class);
         $definition->replaceArgument(0, $config['twig']);

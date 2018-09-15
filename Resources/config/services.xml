@@ -8,11 +8,11 @@
         <defaults public="false" autowire="false" autoconfigure="false" />
 
         <service id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder">
-            <call method="setRouteCollectionTransformers">
-                <argument type="collection" />
-            </call>
             <call method="setTestProviders">
                 <argument type="collection" />
+            </call>
+            <call method="setControllerNameResolver">
+                <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ContainerControllerNameResolver" />
             </call>
             <call method="setLogger">
                 <argument type="service" id="logger" on-invalid="ignore" />
@@ -55,31 +55,18 @@
             <tag name="yarhon_route_guard.test_provider" priority="1023" />
         </service>
 
-        <!-- route collection services -->
-
-        <service id="Yarhon\RouteGuardBundle\Routing\RouteCollection\ControllerNameConverterTransformer">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerNameConverter" />
-            <tag name="yarhon_route_guard.route_collection_transformer" priority="1024" />
-        </service>
-
-        <service id="Yarhon\RouteGuardBundle\Routing\RouteCollection\ControllerNameTransformer">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ContainerControllerNameResolver" />
-            <tag name="yarhon_route_guard.route_collection_transformer" priority="1023" />
-        </service>
-
-        <service id="Yarhon\RouteGuardBundle\Routing\RouteCollection\RemoveIgnoredTransformer">
-            <argument type="collection" /> <!-- ignoredControllers -->
-            <tag name="yarhon_route_guard.route_collection_transformer" priority="1022" />
-        </service>
+        <!-- controller name resolver services -->
 
         <service id="Yarhon\RouteGuardBundle\Controller\ContainerControllerNameResolver">
             <argument type="service" id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" />
+            <call method="setConverter">
+                <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerNameConverter" />
+            </call>
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Controller\ControllerNameConverter">
             <argument type="service" id="kernel" />
         </service>
-
 
         <service id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" public="true"> <!-- is set as public only to be available for TYPE_REMOVE compiler pass -->
             <argument type="collection" /> <!-- map -->

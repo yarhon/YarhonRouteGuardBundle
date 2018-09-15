@@ -107,14 +107,8 @@ class SymfonyAccessControlProviderTest extends TestCase
 
     public function testImportRules()
     {
-        $rule = [
-            'path' => '/foo',
-            'host' => 'site.com',
-            'methods' => ['GET'],
-            'ips' => ['127.0.0.1'],
-            'allow_if' => null,
-            'roles' => ['ROLE_ADMIN'],
-        ];
+        $rule = $this->createRuleArray();
+        $rule['allow_if'] = null;
 
         $expectedConstraint = new RequestConstraint($rule['path'], $rule['host'], $rule['methods'], $rule['ips']);
         $expectedTestArguments = new TestArguments($rule['roles']);
@@ -127,15 +121,7 @@ class SymfonyAccessControlProviderTest extends TestCase
 
     public function testImportRulesWithExpression()
     {
-        $rule = [
-            'path' => '/foo',
-            'host' => null,
-            'methods' => null,
-            'ips' => null,
-
-            'roles' => ['ROLE_ADMIN'],
-            'allow_if' => 'request.getClientIp() == "127.0.0.1',
-        ];
+        $rule = $this->createRuleArray();
 
         $expression = $this->createMock(Expression::class);
         $names = ExpressionVoter::getVariableNames();
@@ -160,15 +146,7 @@ class SymfonyAccessControlProviderTest extends TestCase
 
     public function testImportRulesWithInvalidExpressionException()
     {
-        $rule = [
-            'path' => '/foo',
-            'host' => null,
-            'methods' => null,
-            'ips' => null,
-
-            'roles' => ['ROLE_ADMIN'],
-            'allow_if' => 'request.getClientIp() == "127.0.0.1',
-        ];
+        $rule = $this->createRuleArray();
 
         $this->expressionLanguage->method('parse')
             ->willThrowException(new SyntaxError('syntax'));
@@ -183,15 +161,7 @@ class SymfonyAccessControlProviderTest extends TestCase
 
     public function testImportRulesWithExpressionWithoutExpressionLanguage()
     {
-        $rule = [
-            'path' => '/foo',
-            'host' => null,
-            'methods' => null,
-            'ips' => null,
-
-            'roles' => ['ROLE_ADMIN'],
-            'allow_if' => 'request.getClientIp() == "127.0.0.1',
-        ];
+        $rule = $this->createRuleArray();
 
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Cannot create expression because ExpressionLanguage is not provided.');
@@ -213,5 +183,17 @@ class SymfonyAccessControlProviderTest extends TestCase
             ->with('Access control rule #1 path pattern "/foo" does not starts from "^" - that makes matching pattern to route static prefix impossible and reduces performance.');
 
         $this->provider->onBuild();
+    }
+
+    private function createRuleArray()
+    {
+        return [
+            'path' => '/foo',
+            'host' => 'site.com',
+            'methods' => ['GET'],
+            'ips' => ['127.0.0.1'],
+            'allow_if' => 'request.getClientIp() == "127.0.0.1',
+            'roles' => ['ROLE_ADMIN'],
+        ];
     }
 }

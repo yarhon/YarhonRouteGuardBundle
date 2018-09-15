@@ -17,7 +17,6 @@ use Yarhon\RouteGuardBundle\Tests\HelperTrait;
 use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
 use Yarhon\RouteGuardBundle\Security\AccessMap;
 use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
-use Yarhon\RouteGuardBundle\Routing\RouteCollection\TransformerInterface;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
@@ -74,72 +73,36 @@ class AccessMapBuilderTest extends TestCase
         $this->assertAttributeSame($providers, 'testProviders', $this->builder);
     }
 
-    public function testSetRouteCollectionTransformers()
-    {
-        $transformer1 = $this->createMock(TransformerInterface::class);
-        $transformer2 = $this->createMock(TransformerInterface::class);
-        $transformers = [$transformer1, $transformer2];
-
-        $this->builder->setRouteCollectionTransformers($transformers);
-
-        $this->assertAttributeSame($transformers, 'routeCollectionTransformers', $this->builder);
-    }
-
-    public function testTransformerCalls()
-    {
-        $testProvider = $this->createMock(TestProviderInterface::class);
-        $this->builder->addTestProvider($testProvider);
-
-        $transformer = $this->createMock(TransformerInterface::class);
-
-        $transformer->method('transform')
-            ->willReturn(new RouteCollection());
-
-        $transformer->expects($this->once())
-            ->method('transform');
-
-        $routeCollection = $this->createRouteCollection([
-            '/path1' => 'class::method',
-        ]);
-
-        $this->builder->addRouteCollectionTransformer($transformer);
-        $this->builder->setRouteCollection($routeCollection);
-
-        $this->builder->build(new AccessMap());
-
-        $this->markTestIncomplete('Check transformed route collection and ignored routes.');
-
-        $this->assertAttributeEquals(new RouteCollection(), 'routeCollection', $this->builder);
-        $this->assertAttributeEquals(['/path1'], 'ignoredRoutes', $this->builder);
-    }
-
-    public function testTransformerCallException()
-    {
-        $testProvider = $this->createMock(TestProviderInterface::class);
-        $this->builder->addTestProvider($testProvider);
-
-        $routeCollection = $this->createRouteCollection([
-            '/path1' => 'class',
-        ]);
-
-        $transformer = $this->createMock(TransformerInterface::class);
-
-        $transformer->method('transform')
-            ->willThrowException(new InvalidArgumentException());
-
-        $this->builder->addRouteCollectionTransformer($transformer);
-        $this->builder->setRouteCollection($routeCollection);
-
-        $this->expectException(InvalidArgumentException::class);
-
-        $this->builder->build(new AccessMap());
-    }
-
     public function testBuild()
     {
         $this->markTestIncomplete();
 
         $testProvider = $this->createMock(ProviderInterface::class);
         $this->builder->addTestProvider($testProvider);
+    }
+
+    public function atestIgnoredControllers()
+    {
+        $routeCollection = $this->createRouteCollection([
+            '/path1' => 'class::method',
+            '/path2' => 'class2::method',
+            '/path3' => 'extra_class::method',
+            '/path4' => false,
+        ]);
+
+        $ignoredControllers = [
+            'class2',
+            'extra',
+        ];
+
+        $transformer = new RemoveIgnoredTransformer($ignoredControllers);
+        $transformed = $transformer->transform($routeCollection);
+
+        $expected = $this->createRouteCollection([
+            '/path1' => 'class::method',
+            '/path4' => false,
+        ]);
+
+        $this->assertEquals($expected, $transformed);
     }
 }

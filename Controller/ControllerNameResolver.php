@@ -18,6 +18,16 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 class ControllerNameResolver implements ControllerNameResolverInterface
 {
     /**
+     * @var ControllerNameConverter
+     */
+    private $converter;
+
+    public function setConverter(ControllerNameConverter $converter)
+    {
+        $this->converter = $converter;
+    }
+
+    /**
      * @see \Symfony\Component\HttpKernel\Controller\ControllerResolver::getController For possible $controller forms
      *
      * {@inheritdoc}
@@ -40,6 +50,10 @@ class ControllerNameResolver implements ControllerNameResolverInterface
             if (function_exists($controller)) {
                 // TODO: how to deal with this case?
                 return false;
+            }
+
+            if ($this->converter) {
+                $controller = $this->converter->convert($controller);
             }
 
             if (false === strpos($controller, '::')) {

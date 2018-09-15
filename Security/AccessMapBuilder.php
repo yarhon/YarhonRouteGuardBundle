@@ -10,12 +10,13 @@
 
 namespace Yarhon\RouteGuardBundle\Security;
 
+use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
-use Yarhon\RouteGuardBundle\Routing\RouteCollection\TransformerInterface;
+use Yarhon\RouteGuardBundle\Controller\ControllerNameResolverInterface;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
@@ -34,9 +35,14 @@ class AccessMapBuilder implements LoggerAwareInterface
     private $testProviders = [];
 
     /**
-     * @var TransformerInterface[]
+     * @var ControllerNameResolverInterface
      */
-    private $routeCollectionTransformers = [];
+    private $controllerNameResolver;
+
+    /**
+     * @var string[]
+     */
+    private $ignoredControllers = [];
 
     /**
      * @var LoggerInterface;
@@ -52,14 +58,6 @@ class AccessMapBuilder implements LoggerAwareInterface
     }
 
     /**
-     * @param TransformerInterface $transformer
-     */
-    public function addRouteCollectionTransformer(TransformerInterface $transformer)
-    {
-        $this->routeCollectionTransformers[] = $transformer;
-    }
-
-    /**
      * @param TestProviderInterface[] $providers
      */
     public function setTestProviders(array $providers)
@@ -68,18 +66,6 @@ class AccessMapBuilder implements LoggerAwareInterface
 
         foreach ($providers as $provider) {
             $this->addTestProvider($provider);
-        }
-    }
-
-    /**
-     * @param TransformerInterface[] $transformers
-     */
-    public function setRouteCollectionTransformers(array $transformers)
-    {
-        $this->routeCollectionTransformers = [];
-
-        foreach ($transformers as $transformer) {
-            $this->addRouteCollectionTransformer($transformer);
         }
     }
 
@@ -100,6 +86,20 @@ class AccessMapBuilder implements LoggerAwareInterface
     }
 
     ////////  not tested
+
+    public function setControllerNameResolver(ControllerNameResolverInterface $resolver)
+    {
+        $this->controllerNameResolver = $resolver;
+    }
+
+    /**
+     * @param string[] $ignoredControllers
+     */
+    public function setIgnoredControllers($ignoredControllers)
+    {
+        $this->ignoredControllers = $ignoredControllers;
+    }
+
 
     /**
      * {@inheritdoc}
@@ -135,11 +135,7 @@ class AccessMapBuilder implements LoggerAwareInterface
             $this->logger->info('Build access map. Route collection count', ['count' => count($this->routeCollection)]);
         }
 
-        $originalRoutes = array_keys($this->routeCollection->all());
-        $routeCollection = $this->transformRouteCollection($this->routeCollection);
-        $ignoredRoutes = array_diff($originalRoutes, array_keys($routeCollection->all()));
-
-        // TODO: check controllers format in case when no ControllerNameTransformer added ?
+        $ignoredRoutes = [];
 
         if ($this->logger && count($ignoredRoutes)) {
             $this->logger->info('Ignored routes count', ['count' => count($ignoredRoutes)]);
@@ -147,7 +143,7 @@ class AccessMapBuilder implements LoggerAwareInterface
 
         $this->onBuild();
 
-        foreach ($routeCollection->all() as $name => $route) {
+        foreach ($this->routeCollection->all() as $name => $route) {
             foreach ($this->testProviders as $provider) {
                 $controllerName = $route->getDefault('_controller');
                 $testBag = $provider->getTests($route, $controllerName);
@@ -160,21 +156,39 @@ class AccessMapBuilder implements LoggerAwareInterface
     }
 
     /**
-     * @param RouteCollection $routeCollection
+     * @param Route $route
      *
-     * @return RouteCollection
-     *
-     * @throws InvalidArgumentException If exception in one of the RouteCollection transformers was thrown
+     * @return string|false
      */
-    private function transformRouteCollection(RouteCollection $routeCollection)
+    private function getControllerName(Route $route)
     {
-        $routeCollection = clone $routeCollection;
+        $controller = $route->getDefault('_controller');
 
-        foreach ($this->routeCollectionTransformers as $transformer) {
-            $routeCollection = $transformer->transform($routeCollection);
+        if ($this->controllerNameResolver) {
+            $controller = $this->controllerNameResolver->resolve($controller);
         }
 
-        return $routeCollection;
+        // TODO: check controllers format in case when no resolver added ?
+
+        return $controller;
+    }
+
+    /**
+     * @param string $controllerName
+     *
+     * @return bool
+     */
+    private function isControllerIgnored($controllerName)
+    {
+        list($class) = explode('::', $controllerName);
+
+        foreach ($this->ignoredControllers as $ignored) {
+            if (0 === strpos($class, $ignored)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function onBuild()

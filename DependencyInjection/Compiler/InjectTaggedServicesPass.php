@@ -36,7 +36,6 @@ class InjectTaggedServicesPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $this->injectAsMethodCall($container, [AccessMapBuilder::class, 'setRouteCollectionTransformers'], 'yarhon_route_guard.route_collection_transformer');
         $this->injectAsMethodCall($container, [AccessMapBuilder::class, 'setTestProviders'], 'yarhon_route_guard.test_provider');
 
         $this->injectAsArgument($container, [DelegatingTestResolver::class, 0], 'yarhon_route_guard.test_resolver');

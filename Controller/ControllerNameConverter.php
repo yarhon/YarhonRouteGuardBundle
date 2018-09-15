@@ -42,16 +42,14 @@ class ControllerNameConverter
     }
 
     /**
-     * @param mixed $controller
+     * @param string $controller
      *
-     * @return mixed
+     * @return string
      */
     public function convert($controller)
     {
-        if (is_string($controller)) {
-            $controller = $this->convertBundleNotation($controller);
-            $controller = $this->convertServiceNotation($controller);
-        }
+        $controller = $this->convertBundleNotation($controller);
+        $controller = $this->convertServiceNotation($controller);
 
         return $controller;
     }

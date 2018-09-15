@@ -61,10 +61,6 @@ class ControllerNameConverterTest extends TestCase
     {
         return [
             [
-                ['zzz'],
-                ['zzz'],
-            ],
-            [
                 'service::method',
                 'service::method',
             ],
