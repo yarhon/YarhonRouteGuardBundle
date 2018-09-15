@@ -50,8 +50,7 @@ class RequestAttributesFactory
     {
         $defaults = $routeMetadata->getDefaults();
 
-        unset($defaults['_canonical_route'], $defaults['_controller']);
-        // Other special parameters returned (if present): _format, _fragment, _locale
+        // Special default parameters returned (if present): _format, _fragment, _locale
 
         // See \Symfony\Component\Routing\Matcher\UrlMatcher::mergeDefaults
         foreach ($parameters as $key => $value) {
@@ -87,9 +86,6 @@ class RequestAttributesFactory
     public function getAttributesPrototype(RouteMetadataInterface $routeMetadata)
     {
         $defaults = $routeMetadata->getDefaults();
-
-        unset($defaults['_canonical_route'], $defaults['_controller']);
-        // Other special parameters returned (if present): _format, _fragment, _locale
 
         $attributes = array_unique(array_merge($routeMetadata->getVariables(), array_keys($defaults)));
 

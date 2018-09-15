@@ -22,14 +22,15 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 interface TestProviderInterface extends LoggerAwareInterface
 {
     /**
-     * @param Route $route
+     * @param Route       $route
+     * @param string|null $controllerName
      *
      * @return AbstractTestBagInterface|null
      *
      * @throws LogicException
      * @throws InvalidArgumentException
      */
-    public function getTests(Route $route);
+    public function getTests(Route $route, $controllerName = null);
 
     public function onBuild();
 }

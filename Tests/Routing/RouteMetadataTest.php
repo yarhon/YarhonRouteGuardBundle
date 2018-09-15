@@ -24,12 +24,8 @@ class RouteMetadataTest extends TestCase
     {
         $route = $this->createMock(Route::class);
 
-        $route->method('getDefault')
-            ->with('_controller')
-            ->willReturn('a::b');
-
         $route->method('getDefaults')
-            ->willReturn(['_controller' => 'a::b', 'page' => 1]);
+            ->willReturn(['_controller' => 'c::d', '_canonical_route' => 'foo', 'page' => 1]);
 
         $compiledRoute = $this->createMock(CompiledRoute::class);
 
@@ -39,10 +35,10 @@ class RouteMetadataTest extends TestCase
         $compiledRoute->method('getVariables')
             ->willReturn(['page', 'offset']);
 
-        $routeMetadata = new RouteMetadata($route);
+        $routeMetadata = new RouteMetadata($route, 'a::b');
 
         $this->assertEquals('a::b', $routeMetadata->getControllerName());
-        $this->assertEquals(['_controller' => 'a::b', 'page' => 1], $routeMetadata->getDefaults());
+        $this->assertEquals(['page' => 1], $routeMetadata->getDefaults());
         $this->assertEquals(['page', 'offset'], $routeMetadata->getVariables());
     }
 }

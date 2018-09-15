@@ -68,9 +68,9 @@ class RequestAttributesFactoryTest extends TestCase
     {
         return [
             [
-                // test special default values are not used
+                // test default values
                 [],
-                ['_canonical_route' => 'a', '_controller' => 'a::b', 'q' => 1],
+                ['q' => 1],
                 [],
                 [],
                 ['q' => 1],
@@ -155,12 +155,6 @@ class RequestAttributesFactoryTest extends TestCase
     public function getAttributesPrototypeDataProvider()
     {
         return [
-            [
-                // test special default values are not used
-                [],
-                ['_canonical_route' => 'a', '_controller' => 'a::b', 'q' => 1],
-                ['q'],
-            ],
             [
                 // general test
                 ['page'],

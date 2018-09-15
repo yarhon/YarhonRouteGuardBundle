@@ -35,13 +35,16 @@ class RouteMetadata implements RouteMetadataInterface
     /**
      * RouteMetadata constructor.
      *
-     * @param Route $route
+     * @param Route  $route
+     * @param string $controllerName
      */
-    public function __construct(Route $route)
+    public function __construct(Route $route, $controllerName)
     {
-        $this->controllerName = $route->getDefault('_controller');
+        $this->controllerName = $controllerName;
 
-        $this->defaults = $route->getDefaults();
+        $defaults = $route->getDefaults();
+        unset($defaults['_canonical_route'], $defaults['_controller']);
+        $this->defaults = $defaults;
 
         $compiledRoute = $route->compile();
         $this->variables = $compiledRoute->getVariables();

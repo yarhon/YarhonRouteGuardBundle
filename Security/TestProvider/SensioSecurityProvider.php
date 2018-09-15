@@ -93,18 +93,16 @@ class SensioSecurityProvider implements TestProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getTests(Route $route)
+    public function getTests(Route $route, $controllerName = null)
     {
-        $controller = $route->getDefault('_controller');
-
-        if (!$controller && !is_string($controller)) {
+        if (!$controllerName) {
             return null;
         }
 
-        list($class, $method) = explode('::', $controller);
+        list($class, $method) = explode('::', $controllerName);
 
         $arguments = $this->argumentMetadataFactory->createArgumentMetadata([$class, $method]);
-        $routeMetadata = new RouteMetadata($route);
+        $routeMetadata = new RouteMetadata($route, $controllerName);
         $controllerMetadata = new ControllerMetadata($arguments);
         $variableNames = $this->variableResolver->getVariableNames($routeMetadata, $controllerMetadata);
 
