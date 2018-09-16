@@ -11,6 +11,8 @@
 namespace Yarhon\RouteGuardBundle\Exception;
 
 /**
+ * Interface for exceptions that could be caught and saved / logged instead of direct throwing.
+ *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 interface CatchableExceptionInterface extends ExceptionInterface

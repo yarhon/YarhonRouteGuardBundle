@@ -10,26 +10,11 @@
 
 namespace Yarhon\RouteGuardBundle\Tests;
 
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Route;
-
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 trait HelperTrait
 {
-    private function createRouteCollection($routes)
-    {
-        $routeCollection = new RouteCollection();
-
-        foreach ($routes as $path => $controller) {
-            $route = new Route($path, ['_controller' => $controller]);
-            $routeCollection->add($path, $route);
-        }
-
-        return $routeCollection;
-    }
-
     private function requiresClass($class)
     {
         if (!class_exists($class, false)) {

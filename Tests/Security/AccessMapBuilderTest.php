@@ -11,12 +11,16 @@
 namespace Yarhon\RouteGuardBundle\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouterInterface;
-use Yarhon\RouteGuardBundle\Tests\HelperTrait;
 use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
-use Yarhon\RouteGuardBundle\Security\AccessMap;
+use Yarhon\RouteGuardBundle\Security\AccessMapInterface;
+use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
+use Yarhon\RouteGuardBundle\Controller\ControllerNameResolverInterface;
+use Yarhon\RouteGuardBundle\Exception\LogicException;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
@@ -24,62 +28,225 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
  */
 class AccessMapBuilderTest extends TestCase
 {
-    use HelperTrait;
+    private $providerOne;
 
-    /**
-     * @var AccessMapBuilder
-     */
-    private $builder;
+    private $providerTwo;
+
+    private $providers;
+
+    private $controllerNameResolver;
+
+    private $logger;
+
+    private $accessMap;
 
     public function setUp()
     {
-        $this->builder = new AccessMapBuilder();
+        $this->providerOne = $this->createMock(TestProviderInterface::class);
+        $this->providerTwo = $this->createMock(TestProviderInterface::class);
+
+        $this->providers = [$this->providerOne, $this->providerTwo];
+
+        $this->controllerNameResolver = $this->createMock(ControllerNameResolverInterface::class);
+
+        $this->logger = $this->createMock(LoggerInterface::class);
+
+        $this->accessMap = $this->createMock(AccessMapInterface::class);
     }
 
-    public function testSetRouteCollection()
+    public function testSetLogger()
     {
-        $routeCollection = $this->createRouteCollection([
-            '/path1' => 'class::method',
-        ]);
+        $builder = new AccessMapBuilder($this->providers);
 
-        $this->builder->setRouteCollection($routeCollection);
+        $this->providerOne->expects($this->once())
+            ->method('setLogger')
+            ->with($this->logger);
 
-        $this->assertAttributeEquals($routeCollection, 'routeCollection', $this->builder);
+        $this->providerTwo->expects($this->once())
+            ->method('setLogger')
+            ->with($this->logger);
+
+        $builder->setLogger($this->logger);
     }
 
-    public function testImportRouteCollection()
+    public function testBuildWithoutRouteCollectionException()
     {
-        $routeCollection = $this->createRouteCollection([
-            '/path1' => 'class::method',
-        ]);
+        $builder = new AccessMapBuilder($this->providers);
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Cannot build access map - route collection is not provided.');
+
+        $builder->build($this->accessMap);
+    }
+
+    public function testBuildWithoutTestProvidersException()
+    {
+        $builder = new AccessMapBuilder();
+        $builder->setRouteCollection($this->createRouteCollection());
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Cannot build access map - no test providers are set.');
+
+        $builder->build($this->accessMap);
+    }
+
+    public function testBuildWithImportedRouteCollection()
+    {
+        $routeCollection = $this->createRouteCollection();
 
         $router = $this->createMock(RouterInterface::class);
-        $router->method('getRouteCollection')
+        $router->expects($this->once())
+            ->method('getRouteCollection')
             ->willReturn($routeCollection);
 
-        $this->builder->importRouteCollection($router);
+        $builder = new AccessMapBuilder($this->providers);
+        $builder->importRouteCollection($router);
 
-        $this->assertAttributeEquals($routeCollection, 'routeCollection', $this->builder);
+        $builder->build($this->accessMap);
     }
 
-    public function atestSetTestProviders()
+    public function testOnBuildIsCalled()
     {
-        $provider1 = $this->createMock(TestProviderInterface::class);
-        $provider2 = $this->createMock(TestProviderInterface::class);
-        $providers = [$provider1, $provider2];
+        $builder = new AccessMapBuilder($this->providers);
 
-        $this->builder->setTestProviders($providers);
+        $this->providerOne->expects($this->once())
+            ->method('onBuild');
 
-        $this->assertAttributeSame($providers, 'testProviders', $this->builder);
+        $this->providerTwo->expects($this->once())
+            ->method('onBuild');
+
+        $builder->setRouteCollection($this->createRouteCollection());
+        $builder->build($this->accessMap);
     }
 
-    public function atestBuild()
+    public function testBuild()
     {
-        $this->markTestIncomplete();
+        $routeCollection = $this->createRouteCollection([
+            '/path1' => 'class::method',
+        ]);
 
-        $testProvider = $this->createMock(ProviderInterface::class);
-        $this->builder->addTestProvider($testProvider);
+        $builder = new AccessMapBuilder($this->providers);
+        $builder->setRouteCollection($routeCollection);
+
+        $this->accessMap->expects($this->once())
+            ->method('clear');
+
+        $testBagOne = $this->createMock(AbstractTestBagInterface::class);
+        $testBagTwo = $this->createMock(AbstractTestBagInterface::class);
+
+        $route = $routeCollection->get('/path1');
+
+        $this->providerOne->expects($this->at(1))
+            ->method('getTests')
+            ->with($route, 'class::method')
+            ->willReturn($testBagOne);
+
+        $this->providerTwo->expects($this->at(1))
+            ->method('getTests')
+            ->with($route, 'class::method')
+            ->willReturn($testBagTwo);
+
+        $testBagOne->expects($this->once())
+            ->method('setProviderClass')
+            ->with(get_class($this->providerOne));
+
+        $testBagTwo->expects($this->once())
+            ->method('setProviderClass')
+            ->with(get_class($this->providerTwo));
+
+        $this->accessMap->expects($this->once())
+            ->method('add')
+            ->with('/path1', [$testBagOne, $testBagTwo]);
+
+        $builder->build($this->accessMap);
     }
+
+    public function testBuildWithProviderException()
+    {
+        $routeCollection = $this->createRouteCollection([
+            '/path1' => 'class::method',
+        ]);
+
+        $builder = new AccessMapBuilder($this->providers);
+        $builder->setRouteCollection($routeCollection);
+
+        $testBagOne = $this->createMock(AbstractTestBagInterface::class);
+
+        $this->providerOne->expects($this->at(1))
+            ->method('getTests')
+            ->willReturn($testBagOne);
+
+        $exception = new InvalidArgumentException('bla bla');
+
+        $this->providerTwo->expects($this->at(1))
+            ->method('getTests')
+            ->willThrowException($exception);
+
+        $this->accessMap->expects($this->never())
+            ->method('add');
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('bla bla');
+
+        $builder->build($this->accessMap);
+    }
+
+    public function testBuildWithProviderExceptionCaught()
+    {
+        $routeCollection = $this->createRouteCollection([
+            '/path1' => 'class::method',
+        ]);
+
+        $builder = new AccessMapBuilder($this->providers, ['throw_exceptions' => false]);
+        $builder->setRouteCollection($routeCollection);
+
+        $testBagOne = $this->createMock(AbstractTestBagInterface::class);
+
+        $this->providerOne->expects($this->at(1))
+            ->method('getTests')
+            ->willReturn($testBagOne);
+
+        $exception = new InvalidArgumentException('bla bla');
+
+        $this->providerTwo->expects($this->at(1))
+            ->method('getTests')
+            ->willThrowException($exception);
+
+        $this->accessMap->expects($this->never())
+            ->method('add');
+
+        $this->accessMap->expects($this->at(1))
+            ->method('addException')
+            ->with('/path1', $exception);
+
+
+        $builder->build($this->accessMap);
+    }
+
+    public function testResolveControllerName()
+    {
+        $routeCollection = $this->createRouteCollection([
+            '/path1' => 'class::method',
+        ]);
+
+        $builder = new AccessMapBuilder($this->providers);
+        $builder->setRouteCollection($routeCollection);
+
+        $this->controllerNameResolver->method('resolve')
+            ->with('class::method')
+            ->willReturn('class2::method2');
+
+        $builder->setControllerNameResolver($this->controllerNameResolver);
+
+        $route = $routeCollection->get('/path1');
+
+        $this->providerOne->expects($this->at(1))
+            ->method('getTests')
+            ->with($route, 'class2::method2');
+
+        $builder->build($this->accessMap);
+    }
+
 
     public function atestIgnoredControllers()
     {
@@ -104,5 +271,25 @@ class AccessMapBuilderTest extends TestCase
         ]);
 
         $this->assertEquals($expected, $transformed);
+    }
+
+    private function createRouteCollection($routes = [])
+    {
+        $routeCollection = new RouteCollection();
+
+        foreach ($routes as $path => $controller) {
+            $route = new Route($path, ['_controller' => $controller]);
+            $routeCollection->add($path, $route);
+        }
+
+        return $routeCollection;
+    }
+
+    public function aTestClear()
+    {
+        $accessMap = $this->createMock(AccessMap::class);
+
+        $accessMap->expects($this->once())
+            ->method('clear');
     }
 }

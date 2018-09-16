@@ -24,7 +24,7 @@ class RouteTestResolver implements RouteTestResolverInterface, LoggerAwareInterf
     use LoggerAwareTrait;
 
     /**
-     * @var AccessMap
+     * @var AccessMapInterface
      */
     private $accessMap;
 
@@ -33,7 +33,7 @@ class RouteTestResolver implements RouteTestResolverInterface, LoggerAwareInterf
      */
     private $testResolver;
 
-    public function __construct(AccessMap $accessMap, TestResolverInterface $testResolver)
+    public function __construct(AccessMapInterface $accessMap, TestResolverInterface $testResolver)
     {
         $this->accessMap = $accessMap;
         $this->testResolver = $testResolver;

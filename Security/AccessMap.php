@@ -11,12 +11,12 @@ namespace Yarhon\RouteGuardBundle\Security;
 
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
+use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class AccessMap
+class AccessMap implements AccessMapInterface
 {
     /**
      * @var CacheItemPoolInterface
@@ -29,52 +29,66 @@ class AccessMap
     }
 
     /**
-     * @param string                   $routeName
-     * @param AbstractTestBagInterface $testBag
-     *
-     * @throws \Psr\Cache\InvalidArgumentException
+     * {@inheritdoc}
      */
-    public function add($routeName, $testBag)
+    public function add($routeName, array $testBags)
     {
-        $cacheItem = $this->cache->getItem($routeName);
-
-        $testBags = $cacheItem->isHit() ? $cacheItem->get() : [];
-        $testBags[] = $testBag;
+        $cacheItem = $this->cache->getItem('tests//'.$routeName);
 
         $cacheItem->set($testBags);
         $this->cache->save($cacheItem);
     }
 
     /**
-     * @param string $routeName
-     *
-     * @return AbstractTestBagInterface[]
-     *
-     * @throws \Psr\Cache\InvalidArgumentException
+     * {@inheritdoc}
      */
     public function get($routeName)
     {
-        $cacheItem = $this->cache->getItem($routeName);
+        $cacheItem = $this->cache->getItem('tests//'.$routeName);
 
-        if ($cacheItem->isHit()) {
-            return $cacheItem->get();
-        }
-
-        return [];
+        return $cacheItem->get();
     }
 
     /**
-     * @param string $routeName
-     *
-     * @return bool
-     *
-     * @throws \Psr\Cache\InvalidArgumentException
+     * {@inheritdoc}
      */
     public function has($routeName)
     {
-        return $this->cache->hasItem($routeName);
+        return $this->cache->hasItem('tests//'.$routeName);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function addException($routeName, ExceptionInterface $exception = null)
+    {
+        $cacheItem = $this->cache->getItem('exceptions//'.$routeName);
+
+        $cacheItem->set($exception);
+        $this->cache->save($cacheItem);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getException($routeName)
+    {
+        $cacheItem = $this->cache->getItem('exceptions//'.$routeName);
+
+        return $cacheItem->get();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function hasException($routeName)
+    {
+        return $this->cache->hasItem('exceptions//'.$routeName);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function clear()
     {
         $this->cache->clear();

@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Tests\CacheWarmer;
 use PHPUnit\Framework\TestCase;
 use Yarhon\RouteGuardBundle\CacheWarmer\AccessMapCacheWarmer;
 use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
-use Yarhon\RouteGuardBundle\Security\AccessMap;
+use Yarhon\RouteGuardBundle\Security\AccessMapInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -22,10 +22,7 @@ class AccessMapCacheWarmerTest extends TestCase
 {
     public function testWarmUp()
     {
-        $accessMap = $this->createMock(AccessMap::class);
-
-        $accessMap->expects($this->once())
-            ->method('clear');
+        $accessMap = $this->createMock(AccessMapInterface::class);
 
         $builder = $this->createMock(AccessMapBuilder::class);
 
@@ -40,7 +37,7 @@ class AccessMapCacheWarmerTest extends TestCase
 
     public function testIsOptional()
     {
-        $accessMap = $this->createMock(AccessMap::class);
+        $accessMap = $this->createMock(AccessMapInterface::class);
         $builder = $this->createMock(AccessMapBuilder::class);
 
         $cacheWarmer = new AccessMapCacheWarmer($builder, $accessMap);
