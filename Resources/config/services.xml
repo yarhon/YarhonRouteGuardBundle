@@ -8,9 +8,8 @@
         <defaults public="false" autowire="false" autoconfigure="false" />
 
         <service id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder">
-            <call method="setTestProviders">
-                <argument type="collection" />
-            </call>
+            <argument type="collection" /> <!-- test providers -->
+            <argument type="collection" /> <!-- options -->
             <call method="setControllerNameResolver">
                 <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ContainerControllerNameResolver" />
             </call>

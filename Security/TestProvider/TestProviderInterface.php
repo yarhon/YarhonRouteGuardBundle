@@ -13,8 +13,7 @@ namespace Yarhon\RouteGuardBundle\Security\TestProvider;
 use Symfony\Component\Routing\Route;
 use Psr\Log\LoggerAwareInterface;
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
-use Yarhon\RouteGuardBundle\Exception\LogicException;
-use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
+use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -27,8 +26,7 @@ interface TestProviderInterface extends LoggerAwareInterface
      *
      * @return AbstractTestBagInterface|null
      *
-     * @throws LogicException
-     * @throws InvalidArgumentException
+     * @throws ExceptionInterface
      */
     public function getTests(Route $route, $controllerName = null);
 

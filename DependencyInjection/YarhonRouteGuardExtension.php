@@ -39,8 +39,12 @@ class YarhonRouteGuardExtension extends Extension
 
     private function setConfigParameters(array $config, ContainerBuilder $container)
     {
-        //$definition = $container->getDefinition(AccessMapBuilder::class);
-        //$definition->addMethodCall('setIgnoredControllers', [$config['ignore_controllers']]);
+        $builderOptions = [
+            'ignore_controllers' => $config['ignore_controllers'],
+        ];
+
+        $definition = $container->getDefinition(AccessMapBuilder::class);
+        $definition->replaceArgument(1, $builderOptions);
 
         $definition = $container->getDefinition(RoutingExtension::class);
         $definition->replaceArgument(0, $config['twig']);

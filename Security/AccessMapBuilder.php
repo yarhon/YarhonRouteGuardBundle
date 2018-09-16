@@ -17,6 +17,8 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerNameResolverInterface;
+use Yarhon\RouteGuardBundle\Exception\CatchableExceptionInterface;
+use Yarhon\RouteGuardBundle\Exception\LogicException;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
@@ -25,14 +27,19 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 class AccessMapBuilder implements LoggerAwareInterface
 {
     /**
-     * @var RouteCollection
-     */
-    private $routeCollection;
-
-    /**
      * @var TestProviderInterface[]
      */
     private $testProviders = [];
+
+    /**
+     * @var array
+     */
+    private $options = [];
+
+    /**
+     * @var RouteCollection
+     */
+    private $routeCollection;
 
     /**
      * @var ControllerNameResolverInterface
@@ -40,33 +47,26 @@ class AccessMapBuilder implements LoggerAwareInterface
     private $controllerNameResolver;
 
     /**
-     * @var string[]
-     */
-    private $ignoredControllers = [];
-
-    /**
      * @var LoggerInterface;
      */
     private $logger;
 
     /**
-     * @param TestProviderInterface $provider
+     * AccessMapBuilder constructor.
+     *
+     * @param \Traversable|TestProviderInterface[] $testProviders
+     * @param array                                $options
      */
-    public function addTestProvider(TestProviderInterface $provider)
+    public function __construct($testProviders = [], array $options = [])
     {
-        $this->testProviders[] = $provider;
-    }
-
-    /**
-     * @param TestProviderInterface[] $providers
-     */
-    public function setTestProviders(array $providers)
-    {
-        $this->testProviders = [];
-
-        foreach ($providers as $provider) {
-            $this->addTestProvider($provider);
+        foreach ($testProviders as $testProvider) {
+            $this->addTestProvider($testProvider);
         }
+
+        $this->options = array_merge([
+            'ignore_controllers' => [],
+            'throw_exceptions' => true,
+        ], $options);
     }
 
     /**
@@ -85,21 +85,13 @@ class AccessMapBuilder implements LoggerAwareInterface
         $this->setRouteCollection($router->getRouteCollection());
     }
 
-    ////////  not tested
-
+    /**
+     * @param ControllerNameResolverInterface $resolver
+     */
     public function setControllerNameResolver(ControllerNameResolverInterface $resolver)
     {
         $this->controllerNameResolver = $resolver;
     }
-
-    /**
-     * @param string[] $ignoredControllers
-     */
-    public function setIgnoredControllers($ignoredControllers)
-    {
-        $this->ignoredControllers = $ignoredControllers;
-    }
-
 
     /**
      * {@inheritdoc}
@@ -122,43 +114,67 @@ class AccessMapBuilder implements LoggerAwareInterface
     public function build(AccessMap $accessMap)
     {
         if (!$this->routeCollection) {
-            // TODO: warning or exception
-            return;
+            throw new LogicException('Cannot build access map - route collection is not provided.');
         }
 
         if (0 === count($this->testProviders)) {
-            // TODO: warning or exception
-            return;
+            throw new LogicException('Cannot build access map - no test providers is set.');
         }
 
         if ($this->logger) {
             $this->logger->info('Build access map. Route collection count', ['count' => count($this->routeCollection)]);
         }
 
+        $this->onBuild();
+
         $ignoredRoutes = [];
+
+        foreach ($this->routeCollection->all() as $name => $route) {
+
+            try {
+                $controllerName = $this->getControllerName($route);
+
+                if (null !== $controllerName && $this->isControllerIgnored($controllerName)) {
+                    $ignoredRoutes[] = $name;
+                    continue;
+                }
+
+                $testBags = [];
+
+                foreach ($this->testProviders as $provider) {
+
+                    $testBag = $provider->getTests($route, $controllerName);
+
+                    if (null !== $testBag) {
+                        $testBag->setProviderClass(get_class($provider));
+                        $testBags[] = $testBag;
+                    }
+                }
+
+                // empty test bags  ???
+
+                $accessMap->add($name, $testBags);
+
+            } catch (CatchableExceptionInterface $e) {
+                if ($this->options['throw_exceptions']) {
+                    throw $e;
+                }
+
+                //add exception to map
+            }
+
+
+        }
 
         if ($this->logger && count($ignoredRoutes)) {
             $this->logger->info('Ignored routes count', ['count' => count($ignoredRoutes)]);
-        }
-
-        $this->onBuild();
-
-        foreach ($this->routeCollection->all() as $name => $route) {
-            foreach ($this->testProviders as $provider) {
-                $controllerName = $route->getDefault('_controller');
-                $testBag = $provider->getTests($route, $controllerName);
-                if (null !== $testBag) {
-                    $testBag->setProviderClass(get_class($provider));
-                    $accessMap->add($name, $testBag);
-                }
-            }
         }
     }
 
     /**
      * @param Route $route
      *
-     * @return string|false
+     * @return string|null
      */
     private function getControllerName(Route $route)
     {
@@ -174,6 +190,14 @@ class AccessMapBuilder implements LoggerAwareInterface
     }
 
     /**
+     * @param TestProviderInterface $provider
+     */
+    private function addTestProvider(TestProviderInterface $provider)
+    {
+        $this->testProviders[] = $provider;
+    }
+
+    /**
      * @param string $controllerName
      *
      * @return bool
@@ -182,7 +206,7 @@ class AccessMapBuilder implements LoggerAwareInterface
     {
         list($class) = explode('::', $controllerName);
 
-        foreach ($this->ignoredControllers as $ignored) {
+        foreach ($this->options['ignore_controllers'] as $ignored) {
             if (0 === strpos($class, $ignored)) {
                 return true;
             }

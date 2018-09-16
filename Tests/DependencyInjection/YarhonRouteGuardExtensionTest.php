@@ -42,7 +42,7 @@ class YarhonRouteGuardExtensionTest extends TestCase
     public function testSetConfigParameters()
     {
         $config = [
-            'ignore_controllers' => ['test'],
+            'ignore_controllers' => ['class'],
             'twig' => ['tag_name' => 'test'],
         ];
 
@@ -53,10 +53,13 @@ class YarhonRouteGuardExtensionTest extends TestCase
         $this->container->getCompilerPassConfig()->setRemovingPasses([]);
         $this->container->compile();
 
-        //$argument = $this->container->getDefinition(AccessMapBuilder::class)->getArgument(0);
-        //$this->assertArraySubset([0 => 'test'], $argument);
+        $argument = $this->container->getDefinition(AccessMapBuilder::class)->getArgument(1);
+        $this->assertInternalType('array', $argument);
+        $this->assertArrayHasKey('ignore_controllers', $argument);
+        $this->assertArraySubset(['class'], $argument['ignore_controllers']);
 
         $argument = $this->container->getDefinition(RoutingExtension::class)->getArgument(0);
+        $this->assertInternalType('array', $argument);
         $this->assertArraySubset(['tag_name' => 'test'], $argument);
 
         $this->markTestIncomplete('Watch for config changes.');

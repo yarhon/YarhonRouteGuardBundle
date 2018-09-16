@@ -38,7 +38,7 @@ class ControllerNameResolverTest extends TestCase
     {
         $resolved = $this->resolver->resolve($controller);
 
-        $this->assertEquals($expected, $resolved);
+        $this->assertSame($expected, $resolved);
     }
 
     public function resolveProvider()
@@ -58,7 +58,7 @@ class ControllerNameResolverTest extends TestCase
             ],
             [
                 'array_map',
-                false,
+                null,
             ],
             [
                 'Yarhon\RouteGuardBundle\Tests\Fixtures\Controller\SimpleController',

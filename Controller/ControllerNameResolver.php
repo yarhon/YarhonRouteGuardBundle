@@ -49,7 +49,7 @@ class ControllerNameResolver implements ControllerNameResolverInterface
         if (is_string($controller)) {
             if (function_exists($controller)) {
                 // TODO: how to deal with this case?
-                return false;
+                return null;
             }
 
             if ($this->converter) {

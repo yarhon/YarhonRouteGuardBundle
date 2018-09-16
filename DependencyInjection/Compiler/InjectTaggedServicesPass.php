@@ -18,9 +18,8 @@ use Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
 
 /**
- * Injects tagged services collection as a service argument / service method call argument.
- * Service argument must be an empty  collection.
- * Service method call must contain one argument - empty collection (i.e. <argument type="collection" />).
+ * Injects tagged services collection as a service argument.
+ * Service argument must be initialized by an empty collection.
  *
  * We use CompilerPass to inject tagged services for compatibility with Symfony 3.3.
  * Starting from Symfony 3.4 we can use <argument type="tagged" tag="..." /> and remove this CompilerPass.
@@ -36,27 +35,9 @@ class InjectTaggedServicesPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $this->injectAsMethodCall($container, [AccessMapBuilder::class, 'setTestProviders'], 'yarhon_route_guard.test_provider');
-
+        $this->injectAsArgument($container, [AccessMapBuilder::class, 0], 'yarhon_route_guard.test_provider');
         $this->injectAsArgument($container, [DelegatingTestResolver::class, 0], 'yarhon_route_guard.test_resolver');
         $this->injectAsArgument($container, [ControllerArgumentResolver::class, 1], 'yarhon_route_guard.argument_value_resolver');
-    }
-
-    private function injectAsMethodCall(ContainerBuilder $container, $destination, $tagName)
-    {
-        $services = $this->findAndSortTaggedServices($tagName, $container);
-
-        $definition = $container->getDefinition($destination[0]);
-        $methodCalls = $definition->getMethodCalls();
-
-        foreach ($methodCalls as &$methodCall) {
-            if ($destination[1] === $methodCall[0] && [[]] === $methodCall[1]) {
-                $methodCall[1] = [$services];
-                break;
-            }
-        }
-
-        $definition->setMethodCalls($methodCalls);
     }
 
     private function injectAsArgument(ContainerBuilder $container, $destination, $tagName)
