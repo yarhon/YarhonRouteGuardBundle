@@ -13,43 +13,60 @@ namespace Yarhon\RouteGuardBundle\Tests\Annotations;
 use PHPUnit\Framework\TestCase;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReader;
-use Yarhon\RouteGuardBundle\Tests\Fixtures\Controller\AnnotatedController;
+use Yarhon\RouteGuardBundle\Tests\Fixtures\Controller\SimpleController;
 use Yarhon\RouteGuardBundle\Tests\Fixtures\Annotation\TestOne;
 use Yarhon\RouteGuardBundle\Tests\Fixtures\Annotation\TestTwo;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Yarhon\RouteGuardBundle\Tests\Fixtures\Annotation\TestThree;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class ClassMethodAnnotationReaderTest extends TestCase
 {
-    public function testRead()
-    {
-        $reader = new AnnotationReader();
-        $reader = new ClassMethodAnnotationReader($reader);
+    private $readerDelegate;
 
-        $classes = [
+    private $reader;
+
+    public function setUp()
+    {
+        $this->readerDelegate = $this->createMock(AnnotationReader::class);
+        $this->reader = new ClassMethodAnnotationReader($this->readerDelegate);
+    }
+
+    /**
+     * @dataProvider readDataProvider
+     */
+    public function testRead($classAnnotations, $methodAnnotations, $expected)
+    {
+        $classesToRead = [
             TestOne::class,
             TestTwo::class,
         ];
 
-        $annotations = $reader->read(AnnotatedController::class, 'show1', $classes);
+        $this->readerDelegate->method('getClassAnnotations')
+            ->willReturn($classAnnotations);
 
-        $expected = [
-            new TestOne(['value' => 'v1']),
-        ];
+        $this->readerDelegate->method('getMethodAnnotations')
+            ->willReturn($methodAnnotations);
 
-        $this->assertEquals($expected, $annotations);
-
-        $annotations = $reader->read(AnnotatedController::class, 'show2', $classes);
-
-        $expected = [
-            new TestOne(['value' => 'v1']),
-            new TestTwo(['value' => 'v2']),
-            new TestOne(['value' => 'v3']),
-        ];
+        $annotations = $this->reader->read(SimpleController::class, 'index', $classesToRead);
 
         $this->assertEquals($expected, $annotations);
+    }
+
+    public function readDataProvider()
+    {
+        return [
+            [
+                [new TestOne(['value' => 'v1'])],
+                [new TestThree(['value' => 'v4'])],
+                [new TestOne(['value' => 'v1'])],
+            ],
+            [
+                [new TestOne(['value' => 'v1'])],
+                [new TestTwo(['value' => 'v2']), new TestOne(['value' => 'v3'])],
+                [new TestOne(['value' => 'v1']), new TestTwo(['value' => 'v2']), new TestOne(['value' => 'v3'])],
+            ],
+        ];
     }
 }
