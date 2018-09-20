@@ -33,7 +33,7 @@ class AccessMap implements AccessMapInterface
      */
     public function add($routeName, array $testBags)
     {
-        $cacheItem = $this->cache->getItem('tests//'.$routeName);
+        $cacheItem = $this->cache->getItem('tests#'.$routeName);
 
         $cacheItem->set($testBags);
         $this->cache->save($cacheItem);
@@ -44,7 +44,7 @@ class AccessMap implements AccessMapInterface
      */
     public function get($routeName)
     {
-        $cacheItem = $this->cache->getItem('tests//'.$routeName);
+        $cacheItem = $this->cache->getItem('tests#'.$routeName);
 
         return $cacheItem->get();
     }
@@ -54,7 +54,7 @@ class AccessMap implements AccessMapInterface
      */
     public function has($routeName)
     {
-        return $this->cache->hasItem('tests//'.$routeName);
+        return $this->cache->hasItem('tests#'.$routeName);
     }
 
     /**
@@ -62,7 +62,7 @@ class AccessMap implements AccessMapInterface
      */
     public function addException($routeName, ExceptionInterface $exception = null)
     {
-        $cacheItem = $this->cache->getItem('exceptions//'.$routeName);
+        $cacheItem = $this->cache->getItem('exceptions#'.$routeName);
 
         $cacheItem->set($exception);
         $this->cache->save($cacheItem);
@@ -73,7 +73,7 @@ class AccessMap implements AccessMapInterface
      */
     public function getException($routeName)
     {
-        $cacheItem = $this->cache->getItem('exceptions//'.$routeName);
+        $cacheItem = $this->cache->getItem('exceptions#'.$routeName);
 
         return $cacheItem->get();
     }
@@ -83,7 +83,7 @@ class AccessMap implements AccessMapInterface
      */
     public function hasException($routeName)
     {
-        return $this->cache->hasItem('exceptions//'.$routeName);
+        return $this->cache->hasItem('exceptions#'.$routeName);
     }
 
     /**

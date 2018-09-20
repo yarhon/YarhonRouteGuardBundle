@@ -37,8 +37,7 @@
         "psr-4": { "Yarhon\\RouteGuardBundle\\": "" }
     },
     "autoload-dev": {
-        "psr-4": { "Yarhon\\RouteGuardBundle\\Tests\\": "" },
-        "files": [ "Tests/annotation_loader.php" ]
+        "psr-4": { "Yarhon\\RouteGuardBundle\\Tests\\": "" }
     },
     "minimum-stability": "stable"
 }

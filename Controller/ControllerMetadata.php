@@ -21,7 +21,7 @@ class ControllerMetadata
     /**
      * @var ArgumentMetadata[]
      */
-    private $arguments;
+    private $arguments = [];
 
     /**
      * ControllerMetadata constructor.
