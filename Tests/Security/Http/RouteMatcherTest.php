@@ -97,10 +97,28 @@ class RouteMatcherTest extends TestCase
         ];
     }
 
-    public function testAS()
+    public function atestAS()
     {
-        $route = new Route('/blog/');
-        $p = $route->compile()->getStaticPrefix();
-        var_dump($p);
+        //
+        //$staticPrefix = '/blog';
+        //$pattern = '/blog[a-z]+';
+        ///var_dump(preg_match('{'.$pattern.'}', $staticPrefix));
+
+        // = ! < > | : -
+        $pattern = '=^=';
+        $staticPrefix = '=^=';
+
+        // var_dump(preg_match('{'.$pattern.'}', $staticPrefix));
+
+        //$a = 'as';
+
+        //var_dump(isset($a[1]), isset($a[2]));
+
+
+
+
+        //$route = new Route('/blog/');
+        //$p = $route->compile()->getStaticPrefix();
+        //var_dump($p);
     }
 }

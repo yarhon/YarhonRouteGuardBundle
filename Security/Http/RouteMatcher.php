@@ -89,15 +89,28 @@ class RouteMatcher
         }
 
         // Note: It's important to use the same regexp delimiters ("{}") used in \Symfony\Component\HttpFoundation\RequestMatcher::matches.
-        $staticPrefixMatchesPattern = preg_match('{'.$pattern.'}', $staticPrefix);
+        $matches = preg_match('{'.$pattern.'}', $staticPrefix);
 
         // If route is static (no path variables), static prefix would be equal to the resulting url for the route.
         if (!$compiledRoute->getPathVariables()) {
-            return $staticPrefixMatchesPattern ? 1 : -1;
+            return $matches ? 1 : -1;
         }
+//
+//        if ($matches) {
+//            $lastIndex = strlen($pattern) - 1;
+//            $hasStringEndAssert = ('$' === $pattern[$lastIndex] && (!isset($pattern[$lastIndex - 1]) || '\\' !== $pattern[$lastIndex - 1]));
+//
+//            // If pattern doesn't have "string end" assert and static prefix matches pattern, resulting url would always match pattern.
+//            if (!$hasStringEndAssert && $staticPrefixMatchesPattern) {
+//                return 1;
+//            }
+//
+//        }
+
+        ///////////////////
 
         // If pattern has "string start" assert, and static prefix doesn't matches pattern, resulting url would never match pattern.
-        if ('^' === $pattern[0] && !$staticPrefixMatchesPattern) {
+        if ('^' === $pattern[0] && !$matches) {
             return -1;
         }
 
@@ -105,33 +118,35 @@ class RouteMatcher
         $hasStringEndAssert = ('$' === $pattern[$lastIndex] && (!isset($pattern[$lastIndex - 1]) || '\\' !== $pattern[$lastIndex - 1]));
 
         // If pattern doesn't have "string end" assert and static prefix matches pattern, resulting url would always match pattern.
-        if (!$hasStringEndAssert && $staticPrefixMatchesPattern) {
+
+        if (!$hasStringEndAssert && $matches) {
             return 1;
         }
 
         return 0;
     }
 
-    private function matchStaticPrefix(Route $route, $pattern)
+    private function determineOptionalSeparator(Route $route)
     {
         $compiledRoute = $route->compile();
-        $staticPrefix = $compiledRoute->getStaticPrefix();
-
-        // Note: It's important to use the same regexp delimiters ("{}") used in \Symfony\Component\HttpFoundation\RequestMatcher::matches.
-        if (preg_match('{'.$pattern.'}', $staticPrefix)) {
-            return 1;
-        }
 
         $tokens = array_reverse($compiledRoute->getTokens());
+
+        // We need first token of "variable" type
         $token = ('text' !== $tokens[0][0]) ? $tokens[0] : (isset($tokens[1])) ? $tokens[1] : null;
+
+        // Static prefix would optionally contain terminating separator depending on first variable used in route path:
+        // - variable has default value - no separator
+        // - variable doesn't have default value, but is separated from preceding text by "/" separator - no separator
+        // - in all other cases terminating separator would be present in static prefix.
+        //
+        // Depending on $parameters argument, passed to the UrlGenerator::generate, this optional separator would be
+        // present or not in the resulting url.
 
         $optionalSeparator = ($token && ($route->hasDefault($token[3]) || '/' === $token[1])) ? $token[1] : null;
 
-        if ($optionalSeparator && preg_match('{'.$pattern.'}', $staticPrefix.$optionalSeparator)) {
-            return 0;
-        }
+        // return $optionalSeparator;
 
-        //return -1;
 
         ///////////////////////////////////////
 
