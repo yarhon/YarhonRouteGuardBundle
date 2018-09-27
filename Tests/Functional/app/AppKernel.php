@@ -10,7 +10,6 @@
 
 namespace Yarhon\RouteGuardBundle\Tests\Functional\app;
 
-use Psr\Log\NullLogger;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Kernel;
@@ -66,7 +65,7 @@ class AppKernel extends Kernel
     /*
     protected function build(ContainerBuilder $container)
     {
-        $container->register('logger', NullLogger::class);
+        $container->register('logger', \Psr\Log\NullLogger::class);
     }
     */
 }

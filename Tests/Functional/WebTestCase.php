@@ -39,13 +39,6 @@ abstract class WebTestCase extends BaseWebTestCase
 
     abstract protected static function getRouterConfig();
 
-    protected static function getKernelClass()
-    {
-        require_once __DIR__.'/app/AppKernel.php';
-
-        return 'Yarhon\RouteGuardBundle\Tests\Functional\app\AppKernel';
-    }
-
     public static function setUpBeforeClass()
     {
         static::deleteTempDir();
@@ -68,9 +61,7 @@ abstract class WebTestCase extends BaseWebTestCase
 
     protected static function createKernel(array $options = array())
     {
-        $class = self::getKernelClass();
-
-        return new $class(
+        return new app\AppKernel(
             static::getTempDir(),
             static::getBundles(),
             static::getConfigs(),
