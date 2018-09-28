@@ -21,7 +21,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 class Controller extends AbstractController
 {
     /**
-     * @Route("action1")
+     * @Route("/action1", name="action1")
      */
     public function action1()
     {

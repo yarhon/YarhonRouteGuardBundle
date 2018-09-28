@@ -10,6 +10,9 @@
 
 namespace Yarhon\RouteGuardBundle\Tests\Functional;
 
+use Symfony\Bundle\TwigBundle\TwigBundle;
+use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
+
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
@@ -18,8 +21,8 @@ class SensioSecurityTest extends WebTestCase
     protected static function getBundles()
     {
         return array_merge(parent::getBundles(), [
-            \Symfony\Bundle\TwigBundle\TwigBundle::class,
-            \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle::class,
+            TwigBundle::class,
+            SensioFrameworkExtraBundle::class,
             Bundle\SensioSecurityBundle\SensioSecurityBundle::class,
         ]);
     }
@@ -35,11 +38,9 @@ class SensioSecurityTest extends WebTestCase
     public function testAction1()
     {
         $client = $this->createClient();
+        $crawler = $client->request('GET', '/action1');
+        $crawler = $crawler->filterXPath('//body');
 
-        $client->request('GET', '/action1');
-
-        $content = $client->getResponse()->getContent();
-
-        var_dump($content);
+        $this->assertEquals('http://example.com/action1', $crawler->html());
     }
 }

@@ -46,10 +46,13 @@ class RouteTestResolver implements RouteTestResolverInterface, LoggerAwareInterf
     {
         // TODO: add @throws to interface doc
 
-        $tests = [];
-
         $testBags = $this->accessMap->get($routeContext->getName());
 
+        if (null === $testBags) {
+            return [];
+        }
+
+        $tests = [];
         foreach ($testBags as $testBag) {
             $tests = array_merge($tests, $this->testResolver->resolve($testBag, $routeContext));
         }

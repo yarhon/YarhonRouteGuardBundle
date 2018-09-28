@@ -10,14 +10,14 @@
 
 namespace Yarhon\RouteGuardBundle\Tests\Functional\app;
 
+use Symfony\Component\HttpKernel\Kernel as BaseKernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class AppKernel extends Kernel
+class Kernel extends BaseKernel
 {
     private $testVarDir;
     private $testBundles;

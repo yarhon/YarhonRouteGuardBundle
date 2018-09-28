@@ -13,6 +13,7 @@ namespace Yarhon\RouteGuardBundle\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ConfigurationExtensionInterface;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Config\Definition\Exception\Exception as ConfigDefinitionException;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 
 /**
@@ -57,7 +58,12 @@ class ForeignExtensionAccessor
 
         $configuration = $extension->getConfiguration([], $container);
         $configs = $container->getExtensionConfig($extensionName);
-        $processed = $this->processor->processConfiguration($configuration, $configs);
+
+        try {
+            $processed = $this->processor->processConfiguration($configuration, $configs);
+        } catch (ConfigDefinitionException $e) {
+            throw new LogicException(sprintf('Cannot read configuration of the "%s" extension because of configuration exception.', $extensionName), 0, $e);
+        }
 
         return $processed;
     }

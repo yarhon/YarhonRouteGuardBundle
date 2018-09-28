@@ -1,7 +1,9 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
-
-    Action 1 template
-
+    {% route ["action1"] as url %}
+        {{ ref }}
+    {% else %}
+        No access
+    {% endroute %}
 {% endblock %}

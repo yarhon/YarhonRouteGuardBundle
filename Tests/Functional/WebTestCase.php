@@ -12,6 +12,9 @@ namespace Yarhon\RouteGuardBundle\Tests\Functional;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
+use Symfony\Bundle\SecurityBundle\SecurityBundle;
+use Yarhon\RouteGuardBundle\YarhonRouteGuardBundle;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -21,23 +24,38 @@ abstract class WebTestCase extends BaseWebTestCase
     protected static function getBundles()
     {
         return [
-            \Symfony\Bundle\FrameworkBundle\FrameworkBundle::class,
-            \Symfony\Bundle\SecurityBundle\SecurityBundle::class,
+            FrameworkBundle::class,
+            SecurityBundle::class,
+            YarhonRouteGuardBundle::class,
         ];
     }
 
     protected static function getConfigs()
     {
-        return [
+        $configs = [
             'framework' => [
-                'router' => static::getRouterConfig(),
                 'secret' => 'foo',
                 'test' => null,
             ],
+            'security' => [
+                'firewalls' => [
+                    'main' => ['anonymous' => true],
+                ],
+            ],
+            'twig' => ['debug' => true],
         ];
+
+        if ($routerConfig = static::getRouterConfig()) {
+            $configs['framework']['router'] = $routerConfig;
+        }
+
+        return $configs;
     }
 
-    abstract protected static function getRouterConfig();
+    protected static function getRouterConfig()
+    {
+        return [];
+    }
 
     public static function setUpBeforeClass()
     {
@@ -61,7 +79,7 @@ abstract class WebTestCase extends BaseWebTestCase
 
     protected static function createKernel(array $options = array())
     {
-        return new app\AppKernel(
+        return new app\Kernel(
             static::getTempDir(),
             static::getBundles(),
             static::getConfigs(),
@@ -73,5 +91,14 @@ abstract class WebTestCase extends BaseWebTestCase
     protected static function getTempDir()
     {
         return sys_get_temp_dir().'/route-guard-'.substr(strrchr(static::class, '\\'), 1);
+    }
+
+    protected static function createClient(array $options = [], array $server = [])
+    {
+        $server = array_merge([
+            'HTTP_HOST' => 'example.com',
+        ], $server);
+
+        return parent::createClient($options, $server);
     }
 }
