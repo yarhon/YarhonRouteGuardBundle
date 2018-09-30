@@ -42,6 +42,6 @@ class AccessMapCacheWarmerTest extends TestCase
 
         $cacheWarmer = new AccessMapCacheWarmer($builder, $accessMap);
 
-        $this->assertTrue($cacheWarmer->isOptional());
+        $this->assertFalse($cacheWarmer->isOptional());
     }
 }

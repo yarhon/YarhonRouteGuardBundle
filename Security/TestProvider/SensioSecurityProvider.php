@@ -160,26 +160,26 @@ class SensioSecurityProvider implements TestProviderInterface
 
     /**
      * @param string $expression
-     * @param array  $names
+     * @param array  $variableNames
      *
      * @return ExpressionDecorator
      *
      * @throws InvalidArgumentException
      */
-    private function createExpression($expression, array $names = [])
+    private function createExpression($expression, array $variableNames = [])
     {
-        $defaultNames = SensioSecurityExpressionVoter::getVariableNames();
-        $names = array_merge($defaultNames, $names);
+        $voterVariableNames = SensioSecurityExpressionVoter::getVariableNames();
+        $namesToParse = array_merge($voterVariableNames, $variableNames);
 
         // TODO: warning if some variable names overlaps with SensioSecurityExpressionVoter variables
 
         try {
-            $parsed = $this->expressionLanguage->parse($expression, $names);
+            $parsed = $this->expressionLanguage->parse($expression, $namesToParse);
         } catch (SyntaxError $e) {
             throw new InvalidArgumentException(sprintf('Cannot parse expression "%s" with following variables: "%s".', $expression, implode('", "', $names)), 0, $e);
         }
 
-        $expression = new ExpressionDecorator($parsed, $names);
+        $expression = new ExpressionDecorator($parsed, $variableNames);
 
         return $expression;
     }

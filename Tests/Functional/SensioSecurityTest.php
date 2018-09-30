@@ -35,12 +35,31 @@ class SensioSecurityTest extends WebTestCase
         ];
     }
 
-    public function testAction1()
+    public function testWithoutAnyRole()
     {
         $client = $this->createClient();
-        $crawler = $client->request('GET', '/action1');
-        $crawler = $crawler->filterXPath('//body');
+        $crawler = $client->request('GET', '/');
 
-        $this->assertEquals('http://example.com/action1', $crawler->html());
+        $publicLink = $crawler->filterXPath('//*[@id="public_link"]');
+        $userLink = $crawler->filterXPath('//*[@id="user_link"]');
+        $adminLink = $crawler->filterXPath('//*[@id="admin_link"]');
+
+        $this->assertEquals('http://example.com/public_action', $publicLink->html());
+        $this->assertEquals('No access', $userLink->html());
+        $this->assertEquals('No access', $adminLink->html());
+    }
+
+    public function testWithUserRole()
+    {
+        $client = $this->createClient([], ['PHP_AUTH_USER' => 'bob', 'PHP_AUTH_PW' => 'pa$$word']);
+        $crawler = $client->request('GET', '/');
+
+        $publicLink = $crawler->filterXPath('//*[@id="public_link"]');
+        $userLink = $crawler->filterXPath('//*[@id="user_link"]');
+        $adminLink = $crawler->filterXPath('//*[@id="admin_link"]');
+
+        $this->assertEquals('http://example.com/public_action', $publicLink->html());
+        $this->assertEquals('http://example.com/user_action', $userLink->html());
+        $this->assertEquals('No access', $adminLink->html());
     }
 }

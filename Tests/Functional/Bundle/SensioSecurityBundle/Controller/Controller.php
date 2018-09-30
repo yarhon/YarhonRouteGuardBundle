@@ -12,6 +12,7 @@ namespace Yarhon\RouteGuardBundle\Tests\Functional\Bundle\SensioSecurityBundle\C
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
@@ -21,10 +22,36 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 class Controller extends AbstractController
 {
     /**
-     * @Route("/action1", name="action1")
+     * @Route("/", name="index")
      */
-    public function action1()
+    public function indexAction()
     {
-        return $this->render('@SensioSecurity/action1.html.twig');
+        return $this->render('@SensioSecurity/index.html.twig');
+    }
+
+    /**
+     * @Route("/public_action", name="public_action")
+     */
+    public function publicAction()
+    {
+        return new Response('user action');
+    }
+
+    /**
+     * @Route("/user_action", name="user_action")
+     * @IsGranted("ROLE_USER")
+     */
+    public function userAction()
+    {
+        return new Response('user action');
+    }
+
+    /**
+     * @Route("/admin_action", name="admin_action")
+     * @Security("is_granted('ROLE_ADMIN')")
+     */
+    public function adminAction()
+    {
+        return new Response('admin action');
     }
 }
