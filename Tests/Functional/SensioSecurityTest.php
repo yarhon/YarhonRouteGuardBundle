@@ -35,7 +35,7 @@ class SensioSecurityTest extends WebTestCase
         ];
     }
 
-    public function testWithoutAnyRole()
+    public function testNotSecured()
     {
         $client = $this->createClient();
         $crawler = $client->request('GET', '/');
@@ -49,7 +49,7 @@ class SensioSecurityTest extends WebTestCase
         $this->assertEquals('No access', $adminLink->html());
     }
 
-    public function testWithUserRole()
+    public function testIsGrantedAnnotation()
     {
         $client = $this->createClient([], ['PHP_AUTH_USER' => 'bob', 'PHP_AUTH_PW' => 'pa$$word']);
         $crawler = $client->request('GET', '/');

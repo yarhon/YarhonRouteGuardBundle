@@ -19,6 +19,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class Kernel extends BaseKernel
 {
+    const CONFIG_EXTS = '.{php,xml,yaml,yml}';
+
     private $testVarDir;
     private $testBundles;
     private $testConfigs;
@@ -55,6 +57,10 @@ class Kernel extends BaseKernel
 
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
+        $confDir = __DIR__.'/config';
+
+        $loader->load($confDir.'/*'.self::CONFIG_EXTS, 'glob');
+
         $loader->load(function (ContainerBuilder $container) {
             foreach ($this->testConfigs as $extension => $config) {
                 $container->loadFromExtension($extension, $config);

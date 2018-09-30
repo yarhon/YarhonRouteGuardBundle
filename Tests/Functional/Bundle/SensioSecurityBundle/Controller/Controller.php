@@ -39,9 +39,9 @@ class Controller extends AbstractController
 
     /**
      * @Route("/user_action", name="user_action")
-     * @IsGranted("ROLE_USER")
+     * @IsGranted("ROLE_USER", subject="argument")
      */
-    public function userAction()
+    public function securedByIsGrantedAction($argument = 10)
     {
         return new Response('user action');
     }
@@ -50,7 +50,7 @@ class Controller extends AbstractController
      * @Route("/admin_action", name="admin_action")
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function adminAction()
+    public function securedBySecurityAction($argument)
     {
         return new Response('admin action');
     }

@@ -32,29 +32,7 @@ abstract class WebTestCase extends BaseWebTestCase
 
     protected static function getConfigs()
     {
-        $configs = [
-            'framework' => [
-                'secret' => 'foo',
-                'test' => null,
-            ],
-            'security' => [
-                'firewalls' => [
-                    'main' => ['anonymous' => true, 'http_basic' => true],
-                ],
-                'encoders' => [
-                    'Symfony\Component\Security\Core\User\User' => 'plaintext',
-                ],
-                'providers' => [
-                    'main' => [
-                        'memory' => [
-                            'users' => [
-                                'bob' => ['password' => 'pa$$word', 'roles' => 'ROLE_USER']
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
+        $configs = [];
 
         if ($routerConfig = static::getRouterConfig()) {
             $configs['framework']['router'] = $routerConfig;
