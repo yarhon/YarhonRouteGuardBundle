@@ -101,18 +101,19 @@ class SensioSecurityProviderTest extends TestCase
 
         $expression = $this->createMock(Expression::class);
 
-        $names = SensioSecurityExpressionVoter::getVariableNames();
+        $names = ['foo', 'bar'];
+        $namesToParse = SensioSecurityExpressionVoter::getVariableNames();
 
         $this->expressionLanguage->expects($this->at(0))
             ->method('parse')
-            ->with($expressionString, $names)
+            ->with($expressionString, $namesToParse)
             ->willThrowException(new SyntaxError('syntax'));
 
-        $names = array_merge($names, ['foo', 'bar']);
+        $namesToParse = array_merge($namesToParse, $names);
 
         $this->expressionLanguage->expects($this->at(1))
             ->method('parse')
-            ->with($expressionString, $names)
+            ->with($expressionString, $namesToParse)
             ->willReturn($expression);
 
         $testBag = $this->provider->getTests($this->route, 'a::b');

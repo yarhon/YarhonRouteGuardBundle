@@ -176,7 +176,7 @@ class SensioSecurityProvider implements TestProviderInterface
         try {
             $parsed = $this->expressionLanguage->parse($expression, $namesToParse);
         } catch (SyntaxError $e) {
-            throw new InvalidArgumentException(sprintf('Cannot parse expression "%s" with following variables: "%s".', $expression, implode('", "', $names)), 0, $e);
+            throw new InvalidArgumentException(sprintf('Cannot parse expression "%s" with following variables: "%s".', $expression, implode('", "', $namesToParse)), 0, $e);
         }
 
         $expression = new ExpressionDecorator($parsed, $variableNames);
