@@ -79,12 +79,11 @@ class RequestContextFactory
 
         $pathInfoClosure = function () use ($generateClosure, $urlGeneratorContext) {
             $url = $generateClosure();
-
             $pathInfo = parse_url($url, PHP_URL_PATH);
-
             $pathInfo = substr($pathInfo, strlen($urlGeneratorContext->getBaseUrl()));
+
+            // See \Symfony\Component\HttpFoundation\Request::preparePathInfo
             if (false === $pathInfo || '' === $pathInfo) {
-                // See \Symfony\Component\HttpFoundation\Request::preparePathInfo
                 $pathInfo = '/';
             }
 
