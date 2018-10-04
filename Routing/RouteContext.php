@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RouteContext implements RouteContextInterface
+class RouteContext implements RouteContextInterface, GeneratedUrlAwareInterface
 {
     /**
      * @var string
@@ -38,9 +38,9 @@ class RouteContext implements RouteContextInterface
     private $referenceType;
 
     /**
-     * @var UrlDeferredInterface
+     * @var string
      */
-    private $urlDeferred;
+    private $generatedUrl;
 
     /**
      * @param string $name
@@ -91,20 +91,16 @@ class RouteContext implements RouteContextInterface
     /**
      * {@inheritdoc}
      */
-    public function createUrlDeferred()
+    public function setGeneratedUrl($generatedUrl)
     {
-        if (!$this->urlDeferred) {
-            $this->urlDeferred = new UrlDeferred($this->name, $this->parameters, $this->referenceType);
-        }
-
-        return $this->urlDeferred;
+        $this->generatedUrl = $generatedUrl;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getUrlDeferred()
+    public function getGeneratedUrl()
     {
-        return $this->urlDeferred;
+        return $this->generatedUrl;
     }
 }

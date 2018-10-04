@@ -66,7 +66,7 @@ class AuthorizedUrlGenerator implements AuthorizedUrlGeneratorInterface
             return false;
         }
 
-        if (($urlDeferred = $routeContext->getUrlDeferred()) && $generatedUrl = $urlDeferred->getGeneratedUrl()) {
+        if ($generatedUrl = $routeContext->getGeneratedUrl()) {
             return $generatedUrl;
         }
 

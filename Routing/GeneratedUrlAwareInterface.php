@@ -13,26 +13,15 @@ namespace Yarhon\RouteGuardBundle\Routing;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface RouteContextInterface
+interface GeneratedUrlAwareInterface
 {
     /**
-     * @return string
+     * @param string $generatedUrl
      */
-    public function getName();
-
-    /**
-     * @return array
-     */
-    public function getParameters();
+    public function setGeneratedUrl($generatedUrl);
 
     /**
      * @return string
      */
-    public function getMethod();
-
-    /**
-     * @return int
-     */
-    public function getReferenceType();
-
+    public function getGeneratedUrl();
 }

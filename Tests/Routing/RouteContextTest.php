@@ -39,27 +39,11 @@ class RouteContextTest extends TestCase
         $this->assertSame(UrlGeneratorInterface::RELATIVE_PATH, $context->getReferenceType());
     }
 
-    public function testUrlDeferredParameters()
-    {
-        $context = new RouteContext('route1', ['q' => 1], 'POST', UrlGeneratorInterface::RELATIVE_PATH);
-
-        $urlDeferred = $context->createUrlDeferred();
-
-        $this->assertAttributeEquals('route1', 'name', $urlDeferred);
-        $this->assertAttributeEquals(['q' => 1], 'parameters', $urlDeferred);
-        $this->assertAttributeEquals(UrlGeneratorInterface::RELATIVE_PATH, 'referenceType', $urlDeferred);
-    }
-
-    public function testUrlDeferredSameInstance()
+    public function testGeneratedUrl()
     {
         $context = new RouteContext('route1');
+        $context->setGeneratedUrl('http://site.com/foo');
 
-        $urlDeferred = $context->createUrlDeferred();
-
-        $urlDeferredTwo = $context->createUrlDeferred();
-        $urlDeferredThree = $context->getUrlDeferred();
-
-        $this->assertSame($urlDeferred, $urlDeferredTwo);
-        $this->assertSame($urlDeferred, $urlDeferredThree);
+        $this->assertEquals('http://site.com/foo', $context->getGeneratedUrl());
     }
 }

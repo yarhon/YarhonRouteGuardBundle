@@ -16,6 +16,7 @@ use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\Http\TestBagMapInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
+use Yarhon\RouteGuardBundle\Routing\UrlDeferred;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
 
 /**
@@ -54,6 +55,7 @@ class SymfonyAccessControlResolver implements TestResolverInterface
     {
         if ($testBag instanceof TestBagMapInterface) {
             $requestContext = $this->requestContextFactory->createContext($routeContext);
+
             $testBag = $testBag->resolve($requestContext);
             if (null === $testBag) {
                 return [];

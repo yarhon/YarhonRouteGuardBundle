@@ -92,14 +92,10 @@ class AuthorizedUrlGeneratorTest extends TestCase
         $this->assertEquals('/url1', $this->generator->generate('route1', ['page' => 1], 'POST', UrlGeneratorInterface::RELATIVE_PATH));
     }
 
-    public function testUrlDeferredWithoutUrlGenerated()
+    public function testGenerateWithoutRouteContextUrlGenerated()
     {
         $this->authorizationChecker->method('isGranted')
-            ->willReturnCallback(function ($routeContext) {
-                $routeContext->createUrlDeferred();
-
-                return true;
-            });
+            ->willReturn(true);
 
         $this->generatorDelegate->expects($this->once())
             ->method('generate');
@@ -107,23 +103,18 @@ class AuthorizedUrlGeneratorTest extends TestCase
         $this->generator->generate('route1');
     }
 
-    public function testUrlDeferredWithUrlGenerated()
+    public function testGenerateWithRouteContextUrlGenerated()
     {
         $this->authorizationChecker->method('isGranted')
             ->willReturnCallback(function ($routeContext) {
-                $urlDeferred = $routeContext->createUrlDeferred();
-
-                $r = new \ReflectionProperty($urlDeferred, 'generatedUrl');
-                $r->setAccessible(true);
-                $r->setValue($urlDeferred, '/deferred_generated_url');
-
+                $routeContext->setGeneratedUrl('/generated_url');
                 return true;
             });
 
         $this->generatorDelegate->expects($this->never())
             ->method('generate');
 
-        $this->assertEquals('/deferred_generated_url', $this->generator->generate('route1'));
+        $this->assertEquals('/generated_url', $this->generator->generate('route1'));
     }
 
     public function testLocalizedRouteByLocaleFromContext()
