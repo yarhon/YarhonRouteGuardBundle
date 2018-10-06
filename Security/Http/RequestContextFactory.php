@@ -46,7 +46,7 @@ class RequestContextFactory
         $urlGenerator = $this->urlGenerator;
         $urlGeneratorContext = $this->urlGenerator->getContext();
 
-        $generateClosure = function () use ($routeContext, $urlGenerator) {
+        $generateUrlClosure = function () use ($routeContext, $urlGenerator) {
             static $generated;
 
             if ($generated === null) {
@@ -54,14 +54,14 @@ class RequestContextFactory
 
                 // We need to parse path and host from the generated url, that depends on reference type.
                 // When using ABSOLUTE_URL or NETWORK_PATH, generated url will contain both path and host.
-                // When using ABSOLUTE_PATH, generated url will contain only path.
                 //
-                // If route has some specific host assigned, the UrlGenerator will force reference type to ABSOLUTE_URL or NETWORK_PATH,
-                // that would produce url with host.
-                // So, with ABSOLUTE_PATH and RELATIVE_PATH, if generated url does not contains host, we can be sure
+                // When using ABSOLUTE_PATH or RELATIVE_PATH, generated url will contain only path.
+                // If route has some specific host assigned, the UrlGenerator will force reference type to
+                // ABSOLUTE_URL or NETWORK_PATH, that would produce url with host.
+                // So, with ABSOLUTE_PATH or RELATIVE_PATH, if generated url does not contains host, we can be sure
                 // that the host is the "current" host, and grab it from UrlGenerator context.
-                // Finally, with RELATIVE_PATH we can't simply determine path, so we use ABSOLUTE_URL,
-                // and don't save the generated url.
+                // Finally, with RELATIVE_PATH we can't simply determine path (absolute), so we force generation to
+                // ABSOLUTE_URL, and don't save the generated url.
 
                 if (UrlGeneratorInterface::RELATIVE_PATH === $referenceType) {
                     $referenceType = UrlGeneratorInterface::ABSOLUTE_URL;
@@ -77,8 +77,8 @@ class RequestContextFactory
             return $generated;
         };
 
-        $pathInfoClosure = function () use ($generateClosure, $urlGeneratorContext) {
-            $url = $generateClosure();
+        $pathInfoClosure = function () use ($generateUrlClosure, $urlGeneratorContext) {
+            $url = $generateUrlClosure();
             $pathInfo = parse_url($url, PHP_URL_PATH);
             $pathInfo = substr($pathInfo, strlen($urlGeneratorContext->getBaseUrl()));
 
@@ -90,8 +90,8 @@ class RequestContextFactory
             return $pathInfo;
         };
 
-        $hostClosure = function () use ($generateClosure, $urlGeneratorContext) {
-            $url = $generateClosure();
+        $hostClosure = function () use ($generateUrlClosure, $urlGeneratorContext) {
+            $url = $generateUrlClosure();
             $host = parse_url($url, PHP_URL_HOST) ?: $urlGeneratorContext->getHost();
 
             return $host;

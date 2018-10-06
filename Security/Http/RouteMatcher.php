@@ -20,6 +20,29 @@ use Symfony\Component\Routing\Route;
 class RouteMatcher
 {
     /**
+     * @var string
+     */
+    private $defaultHost;
+
+    /**
+     * @var RegexParser
+     */
+    private $regexParser;
+
+    /**
+     * RouteMatcher constructor.
+     *
+     * @param string|null      $defaultHost
+     * @param RegexParser|null $regexParser
+     */
+    public function __construct($defaultHost = null, RegexParser $regexParser = null)
+    {
+        $this->defaultHost = $defaultHost;
+        $this->regexParser = $regexParser ?: new RegexParser();
+    }
+
+
+    /**
      * @param Route             $route
      * @param RequestConstraint $constraint
      *
@@ -71,60 +94,81 @@ class RouteMatcher
         return new RequestConstraint(...array_values($parameters));
     }
 
-    /**
-     *
-     *
-     * Path pattern example: ^/secure1
-     * Route path example: /secure1/{page}
-     * Route static prefix example: /secure1
-     * Route regexp example: #^/secure1/(?P<page>\d+)$#sD
-     */
     private function matchPathPattern(Route $route, $pattern)
     {
         $compiledRoute = $route->compile();
         $staticPrefix = $compiledRoute->getStaticPrefix();
 
+        // If route is static (no path variables), static prefix would be equal to the resulting url for the route.
+        if (!$compiledRoute->getPathVariables()) {
+            // Note: It's important to use the same regexp delimiters ("{}") used in \Symfony\Component\HttpFoundation\RequestMatcher::matches.
+            return (preg_match('{'.$pattern.'}', $staticPrefix)) ? 1 : -1;
+        }
+
         if ('' === $staticPrefix) {
             return 0;
         }
 
-        // Note: It's important to use the same regexp delimiters ("{}") used in \Symfony\Component\HttpFoundation\RequestMatcher::matches.
-        $matches = preg_match('{'.$pattern.'}', $staticPrefix);
+        return $this->matchRegexStaticPrefix($staticPrefix, $pattern);
+    }
 
-        // If route is static (no path variables), static prefix would be equal to the resulting url for the route.
-        if (!$compiledRoute->getPathVariables()) {
-            return $matches ? 1 : -1;
+    private function matchHostPattern(Route $route, $pattern)
+    {
+        $compiledRoute = $route->compile();
+
+        $host = $route->getHost() ?: $this->defaultHost;
+
+        if (!$host) {
+            return 0;
         }
-//
-//        if ($matches) {
-//            $lastIndex = strlen($pattern) - 1;
-//            $hasStringEndAssert = ('$' === $pattern[$lastIndex] && (!isset($pattern[$lastIndex - 1]) || '\\' !== $pattern[$lastIndex - 1]));
-//
-//            // If pattern doesn't have "string end" assert and static prefix matches pattern, resulting url would always match pattern.
-//            if (!$hasStringEndAssert && $staticPrefixMatchesPattern) {
-//                return 1;
-//            }
-//
-//        }
 
-        ///////////////////
+        if (!$compiledRoute->getHostVariables()) {
+            // Note: It's important to use the same regexp delimiters ("{}") used in \Symfony\Component\HttpFoundation\RequestMatcher::matches.
+            return (preg_match('{'.$pattern.'}i', $host)) ? 1 : -1;
+        }
 
-        // If pattern has "string start" assert, and static prefix doesn't matches pattern, resulting url would never match pattern.
-        if ('^' === $pattern[0] && !$matches) {
+        $staticPrefix = strstr($host, '{', true);
+
+        if ('' === $staticPrefix) {
+            return 0;
+        }
+
+        return $this->matchRegexStaticPrefix($staticPrefix, $pattern);
+    }
+
+    private function matchRegexStaticPrefix($staticPrefix, $pattern)
+    {
+        $parsedPattern = $this->regexParser->parse($pattern);
+
+        if (!$parsedPattern['hasStringStartAssert']) {
+            return 0;
+        }
+
+        $patternStaticPrefix = $parsedPattern['staticPrefix'];
+        $compareLength = min(strlen($staticPrefix), strlen($patternStaticPrefix));
+
+        return (strncmp($staticPrefix, $patternStaticPrefix, $compareLength) === 0) ? 0 : -1;
+    }
+
+    private function matchMethods(Route $route, array $methods)
+    {
+        if (!$route->getMethods()) {
+            return 0;
+        }
+
+        $matchingMethods = array_intersect($route->getMethods(), $methods);
+
+        if (!$matchingMethods) {
             return -1;
         }
 
-        $lastIndex = strlen($pattern) - 1;
-        $hasStringEndAssert = ('$' === $pattern[$lastIndex] && (!isset($pattern[$lastIndex - 1]) || '\\' !== $pattern[$lastIndex - 1]));
-
-        // If pattern doesn't have "string end" assert and static prefix matches pattern, resulting url would always match pattern.
-
-        if (!$hasStringEndAssert && $matches) {
+        if ($matchingMethods == $route->getMethods()) {
             return 1;
         }
 
         return 0;
     }
+
 
     private function determineOptionalSeparator(Route $route)
     {
@@ -164,17 +208,5 @@ class RouteMatcher
 
         return $prefix;
     }
-
-    private function matchHostPattern(Route $route, $pattern)
-    {
-        $compiledRoute = $route->compile();
-
-        if (!$compiledRoute->getHostVariables()) {
-            //return $staticPrefixMatchesPattern ? 1 : -1;
-        }
-
-
-    }
-
 
 }

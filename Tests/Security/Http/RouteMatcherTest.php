@@ -30,7 +30,7 @@ class RouteMatcherTest extends TestCase
     /**
      * @dataProvider matchesGeneralDataProvider
      */
-    public function testMatchesGeneral($route, $constraint, $expected)
+    public function atestMatchesGeneral($route, $constraint, $expected)
     {
         $result = $this->routeMatcher->matches($route, $constraint);
 
@@ -51,7 +51,7 @@ class RouteMatcherTest extends TestCase
     /**
      * @dataProvider matchesByPathPatternProvider
      */
-    public function testMatchesByPathPattern($routePath, $pathPattern, $expected)
+    public function atestMatchesByPathPattern($routePath, $pathPattern, $expected)
     {
         $route = new Route($routePath);
         $constraint = new RequestConstraint($pathPattern);
@@ -97,8 +97,27 @@ class RouteMatcherTest extends TestCase
         ];
     }
 
-    public function atestAS()
+    public function testAS()
     {
+        $route = new Route('/');
+        $compiled = $route->compile();
+
+        var_dump($compiled->getStaticPrefix(), $compiled->getPathVariables());
+
+
+        $stringPrefix = '/blog';
+        $expressionStaticPrefix = '/blog/new';
+
+        $compareLength = max(strlen($stringPrefix), strlen($expressionStaticPrefix));
+        $r = strncmp($stringPrefix, $expressionStaticPrefix, $compareLength);
+
+        //var_dump($r);
+
+        //$a = preg_match('#\w{1}$#', 'š');
+        $b = preg_match('#^\p{L}{1}$#', 'ab');
+
+        //var_dump($b);
+
         //
         //$staticPrefix = '/blog';
         //$pattern = '/blog[a-z]+';
