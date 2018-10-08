@@ -58,7 +58,7 @@ class ServiceValueResolverTest extends TestCase
         $this->context->method('getControllerName')
             ->willReturn('a::b');
 
-        $this->container->expects($this->at(0))
+        $this->container->expects($this->atLeastOnce())
             ->method('has')
             ->willReturn(false);
 

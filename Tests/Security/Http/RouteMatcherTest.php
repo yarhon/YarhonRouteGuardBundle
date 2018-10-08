@@ -30,7 +30,7 @@ class RouteMatcherTest extends TestCase
     /**
      * @dataProvider matchesGeneralDataProvider
      */
-    public function atestMatchesGeneral($route, $constraint, $expected)
+    public function testMatchesGeneral($route, $constraint, $expected)
     {
         $result = $this->routeMatcher->matches($route, $constraint);
 
@@ -44,14 +44,28 @@ class RouteMatcherTest extends TestCase
     public function matchesGeneralDataProvider()
     {
         return [
-
+            [
+                new Route('/blog', [], [], [], '', [], []),
+                new RequestConstraint('^/blog', 'site\.com'),
+                new RequestConstraint(null, 'site\.com'),
+            ],
+            [
+                new Route('/blog', [], [], [], 'site.com', [], []),
+                new RequestConstraint('^/blog', 'site\.com', ['GET']),
+                new RequestConstraint(null, null, ['GET']),
+            ],
+            [
+                new Route('/blog'),
+                new RequestConstraint(null, null, null, ['127.0.0.1']),
+                new RequestConstraint(null, null, null, ['127.0.0.1']),
+            ],
         ];
     }
 
     /**
      * @dataProvider matchesByPathPatternProvider
      */
-    public function atestMatchesByPathPattern($routePath, $pathPattern, $expected)
+    public function testMatchesByPathPattern($routePath, $pathPattern, $expected)
     {
         $route = new Route($routePath);
         $constraint = new RequestConstraint($pathPattern);
@@ -60,6 +74,7 @@ class RouteMatcherTest extends TestCase
         if (is_bool($expected)) {
             $this->assertSame($expected, $result);
         } else {
+            $expected = new RequestConstraint($expected);
             $this->assertEquals($expected, $result);
         }
     }
@@ -67,77 +82,94 @@ class RouteMatcherTest extends TestCase
     public function matchesByPathPatternProvider()
     {
         return [
-
+            // static routes
             ['/', '/', true],
+            ['/', '^/', true],
+            ['/blog', '/blog', true],
+            ['/blog', '/admin', false],
             ['/blog', '^/blog', true],
-            ['/blog', '^/blog/', false],
-            ['/blog/', '^/blog', true],
-            ['/blog/', '^/blog/', true],
-            ['/blog/', '/blog', true],
-            ['/blog/', '^/blog$', false],
-
-            ['/new/blog/', '/blog', true],
-            ['/new/blog/', '^/blog', false],
-
-            ['/{author}', '/', new RequestConstraint('/')],
-            ['/blog/{author}', '^/', true],
+            ['/blog', '^/admin', false],
+            // dynamic routes match to "wildcard" patterns
+            ['/{name}', '^/', '^/'],
             ['/blog/{author}', '^/blog', true],
-
-            ['/blog/{author}', '/blog$', new RequestConstraint('/blog$')],
-            ['/blog$/{author}', '/blog\$', true],
-            ['/blog/{author}', '/blog$', new RequestConstraint('/blog$')],
-            ['/new/blog/{author}', '^/blog', false],
+            ['/blog/{author}', '^/blog.*$', true],
+            ['/blog/{author}', '^/blog/', '^/blog/'],
+            ['/blog/{author}', '^/blog/.*$', '^/blog/.*$'],
+            // dynamic routes match to patterns without "string start" assert
+            ['/blog/{author}', '/blog', true],
             ['/new/blog/{author}', '/blog', true],
-            ['/new/blog/{author}', '/blog/', new RequestConstraint('/blog/')],
-
-            ['/blog/{author}', '^/admin', false],
-            ['/blog/{author}', '/admin', new RequestConstraint('/admin')],
-
-            ['/blog/{author}', '^/blog/', false],
+            ['/new/blog/{author}', '/blog/', '/blog/'],
+            ['/new/blog/{author}', '/new2', '/new2'],
+            // other dynamic routes
+            ['/blog/{author}', '^/blow', false],
+            ['/blog/{author}', '^/blog\\d+', '^/blog\\d+'],
+            ['/blog/{author}', '\\d+', '\\d+'],
+            ['/blog/{author}', '^\\d+', '^\\d+'],
         ];
     }
 
-    public function testAS()
+    /**
+     * @dataProvider matchesByHostPatternProvider
+     */
+    public function testMatchesByHostPattern($routeHost, $hostPattern, $expected)
     {
         $route = new Route('/');
-        $compiled = $route->compile();
+        $route->setHost($routeHost);
+        $constraint = new RequestConstraint(null, $hostPattern);
+        $result = $this->routeMatcher->matches($route, $constraint);
 
-        var_dump($compiled->getStaticPrefix(), $compiled->getPathVariables());
-
-
-        $stringPrefix = '/blog';
-        $expressionStaticPrefix = '/blog/new';
-
-        $compareLength = max(strlen($stringPrefix), strlen($expressionStaticPrefix));
-        $r = strncmp($stringPrefix, $expressionStaticPrefix, $compareLength);
-
-        //var_dump($r);
-
-        //$a = preg_match('#\w{1}$#', 'š');
-        $b = preg_match('#^\p{L}{1}$#', 'ab');
-
-        //var_dump($b);
-
-        //
-        //$staticPrefix = '/blog';
-        //$pattern = '/blog[a-z]+';
-        ///var_dump(preg_match('{'.$pattern.'}', $staticPrefix));
-
-        // = ! < > | : -
-        $pattern = '=^=';
-        $staticPrefix = '=^=';
-
-        // var_dump(preg_match('{'.$pattern.'}', $staticPrefix));
-
-        //$a = 'as';
-
-        //var_dump(isset($a[1]), isset($a[2]));
-
-
-
-
-        //$route = new Route('/blog/');
-        //$p = $route->compile()->getStaticPrefix();
-        //var_dump($p);
+        if (is_bool($expected)) {
+            $this->assertSame($expected, $result);
+        } else {
+            $expected = new RequestConstraint(null, $expected);
+            $this->assertEquals($expected, $result);
+        }
     }
+
+    public function matchesByHostPatternProvider()
+    {
+        return [
+            ['', 'site\.com', 'site\.com'],
+            ['site.com', 'ite\.com', true],
+            ['site.com', '^ite\.com', false],
+            ['site.com', '^site\.com', true],
+            ['site.com', 'SITE\.com', true],
+            ['site.com.ua', 'site\.com', true],
+            ['site.com.ua', 'site\.com$', false],
+            ['site.com.{country}', 'site\.com', true],
+            ['site.com.{country}', '^SITE\.com', true],
+            ['{country}.site.com', 'site\.com', 'site\.com'],
+            ['test.{country}.site.com', 'test\.', true],
+        ];
+    }
+
+    /**
+     * @dataProvider matchesByMethodsProvider
+     */
+    public function testMatchesByMethods($routeMethods, $methods, $expected)
+    {
+        $route = new Route('/');
+        $route->setMethods($routeMethods);
+        $constraint = new RequestConstraint(null, null, $methods);
+        $result = $this->routeMatcher->matches($route, $constraint);
+
+        if (is_bool($expected)) {
+            $this->assertSame($expected, $result);
+        } else {
+            $expected = new RequestConstraint(null, null, $expected);
+            $this->assertEquals($expected, $result);
+        }
+    }
+
+    public function matchesByMethodsProvider()
+    {
+        return [
+            [[], ['GET'], ['GET']],
+            [['GET', 'POST'], ['PUT'], false],
+            [['GET', 'POST'], ['POST'], ['POST']],
+            [['GET', 'POST'], ['GET', 'POST'], true],
+            [['GET', 'POST'], ['POST', 'GET'], true],
+        ];
+    }
+
 }

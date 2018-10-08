@@ -29,6 +29,4 @@ interface TestProviderInterface extends LoggerAwareInterface
      * @throws ExceptionInterface
      */
     public function getTests(Route $route, $controllerName = null);
-
-    public function onBuild();
 }

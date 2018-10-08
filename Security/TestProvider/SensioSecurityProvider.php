@@ -86,13 +86,6 @@ class SensioSecurityProvider implements TestProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function onBuild()
-    {
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getTests(Route $route, $controllerName = null)
     {
         if (!$controllerName) {

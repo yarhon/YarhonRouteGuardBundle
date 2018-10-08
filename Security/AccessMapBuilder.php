@@ -125,8 +125,6 @@ class AccessMapBuilder implements LoggerAwareInterface
 
         $accessMap->clear();
 
-        $this->onBuild();
-
         $ignoredRoutes = [];
 
         foreach ($this->routeCollection as $name => $route) {
@@ -208,12 +206,5 @@ class AccessMapBuilder implements LoggerAwareInterface
         }
 
         return false;
-    }
-
-    private function onBuild()
-    {
-        foreach ($this->testProviders as $provider) {
-            $provider->onBuild();
-        }
     }
 }

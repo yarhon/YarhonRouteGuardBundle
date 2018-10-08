@@ -47,7 +47,7 @@ class SymfonyAccessControlProviderTest extends TestCase
 
         $this->provider = new SymfonyAccessControlProvider($this->routeMatcher);
 
-        $this->route = $this->createMock(Route::class);
+        $this->route = new Route('/');
     }
 
     public function testGetTestsWithOneMatch()
@@ -96,6 +96,29 @@ class SymfonyAccessControlProviderTest extends TestCase
 
         $this->assertSame($testArgumentsOne, iterator_to_array($firstItem[0])[0]);
         $this->assertSame($testArgumentsTwo, iterator_to_array($secondItem[0])[0]);
+    }
+
+    public function testGetTestsWithSeveralMatchesLoggerMessage()
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $this->provider->setLogger($logger);
+
+        $logger->expects($this->once())
+            ->method('warning')
+            ->with('Route with path "/" requires runtime matching to access_control rule(s) #0, #1 (zero-based), this would reduce performance.');
+
+        $testArgumentsOne = new TestArguments(['ROLE_ADMIN']);
+        $testArgumentsTwo = new TestArguments(['ROLE_USER']);
+
+        $this->provider->addRule(new RequestConstraint(), $testArgumentsOne);
+        $this->provider->addRule(new RequestConstraint(), $testArgumentsTwo);
+
+        $requestConstraintForMap = new RequestConstraint();
+
+        $this->routeMatcher->method('matches')
+            ->willReturnOnConsecutiveCalls($requestConstraintForMap, true);
+
+        $this->provider->getTests($this->route, 'a::b');
     }
 
     public function testGetTestsWithoutMatches()
@@ -167,22 +190,6 @@ class SymfonyAccessControlProviderTest extends TestCase
         $this->expectExceptionMessage('Cannot create expression because ExpressionLanguage is not provided.');
 
         $this->provider->importRules([$rule]);
-    }
-
-    public function testInspectRules()
-    {
-        $this->provider->addRule(new RequestConstraint('^/foo'), new TestArguments([]));
-        $this->provider->addRule(new RequestConstraint('/foo'), new TestArguments([]));
-
-        $logger = $this->createMock(LoggerInterface::class);
-
-        $this->provider->setLogger($logger);
-
-        $logger->expects($this->once())
-            ->method('warning')
-            ->with('Access control rule #1 path pattern "/foo" does not starts from "^" - that makes matching pattern to route static prefix impossible and reduces performance.');
-
-        $this->provider->onBuild();
     }
 
     private function createRuleArray()

@@ -109,7 +109,7 @@ class RouteMatcher
             return 0;
         }
 
-        return $this->matchRegexStaticPrefix($staticPrefix, $pattern);
+        return $this->matchStaticPrefixToPattern($staticPrefix, $pattern);
     }
 
     private function matchHostPattern(Route $route, $pattern)
@@ -133,21 +133,7 @@ class RouteMatcher
             return 0;
         }
 
-        return $this->matchRegexStaticPrefix($staticPrefix, $pattern);
-    }
-
-    private function matchRegexStaticPrefix($staticPrefix, $pattern)
-    {
-        $parsedPattern = $this->regexParser->parse($pattern);
-
-        if (!$parsedPattern['hasStringStartAssert']) {
-            return 0;
-        }
-
-        $patternStaticPrefix = $parsedPattern['staticPrefix'];
-        $compareLength = min(strlen($staticPrefix), strlen($patternStaticPrefix));
-
-        return (strncmp($staticPrefix, $patternStaticPrefix, $compareLength) === 0) ? 0 : -1;
+        return $this->matchStaticPrefixToPattern($staticPrefix, $pattern, false);
     }
 
     private function matchMethods(Route $route, array $methods)
@@ -169,44 +155,34 @@ class RouteMatcher
         return 0;
     }
 
-
-    private function determineOptionalSeparator(Route $route)
+    private function matchStaticPrefixToPattern($staticPrefix, $pattern, $caseSensitive = true)
     {
-        $compiledRoute = $route->compile();
+        $parsedPattern = $this->regexParser->parse($pattern);
+        $patternStaticPrefix = $parsedPattern['staticPrefix'];
 
-        $tokens = array_reverse($compiledRoute->getTokens());
-
-        // We need first token of "variable" type
-        $token = ('text' !== $tokens[0][0]) ? $tokens[0] : (isset($tokens[1])) ? $tokens[1] : null;
-
-        // Static prefix would optionally contain terminating separator depending on first variable used in route path:
-        // - variable has default value - no separator
-        // - variable doesn't have default value, but is separated from preceding text by "/" separator - no separator
-        // - in all other cases terminating separator would be present in static prefix.
-        //
-        // Depending on $parameters argument, passed to the UrlGenerator::generate, this optional separator would be
-        // present or not in the resulting url.
-
-        $optionalSeparator = ($token && ($route->hasDefault($token[3]) || '/' === $token[1])) ? $token[1] : null;
-
-        // return $optionalSeparator;
-
-
-        ///////////////////////////////////////
-
-        if ('text' !== $tokens[0][0]) {
-            // when
-
-            return ($route->hasDefault($tokens[0][3]) || '/' === $tokens[0][1]) ? '' : $tokens[0][1];
+        if ('' === $patternStaticPrefix) {
+            return 0;
         }
 
-        $prefix = $tokens[0][1];
+        if ($parsedPattern['hasStringStartAssert']) {
+            $compareLength = min(strlen($staticPrefix), strlen($patternStaticPrefix));
+            $compareFunction = $caseSensitive ? 'strncmp' : 'strncasecmp';
+            $compareResult = $compareFunction($staticPrefix, $patternStaticPrefix, $compareLength);
 
-        if (isset($tokens[1][1]) && '/' !== $tokens[1][1] && false === $route->hasDefault($tokens[1][3])) {
-            $prefix .= $tokens[1][1];
+            if (0 !== $compareResult) {
+                return -1;
+            }
+
+            if ($parsedPattern['dynamicPartIsWildcard'] && strlen($patternStaticPrefix) <= strlen($staticPrefix)) {
+                return 1;
+            }
+        } else {
+            $searchFunction = $caseSensitive ? 'strpos' : 'stripos';
+            if ($parsedPattern['dynamicPartIsWildcard'] && false !== $searchFunction($staticPrefix, $patternStaticPrefix)) {
+                return 1;
+            }
         }
 
-        return $prefix;
+        return 0;
     }
-
 }

@@ -33,6 +33,7 @@ class RegexParserTest extends TestCase
         $expected = array_combine([
             'hasStringStartAssert',
             'hasStringEndAssert',
+            'dynamicPartIsWildcard',
             'staticPrefix',
         ], $expected);
 
@@ -42,22 +43,23 @@ class RegexParserTest extends TestCase
     public function parseDataProvider()
     {
         return [
-            ['^foo$', [true, true, 'foo']],
-            ['^foo\\$', [true, false, 'foo$']],
-            [ 'foo', [false, false, 'foo']],
-            [ '\\\\', [false, false, '\\']],
-            [ '\\.\\+\\*\\?\\|\\^\\$\\[\\]\\(\\)\\{\\}', [false, false, '.+*?|^$[](){}']],
-            [ 'foo(bar)', [false, false, 'foo']],
-            [ 'foo[bar]', [false, false, 'foo']],
-            [ 'foo.', [false, false, 'foo']],
-            [ 'foo\\bar', [false, false, 'foo']],
-            [ 'foob{1}', [false, false, 'foo']],
-            [ 'foob+', [false, false, 'foo']],
-            [ 'foob*', [false, false, 'foo']],
-            [ 'foob?', [false, false, 'foo']],
-            [ 'foob|c', [false, false, 'foo']],
-            [ 'foo$a', [false, false, 'foo']],
-            [ 'foo^a', [false, false, 'foo']],
+            ['^foo$', [true, true, false, 'foo']],
+            ['^foo\\$', [true, false, true, 'foo$']],
+            ['foo', [false, false, true, 'foo']],
+            ['\\\\', [false, false, true, '\\']],
+            ['\\.\\+\\*\\?\\|\\^\\$\\[\\]\\(\\)\\{\\}\\d+', [false, false, false, '.+*?|^$[](){}']],
+            ['foo(bar)', [false, false, false, 'foo']],
+            ['foo[bar]', [false, false, false, 'foo']],
+            ['foo.', [false, false, false, 'foo']],
+            ['foo\\bar', [false, false, false, 'foo']],
+            ['foob{1}', [false, false, false, 'foo']],
+            ['foob+', [false, false, false, 'foo']],
+            ['foob*', [false, false, false, 'foo']],
+            ['foob?', [false, false, false, 'foo']],
+            ['foob|c', [false, false, false, 'foo']],
+            ['foo$a', [false, false, false, 'foo']],
+            ['foo^a', [false, false, false, 'foo']],
+            ['foo.*$', [false, true, true, 'foo']],
         ];
     }
 }

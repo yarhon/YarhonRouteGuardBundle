@@ -108,19 +108,11 @@ class SymfonyAccessControlProvider implements TestProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function onBuild()
-    {
-        $this->inspectRules();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getTests(Route $route, $controllerName = null)
     {
         $matches = [];
 
-        foreach ($this->rules as $rule) {
+        foreach ($this->rules as $index => $rule) {
             list($constraint, $arguments) = $rule;
 
             $matchResult = $this->routeMatcher->matches($route, $constraint);
@@ -132,12 +124,12 @@ class SymfonyAccessControlProvider implements TestProviderInterface
             $testBag = new TestBag([$arguments]);
 
             if (true === $matchResult) {
-                $matches[] = [$testBag, null];
+                $matches[$index] = [$testBag, null];
                 break;
             }
 
             if ($matchResult instanceof RequestConstraint) {
-                $matches[] = [$testBag, $matchResult];
+                $matches[$index] = [$testBag, $matchResult];
                 continue;
             }
         }
@@ -146,12 +138,13 @@ class SymfonyAccessControlProvider implements TestProviderInterface
             return null;
         }
 
-        if (1 === count($matches) && null === $matches[0][1]) {
+        if (1 === count($matches) && null === current($matches)[1]) {
             // Always matching rule was found, and there were no possibly matching rules found before,
             // so we don't need a TestBagMap for resolving it by RequestContext in runtime.
-            $testBag = $matches[0][0];
+            $testBag = current($matches)[0];
         } else {
-            $testBag = new TestBagMap($matches);
+            $this->logRuntimeMatching($route, $matches);
+            $testBag = new TestBagMap(array_values($matches));
         }
 
         return $testBag;
@@ -177,24 +170,13 @@ class SymfonyAccessControlProvider implements TestProviderInterface
         return $parsed;
     }
 
-    private function inspectRules()
+    private function logRuntimeMatching(Route $route, array $matches)
     {
         if (!$this->logger) {
             return;
         }
 
-        foreach ($this->rules as $index => $rule) {
-            /** @var RequestConstraint $constraint */
-            $constraint = $rule[0];
-
-            if (!$pathPatten = $constraint->getPathPattern()) {
-                continue;
-            }
-
-            if ('^' !== $pathPatten[0]) {
-                $message = 'Access control rule #%s path pattern "%s" does not starts from "^" - that makes matching pattern to route static prefix impossible and reduces performance.';
-                $this->logger->warning(sprintf($message, $index, $pathPatten));
-            }
-        }
+        $message = 'Route with path "%s" requires runtime matching to access_control rule(s) #%s (zero-based), this would reduce performance.';
+        $this->logger->warning(sprintf($message, $route->getPath(), implode(', #', array_keys($matches))));
     }
 }

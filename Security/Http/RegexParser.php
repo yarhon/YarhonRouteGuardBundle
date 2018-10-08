@@ -15,7 +15,7 @@ namespace Yarhon\RouteGuardBundle\Security\Http;
  */
 class RegexParser
 {
-    protected static $metaCharacters = '.\\+*?|^$[](){}';
+    protected static $metaCharacters = '\\.+*?|^$[](){}';
 
     protected static $removePreviousMetaCharacters = '+*?|{';
 
@@ -28,6 +28,7 @@ class RegexParser
     {
         $hasStringStartAssert = false;
         $hasStringEndAssert = false;
+        $dynamicPartIsWildcard = false;
 
         if ('^' === $expression[0]) {
             $hasStringStartAssert = true;
@@ -40,12 +41,17 @@ class RegexParser
             $expression = substr($expression, 0, -1);
         }
 
-        $staticPrefix = $this->parseStaticPrefix($expression);
+        list($staticPrefix, $dynamicPart) = $this->parseStaticPrefix($expression);
+
+        if (('' === $dynamicPart && !$hasStringEndAssert) || '.*' === $dynamicPart) {
+            $dynamicPartIsWildcard = true;
+        }
 
         return [
             'hasStringStartAssert' => $hasStringStartAssert,
             'hasStringEndAssert' => $hasStringEndAssert,
             'staticPrefix' => $staticPrefix,
+            'dynamicPartIsWildcard' => $dynamicPartIsWildcard,
         ];
     }
 
@@ -85,6 +91,8 @@ class RegexParser
             $prefix .= $symbol;
         }
 
-        return $prefix;
+        $dynamicPart = substr($expression, $i);
+
+        return [$prefix, $dynamicPart];
     }
 }

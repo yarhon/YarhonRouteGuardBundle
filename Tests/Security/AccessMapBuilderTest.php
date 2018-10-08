@@ -105,20 +105,6 @@ class AccessMapBuilderTest extends TestCase
         $builder->build($this->accessMap);
     }
 
-    public function testOnBuildIsCalled()
-    {
-        $builder = new AccessMapBuilder($this->providers);
-
-        $this->providerOne->expects($this->once())
-            ->method('onBuild');
-
-        $this->providerTwo->expects($this->once())
-            ->method('onBuild');
-
-        $builder->setRouteCollection($this->createRouteCollection());
-        $builder->build($this->accessMap);
-    }
-
     public function testBuild()
     {
         $routeCollection = $this->createRouteCollection([
@@ -136,12 +122,12 @@ class AccessMapBuilderTest extends TestCase
 
         $route = $routeCollection->get('/path1');
 
-        $this->providerOne->expects($this->at(1))
+        $this->providerOne->expects($this->once())
             ->method('getTests')
             ->with($route, 'class::method')
             ->willReturn($testBagOne);
 
-        $this->providerTwo->expects($this->at(1))
+        $this->providerTwo->expects($this->once())
             ->method('getTests')
             ->with($route, 'class::method')
             ->willReturn($testBagTwo);
@@ -172,13 +158,13 @@ class AccessMapBuilderTest extends TestCase
 
         $testBagOne = $this->createMock(AbstractTestBagInterface::class);
 
-        $this->providerOne->expects($this->at(1))
+        $this->providerOne->expects($this->once())
             ->method('getTests')
             ->willReturn($testBagOne);
 
         $exception = new InvalidArgumentException('bla bla');
 
-        $this->providerTwo->expects($this->at(1))
+        $this->providerTwo->expects($this->once())
             ->method('getTests')
             ->willThrowException($exception);
 
@@ -202,20 +188,20 @@ class AccessMapBuilderTest extends TestCase
 
         $testBagOne = $this->createMock(AbstractTestBagInterface::class);
 
-        $this->providerOne->expects($this->at(1))
+        $this->providerOne->expects($this->once())
             ->method('getTests')
             ->willReturn($testBagOne);
 
         $exception = new InvalidArgumentException('bla bla');
 
-        $this->providerTwo->expects($this->at(1))
+        $this->providerTwo->expects($this->once())
             ->method('getTests')
             ->willThrowException($exception);
 
         $this->accessMap->expects($this->never())
             ->method('add');
 
-        $this->accessMap->expects($this->at(1))
+        $this->accessMap->expects($this->once())
             ->method('addException')
             ->with('/path1', $exception);
 
@@ -240,7 +226,7 @@ class AccessMapBuilderTest extends TestCase
 
         $route = $routeCollection->get('/path1');
 
-        $this->providerOne->expects($this->at(1))
+        $this->providerOne->expects($this->once())
             ->method('getTests')
             ->with($route, 'class2::method2');
 
