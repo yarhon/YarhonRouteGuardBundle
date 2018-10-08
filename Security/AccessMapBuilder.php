@@ -148,6 +148,7 @@ class AccessMapBuilder implements LoggerAwareInterface
                     }
                 }
 
+                // Note: empty arrays are also added to access map
                 $accessMap->add($name, $testBags);
 
             } catch (CatchableExceptionInterface $e) {
@@ -197,10 +198,8 @@ class AccessMapBuilder implements LoggerAwareInterface
      */
     private function isControllerIgnored($controllerName)
     {
-        list($class) = explode('::', $controllerName);
-
         foreach ($this->options['ignore_controllers'] as $ignored) {
-            if (0 === strpos($class, $ignored)) {
+            if (0 === strpos($controllerName, $ignored)) {
                 return true;
             }
         }

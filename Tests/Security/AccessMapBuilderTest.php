@@ -162,11 +162,9 @@ class AccessMapBuilderTest extends TestCase
             ->method('getTests')
             ->willReturn($testBagOne);
 
-        $exception = new InvalidArgumentException('bla bla');
-
         $this->providerTwo->expects($this->once())
             ->method('getTests')
-            ->willThrowException($exception);
+            ->willThrowException(new InvalidArgumentException('bla bla'));
 
         $this->accessMap->expects($this->never())
             ->method('add');
@@ -205,7 +203,6 @@ class AccessMapBuilderTest extends TestCase
             ->method('addException')
             ->with('/path1', $exception);
 
-
         $builder->build($this->accessMap);
     }
 
@@ -233,30 +230,32 @@ class AccessMapBuilderTest extends TestCase
         $builder->build($this->accessMap);
     }
 
-
-    public function atestIgnoredControllers()
+    public function testIgnoredControllers()
     {
         $routeCollection = $this->createRouteCollection([
-            '/path1' => 'class::method',
-            '/path2' => 'class2::method',
-            '/path3' => 'extra_class::method',
-            '/path4' => false,
+            '/path1' => 'class1::method',
+            '/path2' => 'class2::method1',
+            '/path3' => 'class2::method2',
         ]);
 
         $ignoredControllers = [
-            'class2',
-            'extra',
+            'class1',
+            'class2::method2',
         ];
 
-        $transformer = new RemoveIgnoredTransformer($ignoredControllers);
-        $transformed = $transformer->transform($routeCollection);
+        $this->providerOne->expects($this->once())
+            ->method('getTests')
+            ->with($routeCollection->get('/path2'));
 
-        $expected = $this->createRouteCollection([
-            '/path1' => 'class::method',
-            '/path4' => false,
-        ]);
+        $this->accessMap->expects($this->once())
+            ->method('add')
+            ->with('/path2');
 
-        $this->assertEquals($expected, $transformed);
+        $builder = new AccessMapBuilder($this->providers, ['ignore_controllers' => $ignoredControllers]);
+        $builder->setRouteCollection($routeCollection);
+        $builder->setLogger($this->logger);
+
+        $builder->build($this->accessMap);
     }
 
     private function createRouteCollection($routes = [])
@@ -271,11 +270,4 @@ class AccessMapBuilderTest extends TestCase
         return $routeCollection;
     }
 
-    public function aTestClear()
-    {
-        $accessMap = $this->createMock(AccessMap::class);
-
-        $accessMap->expects($this->once())
-            ->method('clear');
-    }
 }

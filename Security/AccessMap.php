@@ -33,7 +33,7 @@ class AccessMap implements AccessMapInterface
      */
     public function add($routeName, array $testBags)
     {
-        $cacheItem = $this->cache->getItem('tests#'.$routeName);
+        $cacheItem = $this->cache->getItem('tests!'.$routeName);
 
         $cacheItem->set($testBags);
         $this->cache->save($cacheItem);
@@ -44,7 +44,7 @@ class AccessMap implements AccessMapInterface
      */
     public function get($routeName)
     {
-        $cacheItem = $this->cache->getItem('tests#'.$routeName);
+        $cacheItem = $this->cache->getItem('tests!'.$routeName);
 
         return $cacheItem->get();
     }
