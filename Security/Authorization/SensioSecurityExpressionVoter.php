@@ -41,11 +41,34 @@ class SensioSecurityExpressionVoter extends Voter
         'request', // TODO: this variable is conditionally passed to evaluate
     ];
 
+    /**
+     * @var ExpressionLanguage
+     */
     protected $expressionLanguage;
+
+    /**
+     * @var AuthenticationTrustResolverInterface
+     */
     protected $trustResolver;
+
+    /**
+     * @var AuthorizationCheckerInterface
+     */
     protected $authChecker;
+
+    /**
+     * @var RoleHierarchyInterface|null
+     */
     protected $roleHierarchy;
 
+    /**
+     * SensioSecurityExpressionVoter constructor.
+     *
+     * @param ExpressionLanguage                   $expressionLanguage
+     * @param AuthenticationTrustResolverInterface $trustResolver
+     * @param AuthorizationCheckerInterface        $authChecker
+     * @param RoleHierarchyInterface|null          $roleHierarchy
+     */
     public function __construct(ExpressionLanguage $expressionLanguage, AuthenticationTrustResolverInterface $trustResolver, AuthorizationCheckerInterface $authChecker, RoleHierarchyInterface $roleHierarchy = null)
     {
         $this->expressionLanguage = $expressionLanguage;
@@ -54,6 +77,9 @@ class SensioSecurityExpressionVoter extends Voter
         $this->roleHierarchy = $roleHierarchy;
     }
 
+    /**
+     * @return array
+     */
     public static function getVariableNames()
     {
         return self::$variableNames;
@@ -85,6 +111,11 @@ class SensioSecurityExpressionVoter extends Voter
 
     /**
      * @codeCoverageIgnore
+     *
+     * @param TokenInterface $token
+     * @param mixed          $subject
+     *
+     * @return array
      */
     protected function getVariables(TokenInterface $token, $subject)
     {

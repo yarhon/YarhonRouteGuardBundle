@@ -175,6 +175,9 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
         return $expression;
     }
 
+    /**
+     * @return string
+     */
     private function createDiscoveredFunctionsString()
     {
         $functions = $this->discoveredFunctions->getFunctions();

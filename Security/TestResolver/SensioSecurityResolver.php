@@ -30,6 +30,11 @@ class SensioSecurityResolver implements TestResolverInterface
      */
     private $variableResolver;
 
+    /**
+     * SensioSecurityResolver constructor.
+     *
+     * @param VariableResolver $variableResolver
+     */
     public function __construct(VariableResolver $variableResolver)
     {
         $this->variableResolver = $variableResolver;

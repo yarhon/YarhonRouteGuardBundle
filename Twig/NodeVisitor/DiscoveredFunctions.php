@@ -54,6 +54,9 @@ class DiscoveredFunctions
         return [$arguments, $generateAs];
     }
 
+    /**
+     * @return array
+     */
     public function getFunctions()
     {
         return $this->functions;

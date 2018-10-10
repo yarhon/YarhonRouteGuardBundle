@@ -40,6 +40,11 @@ class InjectTaggedServicesPass implements CompilerPassInterface
         $this->injectAsArgument($container, [ControllerArgumentResolver::class, 1], 'yarhon_route_guard.argument_value_resolver');
     }
 
+    /**
+     * @param ContainerBuilder $container
+     * @param array            $destination
+     * @param string           $tagName
+     */
     private function injectAsArgument(ContainerBuilder $container, $destination, $tagName)
     {
         $services = $this->findAndSortTaggedServices($tagName, $container);

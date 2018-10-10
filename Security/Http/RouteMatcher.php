@@ -41,7 +41,6 @@ class RouteMatcher
         $this->regexParser = $regexParser ?: new RegexParser();
     }
 
-
     /**
      * @param Route             $route
      * @param RequestConstraint $constraint
@@ -94,6 +93,12 @@ class RouteMatcher
         return new RequestConstraint(...array_values($parameters));
     }
 
+    /**
+     * @param Route  $route
+     * @param string $pattern
+     *
+     * @return int
+     */
     private function matchPathPattern(Route $route, $pattern)
     {
         $compiledRoute = $route->compile();
@@ -112,6 +117,12 @@ class RouteMatcher
         return $this->matchStaticPrefixToPattern($staticPrefix, $pattern);
     }
 
+    /**
+     * @param Route  $route
+     * @param string $pattern
+     *
+     * @return int
+     */
     private function matchHostPattern(Route $route, $pattern)
     {
         $compiledRoute = $route->compile();
@@ -136,6 +147,12 @@ class RouteMatcher
         return $this->matchStaticPrefixToPattern($staticPrefix, $pattern, false);
     }
 
+    /**
+     * @param Route $route
+     * @param array $methods
+     *
+     * @return int
+     */
     private function matchMethods(Route $route, array $methods)
     {
         if (!$route->getMethods()) {
@@ -155,6 +172,13 @@ class RouteMatcher
         return 0;
     }
 
+    /**
+     * @param string $staticPrefix
+     * @param string $pattern
+     * @param bool   $caseSensitive
+     *
+     * @return int
+     */
     private function matchStaticPrefixToPattern($staticPrefix, $pattern, $caseSensitive = true)
     {
         $parsedPattern = $this->regexParser->parse($pattern);

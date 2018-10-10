@@ -37,6 +37,13 @@ class VariableResolver
      */
     private $requestStack;
 
+    /**
+     * VariableResolver constructor.
+     *
+     * @param RequestAttributesFactory   $requestAttributesFactory
+     * @param ControllerArgumentResolver $controllerArgumentResolver
+     * @param RequestStack               $requestStack
+     */
     public function __construct(RequestAttributesFactory $requestAttributesFactory, ControllerArgumentResolver $controllerArgumentResolver, RequestStack $requestStack)
     {
         $this->requestAttributesFactory = $requestAttributesFactory;

@@ -27,6 +27,11 @@ class SymfonySecurityBundlePass implements CompilerPassInterface
      */
     private $extensionAccessor;
 
+    /**
+     * SymfonySecurityBundlePass constructor.
+     *
+     * @param ForeignExtensionAccessor $extensionAccessor
+     */
     public function __construct(ForeignExtensionAccessor $extensionAccessor)
     {
         $this->extensionAccessor = $extensionAccessor;
@@ -47,6 +52,9 @@ class SymfonySecurityBundlePass implements CompilerPassInterface
         $this->processAccessControl($container);
     }
 
+    /**
+     * @param ContainerBuilder $container
+     */
     private function processAccessControl(ContainerBuilder $container)
     {
         $config = $this->extensionAccessor->getProcessedConfig($container, 'security');

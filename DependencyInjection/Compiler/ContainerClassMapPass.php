@@ -25,6 +25,11 @@ class ContainerClassMapPass implements CompilerPassInterface
      */
     private $classMapBuilder;
 
+    /**
+     * ContainerClassMapPass constructor.
+     *
+     * @param ClassMapBuilder $classMapBuilder
+     */
     public function __construct(ClassMapBuilder $classMapBuilder)
     {
         $this->classMapBuilder = $classMapBuilder;

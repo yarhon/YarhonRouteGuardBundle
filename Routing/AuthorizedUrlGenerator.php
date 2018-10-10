@@ -35,6 +35,13 @@ class AuthorizedUrlGenerator implements AuthorizedUrlGeneratorInterface
      */
     protected $routes;
 
+    /**
+     * AuthorizedUrlGenerator constructor.
+     *
+     * @param UrlGeneratorInterface              $urlGenerator
+     * @param RouteAuthorizationCheckerInterface $authorizationChecker
+     * @param RouterInterface                    $router
+     */
     public function __construct(UrlGeneratorInterface $urlGenerator, RouteAuthorizationCheckerInterface $authorizationChecker, RouterInterface $router)
     {
         $this->delegate = $urlGenerator;
@@ -79,8 +86,8 @@ class AuthorizedUrlGenerator implements AuthorizedUrlGeneratorInterface
      * a) it's never passed to UrlGenerator constructor - see \Symfony\Component\Routing\Router::getGenerator
      * b) we have no way to retrieve it
      *
-     * @param $name
-     * @param array $parameters
+     * @param string $name
+     * @param array  $parameters
      *
      * @return string|null
      */

@@ -25,6 +25,11 @@ class RoutingRuntime implements RuntimeExtensionInterface
      */
     protected $urlGenerator;
 
+    /**
+     * RoutingRuntime constructor.
+     *
+     * @param AuthorizedUrlGeneratorInterface $urlGenerator
+     */
     public function __construct(AuthorizedUrlGeneratorInterface $urlGenerator)
     {
         $this->urlGenerator = $urlGenerator;
