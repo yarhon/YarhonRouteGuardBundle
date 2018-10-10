@@ -77,6 +77,9 @@ class ControllerMetadata
         return $this->arguments[$name];
     }
 
+    /**
+     * @param ArgumentMetadata $argument
+     */
     private function addArgument(ArgumentMetadata $argument)
     {
         $this->arguments[$argument->getName()] = $argument;

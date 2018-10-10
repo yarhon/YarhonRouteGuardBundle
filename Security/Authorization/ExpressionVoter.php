@@ -27,11 +27,17 @@ class ExpressionVoter
         'request', // TODO: this variable is conditionally passed to evaluate
     ];
 
+    /**
+     * @return array
+     */
     public static function getVariableNames()
     {
         return self::$variableNames;
     }
 
+    /**
+     * @param array $names
+     */
     public static function setVariableNames(array $names)
     {
         self::$variableNames = $names;

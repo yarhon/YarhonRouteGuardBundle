@@ -55,6 +55,11 @@ class RegexParser
         ];
     }
 
+    /**
+     * @param string $expression
+     *
+     * @return array
+     */
     private function parseStaticPrefix($expression)
     {
         $prefix = '';
@@ -66,7 +71,6 @@ class RegexParser
                 $nextSymbol = $expression[$i + 1];
 
                 if ('\\' === $symbol) {
-
                     if (false !== strpos(self::$metaCharacters, $nextSymbol)) {
                         // Escaped meta character symbol, i.e. "."
                         $prefix .= $nextSymbol;

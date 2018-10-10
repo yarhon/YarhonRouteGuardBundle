@@ -30,6 +30,12 @@ class RequestContextFactory
      */
     private $urlGenerator;
 
+    /**
+     * RequestContextFactory constructor.
+     *
+     * @param RequestStack          $requestStack
+     * @param UrlGeneratorInterface $urlGenerator
+     */
     public function __construct(RequestStack $requestStack, UrlGeneratorInterface $urlGenerator)
     {
         $this->requestStack = $requestStack;
@@ -49,7 +55,7 @@ class RequestContextFactory
         $generateUrlClosure = function () use ($routeContext, $urlGenerator) {
             static $generated;
 
-            if ($generated === null) {
+            if (null === $generated) {
                 $referenceType = $routeContext->getReferenceType();
 
                 // We need to parse path and host from the generated url, that depends on reference type.

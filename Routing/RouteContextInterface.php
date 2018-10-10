@@ -34,5 +34,4 @@ interface RouteContextInterface
      * @return int
      */
     public function getReferenceType();
-
 }

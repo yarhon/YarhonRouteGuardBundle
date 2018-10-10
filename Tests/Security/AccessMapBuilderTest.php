@@ -269,5 +269,4 @@ class AccessMapBuilderTest extends TestCase
 
         return $routeCollection;
     }
-
 }

@@ -14,7 +14,6 @@ use Twig\TokenParser\AbstractTokenParser;
 use Twig\Token;
 use Twig\Parser;
 use Yarhon\RouteGuardBundle\Twig\Node\RouteNode;
-use Yarhon\RouteGuardBundle\Twig\Node\RouteExpression;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -91,11 +90,6 @@ class RouteTokenParser extends AbstractTokenParser
         if ('else' == $stream->next()->getValue()) {
             $stream->expect(Token::BLOCK_END_TYPE);
 
-            // $dropNeedle parameter of subparse method is significant to call next() on the stream, that would skip the node with the end tag name.
-            // For unknown reason, that node is skipped automatically if there are no any nested tags (i.e., {% else %}).
-            // Same result could be achieved by the following code after subparse call:
-            // $stream->expect($this->endTagName).
-            // We use second option to be more explicit and to allow / disallow nested tags in the future.
             $elseNode = $parser->subparse(function (Token $token) {
                 return $token->test([$this->endTagName]);
             });

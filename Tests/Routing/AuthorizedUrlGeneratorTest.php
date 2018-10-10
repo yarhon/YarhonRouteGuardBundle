@@ -108,6 +108,7 @@ class AuthorizedUrlGeneratorTest extends TestCase
         $this->authorizationChecker->method('isGranted')
             ->willReturnCallback(function ($routeContext) {
                 $routeContext->setGeneratedUrl('/generated_url');
+
                 return true;
             });
 

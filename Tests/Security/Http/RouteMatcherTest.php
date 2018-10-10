@@ -171,5 +171,4 @@ class RouteMatcherTest extends TestCase
             [['GET', 'POST'], ['POST', 'GET'], true],
         ];
     }
-
 }

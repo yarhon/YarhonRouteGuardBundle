@@ -28,5 +28,4 @@ class AccessMapTest extends TestCase
         $this->cache = $this->createMock(CacheItemPoolInterface::class);
         $this->accessMap = new AccessMap($this->cache);
     }
-
 }

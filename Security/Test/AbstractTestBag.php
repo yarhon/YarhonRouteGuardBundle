@@ -15,10 +15,19 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
  */
 abstract class AbstractTestBag implements AbstractTestBagInterface
 {
+    /**
+     * @var array
+     */
     protected $elements = [];
 
+    /**
+     * @var string
+     */
     protected $providerClass;
 
+    /**
+     * @var mixed
+     */
     protected $metadata;
 
     /**

@@ -68,6 +68,9 @@ class SymfonyAccessControlProvider implements TestProviderInterface
         $this->expressionLanguage = $expressionLanguage;
     }
 
+    /**
+     * @param array $rules
+     */
     public function importRules(array $rules)
     {
         foreach ($rules as $rule) {
@@ -76,6 +79,10 @@ class SymfonyAccessControlProvider implements TestProviderInterface
         }
     }
 
+    /**
+     * @param RequestConstraint $constraint
+     * @param TestArguments     $arguments
+     */
     public function addRule(RequestConstraint $constraint, TestArguments $arguments)
     {
         $this->rules[] = [$constraint, $arguments];
@@ -170,6 +177,10 @@ class SymfonyAccessControlProvider implements TestProviderInterface
         return $parsed;
     }
 
+    /**
+     * @param Route $route
+     * @param array $matches
+     */
     private function logRuntimeMatching(Route $route, array $matches)
     {
         if (!$this->logger) {

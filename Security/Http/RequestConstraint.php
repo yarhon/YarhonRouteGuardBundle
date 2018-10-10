@@ -46,10 +46,10 @@ class RequestConstraint implements RequestConstraintInterface
     /**
      * RequestConstraint constructor.
      *
-     * @param string|null $pathPattern
-     * @param string|null $hostPattern
-     * @param string[]    $methods
-     * @param string[]    $ips
+     * @param string|null   $pathPattern
+     * @param string|null   $hostPattern
+     * @param string[]|null $methods
+     * @param string[]|null $ips
      */
     public function __construct($pathPattern = null, $hostPattern = null, array $methods = null, array $ips = null)
     {

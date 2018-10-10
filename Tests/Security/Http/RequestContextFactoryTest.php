@@ -148,5 +148,4 @@ class RequestContextFactoryTest extends TestCase
 
         $this->assertEquals('127.0.0.1', $context->getClientIp());
     }
-
 }

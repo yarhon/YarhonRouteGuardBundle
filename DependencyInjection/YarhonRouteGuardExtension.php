@@ -17,7 +17,6 @@ use Symfony\Component\Config\FileLocator;
 use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
 use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
 
-
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
@@ -37,6 +36,10 @@ class YarhonRouteGuardExtension extends Extension
         $this->setConfigParameters($config, $container);
     }
 
+    /**
+     * @param array            $config
+     * @param ContainerBuilder $container
+     */
     private function setConfigParameters(array $config, ContainerBuilder $container)
     {
         $builderOptions = [

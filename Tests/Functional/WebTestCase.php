@@ -66,7 +66,7 @@ abstract class WebTestCase extends BaseWebTestCase
         $fs->remove($dir);
     }
 
-    protected static function createKernel(array $options = array())
+    protected static function createKernel(array $options = [])
     {
         return new app\Kernel(
             static::getTempDir(),

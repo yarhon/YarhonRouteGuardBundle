@@ -128,7 +128,6 @@ class AccessMapBuilder implements LoggerAwareInterface
         $ignoredRoutes = [];
 
         foreach ($this->routeCollection as $name => $route) {
-
             try {
                 $controllerName = $this->getControllerName($route);
 
@@ -150,7 +149,6 @@ class AccessMapBuilder implements LoggerAwareInterface
 
                 // Note: empty arrays are also added to access map
                 $accessMap->add($name, $testBags);
-
             } catch (CatchableExceptionInterface $e) {
                 if ($this->options['throw_exceptions']) {
                     throw $e;

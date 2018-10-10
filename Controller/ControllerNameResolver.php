@@ -68,6 +68,11 @@ class ControllerNameResolver implements ControllerNameResolverInterface
         throw new InvalidArgumentException('Unable to resolve controller name, the controller is not callable.');
     }
 
+    /**
+     * @param string $class
+     *
+     * @return string
+     */
     protected function resolveClass($class)
     {
         // TODO: can controller class start from  "\" symbol ?
