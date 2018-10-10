@@ -14,6 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
 use Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver;
+use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -28,8 +29,13 @@ class SensioFrameworkExtraBundlePass implements CompilerPassInterface
         if (!$container->hasDefinition('sensio_framework_extra.controller.listener')) {
             $container->removeDefinition(SensioSecurityProvider::class);
             $container->removeDefinition(SensioSecurityResolver::class);
+            $container->removeDefinition(SensioSecurityExpressionVoter::class);
 
             return;
+        }
+
+        if (!$container->hasDefinition('sensio_framework_extra.security.expression_language.default')) {
+            $container->removeDefinition(SensioSecurityExpressionVoter::class);
         }
     }
 }

@@ -17,7 +17,7 @@
                 <argument type="service" id="logger" on-invalid="ignore" />
             </call>
             <call method="importRouteCollection">
-                <argument type="service" id="router.default" on-invalid="ignore" />
+                <argument type="service" id="router.default" />
             </call>
             <tag name="monolog.logger" channel="route_guard" />
         </service>
@@ -40,7 +40,7 @@
             <call method="setExpressionLanguage">
                 <argument type="service" id="sensio_framework_extra.security.expression_language.default" on-invalid="ignore"/>
             </call>
-            <tag name="yarhon_route_guard.test_provider" priority="1024" />
+            <tag name="yarhon_route_guard.test_provider" priority="100" />
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\Http\RouteMatcher">
@@ -51,7 +51,7 @@
             <call method="setExpressionLanguage">
                 <argument type="service" id="security.expression_language" on-invalid="ignore"/>
             </call>
-            <tag name="yarhon_route_guard.test_provider" priority="1023" />
+            <tag name="yarhon_route_guard.test_provider" priority="50" />
         </service>
 
         <!-- controller name resolver services -->
@@ -67,7 +67,7 @@
             <argument type="service" id="kernel" />
         </service>
 
-        <service id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" public="true"> <!-- is set as public only to be available for TYPE_REMOVE compiler pass -->
+        <service id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" public="true"> <!-- set as public only to be available for TYPE_AFTER_REMOVING compiler pass -->
             <argument type="collection" /> <!-- map -->
         </service>
 
@@ -79,7 +79,7 @@
 
         <service id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver">
             <argument type="service" id="request_stack" />
-            <argument type="collection" />
+            <argument type="collection" /> <!-- argument value resolvers -->
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver">
@@ -99,7 +99,7 @@
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver">
-            <argument type="collection" />
+            <argument type="collection" /> <!-- test resolvers -->
         </service>
 
         <!-- cache services -->
@@ -165,7 +165,7 @@
             <tag name="twig.runtime" />
         </service>
 
-        <!-- controller argument resolvers -->
+        <!-- controller argument value resolvers -->
 
         <service id="Yarhon\RouteGuardBundle\Controller\ArgumentResolver\RequestAttributeValueResolver">
             <tag name="yarhon_route_guard.argument_value_resolver" priority="100" />

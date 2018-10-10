@@ -17,7 +17,7 @@ class RegexParser
 {
     protected static $metaCharacters = '\\.+*?|^$[](){}';
 
-    protected static $removePreviousMetaCharacters = '+*?|{';
+    protected static $removePreviousMetaCharacters = '+*?{|';
 
     /**
      * @param string $expression

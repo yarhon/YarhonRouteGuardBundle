@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\SensioFrameworkExtraBundlePass;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
 use Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver;
+use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -36,6 +37,7 @@ class SensioFrameworkExtraBundlePassTest extends TestCase
         $this->container = new ContainerBuilder();
         $this->container->register(SensioSecurityProvider::class);
         $this->container->register(SensioSecurityResolver::class);
+        $this->container->register(SensioSecurityExpressionVoter::class);
         $this->pass = new SensioFrameworkExtraBundlePass();
     }
 
@@ -45,9 +47,22 @@ class SensioFrameworkExtraBundlePassTest extends TestCase
 
         $this->assertFalse($this->container->hasDefinition(SensioSecurityProvider::class));
         $this->assertFalse($this->container->hasDefinition(SensioSecurityResolver::class));
+        $this->assertFalse($this->container->hasDefinition(SensioSecurityExpressionVoter::class));
     }
 
     public function testProcessWithExtraBundle()
+    {
+        $this->container->register('sensio_framework_extra.controller.listener');
+        $this->container->register('sensio_framework_extra.security.expression_language.default');
+
+        $this->pass->process($this->container);
+
+        $this->assertTrue($this->container->hasDefinition(SensioSecurityProvider::class));
+        $this->assertTrue($this->container->hasDefinition(SensioSecurityResolver::class));
+        $this->assertTrue($this->container->hasDefinition(SensioSecurityExpressionVoter::class));
+    }
+
+    public function testProcessWithExtraBundleWithoutExpressionLanguage()
     {
         $this->container->register('sensio_framework_extra.controller.listener');
 
@@ -55,5 +70,6 @@ class SensioFrameworkExtraBundlePassTest extends TestCase
 
         $this->assertTrue($this->container->hasDefinition(SensioSecurityProvider::class));
         $this->assertTrue($this->container->hasDefinition(SensioSecurityResolver::class));
+        $this->assertFalse($this->container->hasDefinition(SensioSecurityExpressionVoter::class));
     }
 }
