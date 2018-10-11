@@ -59,6 +59,21 @@ class RouteMatcherTest extends TestCase
                 new RequestConstraint(null, null, null, ['127.0.0.1']),
                 new RequestConstraint(null, null, null, ['127.0.0.1']),
             ],
+            [
+                new Route('/blog', [], [], []),
+                new RequestConstraint('^/blog'),
+                true,
+            ],
+            [
+                new Route('/blog', [], [], []),
+                new RequestConstraint('^/admin'),
+                false,
+            ],
+            [
+                new Route('/blog', [], [], []),
+                new RequestConstraint(),
+                true,
+            ],
         ];
     }
 

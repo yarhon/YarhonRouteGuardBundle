@@ -17,6 +17,7 @@ use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\DependencyInjection\Extension\ConfigurationExtensionInterface;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Exception\Exception as ConfigDefinitionException;
 use Yarhon\RouteGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 
@@ -45,11 +46,10 @@ class ForeignExtensionAccessorTest extends TestCase
             ->willReturn($configuration);
 
         $processor = $this->createMock(Processor::class);
-        $processor->method('processConfiguration')
-            ->willReturn(['processed' => true]);
         $processor->expects($this->once())
             ->method('processConfiguration')
-            ->with($configuration, $rawConfig);
+            ->with($configuration, $rawConfig)
+            ->willReturn(['processed' => true]);
 
         $accessor = new ForeignExtensionAccessor($processor);
         $container = new ContainerBuilder();
@@ -58,12 +58,12 @@ class ForeignExtensionAccessorTest extends TestCase
         $container->loadFromExtension('foreign', $rawConfig[0]);
         $container->loadFromExtension('foreign', $rawConfig[1]);
 
-        $config = $accessor->getProcessedConfig($container, 'foreign');
+        $config = $accessor->getProcessedConfig($container, $extension);
 
         $this->assertEquals(['processed' => true], $config);
     }
 
-    public function testGetProcessedConfigException()
+    public function testGetProcessedConfigNotInstanceOfConfigurationExtensionException()
     {
         $extension = $this->createMock(ExtensionInterface::class);
         $extension->method('getAlias')
@@ -76,8 +76,32 @@ class ForeignExtensionAccessorTest extends TestCase
         $container->registerExtension($extension);
 
         $this->expectException(LogicException::class);
-        $this->expectExceptionMessage(sprintf('"%s" extension configuration class is not an instance of %s.', 'foreign', ConfigurationExtensionInterface::class));
+        $this->expectExceptionMessage(sprintf('"%s" extension class is not an instance of %s.', 'foreign', ConfigurationExtensionInterface::class));
 
-        $accessor->getProcessedConfig($container, 'foreign');
+        $accessor->getProcessedConfig($container, $extension);
+    }
+
+    public function testGetProcessedConfigConfigDefinitionException()
+    {
+        $configuration = $this->createMock(ConfigurationInterface::class);
+
+        $extension = $this->createMock(Extension::class);
+        $extension->method('getAlias')
+            ->willReturn('foreign');
+        $extension->method('getConfiguration')
+            ->willReturn($configuration);
+
+        $processor = $this->createMock(Processor::class);
+        $processor->method('processConfiguration')
+            ->willThrowException(new ConfigDefinitionException('test'));
+
+        $accessor = new ForeignExtensionAccessor($processor);
+        $container = new ContainerBuilder();
+        $container->registerExtension($extension);
+
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Cannot read configuration of the "foreign" extension because of configuration exception.');
+
+        $accessor->getProcessedConfig($container, $extension);
     }
 }

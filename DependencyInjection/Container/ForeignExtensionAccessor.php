@@ -11,6 +11,7 @@
 namespace Yarhon\RouteGuardBundle\DependencyInjection\Container;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\DependencyInjection\Extension\ConfigurationExtensionInterface;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Definition\Exception\Exception as ConfigDefinitionException;
@@ -28,7 +29,6 @@ class ForeignExtensionAccessor
 
     /**
      * ForeignExtensionAccessor constructor.
-
      *
      * @param Processor|null $processor
      */
@@ -40,29 +40,27 @@ class ForeignExtensionAccessor
     /**
      * Returns processed config of a foreign extension outside of it's context.
      *
-     * @param ContainerBuilder $container
-     * @param string           $extensionName
+     * @param ContainerBuilder   $container
+     * @param ExtensionInterface $extension
      *
      * @return array Processed configuration
      *
      * @throws LogicException When extension configuration class in not an instance of ConfigurationExtensionInterface
      */
-    public function getProcessedConfig(ContainerBuilder $container, $extensionName)
+    public function getProcessedConfig(ContainerBuilder $container, ExtensionInterface $extension)
     {
-        $extension = $container->getExtension($extensionName);
-
         if (!($extension instanceof ConfigurationExtensionInterface)) {
-            throw new LogicException(sprintf('"%s" extension configuration class is not an instance of %s.',
-                $extensionName, ConfigurationExtensionInterface::class));
+            throw new LogicException(sprintf('"%s" extension class is not an instance of %s.',
+                $extension->getAlias(), ConfigurationExtensionInterface::class));
         }
 
         $configuration = $extension->getConfiguration([], $container);
-        $configs = $container->getExtensionConfig($extensionName);
+        $configs = $container->getExtensionConfig($extension->getAlias());
 
         try {
             $processed = $this->processor->processConfiguration($configuration, $configs);
         } catch (ConfigDefinitionException $e) {
-            throw new LogicException(sprintf('Cannot read configuration of the "%s" extension because of configuration exception.', $extensionName), 0, $e);
+            throw new LogicException(sprintf('Cannot read configuration of the "%s" extension because of configuration exception.', $extension->getAlias()), 0, $e);
         }
 
         return $processed;

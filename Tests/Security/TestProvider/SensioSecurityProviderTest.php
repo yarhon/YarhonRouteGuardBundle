@@ -222,4 +222,11 @@ class SensioSecurityProviderTest extends TestCase
 
         $this->assertNull($testBag);
     }
+
+    public function testNoControllerName()
+    {
+        $testBag = $this->provider->getTests($this->route, null);
+
+        $this->assertNull($testBag);
+    }
 }

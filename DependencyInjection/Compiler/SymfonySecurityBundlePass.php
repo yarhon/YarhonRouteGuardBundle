@@ -57,7 +57,8 @@ class SymfonySecurityBundlePass implements CompilerPassInterface
      */
     private function processAccessControl(ContainerBuilder $container)
     {
-        $config = $this->extensionAccessor->getProcessedConfig($container, 'security');
+        $extension = $container->getExtension('security');
+        $config = $this->extensionAccessor->getProcessedConfig($container, $extension);
 
         if (!isset($config['access_control']) || 0 === count($config['access_control'])) {
             $container->removeDefinition(SymfonyAccessControlProvider::class);
