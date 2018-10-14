@@ -3,7 +3,7 @@
 RouteGuardBundle is a tool to:
 * retrieve authorization rules for a route
 * check if user is authorized to access a route
-* conditionally display links in twig templates depending on authorization rules, avoiding
+* conditionally display links in Twig templates depending on authorization rules, avoiding
 authorization checks duplication both in controller and template.
 
 RouteGuard supports authorization rules from:
@@ -133,7 +133,7 @@ class::method notation. You can specify:
 Twig tag arguments are split into two parts: first one is route context array, second one, after the `as` keyword, 
 specifies required reference type in literal form. 
 
-Route context array has following arguments:
+Route context array has the following arguments:
 * routeName (string, required)
 * parameters (array, optional, default value: [])
 * method (string, optional, default value: 'GET').
@@ -152,7 +152,7 @@ Examples:
 {% route ['blog'] %}
 ```
 
-For those, who want to try RouteGuard with minimal efforts, it has "discover" mode. In this mode, RouteGuard will search
+For those, who want to try RouteGuard with minimal effort, it has "discover" mode. In this mode, RouteGuard will search
 for `path()` or `url()` function call inside "route" tag, and then use function arguments as tag arguments.
 Following two examples will produce the same result:
 ```twig
@@ -399,7 +399,7 @@ The general performance tip for path and host constraints - to always use "strin
 This could be illustrated by the following examples:
 
 Rule `path: /foo` at compile time would be determined as potentially matching to ANY dynamic route - 
-because at runtime any variable used in a route could result into a string `"/foo"`.
+because at runtime any variable used in a route could result in a string `"/foo"`.
 
 But rule `path: ^/foo` at compile time would be determined as potentially matching to dynamic routes with path static prefix 
 `"/"` or `"/f"` or `"/foo"` or `"/foob"`, but not `"/bar"`. 
@@ -413,7 +413,7 @@ that would allow direct mapping of a rule to a route, without need to use a map 
 
 ## Sensio FrameworkExtraBundle details
 
-Sensio FrameworkExtraBundle executes expressions from @Security annotation in-place, bypassing standard flow 
+Sensio FrameworkExtraBundle executes expressions from `@Security` annotation in-place, bypassing standard flow 
 (passing authorization test arguments to security voters via "isGranted" call). 
 See `Sensio\Bundle\FrameworkExtraBundle\EventListener\SecurityListener`.
 
