@@ -1,8 +1,8 @@
 # About
 
 RouteGuardBundle is a tool to:
-* retrieve authorization rules for a route
 * check if user is authorized to access a route
+* retrieve authorization rules for a route
 * conditionally display links in Twig templates depending on authorization rules, avoiding
 authorization checks duplication both in controller and template.
 
@@ -81,7 +81,9 @@ Read more in [Public services](#public-services) section.
 
 
 # Requirements
-PHP 5.6+, Symfony 3.3+
+PHP 5.6+, Symfony 3.3+.
+
+It's highly recommended to have OPcache extension enabled.
 
 # Installation
 ```console
@@ -428,6 +430,12 @@ At first, read the [Under the hood](#under-the-hood) section.
 To add support for your authorization rules you have to implement 2 classes:
 * Test provider (`Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface`)
 * Test resolver (`Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface`)
+
+and register them as services. 
+
+If you are not using services autoconfiguration, you need to add
+`yarhon_route_guard.test_provider` tag to test provider service, and `yarhon_route_guard.test_resolver` tag to test resolver service.
+
 
 
 

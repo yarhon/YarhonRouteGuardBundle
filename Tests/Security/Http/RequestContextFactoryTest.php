@@ -100,6 +100,21 @@ class RequestContextFactoryTest extends TestCase
         $this->assertEquals('http://site.com/foo', $routeContext->getGeneratedUrl());
     }
 
+    public function testPathInfoClosureNoReferenceType()
+    {
+        $routeContext = new RouteContext('main');
+
+        $context = $this->factory->createContext($routeContext);
+
+        $this->urlGenerator->expects($this->once())
+            ->method('generate')
+            ->with($routeContext->getName(), $routeContext->getParameters(), UrlGeneratorInterface::ABSOLUTE_PATH)
+            ->willReturn('http://site.com/foo');
+
+        $this->assertEquals('/foo', $context->getPathInfo());
+        $this->assertNull($routeContext->getGeneratedUrl());
+    }
+
     public function testHostClosure()
     {
         $routeContext = new RouteContext('main');

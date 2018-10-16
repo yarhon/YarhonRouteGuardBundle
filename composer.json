@@ -1,7 +1,7 @@
 {
     "name": "yarhon/route-guard-bundle",
-    "description": "This bundle provides a way to .... !!!!!",
-    "keywords": ["...."],
+    "description": "RouteGuard allows to check if user is authorized to access a route; retrieve authorization rules for a route; conditionally display links in Twig templates depending on authorization rules.",
+    "keywords": ["security", "authorization", "twig"],
     "type": "symfony-bundle",
     "license": "MIT",
     "authors": [
@@ -28,15 +28,19 @@
     "require-dev": {
         "sensio/framework-extra-bundle": "^5.0",
         "symfony/expression-language": "^3.3||^4.0",
-        "twig/twig": "^1.35||^2.0",
-        "symfony/twig-bridge": "^3.3||^4.0",
         "symfony/twig-bundle": "^3.3||^4.0",
         "symfony/monolog-bundle": "^3.1",
         "symfony/yaml": "^3.3||^4.0",
         "symfony/browser-kit": "^3.3||^4.0"
     },
+    "conflict": {
+        "sensio/framework-extra-bundle": "<5.0",
+        "symfony/expression-language": "<3.3",
+        "symfony/twig-bundle": "<3.3",
+        "twig/twig": "<1.35"
+    },
     "suggest": {
-
+        "ext-opcache": "Improves performance"
     },
     "autoload": {
         "psr-4": { "Yarhon\\RouteGuardBundle\\": "" }
