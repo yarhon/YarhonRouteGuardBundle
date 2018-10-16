@@ -46,6 +46,8 @@ class RouteTestResolver implements RouteTestResolverInterface, LoggerAwareInterf
     {
         // TODO: add @throws to interface doc
 
+        //var_dump($this->accessMap->has('blog1'), $this->accessMap->get('blog1'));
+
         $testBags = $this->accessMap->get($routeContext->getName());
 
         if (null === $testBags) {

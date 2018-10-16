@@ -64,7 +64,7 @@ class AccessMapBuilder implements LoggerAwareInterface
 
         $this->options = array_merge([
             'ignore_controllers' => [],
-            'throw_exceptions' => true,
+            'catch_exceptions' => false,
         ], $options);
     }
 
@@ -126,6 +126,7 @@ class AccessMapBuilder implements LoggerAwareInterface
         $accessMap->clear();
 
         $ignoredRoutes = [];
+        $exceptionRoutes = [];
 
         foreach ($this->routeCollection as $name => $route) {
             try {
@@ -148,18 +149,25 @@ class AccessMapBuilder implements LoggerAwareInterface
                 }
 
                 // Note: empty arrays are also added to access map
-                $accessMap->add($name, $testBags);
+                $result = $accessMap->set($name, $testBags);
+                // TODO: check set result
             } catch (CatchableExceptionInterface $e) {
-                if ($this->options['throw_exceptions']) {
+                if (!$this->options['catch_exceptions']) {
                     throw $e;
                 }
 
-                $accessMap->addException($name, $e);
+                $exceptionRoutes[] = $name;
+
+                if ($this->logger) {
+                    $this->logger->error(sprintf('Exception caught while processing route "%s": %s', $name, $e->getMessage()), ['exception' => $e]);
+                }
             }
         }
 
-        if ($this->logger && count($ignoredRoutes)) {
-            $this->logger->info('Ignored routes count', ['count' => count($ignoredRoutes)]);
+        if ($this->logger) {
+            if (count($ignoredRoutes)) {
+                $this->logger->info('Ignored routes count', ['count' => count($ignoredRoutes)]);
+            }
         }
     }
 

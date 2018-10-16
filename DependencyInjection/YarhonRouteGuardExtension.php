@@ -16,6 +16,9 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\Config\FileLocator;
 use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
 use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
+use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
+use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
+use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentValueResolverInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -33,14 +36,15 @@ class YarhonRouteGuardExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $this->setConfigParameters($config, $container);
+        $this->setConfigParameters($container, $config);
+        $this->registerAutoConfiguration($container);
     }
 
     /**
-     * @param array            $config
      * @param ContainerBuilder $container
+     * @param array            $config
      */
-    private function setConfigParameters(array $config, ContainerBuilder $container)
+    private function setConfigParameters(ContainerBuilder $container, array $config)
     {
         $builderOptions = [
             'ignore_controllers' => $config['ignore_controllers'],
@@ -51,5 +55,12 @@ class YarhonRouteGuardExtension extends Extension
 
         $definition = $container->getDefinition(RoutingExtension::class);
         $definition->replaceArgument(0, $config['twig']);
+    }
+
+    private function registerAutoConfiguration(ContainerBuilder $container)
+    {
+        $container->registerForAutoconfiguration(TestProviderInterface::class)->addTag('yarhon_route_guard.test_provider');
+        $container->registerForAutoconfiguration(TestResolverInterface::class)->addTag('yarhon_route_guard.test_resolver');
+        $container->registerForAutoconfiguration(ArgumentValueResolverInterface::class)->addTag('yarhon_route_guard.argument_value_resolver');
     }
 }

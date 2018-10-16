@@ -23,20 +23,22 @@ class AccessMap implements AccessMapInterface
      */
     private $cache;
 
-    public function __construct(CacheItemPoolInterface $cache = null)
+    public function __construct(CacheItemPoolInterface $cache)
     {
-        $this->cache = $cache ?: new ArrayAdapter();
+        $this->cache = $cache;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function add($routeName, array $testBags)
+    public function set($routeName, array $testBags)
     {
-        $cacheItem = $this->cache->getItem('tests!'.$routeName);
+        $key = $this->fixCacheKey($routeName);
+        $cacheItem = $this->cache->getItem($key);
 
         $cacheItem->set($testBags);
-        $this->cache->save($cacheItem);
+
+        return $this->cache->save($cacheItem);
     }
 
     /**
@@ -44,7 +46,8 @@ class AccessMap implements AccessMapInterface
      */
     public function get($routeName)
     {
-        $cacheItem = $this->cache->getItem('tests!'.$routeName);
+        $key = $this->fixCacheKey($routeName);
+        $cacheItem = $this->cache->getItem($key);
 
         return $cacheItem->get();
     }
@@ -54,36 +57,9 @@ class AccessMap implements AccessMapInterface
      */
     public function has($routeName)
     {
-        return $this->cache->hasItem('tests#'.$routeName);
-    }
+        $key = $this->fixCacheKey($routeName);
 
-    /**
-     * {@inheritdoc}
-     */
-    public function addException($routeName, ExceptionInterface $exception = null)
-    {
-        $cacheItem = $this->cache->getItem('exceptions#'.$routeName);
-
-        $cacheItem->set($exception);
-        $this->cache->save($cacheItem);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getException($routeName)
-    {
-        $cacheItem = $this->cache->getItem('exceptions#'.$routeName);
-
-        return $cacheItem->get();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasException($routeName)
-    {
-        return $this->cache->hasItem('exceptions#'.$routeName);
+        return $this->cache->hasItem($key);
     }
 
     /**
@@ -91,6 +67,18 @@ class AccessMap implements AccessMapInterface
      */
     public function clear()
     {
-        $this->cache->clear();
+        return $this->cache->clear();
+    }
+
+    /**
+     * @see \Symfony\Component\Cache\CacheItem::validateKey
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    private function fixCacheKey($key)
+    {
+        return str_replace(['{', '}', '(', ')', '/', '\\', '@', ':'], '#', $key);
     }
 }

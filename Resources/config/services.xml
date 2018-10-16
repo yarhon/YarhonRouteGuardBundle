@@ -111,14 +111,9 @@
         </service>
 
         <service id="yarhon_route_guard.cache" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-            <factory class="Symfony\Component\Cache\Adapter\AbstractAdapter" method="createSystemCache" />
+            <factory class="Yarhon\RouteGuardBundle\Cache\CacheFactory" method="create" />
             <argument /> <!-- namespace -->
-            <argument>0</argument> <!-- default lifetime -->
-            <argument>null</argument> <!-- version -->
-            <argument>%kernel.cache_dir%/route-guard</argument>
-            <argument type="service" id="logger" on-invalid="ignore" />
-            <tag name="monolog.logger" channel="cache" />
-            <tag name="cache.pool" clearer="cache.app_clearer" />
+            <argument>%kernel.cache_dir%/route-guard</argument> <!-- directory -->
         </service>
 
         <!-- authorization services -->

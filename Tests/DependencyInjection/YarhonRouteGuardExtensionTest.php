@@ -15,6 +15,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yarhon\RouteGuardBundle\DependencyInjection\YarhonRouteGuardExtension;
 use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
 use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
+use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
+use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
+use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentValueResolverInterface;
 use Yarhon\RouteGuardBundle\YarhonRouteGuardBundle;
 
 /**
@@ -63,6 +66,30 @@ class YarhonRouteGuardExtensionTest extends TestCase
         $this->assertArraySubset(['tag_name' => 'test'], $argument);
 
         $this->markTestIncomplete('Watch for config changes.');
+    }
+
+    public function testRegisterAutoConfiguration()
+    {
+        $extension = new YarhonRouteGuardExtension();
+        $this->container->loadFromExtension($extension->getAlias(), []);
+
+        $this->container->getCompilerPassConfig()->setOptimizationPasses([]);
+        $this->container->getCompilerPassConfig()->setRemovingPasses([]);
+        $this->container->compile();
+
+        $autoconfigured = $this->container->getAutoconfiguredInstanceof();
+
+        $this->assertArrayHasKey(TestProviderInterface::class, $autoconfigured);
+        $tags = array_keys($autoconfigured[TestProviderInterface::class]->getTags());
+        $this->assertEquals(['yarhon_route_guard.test_provider'], $tags);
+
+        $this->assertArrayHasKey(TestResolverInterface::class, $autoconfigured);
+        $tags = array_keys($autoconfigured[TestResolverInterface::class]->getTags());
+        $this->assertEquals(['yarhon_route_guard.test_resolver'], $tags);
+
+        $this->assertArrayHasKey(ArgumentValueResolverInterface::class, $autoconfigured);
+        $tags = array_keys($autoconfigured[ArgumentValueResolverInterface::class]->getTags());
+        $this->assertEquals(['yarhon_route_guard.argument_value_resolver'], $tags);
     }
 
     public function testPrivateServices()

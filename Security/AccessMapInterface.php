@@ -10,7 +10,6 @@
 namespace Yarhon\RouteGuardBundle\Security;
 
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
-use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -20,8 +19,10 @@ interface AccessMapInterface
     /**
      * @param string                     $routeName
      * @param AbstractTestBagInterface[] $testBags
+     *
+     * @return bool
      */
-    public function add($routeName, array $testBags);
+    public function set($routeName, array $testBags);
 
     /**
      * @param string $routeName
@@ -38,24 +39,7 @@ interface AccessMapInterface
     public function has($routeName);
 
     /**
-     * @param string                  $routeName
-     * @param ExceptionInterface|null $exception
-     */
-    public function addException($routeName, ExceptionInterface $exception = null);
-
-    /**
-     * @param string $routeName
-     *
-     * @return ExceptionInterface|null
-     */
-    public function getException($routeName);
-
-    /**
-     * @param string $routeName
-     *
      * @return bool
      */
-    public function hasException($routeName);
-
     public function clear();
 }

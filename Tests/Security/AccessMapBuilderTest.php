@@ -141,7 +141,7 @@ class AccessMapBuilderTest extends TestCase
             ->with(get_class($this->providerTwo));
 
         $this->accessMap->expects($this->once())
-            ->method('add')
+            ->method('set')
             ->with('/path1', [$testBagOne, $testBagTwo]);
 
         $builder->build($this->accessMap);
@@ -167,7 +167,7 @@ class AccessMapBuilderTest extends TestCase
             ->willThrowException(new InvalidArgumentException('bla bla'));
 
         $this->accessMap->expects($this->never())
-            ->method('add');
+            ->method('set');
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('bla bla');
@@ -181,8 +181,9 @@ class AccessMapBuilderTest extends TestCase
             '/path1' => 'class::method',
         ]);
 
-        $builder = new AccessMapBuilder($this->providers, ['throw_exceptions' => false]);
+        $builder = new AccessMapBuilder($this->providers, ['catch_exceptions' => true]);
         $builder->setRouteCollection($routeCollection);
+        $builder->setLogger($this->logger);
 
         $testBagOne = $this->createMock(AbstractTestBagInterface::class);
 
@@ -190,18 +191,16 @@ class AccessMapBuilderTest extends TestCase
             ->method('getTests')
             ->willReturn($testBagOne);
 
-        $exception = new InvalidArgumentException('bla bla');
-
         $this->providerTwo->expects($this->once())
             ->method('getTests')
-            ->willThrowException($exception);
+            ->willThrowException(new InvalidArgumentException('bla bla'));
 
         $this->accessMap->expects($this->never())
-            ->method('add');
+            ->method('set');
 
-        $this->accessMap->expects($this->once())
-            ->method('addException')
-            ->with('/path1', $exception);
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with('Exception caught while processing route "/path1": bla bla');
 
         $builder->build($this->accessMap);
     }
@@ -248,7 +247,7 @@ class AccessMapBuilderTest extends TestCase
             ->with($routeCollection->get('/path2'));
 
         $this->accessMap->expects($this->once())
-            ->method('add')
+            ->method('set')
             ->with('/path2');
 
         $builder = new AccessMapBuilder($this->providers, ['ignore_controllers' => $ignoredControllers]);
