@@ -12,11 +12,8 @@ namespace Yarhon\RouteGuardBundle\Tests\Routing;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\RequestContext;
 use Yarhon\RouteGuardBundle\Routing\AuthorizedUrlGenerator;
+use Yarhon\RouteGuardBundle\Routing\LocalizedRouteDetector;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface;
 
@@ -27,42 +24,27 @@ class AuthorizedUrlGeneratorTest extends TestCase
 {
     private $generatorDelegate;
 
-    private $generatorDelegateContext;
-
     private $authorizationChecker;
 
-    private $routeCollection;
+    private $localizedRouteDetector;
 
     private $generator;
 
     public function setUp()
     {
         $this->generatorDelegate = $this->createMock(UrlGeneratorInterface::class);
-        $this->generatorDelegateContext = $this->createMock(RequestContext::class);
         $this->authorizationChecker = $this->createMock(RouteAuthorizationCheckerInterface::class);
+        $this->localizedRouteDetector = $this->createMock(LocalizedRouteDetector::class);
 
-        $this->generatorDelegate->method('getContext')
-            ->willReturn($this->generatorDelegateContext);
-
-        $this->generatorDelegateContext->method('getParameter')
-            ->with('_locale')
-            ->willReturn('en');
-
-        $this->routeCollection = $this->createMock(RouteCollection::class);
-
-        $router = $this->createMock(RouterInterface::class);
-
-        $router->method('getRouteCollection')
-            ->willReturn($this->routeCollection);
-
-        $this->generator = new AuthorizedUrlGenerator($this->generatorDelegate, $this->authorizationChecker, $router);
+        $this->generator = new AuthorizedUrlGenerator($this->generatorDelegate, $this->authorizationChecker, $this->localizedRouteDetector);
     }
 
     public function testGenerateRouteContext()
     {
         $arguments = ['route1', ['page' => 1], 'POST', UrlGeneratorInterface::RELATIVE_PATH];
 
-        $expectedRouteContext = new RouteContext(...$arguments);
+        $expectedRouteContext = new RouteContext(...array_slice($arguments, 0, 3));
+        $expectedRouteContext->setReferenceType($arguments[3]);
 
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
@@ -118,45 +100,23 @@ class AuthorizedUrlGeneratorTest extends TestCase
         $this->assertEquals('/generated_url', $this->generator->generate('route1'));
     }
 
-    public function testLocalizedRouteByLocaleFromContext()
+    public function testLocalizedRoute()
     {
-        $route = $this->createMock(Route::class);
-
-        $route->method('getDefault')
-            ->with('_canonical_route')
-            ->willReturn('route1');
-
-        $this->routeCollection->method('get')
-            ->with('route1.en')
-            ->willReturn($route);
+        $this->localizedRouteDetector->method('getLocalizedName')
+            ->willReturn('route1.en');
 
         $expectedRouteContext = new RouteContext('route1.en');
+        $expectedRouteContext->setReferenceType(UrlGeneratorInterface::ABSOLUTE_PATH);
 
         $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
-            ->with($expectedRouteContext);
+            ->with($expectedRouteContext)
+            ->willReturn(true);
 
-        $this->generator->generate('route1');
-    }
+        $this->generatorDelegate->expects($this->once())
+            ->method('generate')
+            ->with('route1', ['_locale' => 'en']);
 
-    public function testLocalizedRouteByLocaleFromParameters()
-    {
-        $route = $this->createMock(Route::class);
-
-        $route->method('getDefault')
-            ->with('_canonical_route')
-            ->willReturn('route1');
-
-        $this->routeCollection->method('get')
-            ->with('route1.fr')
-            ->willReturn($route);
-
-        $expectedRouteContext = new RouteContext('route1.fr');
-
-        $this->authorizationChecker->expects($this->once())
-            ->method('isGranted')
-            ->with($expectedRouteContext);
-
-        $this->generator->generate('route1', ['_locale' => 'fr']);
+        $this->generator->generate('route1', ['_locale' => 'en']);
     }
 }

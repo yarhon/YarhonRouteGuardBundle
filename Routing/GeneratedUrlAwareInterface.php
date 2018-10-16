@@ -16,6 +16,16 @@ namespace Yarhon\RouteGuardBundle\Routing;
 interface GeneratedUrlAwareInterface
 {
     /**
+     * @param int $referenceType
+     */
+    public function setReferenceType($referenceType);
+
+    /**
+     * @return int
+     */
+    public function getReferenceType();
+
+    /**
      * @param string $generatedUrl
      */
     public function setGeneratedUrl($generatedUrl);

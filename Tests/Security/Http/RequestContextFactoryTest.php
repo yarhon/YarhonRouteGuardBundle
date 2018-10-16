@@ -52,6 +52,7 @@ class RequestContextFactoryTest extends TestCase
     public function testPathInfoClosure()
     {
         $routeContext = new RouteContext('main');
+        $routeContext->setReferenceType(UrlGeneratorInterface::ABSOLUTE_PATH);
 
         $context = $this->factory->createContext($routeContext);
 
@@ -67,7 +68,8 @@ class RequestContextFactoryTest extends TestCase
 
     public function testPathInfoClosureWithRelativePath()
     {
-        $routeContext = new RouteContext('main', [], 'POST', UrlGeneratorInterface::RELATIVE_PATH);
+        $routeContext = new RouteContext('main', [], 'POST');
+        $routeContext->setReferenceType(UrlGeneratorInterface::RELATIVE_PATH);
 
         $context = $this->factory->createContext($routeContext);
 
@@ -84,6 +86,7 @@ class RequestContextFactoryTest extends TestCase
     public function testPathInfoClosureWithContextBaseUrl()
     {
         $routeContext = new RouteContext('main');
+        $routeContext->setReferenceType(UrlGeneratorInterface::ABSOLUTE_PATH);
 
         $context = $this->factory->createContext($routeContext);
 
@@ -100,6 +103,7 @@ class RequestContextFactoryTest extends TestCase
     public function testHostClosure()
     {
         $routeContext = new RouteContext('main');
+        $routeContext->setReferenceType(UrlGeneratorInterface::ABSOLUTE_PATH);
 
         $context = $this->factory->createContext($routeContext);
 
@@ -115,6 +119,7 @@ class RequestContextFactoryTest extends TestCase
     public function testHostClosureWithContextHost()
     {
         $routeContext = new RouteContext('main');
+        $routeContext->setReferenceType(UrlGeneratorInterface::ABSOLUTE_PATH);
 
         $context = $this->factory->createContext($routeContext);
 

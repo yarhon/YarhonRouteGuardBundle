@@ -10,8 +10,6 @@
 
 namespace Yarhon\RouteGuardBundle\Routing;
 
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
@@ -46,14 +44,12 @@ class RouteContext implements RouteContextInterface, GeneratedUrlAwareInterface
      * @param string $name
      * @param array  $parameters
      * @param string $method
-     * @param int    $referenceType
      */
-    public function __construct($name, array $parameters = [], $method = 'GET', $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
+    public function __construct($name, array $parameters = [], $method = 'GET')
     {
         $this->name = $name;
         $this->parameters = $parameters;
         $this->method = $method;
-        $this->referenceType = $referenceType;
     }
 
     /**
@@ -78,6 +74,14 @@ class RouteContext implements RouteContextInterface, GeneratedUrlAwareInterface
     public function getMethod()
     {
         return $this->method;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setReferenceType($referenceType)
+    {
+        $this->referenceType = $referenceType;
     }
 
     /**

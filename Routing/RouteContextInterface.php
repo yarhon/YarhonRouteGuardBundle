@@ -30,8 +30,4 @@ interface RouteContextInterface
      */
     public function getMethod();
 
-    /**
-     * @return int
-     */
-    public function getReferenceType();
 }

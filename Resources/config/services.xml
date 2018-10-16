@@ -143,10 +143,14 @@
         <service id="Yarhon\RouteGuardBundle\Routing\AuthorizedUrlGenerator">
             <argument type="service" id="router.default" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker" />
-            <argument type="service" id="router.default" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\LocalizedRouteDetector" on-invalid="ignore"/>
         </service>
         <service id="yarhon_route_guard.authorized_url_generator" alias="Yarhon\RouteGuardBundle\Routing\AuthorizedUrlGenerator" public="true"/>
         <service id="Yarhon\RouteGuardBundle\Routing\AuthorizedUrlGeneratorInterface" alias="yarhon_route_guard.authorized_url_generator" />
+
+        <service id="Yarhon\RouteGuardBundle\Routing\LocalizedRouteDetector">
+            <argument type="service" id="router.default" />
+        </service>
 
         <!-- twig services -->
 

@@ -11,8 +11,6 @@
 namespace Yarhon\RouteGuardBundle\Routing;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Routing\RouteCollection;
 use Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface;
 
 /**
@@ -31,22 +29,22 @@ class AuthorizedUrlGenerator implements AuthorizedUrlGeneratorInterface
     protected $authorizationChecker;
 
     /**
-     * @var RouteCollection
+     * @var LocalizedRouteDetector|null
      */
-    protected $routes;
+    protected $localizedRouteDetector;
 
     /**
      * AuthorizedUrlGenerator constructor.
      *
      * @param UrlGeneratorInterface              $urlGenerator
      * @param RouteAuthorizationCheckerInterface $authorizationChecker
-     * @param RouterInterface                    $router
+     * @param LocalizedRouteDetector|null        $localizedRouteDetector
      */
-    public function __construct(UrlGeneratorInterface $urlGenerator, RouteAuthorizationCheckerInterface $authorizationChecker, RouterInterface $router)
+    public function __construct(UrlGeneratorInterface $urlGenerator, RouteAuthorizationCheckerInterface $authorizationChecker, LocalizedRouteDetector $localizedRouteDetector = null)
     {
         $this->delegate = $urlGenerator;
         $this->authorizationChecker = $authorizationChecker;
-        $this->routes = $router->getRouteCollection();
+        $this->localizedRouteDetector = $localizedRouteDetector;
     }
 
     /**
@@ -59,13 +57,18 @@ class AuthorizedUrlGenerator implements AuthorizedUrlGeneratorInterface
      */
     public function generate($name, $parameters = [], $method = 'GET', $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
-        $localizedName = $this->detectLocalizedRoute($name, $parameters);
+        $originalName = $name;
+        $originalParameters = $parameters;
+
+        $localizedName = $this->localizedRouteDetector ? $this->localizedRouteDetector->getLocalizedName($name, $parameters) : null;
 
         if ($localizedName) {
+            $name = $localizedName;
             unset($parameters['_locale']);
         }
 
-        $routeContext = new RouteContext($localizedName ?: $name, $parameters, $method, $referenceType);
+        $routeContext = new RouteContext($name, $parameters, $method);
+        $routeContext->setReferenceType($referenceType);
 
         $isGranted = $this->authorizationChecker->isGranted($routeContext);
 
@@ -77,32 +80,6 @@ class AuthorizedUrlGenerator implements AuthorizedUrlGeneratorInterface
             return $generatedUrl;
         }
 
-        return $this->delegate->generate($name, $parameters, $referenceType);
-    }
-
-    /**
-     * @see \Symfony\Component\Routing\Generator\UrlGenerator::generate
-     * Note: UrlGenerator uses $defaultLocale parameter when determining locale for url generation, but
-     * a) it's never passed to UrlGenerator constructor - see \Symfony\Component\Routing\Router::getGenerator
-     * b) we have no way to retrieve it
-     *
-     * @param string $name
-     * @param array  $parameters
-     *
-     * @return string|null
-     */
-    protected function detectLocalizedRoute($name, array $parameters)
-    {
-        $defaultLocale = null;
-        $contextLocale = $this->delegate->getContext()->getParameter('_locale');
-
-        $locale = isset($parameters['_locale']) ? $parameters['_locale'] : $contextLocale ?: $defaultLocale;
-
-        if (null !== $locale) {
-            $localizedName = $name.'.'.$locale;
-            if (null !== ($route = $this->routes->get($localizedName)) && $route->getDefault('_canonical_route') === $name) {
-                return $localizedName;
-            }
-        }
+        return $this->delegate->generate($originalName, $originalParameters, $referenceType);
     }
 }

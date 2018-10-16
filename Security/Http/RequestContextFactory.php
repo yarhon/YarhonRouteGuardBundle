@@ -56,27 +56,33 @@ class RequestContextFactory
             static $generated;
 
             if (null === $generated) {
-                $referenceType = $routeContext->getReferenceType();
 
-                // We need to parse path and host from the generated url, that depends on reference type.
-                // When using ABSOLUTE_URL or NETWORK_PATH, generated url will contain both path and host.
-                //
-                // When using ABSOLUTE_PATH or RELATIVE_PATH, generated url will contain only path.
-                // If route has some specific host assigned, the UrlGenerator will force reference type to
-                // ABSOLUTE_URL or NETWORK_PATH, that would produce url with host.
-                // So, with ABSOLUTE_PATH or RELATIVE_PATH, if generated url does not contains host, we can be sure
-                // that the host is the "current" host, and grab it from UrlGenerator context.
-                // Finally, with RELATIVE_PATH we can't simply determine path (absolute), so we force generation to
-                // ABSOLUTE_URL, and don't save the generated url.
+                if (!($routeContext instanceof GeneratedUrlAwareInterface) || null === $routeContext->getReferenceType()) {
+                    $generated = $urlGenerator->generate($routeContext->getName(), $routeContext->getParameters(), UrlGeneratorInterface::ABSOLUTE_PATH);
+                } else {
 
-                if (UrlGeneratorInterface::RELATIVE_PATH === $referenceType) {
-                    $referenceType = UrlGeneratorInterface::ABSOLUTE_URL;
-                }
+                    $referenceType = $routeContext->getReferenceType();
 
-                $generated = $urlGenerator->generate($routeContext->getName(), $routeContext->getParameters(), $referenceType);
+                    // We need to parse path and host from the generated url, that depends on reference type.
+                    // When using ABSOLUTE_URL or NETWORK_PATH, generated url will contain both path and host.
+                    //
+                    // When using ABSOLUTE_PATH or RELATIVE_PATH, generated url will contain only path.
+                    // If route has some specific host assigned, the UrlGenerator will force reference type to
+                    // ABSOLUTE_URL or NETWORK_PATH, that would produce url with host.
+                    // So, with ABSOLUTE_PATH or RELATIVE_PATH, if generated url does not contains host, we can be sure
+                    // that the host is the "current" host, and grab it from UrlGenerator context.
+                    // Finally, with RELATIVE_PATH we can't simply determine path (absolute), so we force generation to
+                    // ABSOLUTE_URL, and don't save the generated url.
 
-                if ($routeContext instanceof GeneratedUrlAwareInterface && UrlGeneratorInterface::RELATIVE_PATH !== $routeContext->getReferenceType()) {
-                    $routeContext->setGeneratedUrl($generated);
+                    if (UrlGeneratorInterface::RELATIVE_PATH === $referenceType) {
+                        $referenceType = UrlGeneratorInterface::ABSOLUTE_URL;
+                    }
+
+                    $generated = $urlGenerator->generate($routeContext->getName(), $routeContext->getParameters(), $referenceType);
+
+                    if (UrlGeneratorInterface::RELATIVE_PATH !== $routeContext->getReferenceType()) {
+                        $routeContext->setGeneratedUrl($generated);
+                    }
                 }
             }
 

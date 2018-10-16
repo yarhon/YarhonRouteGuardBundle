@@ -26,17 +26,23 @@ class RouteContextTest extends TestCase
         $this->assertSame('route1', $context->getName());
         $this->assertSame([], $context->getParameters());
         $this->assertSame('GET', $context->getMethod());
-        $this->assertSame(UrlGeneratorInterface::ABSOLUTE_PATH, $context->getReferenceType());
     }
 
     public function testConstructAllValues()
     {
-        $context = new RouteContext('route1', ['q' => 1], 'POST', UrlGeneratorInterface::RELATIVE_PATH);
+        $context = new RouteContext('route1', ['q' => 1], 'POST');
 
         $this->assertSame('route1', $context->getName());
         $this->assertSame(['q' => 1], $context->getParameters());
         $this->assertSame('POST', $context->getMethod());
-        $this->assertSame(UrlGeneratorInterface::RELATIVE_PATH, $context->getReferenceType());
+    }
+
+    public function testReferenceType()
+    {
+        $context = new RouteContext('route1');
+        $context->setReferenceType(UrlGeneratorInterface::ABSOLUTE_PATH);
+
+        $this->assertEquals(UrlGeneratorInterface::ABSOLUTE_PATH, $context->getReferenceType());
     }
 
     public function testGeneratedUrl()
