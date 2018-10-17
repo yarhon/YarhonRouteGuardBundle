@@ -36,7 +36,7 @@ abstract class AbstractNodeTest extends TestCase
 
     public function setUp()
     {
-        $loader = $this->getMockBuilder('Twig\Loader\LoaderInterface')->getMock();
+        $loader = $this->getMockBuilder(\Twig\Loader\LoaderInterface::class)->getMock();
 
         $this->environment = new Environment($loader, ['cache' => false, 'autoescape' => false, 'optimizations' => 0]);
 

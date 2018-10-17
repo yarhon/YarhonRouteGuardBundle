@@ -11,6 +11,7 @@
 namespace Yarhon\RouteGuardBundle\Tests\DependencyInjection;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Config\Definition\Processor;
 use Yarhon\RouteGuardBundle\DependencyInjection\Configuration;
 
 /**
@@ -22,7 +23,7 @@ class ConfigurationTest extends TestCase
     {
         $input = [];
 
-        $processor = $this->createPartialMock('Symfony\Component\Config\Definition\Processor', []);
+        $processor = $this->createPartialMock(Processor::class, []);
 
         $config = $processor->processConfiguration(new Configuration(), [$input]);
 
