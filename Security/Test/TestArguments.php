@@ -22,7 +22,7 @@ class TestArguments
     /**
      * @var mixed[]
      */
-    private $attributes = [];
+    private $attributes;
 
     /**
      * @var mixed

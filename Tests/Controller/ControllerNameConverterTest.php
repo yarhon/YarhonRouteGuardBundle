@@ -15,7 +15,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerNameConverter;
-use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

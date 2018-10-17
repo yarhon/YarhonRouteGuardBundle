@@ -12,7 +12,6 @@ namespace Yarhon\RouteGuardBundle\Tests\Security\Sensio;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Security\Sensio\VariableResolverContext;

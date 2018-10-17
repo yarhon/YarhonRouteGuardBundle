@@ -37,7 +37,7 @@ class SensioSecurityTest extends WebTestCase
 
     public function testNotSecured()
     {
-        $client = $this->createClient();
+        $client = static::createClient();
         $crawler = $client->request('GET', '/');
 
         $publicLink = $crawler->filterXPath('//*[@id="public_link"]');
@@ -51,7 +51,7 @@ class SensioSecurityTest extends WebTestCase
 
     public function testIsGrantedAnnotation()
     {
-        $client = $this->createClient([], ['PHP_AUTH_USER' => 'bob', 'PHP_AUTH_PW' => 'pa$$word']);
+        $client = static::createClient([], ['PHP_AUTH_USER' => 'bob', 'PHP_AUTH_PW' => 'pa$$word']);
         $crawler = $client->request('GET', '/');
 
         $publicLink = $crawler->filterXPath('//*[@id="public_link"]');

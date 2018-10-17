@@ -24,7 +24,7 @@ class ClassMap implements ClassMapInterface
     /**
      * @var string[]
      */
-    private $map = [];
+    private $map;
 
     /**
      * ClassMap constructor.

@@ -107,7 +107,7 @@ class RouteMatcher
         // If route is static (no path variables), static prefix would be equal to the resulting url for the route.
         if (!$compiledRoute->getPathVariables()) {
             // Note: It's important to use the same regexp delimiters ("{}") used in \Symfony\Component\HttpFoundation\RequestMatcher::matches.
-            return (preg_match('{'.$pattern.'}', $staticPrefix)) ? 1 : -1;
+            return preg_match('{'.$pattern.'}', $staticPrefix) ? 1 : -1;
         }
 
         if ('' === $staticPrefix) {
@@ -135,7 +135,7 @@ class RouteMatcher
 
         if (!$compiledRoute->getHostVariables()) {
             // Note: It's important to use the same regexp delimiters ("{}") used in \Symfony\Component\HttpFoundation\RequestMatcher::matches.
-            return (preg_match('{'.$pattern.'}i', $host)) ? 1 : -1;
+            return preg_match('{'.$pattern.'}i', $host) ? 1 : -1;
         }
 
         $staticPrefix = strstr($host, '{', true);

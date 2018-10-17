@@ -12,7 +12,6 @@ namespace Yarhon\RouteGuardBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\Reference;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
 use Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver;
 use Yarhon\RouteGuardBundle\DependencyInjection\Container\ForeignExtensionAccessor;

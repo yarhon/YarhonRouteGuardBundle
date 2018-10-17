@@ -62,7 +62,7 @@ class RouteExpressionParser
             $generateAs = [$referenceType];
 
             if ($stream->test(['absolute', 'relative'])) {
-                $relative = 'absolute' == $stream->getCurrent()->getValue() ? false : true;
+                $relative = 'absolute' !== $stream->getCurrent()->getValue();
                 $generateAs[] = $relative;
                 $stream->next();
             }

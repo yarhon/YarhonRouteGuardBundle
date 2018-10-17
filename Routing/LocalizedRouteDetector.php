@@ -64,5 +64,7 @@ class LocalizedRouteDetector
                 return $localizedName;
             }
         }
+
+        return null;
     }
 }

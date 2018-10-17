@@ -91,12 +91,12 @@ class RouteExpression extends FunctionExpression
     {
         $line = $arguments->getTemplateLine();
 
-        if (1 == $arguments->count()) {
+        if (1 === $arguments->count()) {
             // add a default "parameters" argument
             $arguments->setNode(1, new ArrayExpression([], $line));
         }
 
-        if (2 == $arguments->count()) {
+        if (2 === $arguments->count()) {
             // add a default "method" argument
             $arguments->setNode(2, new ConstantExpression('GET', $line));
         }

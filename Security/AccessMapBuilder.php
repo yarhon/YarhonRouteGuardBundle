@@ -33,7 +33,7 @@ class AccessMapBuilder implements LoggerAwareInterface
     /**
      * @var array
      */
-    private $options = [];
+    private $options;
 
     /**
      * @var RouteCollection

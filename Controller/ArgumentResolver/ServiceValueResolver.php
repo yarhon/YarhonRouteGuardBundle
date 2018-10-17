@@ -12,6 +12,7 @@ namespace Yarhon\RouteGuardBundle\Controller\ArgumentResolver;
 
 use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException as ContainerRuntimeException;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
@@ -64,6 +65,13 @@ final class ServiceValueResolver implements ArgumentValueResolverInterface
         }
     }
 
+    /**
+     * @param string $originalMessage
+     * @param string $controller
+     * @param string $argument
+     *
+     * @return string
+     */
     private function transformExceptionMessage($originalMessage, $controller, $argument)
     {
         $what = sprintf('argument $%s of "%s()"', $argument, $controller);
@@ -76,6 +84,11 @@ final class ServiceValueResolver implements ArgumentValueResolverInterface
         return $message;
     }
 
+    /**
+     * @param string $controller
+     *
+     * @return ServiceLocator|null
+     */
     private function getServiceLocator($controller)
     {
         if ($this->container->has($controller)) {
@@ -89,5 +102,7 @@ final class ServiceValueResolver implements ArgumentValueResolverInterface
         if ($this->container->has($controller)) {
             return $this->container->get($controller);
         }
+
+        return null;
     }
 }

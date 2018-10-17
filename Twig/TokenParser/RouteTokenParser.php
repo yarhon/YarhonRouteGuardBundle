@@ -87,7 +87,7 @@ class RouteTokenParser extends AbstractTokenParser
             return $token->test(['else', $this->endTagName]);
         });
 
-        if ('else' == $stream->next()->getValue()) {
+        if ('else' === $stream->next()->getValue()) {
             $stream->expect(Token::BLOCK_END_TYPE);
 
             $elseNode = $parser->subparse(function (Token $token) {

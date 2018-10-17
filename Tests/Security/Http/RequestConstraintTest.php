@@ -11,7 +11,6 @@
 namespace Yarhon\RouteGuardBundle\Tests\Security\Http;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\IpUtils;
 use Yarhon\RouteGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\RouteGuardBundle\Security\Http\RequestContext;
 

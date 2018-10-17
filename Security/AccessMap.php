@@ -10,8 +10,6 @@
 namespace Yarhon\RouteGuardBundle\Security;
 
 use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

@@ -11,7 +11,6 @@
 namespace Yarhon\RouteGuardBundle\Tests\Security\Sensio;
 
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
@@ -32,8 +31,6 @@ class VariableResolverTest extends TestCase
 
     private $controllerArgumentResolver;
 
-    private $requestStack;
-
     private $routeMetadata;
 
     private $controllerMetadata;
@@ -46,9 +43,8 @@ class VariableResolverTest extends TestCase
     {
         $this->requestAttributesFactory = $this->createMock(RequestAttributesFactory::class);
         $this->controllerArgumentResolver = $this->createMock(ControllerArgumentResolver::class);
-        $this->requestStack = $this->createMock(RequestStack::class);
 
-        $this->variableResolver = new VariableResolver($this->requestAttributesFactory, $this->controllerArgumentResolver, $this->requestStack);
+        $this->variableResolver = new VariableResolver($this->requestAttributesFactory, $this->controllerArgumentResolver);
 
         $this->routeMetadata = $this->createMock(RouteMetadataInterface::class);
         $this->controllerMetadata = $this->createMock(ControllerMetadata::class);

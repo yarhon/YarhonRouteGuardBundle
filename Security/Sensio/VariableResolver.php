@@ -10,7 +10,6 @@
 
 namespace Yarhon\RouteGuardBundle\Security\Sensio;
 
-use Symfony\Component\HttpFoundation\RequestStack;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataInterface;
@@ -33,22 +32,15 @@ class VariableResolver
     private $controllerArgumentResolver;
 
     /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
-    /**
      * VariableResolver constructor.
      *
      * @param RequestAttributesFactory   $requestAttributesFactory
      * @param ControllerArgumentResolver $controllerArgumentResolver
-     * @param RequestStack               $requestStack
      */
-    public function __construct(RequestAttributesFactory $requestAttributesFactory, ControllerArgumentResolver $controllerArgumentResolver, RequestStack $requestStack)
+    public function __construct(RequestAttributesFactory $requestAttributesFactory, ControllerArgumentResolver $controllerArgumentResolver)
     {
         $this->requestAttributesFactory = $requestAttributesFactory;
         $this->controllerArgumentResolver = $controllerArgumentResolver;
-        $this->requestStack = $requestStack;
     }
 
     /**

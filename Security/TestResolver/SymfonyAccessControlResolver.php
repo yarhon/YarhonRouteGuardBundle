@@ -16,7 +16,6 @@ use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\Http\TestBagMapInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
-use Yarhon\RouteGuardBundle\Routing\UrlDeferred;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
 
 /**

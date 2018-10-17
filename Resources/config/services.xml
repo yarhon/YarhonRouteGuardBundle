@@ -30,7 +30,6 @@
         <service id="Yarhon\RouteGuardBundle\Security\Sensio\VariableResolver">
             <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver" />
-            <argument type="service" id="request_stack" />
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider">

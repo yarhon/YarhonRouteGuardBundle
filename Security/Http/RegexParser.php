@@ -15,9 +15,9 @@ namespace Yarhon\RouteGuardBundle\Security\Http;
  */
 class RegexParser
 {
-    protected static $metaCharacters = '\\.+*?|^$[](){}';
+    private static $metaCharacters = '\\.+*?|^$[](){}';
 
-    protected static $removePreviousMetaCharacters = '+*?{|';
+    private static $removePreviousMetaCharacters = '+*?{|';
 
     /**
      * @param string $expression

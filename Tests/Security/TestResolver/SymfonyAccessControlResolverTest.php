@@ -13,7 +13,6 @@ namespace Yarhon\RouteGuardBundle\Tests\Security\TestResolver;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory;
 use Yarhon\RouteGuardBundle\Security\Http\RequestContext;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
@@ -62,7 +61,7 @@ class SymfonyAccessControlResolverTest extends TestCase
         $this->testBag->method('getIterator')
             ->willReturn(new \ArrayIterator([$this->testArguments]));
 
-        $this->routeContext = new RouteContext('main', [], 'POST', UrlGeneratorInterface::ABSOLUTE_PATH);
+        $this->routeContext = new RouteContext('main', [], 'POST');
     }
 
     public function testGetProviderClass()
