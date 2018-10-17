@@ -104,7 +104,7 @@
 
         <!-- cache services -->
 
-        <service id="Yarhon\RouteGuardBundle\CacheWarmer\AccessMapCacheWarmer">
+        <service id="Yarhon\RouteGuardBundle\Cache\AccessMapCacheWarmer">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMap" />
             <tag name="kernel.cache_warmer" />

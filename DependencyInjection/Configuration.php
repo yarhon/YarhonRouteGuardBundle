@@ -57,7 +57,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('tag_name')->defaultValue('route')->end()
-                        ->scalarNode('reference_var_name')->defaultValue('ref')->end()
+                        ->scalarNode('tag_variable_name')->defaultValue('_route')->end()
                         ->booleanNode('discover_routing_functions')->defaultValue(true)->end()
                     ->end()
                 ->end()

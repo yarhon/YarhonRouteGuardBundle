@@ -35,7 +35,7 @@ class ConfigurationTest extends TestCase
             ],
             'twig' => [
                 'tag_name' => 'route',
-                'reference_var_name' => 'ref',
+                'tag_variable_name' => '_route',
                 'discover_routing_functions' => true,
             ],
         ];

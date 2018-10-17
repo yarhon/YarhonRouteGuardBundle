@@ -39,12 +39,12 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
     /**
      * @var string
      */
-    private $referenceVarName;
+    private $tagName;
 
     /**
      * @var string
      */
-    private $tagName;
+    private $tagVariableName;
 
     /**
      * @var Scope
@@ -54,13 +54,13 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
     /**
      * DiscoverRoutingFunctionNodeVisitor constructor.
      *
-     * @param string $referenceVarName
      * @param string $tagName
+     * @param string $tagVariableName
      */
-    public function __construct($referenceVarName, $tagName)
+    public function __construct($tagName, $tagVariableName)
     {
-        $this->referenceVarName = $referenceVarName;
         $this->tagName = $tagName;
+        $this->tagVariableName = $tagVariableName;
         $this->discoveredFunctions = new DiscoveredFunctions();
         $this->scope = new Scope();
     }
@@ -114,7 +114,7 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
 
             $this->scope->set('routingFunction', $node);
 
-            $newNode = new NameExpression($this->referenceVarName, $node->getTemplateLine());
+            $newNode = new NameExpression($this->tagVariableName, $node->getTemplateLine());
             $newNode->setAttribute('always_defined', true);
 
             return $newNode;

@@ -24,7 +24,7 @@ class RouteNode extends Node
     /**
      * @var string
      */
-    private static $referenceVarName;
+    private static $variableName;
 
     /**
      * RouteNode constructor.
@@ -52,11 +52,11 @@ class RouteNode extends Node
     }
 
     /**
-     * @param string $referenceVarName
+     * @param string $variableName
      */
-    public static function setReferenceVarName($referenceVarName)
+    public static function setVariableName($variableName)
     {
-        self::$referenceVarName = $referenceVarName;
+        self::$variableName = $variableName;
     }
 
     /**
@@ -67,7 +67,7 @@ class RouteNode extends Node
      */
     public function compile(Compiler $compiler)
     {
-        // TODO: check if $referenceVarName is not already defined in context
+        // TODO: check if $variableName is not already defined in context
 
         $compiler->addDebugInfo($this);
 
@@ -75,18 +75,20 @@ class RouteNode extends Node
             throw new SyntaxError('Condition node is required.', $this->getTemplateLine());
         }
 
-        if (!self::$referenceVarName) {
+        if (!self::$variableName) {
             throw new RuntimeError(
-                sprintf('referenceVarName is not set. setReferenceVarName() method should be called before compiling.')
+                sprintf('variableName is not set. setVariableName() method should be called before compiling.')
             );
         }
 
-        $referenceVar = new AssignNameExpression(self::$referenceVarName, 0);
+        $variable = new AssignNameExpression(self::$variableName, 0);
 
         $compiler
+            ->subcompile($variable)
+            ->write(" = array();\n")
             ->write('if (false !== (')
-            ->subcompile($referenceVar)
-            ->write(' = ')
+            ->subcompile($variable)
+            ->write('["ref"] = ')
             ->subcompile($this->getNode('condition'))
             ->write(")) {\n")
             ->indent()
@@ -106,7 +108,7 @@ class RouteNode extends Node
             ->outdent()
             ->write("}\n")
             ->write('unset(')
-            ->subcompile($referenceVar)
+            ->subcompile($variable)
             ->write(");\n");
     }
 }

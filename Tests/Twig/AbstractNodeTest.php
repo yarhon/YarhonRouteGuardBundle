@@ -32,7 +32,7 @@ abstract class AbstractNodeTest extends TestCase
 
     private $tagName = 'route';
 
-    private $referenceVarName = 'ref';
+    private $tagVariableName = '_route';
 
     public function setUp()
     {
@@ -43,7 +43,7 @@ abstract class AbstractNodeTest extends TestCase
         $this->environment->addTokenParser(new RouteTokenParser($this->tagName, false));
         $this->environment->addFunction(new TwigFunction('route_guard_route', function () {}));
 
-        RouteNode::setReferenceVarName($this->referenceVarName);
+        RouteNode::setVariableName($this->tagVariableName);
     }
 
     /**

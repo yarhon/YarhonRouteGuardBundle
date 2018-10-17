@@ -37,7 +37,7 @@ class RoutingExtensionTest extends TestCase
     {
         $defaults = [
             'tag_name' => 'route',
-            'reference_var_name' => 'ref',
+            'tag_variable_name' => '_route',
             'discover_routing_functions' => false,
         ];
 
@@ -54,7 +54,7 @@ class RoutingExtensionTest extends TestCase
     {
         $options = [
             'tag_name' => 'foo',
-            'reference_var_name' => 'bar',
+            'tag_variable_name' => 'bar',
             'discover_routing_functions' => true,
         ];
 
@@ -79,13 +79,13 @@ class RoutingExtensionTest extends TestCase
     {
         $options = [
             'tag_name' => 'foo',
-            'reference_var_name' => 'bar',
+            'tag_variable_name' => 'bar',
             'discover_routing_functions' => true,
         ];
 
         $extension = new RoutingExtension($options);
         $nodeVisitors = [
-            new DiscoverRoutingFunctionNodeVisitor($options['reference_var_name'], $options['tag_name']),
+            new DiscoverRoutingFunctionNodeVisitor($options['tag_name'], $options['tag_variable_name']),
         ];
 
         $this->assertEquals($nodeVisitors, $extension->getNodeVisitors());
@@ -94,19 +94,19 @@ class RoutingExtensionTest extends TestCase
     public function testRouteNode()
     {
         $defaults = [
-            'reference_var_name' => 'ref',
+            'tag_variable_name' => '_route',
         ];
 
         $extension = new RoutingExtension();
 
-        $this->assertAttributeEquals($defaults['reference_var_name'], 'referenceVarName', RouteNode::class);
+        $this->assertAttributeEquals($defaults['tag_variable_name'], 'variableName', RouteNode::class);
 
         $options = [
-            'reference_var_name' => 'bar',
+            'tag_variable_name' => 'bar',
         ];
 
         $extension = new RoutingExtension($options);
 
-        $this->assertAttributeEquals($options['reference_var_name'], 'referenceVarName', RouteNode::class);
+        $this->assertAttributeEquals($options['tag_variable_name'], 'variableName', RouteNode::class);
     }
 }

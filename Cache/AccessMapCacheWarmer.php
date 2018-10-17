@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\CacheWarmer;
+namespace Yarhon\RouteGuardBundle\Cache;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;

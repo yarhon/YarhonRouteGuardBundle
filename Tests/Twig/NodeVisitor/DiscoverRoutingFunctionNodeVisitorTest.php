@@ -27,7 +27,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
 {
     private $tagName = 'routewithdiscover';
 
-    private $referenceVarName = 'ref';
+    private $tagVariableName = '_routewithdiscover';
 
     public function setUp()
     {
@@ -36,7 +36,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
         $this->environment->addFunction(new TwigFunction('url', function () {}));
         $this->environment->addFunction(new TwigFunction('path', function () {}));
 
-        $nodeVisitor = new DiscoverRoutingFunctionNodeVisitor($this->referenceVarName, $this->tagName);
+        $nodeVisitor = new DiscoverRoutingFunctionNodeVisitor($this->tagName, $this->tagVariableName);
         $this->environment->addNodeVisitor($nodeVisitor);
 
         $this->environment->addTokenParser(new RouteTokenParser($this->tagName, true));
@@ -54,7 +54,7 @@ class DiscoverRoutingFunctionNodeVisitorTest extends AbstractNodeTest
 
     public function discoverDataProvider()
     {
-        $nameExpression = new NameExpression($this->referenceVarName, 0);
+        $nameExpression = new NameExpression($this->tagVariableName, 0);
         $nameExpression->setAttribute('always_defined', true);
 
         return [

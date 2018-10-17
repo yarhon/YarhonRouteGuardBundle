@@ -19,7 +19,7 @@ use Yarhon\RouteGuardBundle\Twig\Node\RouteExpression;
 
 class RouteNodeTest extends AbstractNodeTest
 {
-    private $referenceVarName = 'ref';
+    private $tagVariableName = '_route';
 
     /**
      * @dataProvider compileDataProvider
@@ -31,7 +31,7 @@ class RouteNodeTest extends AbstractNodeTest
 
         $conditionNode = $node->getNode('condition');
         $conditionSource = $this->compile($conditionNode);
-        $expected = sprintf($expected, $this->referenceVarName, $conditionSource, $this->referenceVarName);
+        $expected = sprintf($expected, $this->tagVariableName, $this->tagVariableName, $conditionSource, $this->tagVariableName);
 
         $this->assertEquals($expected, $source);
     }
@@ -43,7 +43,8 @@ class RouteNodeTest extends AbstractNodeTest
         // general test
         $dataSet[0][0] = '{% $tagName ["secure1"] %}body text{% end$tagName %}';
         $dataSet[0][1] = <<<'EOD'
-if (false !== ($context["%s"] = %s)) {
+$context["%s"] = array();
+if (false !== ($context["%s"]["ref"] = %s)) {
     echo "body text";
 }
 unset($context["%s"]);
@@ -52,7 +53,8 @@ EOD;
         // else node test
         $dataSet[1][] = '{% $tagName ["secure1"] %}body text{% else %}else text{% end$tagName %}';
         $dataSet[1][] = <<<'EOD'
-if (false !== ($context["%s"] = %s)) {
+$context["%s"] = array();
+if (false !== ($context["%s"]["ref"] = %s)) {
     echo "body text";
 } else {
     echo "else text";
@@ -73,23 +75,23 @@ EOD;
         $this->compile($node);
     }
 
-    public function testSetReferenceVarName()
+    public function testSetVariableName()
     {
         $testName = uniqid();
-        RouteNode::setReferenceVarName($testName);
+        RouteNode::setVariableName($testName);
 
-        $this->assertAttributeEquals($testName, 'referenceVarName', RouteNode::class);
+        $this->assertAttributeEquals($testName, 'variableName', RouteNode::class);
     }
 
-    public function testSetReferenceVarNameException()
+    public function testSetVariableNameException()
     {
-        RouteNode::setReferenceVarName(null);
+        RouteNode::setVariableName(null);
 
         $routeExpression = $this->createMock(RouteExpression::class);
         $node = new RouteNode($routeExpression, new Node());
 
         $this->expectException(RuntimeError::class);
-        $this->expectExceptionMessage('referenceVarName is not set. setReferenceVarName() method should be called before compiling.');
+        $this->expectExceptionMessage('variableName is not set. setVariableName() method should be called before compiling.');
 
         $this->compile($node);
     }

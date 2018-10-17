@@ -8,10 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Tests\CacheWarmer;
+namespace Yarhon\RouteGuardBundle\Tests\Cache;
 
 use PHPUnit\Framework\TestCase;
-use Yarhon\RouteGuardBundle\CacheWarmer\AccessMapCacheWarmer;
+use Yarhon\RouteGuardBundle\Cache\AccessMapCacheWarmer;
 use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
 use Yarhon\RouteGuardBundle\Security\AccessMapInterface;
 

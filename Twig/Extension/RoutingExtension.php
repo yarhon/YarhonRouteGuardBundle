@@ -36,13 +36,13 @@ class RoutingExtension extends AbstractExtension
     {
         $defaults = [
             'tag_name' => 'route',
-            'reference_var_name' => 'ref',
+            'tag_variable_name' => '_route',
             'discover_routing_functions' => false,
         ];
 
         $this->options = array_merge($defaults, $options);
 
-        RouteNode::setReferenceVarName($this->options['reference_var_name']);
+        RouteNode::setVariableName($this->options['tag_variable_name']);
     }
 
     /**
@@ -63,7 +63,7 @@ class RoutingExtension extends AbstractExtension
         $nodeVisitors = [];
 
         if ($this->options['discover_routing_functions']) {
-            $nodeVisitors[] = new DiscoverRoutingFunctionNodeVisitor($this->options['reference_var_name'], $this->options['tag_name']);
+            $nodeVisitors[] = new DiscoverRoutingFunctionNodeVisitor($this->options['tag_name'], $this->options['tag_variable_name']);
         }
 
         return $nodeVisitors;

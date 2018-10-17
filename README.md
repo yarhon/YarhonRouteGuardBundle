@@ -38,19 +38,19 @@ class BlogController extends AbstractController
 
 ```twig
 {% route ['blog', { page: 1} ] %}
-    <a href="{{ ref }}">Blog link</a>
+    <a href="{{ _route.ref }}">Blog link</a>
 {% else %}
     No access
 {% endroute %}
 ```
 In this example, link will be rendered only if user is authorized to access route `blog`, contents of the `else` block rendered otherwise.
 
-The `ref` variable would contain the generated URL.
+The `_route.ref` variable would contain the generated URL.
 
 Read more in [Twig templates](#twig-templates) section.
 
 Moreover, being well aware of "naming things" problem, RouteGuard allows to configure the name of the Twig tag ("route" by default),
-and the name of generated URL variable ("ref" by default). Read more in [Configuration](#configuration) section.
+and the name of the special inner variable ("_route" by default). Read more in [Configuration](#configuration) section.
 
 B) Check if user is authorized to access a route
 
@@ -123,7 +123,7 @@ class::method notation. You can specify:
   ```
 * `twig`
   * `tag_name`. Name of the Twig tag. Default value: `'route'`.
-  * `reference_var_name`. Name of variable that would contain generated URL. Default value: `'ref'`.
+  * `tag_variable_name`. Name of the tag inner variable (array), that would contain route info (i.e., generated URL). Default value: `'_route'`.
   * `discover_routing_functions`. Boolean, specifies whether to use "discover" mode in twig tag. Default value: `true`.
   
 # Usage
@@ -164,7 +164,7 @@ Following two examples will produce the same result:
 ```
 ```twig
 {% route ['blog', { page: 1}, 'GET'] as url relative %}
-    <a href="{{ ref }}">Blog link</a>
+    <a href="{{ _route.ref }}">Blog link</a>
 {% endroute %}
 ```
 The limitation of "discover" mode is that you can't specify method - it would always be considered as `'GET'`.
