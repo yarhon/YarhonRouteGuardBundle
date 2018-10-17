@@ -16,7 +16,6 @@ use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Yarhon\RouteGuardBundle\Cache\CacheFactory;
 
-
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */

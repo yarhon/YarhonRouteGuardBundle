@@ -56,11 +56,9 @@ class RequestContextFactory
             static $generated;
 
             if (null === $generated) {
-
                 if (!($routeContext instanceof GeneratedUrlAwareInterface) || null === $routeContext->getReferenceType()) {
                     $generated = $urlGenerator->generate($routeContext->getName(), $routeContext->getParameters(), UrlGeneratorInterface::ABSOLUTE_PATH);
                 } else {
-
                     $referenceType = $routeContext->getReferenceType();
 
                     // We need to parse path and host from the generated url, that depends on reference type.

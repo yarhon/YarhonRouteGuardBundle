@@ -29,5 +29,4 @@ interface RouteContextInterface
      * @return string
      */
     public function getMethod();
-
 }
