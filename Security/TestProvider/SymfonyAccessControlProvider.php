@@ -51,6 +51,11 @@ class SymfonyAccessControlProvider implements TestProviderInterface
     private $expressionLanguage;
 
     /**
+     * @var array
+     */
+    private $testArguments = [];
+
+    /**
      * SymfonyAccessControlProvider constructor.
      *
      * @param RouteMatcher $routeMatcher
@@ -107,7 +112,7 @@ class SymfonyAccessControlProvider implements TestProviderInterface
             $attributes[] = $expression;
         }
 
-        $arguments = new TestArguments($attributes);
+        $arguments = $this->createTestArguments($attributes);
 
         return [$constraint, $arguments];
     }
@@ -189,5 +194,36 @@ class SymfonyAccessControlProvider implements TestProviderInterface
 
         $message = 'Route with path "%s" requires runtime matching to access_control rule(s) #%s (zero-based), this would reduce performance.';
         $this->logger->warning(sprintf($message, $route->getPath(), implode(', #', array_keys($matches))));
+    }
+
+    /**
+     * @param array $attributes
+     *
+     * @return TestArguments
+     */
+    private function createTestArguments(array $attributes)
+    {
+        $roles = $attributes;
+
+        $expressions = array_filter($attributes, function ($attribute) {
+            return $attribute instanceof Expression;
+        });
+
+        $roles = array_diff($roles, $expressions);
+
+        $expressions = array_map(function ($expression) {
+            return (string) $expression;
+        }, $expressions);
+
+        $roles = array_unique($roles);
+        sort($roles);
+
+        $uniqueKey = implode('#', array_merge($roles, $expressions));
+
+        if (!isset($this->testArguments[$uniqueKey])) {
+            $this->testArguments[$uniqueKey] = new TestArguments($attributes);
+        }
+
+        return $this->testArguments[$uniqueKey];
     }
 }

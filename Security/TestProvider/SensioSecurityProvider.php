@@ -61,6 +61,11 @@ class SensioSecurityProvider implements TestProviderInterface
     private $argumentMetadataFactory;
 
     /**
+     * @var array
+     */
+    private $testArguments = [];
+
+    /**
      * SensioSecurityProvider constructor.
      *
      * @param ClassMethodAnnotationReaderInterface  $reader
@@ -126,18 +131,15 @@ class SensioSecurityProvider implements TestProviderInterface
                 // Despite of the name, $annotation->getAttributes() is a string (annotation value)
                 $attributes[] = $annotation->getAttributes();
 
-                $subjectName = $annotation->getSubject();
+                $subjectName = $annotation->getSubject() ?: null;
 
                 if ($subjectName && !in_array($subjectName, $variableNames)) {
                     throw new InvalidArgumentException(sprintf('Unknown subject variable "%s". Known variables: "%s".', $subjectName, implode('", "', $variableNames)));
                 }
             }
 
-            $arguments = new TestArguments($attributes);
+            $arguments = $this->createTestArguments($attributes, $subjectName);
 
-            if ($subjectName) {
-                $arguments->setMetadata($subjectName);
-            }
             $tests[] = $arguments;
         }
 
@@ -175,5 +177,50 @@ class SensioSecurityProvider implements TestProviderInterface
         $expression = new ExpressionDecorator($parsed, $variableNames);
 
         return $expression;
+    }
+
+    /**
+     * @param array       $attributes
+     * @param string|null $subjectName
+     *
+     * @return TestArguments
+     */
+    private function createTestArguments(array $attributes, $subjectName)
+    {
+        $expressionsWithContext = array_filter($attributes, function ($attribute) {
+            return $attribute instanceof ExpressionDecorator && 0 !== count($attribute->getNames());
+        });
+
+        if (null !== $subjectName || count($expressionsWithContext)) {
+            $testArguments = new TestArguments($attributes);
+            if (null !== $subjectName) {
+                $testArguments->setMetadata($subjectName);
+            }
+
+            return $testArguments;
+        }
+
+        $roles = $attributes;
+
+        $expressions = array_filter($attributes, function ($attribute) {
+            return $attribute instanceof ExpressionDecorator;
+        });
+
+        $roles = array_diff($roles, $expressions);
+
+        $expressions = array_map(function ($expression) {
+            return (string) $expression;
+        }, $expressions);
+
+        $roles = array_unique($roles);
+        sort($roles);
+
+        $uniqueKey = implode('#', array_merge($roles, $expressions));
+
+        if (!isset($this->testArguments[$uniqueKey])) {
+            $this->testArguments[$uniqueKey] = new TestArguments($attributes);
+        }
+
+        return $this->testArguments[$uniqueKey];
     }
 }

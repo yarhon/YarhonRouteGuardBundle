@@ -88,4 +88,14 @@ class ExpressionDecorator
 
         $this->variables = $variables;
     }
+
+    /**
+     * Gets the expression.
+     *
+     * @return string The expression
+     */
+    public function __toString()
+    {
+        return (string) $this->expression;
+    }
 }
