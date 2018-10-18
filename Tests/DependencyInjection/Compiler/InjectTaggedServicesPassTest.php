@@ -38,7 +38,7 @@ class InjectTaggedServicesPassTest extends TestCase
 
         $this->container->register(AccessMapBuilder::class)->addArgument([]);
 
-        $this->container->register(ControllerArgumentResolver::class)->setArguments([null, []]);
+        $this->container->register(ControllerArgumentResolver::class)->setArguments([null, null, null, []]);
 
         $this->container->register(DelegatingTestResolver::class)->addArgument([]);
 
@@ -73,7 +73,7 @@ class InjectTaggedServicesPassTest extends TestCase
                 'yarhon_route_guard.test_provider',
             ],
             [
-                [ControllerArgumentResolver::class, 1],
+                [ControllerArgumentResolver::class, 3],
                 'yarhon_route_guard.argument_value_resolver',
             ],
             [

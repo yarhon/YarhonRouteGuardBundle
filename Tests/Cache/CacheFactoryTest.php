@@ -11,6 +11,7 @@
 namespace Yarhon\RouteGuardBundle\Tests\Cache;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
@@ -21,9 +22,19 @@ use Yarhon\RouteGuardBundle\Cache\CacheFactory;
  */
 class CacheFactoryTest extends TestCase
 {
+    public static function setUpBeforeClass()
+    {
+        static::deleteTempDir();
+    }
+
+    public static function tearDownAfterClass()
+    {
+        static::deleteTempDir();
+    }
+
     public function testGeneral()
     {
-        $cache = CacheFactory::create();
+        $cache = CacheFactory::createCache(self::getTempDir(), 'test');
 
         $this->assertInstanceOf(AdapterInterface::class, $cache);
     }
@@ -38,7 +49,7 @@ class CacheFactoryTest extends TestCase
             $this->markTestSkipped();
         }
 
-        $cache = CacheFactory::create();
+        $cache = CacheFactory::createCache(self::getTempDir(), 'test');
 
         $this->assertInstanceOf(PhpFilesAdapter::class, $cache);
     }
@@ -50,8 +61,23 @@ class CacheFactoryTest extends TestCase
     {
         ini_set('opcache.enable', 0);
 
-        $cache = CacheFactory::create();
+        $cache = CacheFactory::createCache(self::getTempDir(), 'test');
 
         $this->assertInstanceOf(FilesystemAdapter::class, $cache);
+    }
+
+    protected static function getTempDir()
+    {
+        return sys_get_temp_dir().'/route-guard-'.substr(strrchr(static::class, '\\'), 1);
+    }
+
+    protected static function deleteTempDir()
+    {
+        if (!file_exists($dir = static::getTempDir())) {
+            return;
+        }
+
+        $fs = new Filesystem();
+        $fs->remove($dir);
     }
 }

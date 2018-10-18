@@ -19,6 +19,11 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 class ControllerMetadata
 {
     /**
+     * @var string
+     */
+    private $name;
+
+    /**
      * @var ArgumentMetadata[]
      */
     private $arguments = [];
@@ -26,13 +31,24 @@ class ControllerMetadata
     /**
      * ControllerMetadata constructor.
      *
+     * @param string             $name
      * @param ArgumentMetadata[] $arguments
      */
-    public function __construct(array $arguments = [])
+    public function __construct($name, array $arguments = [])
     {
+        $this->name = $name;
+
         foreach ($arguments as $argument) {
             $this->addArgument($argument);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**

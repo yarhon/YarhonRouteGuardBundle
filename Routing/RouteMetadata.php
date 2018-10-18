@@ -10,12 +10,10 @@
 
 namespace Yarhon\RouteGuardBundle\Routing;
 
-use Symfony\Component\Routing\Route;
-
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RouteMetadata implements RouteMetadataInterface
+class RouteMetadata
 {
     /**
      * @var string
@@ -35,23 +33,19 @@ class RouteMetadata implements RouteMetadataInterface
     /**
      * RouteMetadata constructor.
      *
-     * @param Route  $route
+     * @param array $defaults
+     * @param array $variables
      * @param string $controllerName
      */
-    public function __construct(Route $route, $controllerName)
+    public function __construct(array $defaults, array $variables, $controllerName = null)
     {
-        $this->controllerName = $controllerName;
-
-        $defaults = $route->getDefaults();
-        unset($defaults['_canonical_route'], $defaults['_controller']);
         $this->defaults = $defaults;
-
-        $compiledRoute = $route->compile();
-        $this->variables = $compiledRoute->getVariables();
+        $this->variables = $variables;
+        $this->controllerName = $controllerName;
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getControllerName()
     {
@@ -59,7 +53,7 @@ class RouteMetadata implements RouteMetadataInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function getDefaults()
     {
@@ -67,7 +61,7 @@ class RouteMetadata implements RouteMetadataInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function getVariables()
     {

@@ -26,19 +26,17 @@ class ControllerMetadataTest extends TestCase
 
     private $controllerMetadata;
 
-    public function setUp()
+    public function setUp()    {
+
+        $this->argumentOne = new ArgumentMetadata('arg1', 'int', false, false, null);
+        $this->argumentTwo =  new ArgumentMetadata('arg2', 'string', false, false, null);
+
+        $this->controllerMetadata = new ControllerMetadata('class::method', [$this->argumentOne, $this->argumentTwo]);
+    }
+
+    public function testGetName()
     {
-        $this->argumentOne = $this->createMock(ArgumentMetadata::class);
-
-        $this->argumentOne->method('getName')
-            ->willReturn('arg1');
-
-        $this->argumentTwo = $this->createMock(ArgumentMetadata::class);
-
-        $this->argumentTwo->method('getName')
-            ->willReturn('arg2');
-
-        $this->controllerMetadata = new ControllerMetadata([$this->argumentOne, $this->argumentTwo]);
+        $this->assertSame('class::method', $this->controllerMetadata->getName());
     }
 
     public function testAll()

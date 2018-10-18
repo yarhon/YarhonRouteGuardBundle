@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <defaults public="false" />
+
+        <service id="yarhon_route_guard.cache" class="Symfony\Component\Cache\Adapter\AdapterInterface" abstract="true">
+            <factory class="Yarhon\RouteGuardBundle\Cache\CacheFactory" method="createCache" />
+            <argument>%kernel.cache_dir%/route-guard</argument> <!-- directory -->
+        </service>
+
+        <service id="yarhon_route_guard.cache.tests" parent="yarhon_route_guard.cache" public="false">
+            <argument>tests</argument> <!-- namespace -->
+        </service>
+
+        <service id="yarhon_route_guard.cache.route_metadata" parent="yarhon_route_guard.cache" public="false">
+            <argument>route-metadata</argument> <!-- namespace -->
+        </service>
+
+        <service id="yarhon_route_guard.cache.controller_metadata" parent="yarhon_route_guard.cache" public="false">
+            <argument>controller-metadata</argument> <!-- namespace -->
+        </service>
+
+    </services>
+</container>

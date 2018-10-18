@@ -14,13 +14,13 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
- * LinkGuardBundle configuration structure.
+ * RouteGuardBundle configuration structure.
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class Configuration implements ConfigurationInterface
 {
-    private $symfonyControllers = [
+    private static $symfonyControllers = [
         'Symfony\Bundle\TwigBundle\Controller\PreviewErrorController',
         'Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController',
         'Symfony\Bundle\WebProfilerBundle\Controller\RouterController',
@@ -51,7 +51,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->arrayNode('ignore_controllers_symfony')
                     ->prototype('scalar')->end()
-                    ->defaultValue($this->symfonyControllers)
+                    ->defaultValue(static::$symfonyControllers)
                 ->end()
                 ->arrayNode('twig')
                     ->addDefaultsIfNotSet()

@@ -20,12 +20,12 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 class CacheFactory
 {
     /**
-     * @param string $namespace
      * @param string $directory
+     * @param string $namespace
      *
      * @return AdapterInterface
      */
-    public static function create($namespace = '', $directory = null)
+    public static function createCache($directory, $namespace)
     {
         if (PhpFilesAdapter::isSupported()) {
             return new PhpFilesAdapter($namespace, 0, $directory);

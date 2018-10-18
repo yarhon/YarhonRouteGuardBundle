@@ -37,7 +37,7 @@ class InjectTaggedServicesPass implements CompilerPassInterface
     {
         $this->injectAsArgument($container, [AccessMapBuilder::class, 0], 'yarhon_route_guard.test_provider');
         $this->injectAsArgument($container, [DelegatingTestResolver::class, 0], 'yarhon_route_guard.test_resolver');
-        $this->injectAsArgument($container, [ControllerArgumentResolver::class, 1], 'yarhon_route_guard.argument_value_resolver');
+        $this->injectAsArgument($container, [ControllerArgumentResolver::class, 3], 'yarhon_route_guard.argument_value_resolver');
     }
 
     /**

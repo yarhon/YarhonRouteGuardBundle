@@ -10,6 +10,7 @@
 
 namespace Yarhon\RouteGuardBundle\Routing;
 
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\Routing\RequestContext;
@@ -18,20 +19,32 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RequestAttributesFactory
+class RequestAttributesFactory implements RequestAttributesFactoryInterface
 {
+    /**
+     * @var CacheItemPoolInterface
+     */
+    private $routeMetadataCache;
+
     /**
      * @var RequestContext
      */
     private $generatorContext;
 
     /**
+     * @var array
+     */
+    private $cache;
+
+    /**
      * RequestAttributesFactory constructor.
      *
-     * @param UrlGeneratorInterface $urlGenerator
+     * @param CacheItemPoolInterface $routeMetadataCache
+     * @param UrlGeneratorInterface  $urlGenerator
      */
-    public function __construct(UrlGeneratorInterface $urlGenerator)
+    public function __construct(CacheItemPoolInterface $routeMetadataCache, UrlGeneratorInterface $urlGenerator)
     {
+        $this->routeMetadataCache = $routeMetadataCache;
         $this->generatorContext = $urlGenerator->getContext();
     }
 
@@ -39,15 +52,25 @@ class RequestAttributesFactory
      * @see \Symfony\Component\Routing\Matcher\UrlMatcher::getAttributes
      * @see \Symfony\Component\HttpKernel\EventListener\RouterListener::onKernelRequest
      *
-     * @param RouteMetadataInterface $routeMetadata
-     * @param array                  $parameters
-     *
-     * @return ParameterBag
-     *
-     * @throws RuntimeException
+     * {@inheritdoc}
      */
-    public function getAttributes(RouteMetadataInterface $routeMetadata, array $parameters)
+    public function getAttributes(RouteContextInterface $routeContext)
     {
+        $cacheKey = spl_object_hash($routeContext);
+
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+
+        if (!$this->routeMetadataCache->hasItem($routeContext->getName())) {
+            throw new RuntimeException(sprintf('Cannot get RouteMetadata for route "%s" from cache.', $routeContext->getName()));
+        }
+
+        /** @var RouteMetadata $routeMetadata */
+        $routeMetadata = $this->routeMetadataCache->getItem($routeContext->getName());
+
+        $parameters = $routeContext->getParameters();
+
         $defaults = $routeMetadata->getDefaults();
 
         // Special default parameters returned (if present): _format, _fragment, _locale
@@ -75,15 +98,15 @@ class RequestAttributesFactory
             throw new RuntimeException(sprintf('Some mandatory parameters are missing ("%s") to get attributes for route.', $missing));
         }
 
-        return new ParameterBag($attributes);
+        return $this->cache[$cacheKey] = new ParameterBag($attributes);
     }
 
     /**
-     * @param RouteMetadataInterface $routeMetadata
+     * @param RouteMetadata $routeMetadata
      *
      * @return ParameterBag
      */
-    public function getAttributesPrototype(RouteMetadataInterface $routeMetadata)
+    public function getAttributesPrototype(RouteMetadata $routeMetadata)
     {
         $defaults = $routeMetadata->getDefaults();
 

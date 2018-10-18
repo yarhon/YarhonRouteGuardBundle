@@ -73,10 +73,13 @@
         <!-- test resolvers -->
 
         <service id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory">
+            <argument type="service" id="yarhon_route_guard.cache.tests.route_metadata" />
             <argument type="service" id="router.default" />
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver">
+            <argument type="service" id="yarhon_route_guard.cache.tests.controller_metadata" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
             <argument type="service" id="request_stack" />
             <argument type="collection" /> <!-- argument value resolvers -->
         </service>
@@ -103,22 +106,31 @@
 
         <!-- cache services -->
 
+        <service id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory">
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ContainerControllerNameResolver" />
+            <argument type="service" id="argument_metadata_factory" on-invalid="ignore" />
+        </service>
+
         <service id="Yarhon\RouteGuardBundle\Cache\AccessMapCacheWarmer">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMap" />
             <tag name="kernel.cache_warmer" />
         </service>
 
-        <service id="yarhon_route_guard.cache" class="Symfony\Component\Cache\Adapter\AdapterInterface">
-            <factory class="Yarhon\RouteGuardBundle\Cache\CacheFactory" method="create" />
-            <argument /> <!-- namespace -->
-            <argument>%kernel.cache_dir%/route-guard</argument> <!-- directory -->
+        <service id="Yarhon\RouteGuardBundle\Cache\RouteMetadataCacheWarmer">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory" />
+            <argument type="service" id="yarhon_route_guard.cache.route_metadata" />
+            <argument type="service" id="router.default" />
+            <tag name="kernel.cache_warmer" />
         </service>
 
         <!-- authorization services -->
 
         <service id="Yarhon\RouteGuardBundle\Security\AccessMap">
-            <argument type="service" id="yarhon_route_guard.cache" />
+            <argument type="service" id="yarhon_route_guard.cache.tests" />
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\RouteTestResolver">
