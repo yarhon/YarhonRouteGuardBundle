@@ -24,14 +24,4 @@ interface AbstractTestBagInterface extends \IteratorAggregate, \Countable
      * @return string
      */
     public function getProviderClass();
-
-    /**
-     * @param mixed $metadata
-     */
-    public function setMetadata($metadata);
-
-    /**
-     * @return mixed
-     */
-    public function getMetadata();
 }

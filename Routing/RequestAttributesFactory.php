@@ -34,7 +34,7 @@ class RequestAttributesFactory implements RequestAttributesFactoryInterface
     /**
      * @var array
      */
-    private $cache;
+    private $cache = [];
 
     /**
      * RequestAttributesFactory constructor.

@@ -12,8 +12,6 @@ namespace Yarhon\RouteGuardBundle\Security\TestProvider;
 
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Routing\Route;
-use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactoryInterface;
-use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactory;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotation;
@@ -21,8 +19,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnot
 use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReaderInterface;
 use Yarhon\RouteGuardBundle\Security\Sensio\VariableResolver;
 use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
-use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
-use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter;
@@ -56,11 +52,6 @@ class SensioSecurityProvider implements TestProviderInterface
     private $expressionLanguage;
 
     /**
-     * @var ArgumentMetadataFactoryInterface
-     */
-    private $argumentMetadataFactory;
-
-    /**
      * @var array
      */
     private $testArguments = [];
@@ -70,14 +61,11 @@ class SensioSecurityProvider implements TestProviderInterface
      *
      * @param ClassMethodAnnotationReaderInterface  $reader
      * @param VariableResolver                      $variableResolver
-     * @param ArgumentMetadataFactoryInterface|null $argumentMetadataFactory
      */
-    public function __construct(ClassMethodAnnotationReaderInterface $reader, VariableResolver $variableResolver, ArgumentMetadataFactoryInterface $argumentMetadataFactory = null)
+    public function __construct(ClassMethodAnnotationReaderInterface $reader, VariableResolver $variableResolver)
     {
         $this->reader = $reader;
         $this->variableResolver = $variableResolver;
-
-        $this->argumentMetadataFactory = $argumentMetadataFactory ?: new ArgumentMetadataFactory();
     }
 
     /**
@@ -99,9 +87,6 @@ class SensioSecurityProvider implements TestProviderInterface
 
         list($class, $method) = explode('::', $controllerName);
 
-        $arguments = $this->argumentMetadataFactory->createArgumentMetadata([$class, $method]);
-        $routeMetadata = new RouteMetadata($route, $controllerName);
-        $controllerMetadata = new ControllerMetadata($arguments);
         $variableNames = $this->variableResolver->getVariableNames($routeMetadata, $controllerMetadata);
 
         $annotations = $this->reader->read($class, $method, [SecurityAnnotation::class, IsGrantedAnnotation::class]);
@@ -147,10 +132,7 @@ class SensioSecurityProvider implements TestProviderInterface
             return null;
         }
 
-        $testBag = new TestBag($tests);
-        $testBag->setMetadata([$routeMetadata, $controllerMetadata]);
-
-        return $testBag;
+        return new TestBag($tests);
     }
 
     /**

@@ -16,11 +16,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentValueResolverInterface;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContextInterface;
+use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContext;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
@@ -32,7 +34,11 @@ class ControllerArgumentResolverTest extends TestCase
 
     private $requestAttributesFactory;
 
-    private $requestStack;
+    private $request;
+
+    private $valueResolvers;
+
+    private $resolver;
 
     public function setUp()
     {
@@ -40,47 +46,62 @@ class ControllerArgumentResolverTest extends TestCase
 
         $this->requestAttributesFactory = $this->createMock(RequestAttributesFactory::class);
 
-        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->request = $this->createMock(Request::class);
 
-        $request = $this->createMock(Request::class);
+        $requestStack = $this->createMock(RequestStack::class);
 
-        $this->requestStack->method('getCurrentRequest')
-            ->willReturn($request);
+        $requestStack->method('getCurrentRequest')
+            ->willReturn($this->request);
+
+        $this->valueResolvers = [
+            $this->createMock(ArgumentValueResolverInterface::class),
+            $this->createMock(ArgumentValueResolverInterface::class),
+        ];
+
+        $this->resolver = new ControllerArgumentResolver($this->cache, $this->requestAttributesFactory, $requestStack, $this->valueResolvers);
     }
 
-    public function atestGetArgument()
+    public function testGetArgument()
     {
-        //$requestAttributes = $this->createMock(ParameterBag::class);
+        $routeContext = new RouteContext('index');
 
+        $argumentMetadata =  new ArgumentMetadata('arg1', 'int', false, false, null);
 
-        $valueResolverOne = $this->createMock(ArgumentValueResolverInterface::class);
-        $valueResolverTwo = $this->createMock(ArgumentValueResolverInterface::class);
+        $controllerMetadata = new ControllerMetadata('class::method', [
+            $argumentMetadata,
+        ]);
 
-        $context = $this->createMock(ArgumentResolverContextInterface::class);
-        $metadata = $this->createMock(ArgumentMetadata::class);
+        $requestAttributes = new ParameterBag(['a' => 1]);
 
-        $valueResolverOne->method('supports')
-            ->willReturn(false);
-
-        $valueResolverOne->expects($this->never())
-            ->method('resolve');
-
-        $valueResolverTwo->method('supports')
+        $this->cache->method('hasItem')
+            ->with($routeContext->getName())
             ->willReturn(true);
 
-        $valueResolverTwo->method('resolve')
+        $this->cache->method('getItem')
+            ->with($routeContext->getName())
+            ->willReturn($controllerMetadata);
+
+        $this->requestAttributesFactory->method('getAttributes')
+            ->with($routeContext)
+            ->willReturn($requestAttributes);
+
+        $resolverContext = new ArgumentResolverContext($requestAttributes, $controllerMetadata->getName(), $this->request);
+
+        $this->valueResolvers[0]->method('supports')
+            ->willReturn(false);
+
+        $this->valueResolvers[0]->expects($this->never())
+            ->method('resolve');
+
+        $this->valueResolvers[1]->method('supports')
+            ->willReturn(true);
+
+        $this->valueResolvers[1]->expects($this->once())
+            ->method('resolve')
+            ->with($resolverContext, $argumentMetadata)
             ->willReturn(5);
 
-        $valueResolverTwo->expects($this->once())
-            ->method('resolve')
-            ->with($context, $metadata);
-
-        $argumentResolver = new ControllerArgumentResolver($this->cache, $this->requestAttributesFactory, $this->requestStack, [$valueResolverOne, $valueResolverTwo]);
-
-        $context = $this->createMock(ArgumentResolverContextInterface::class);
-        $metadata = $this->createMock(ArgumentMetadata::class);
-
-        $value = $argumentResolver->getArgument($context, $metadata);
+        $value = $this->resolver->getArgument($routeContext, 'arg1');
 
         $this->assertEquals(5, $value);
     }

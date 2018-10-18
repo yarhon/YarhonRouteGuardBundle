@@ -47,11 +47,4 @@ class AbstractTestBagTest extends TestCase
 
         $this->assertSame('foo', $this->testBag->getProviderClass());
     }
-
-    public function testMetadata()
-    {
-        $this->testBag->setMetadata('foo');
-
-        $this->assertSame('foo', $this->testBag->getMetadata());
-    }
 }

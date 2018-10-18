@@ -141,27 +141,37 @@ class RequestAttributesFactoryTest extends TestCase
     public function testGetAttributesCache()
     {
         $routeMetadata = new RouteMetadata([], ['page']);
+
         $routeContextOne = new RouteContext('index', ['page' => 5]);
         $routeContextTwo = $routeContextOne;
+        $routeContextThree = new RouteContext('index2', ['page' => 5]);
+        $routeContextFour = $routeContextThree;
 
-        $this->cache->expects($this->once())
-            ->method('hasItem')
-            ->with($routeContextOne->getName())
+        $this->cache->method('hasItem')
             ->willReturn(true);
 
-        $this->cache->expects($this->once())
-            ->method('getItem')
-            ->with($routeContextOne->getName())
+        $this->cache->method('getItem')
             ->willReturn($routeMetadata);
 
-        $this->urlGeneratorContext->expects($this->once())
-            ->method('getParameters')
+        $this->urlGeneratorContext->method('getParameters')
             ->willReturn([]);
+
+        $this->cache->expects($this->exactly(2))
+            ->method('hasItem')
+            ->withConsecutive([$routeContextOne->getName()], [$routeContextThree->getName()]);
+
+        $this->cache->expects($this->exactly(2))
+            ->method('getItem')
+            ->withConsecutive([$routeContextOne->getName()], [$routeContextThree->getName()]);
 
         $attributesOne = $this->factory->getAttributes($routeContextOne);
         $attributesTwo = $this->factory->getAttributes($routeContextTwo);
+        $attributesThree = $this->factory->getAttributes($routeContextThree);
+        $attributesFour = $this->factory->getAttributes($routeContextFour);
 
         $this->assertSame($attributesOne, $attributesTwo);
+        $this->assertSame($attributesThree, $attributesFour);
+        $this->assertNotSame($attributesOne, $attributesThree);
     }
 
     /**

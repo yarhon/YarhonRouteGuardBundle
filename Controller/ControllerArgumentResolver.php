@@ -48,7 +48,7 @@ class ControllerArgumentResolver implements ControllerArgumentResolverInterface
     /**
      * @var array
      */
-    private $cache;
+    private $cache = [];
 
     /**
      * ControllerArgumentResolver constructor.

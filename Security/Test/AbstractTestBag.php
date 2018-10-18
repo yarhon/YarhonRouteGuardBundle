@@ -26,11 +26,6 @@ abstract class AbstractTestBag implements AbstractTestBagInterface
     protected $providerClass;
 
     /**
-     * @var mixed
-     */
-    protected $metadata;
-
-    /**
      * {@inheritdoc}
      */
     public function getIterator()
@@ -60,21 +55,5 @@ abstract class AbstractTestBag implements AbstractTestBagInterface
     public function getProviderClass()
     {
         return $this->providerClass;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setMetadata($metadata)
-    {
-        $this->metadata = $metadata;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMetadata()
-    {
-        return $this->metadata;
     }
 }
