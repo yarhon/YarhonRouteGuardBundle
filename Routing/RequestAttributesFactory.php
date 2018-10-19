@@ -10,7 +10,6 @@
 
 namespace Yarhon\RouteGuardBundle\Routing;
 
-use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\Routing\RequestContext;
@@ -22,9 +21,9 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 class RequestAttributesFactory implements RequestAttributesFactoryInterface
 {
     /**
-     * @var CacheItemPoolInterface
+     * @var RouteMetadataFactory
      */
-    private $routeMetadataCache;
+    private $routeMetadataFactory;
 
     /**
      * @var RequestContext
@@ -39,12 +38,12 @@ class RequestAttributesFactory implements RequestAttributesFactoryInterface
     /**
      * RequestAttributesFactory constructor.
      *
-     * @param CacheItemPoolInterface $routeMetadataCache
-     * @param UrlGeneratorInterface  $urlGenerator
+     * @param RouteMetadataFactory  $routeMetadataFactory
+     * @param UrlGeneratorInterface $urlGenerator
      */
-    public function __construct(CacheItemPoolInterface $routeMetadataCache, UrlGeneratorInterface $urlGenerator)
+    public function __construct(RouteMetadataFactory $routeMetadataFactory, UrlGeneratorInterface $urlGenerator)
     {
-        $this->routeMetadataCache = $routeMetadataCache;
+        $this->routeMetadataFactory = $routeMetadataFactory;
         $this->generatorContext = $urlGenerator->getContext();
     }
 
@@ -62,12 +61,7 @@ class RequestAttributesFactory implements RequestAttributesFactoryInterface
             return $this->cache[$cacheKey];
         }
 
-        if (!$this->routeMetadataCache->hasItem($routeContext->getName())) {
-            throw new RuntimeException(sprintf('Cannot get RouteMetadata for route "%s" from cache.', $routeContext->getName()));
-        }
-
-        /** @var RouteMetadata $routeMetadata */
-        $routeMetadata = $this->routeMetadataCache->getItem($routeContext->getName());
+        $routeMetadata = $this->routeMetadataFactory->createMetadata($routeContext->getName());
 
         $parameters = $routeContext->getParameters();
 

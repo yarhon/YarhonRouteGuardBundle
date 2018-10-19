@@ -11,26 +11,26 @@
 namespace Yarhon\RouteGuardBundle\Cache;
 
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
-use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
+use Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RouteMetadataCacheWarmer implements CacheWarmerInterface
+class ControllerMetadataCacheWarmer implements CacheWarmerInterface
 {
     /**
-     * @var RouteMetadataFactory
+     * @var ControllerMetadataFactory
      */
-    private $routeMetadataFactory;
+    private $controllerMetadataFactory;
 
     /**
-     * RouteMetadataCacheWarmer constructor.
+     * ControllerMetadataCacheWarmer constructor.
      *
-     * @param RouteMetadataFactory $routeMetadataFactory
+     * @param ControllerMetadataFactory $controllerMetadataFactory
      */
-    public function __construct(RouteMetadataFactory $routeMetadataFactory)
+    public function __construct(ControllerMetadataFactory $controllerMetadataFactory)
     {
-        $this->routeMetadataFactory = $routeMetadataFactory;
+        $this->controllerMetadataFactory = $controllerMetadataFactory;
     }
 
     /**
@@ -46,6 +46,6 @@ class RouteMetadataCacheWarmer implements CacheWarmerInterface
      */
     public function warmUp($cacheDir)
     {
-        $this->routeMetadataFactory->warmUp();
+        $this->controllerMetadataFactory->warmUp();
     }
 }

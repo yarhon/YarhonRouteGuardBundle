@@ -11,11 +11,11 @@
 namespace Yarhon\RouteGuardBundle\Tests\Controller;
 
 use PHPUnit\Framework\TestCase;
-use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
@@ -30,7 +30,7 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
  */
 class ControllerArgumentResolverTest extends TestCase
 {
-    private $cache;
+    private $metadataFactory;
 
     private $requestAttributesFactory;
 
@@ -42,7 +42,7 @@ class ControllerArgumentResolverTest extends TestCase
 
     public function setUp()
     {
-        $this->cache = $this->createMock(CacheItemPoolInterface::class);
+        $this->metadataFactory = $this->createMock(ControllerMetadataFactory::class);
 
         $this->requestAttributesFactory = $this->createMock(RequestAttributesFactory::class);
 
@@ -58,7 +58,7 @@ class ControllerArgumentResolverTest extends TestCase
             $this->createMock(ArgumentValueResolverInterface::class),
         ];
 
-        $this->resolver = new ControllerArgumentResolver($this->cache, $this->requestAttributesFactory, $requestStack, $this->valueResolvers);
+        $this->resolver = new ControllerArgumentResolver($this->metadataFactory, $this->requestAttributesFactory, $requestStack, $this->valueResolvers);
     }
 
     public function testGetArgument()
@@ -73,11 +73,7 @@ class ControllerArgumentResolverTest extends TestCase
 
         $requestAttributes = new ParameterBag(['a' => 1]);
 
-        $this->cache->method('hasItem')
-            ->with($routeContext->getName())
-            ->willReturn(true);
-
-        $this->cache->method('getItem')
+        $this->metadataFactory->method('createMetadata')
             ->with($routeContext->getName())
             ->willReturn($controllerMetadata);
 

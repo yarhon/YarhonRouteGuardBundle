@@ -11,10 +11,10 @@
 namespace Yarhon\RouteGuardBundle\Tests\Routing;
 
 use PHPUnit\Framework\TestCase;
-use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
@@ -25,7 +25,7 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
  */
 class RequestAttributesFactoryTest extends TestCase
 {
-    private $cache;
+    private $metadataFactory;
 
     private $urlGenerator;
 
@@ -35,7 +35,7 @@ class RequestAttributesFactoryTest extends TestCase
 
     public function setUp()
     {
-        $this->cache = $this->createMock(CacheItemPoolInterface::class);
+        $this->metadataFactory = $this->createMock(RouteMetadataFactory::class);
 
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
 
@@ -44,7 +44,7 @@ class RequestAttributesFactoryTest extends TestCase
         $this->urlGenerator->method('getContext')
             ->willReturn($this->urlGeneratorContext);
 
-        $this->factory = new RequestAttributesFactory($this->cache, $this->urlGenerator);
+        $this->factory = new RequestAttributesFactory($this->metadataFactory, $this->urlGenerator);
     }
 
     /**
@@ -52,11 +52,7 @@ class RequestAttributesFactoryTest extends TestCase
      */
     public function testGetAttributes($routeMetadata, $routeContext, $generatorContext, $expected)
     {
-        $this->cache->method('hasItem')
-            ->with($routeContext->getName())
-            ->willReturn(true);
-
-        $this->cache->method('getItem')
+        $this->metadataFactory->method('createMetadata')
             ->with($routeContext->getName())
             ->willReturn($routeMetadata);
 
@@ -121,11 +117,7 @@ class RequestAttributesFactoryTest extends TestCase
         $routeMetadata = new RouteMetadata([], ['page']);
         $routeContext = new RouteContext('index', []);
 
-        $this->cache->method('hasItem')
-            ->with($routeContext->getName())
-            ->willReturn(true);
-
-        $this->cache->method('getItem')
+        $this->metadataFactory->method('createMetadata')
             ->with($routeContext->getName())
             ->willReturn($routeMetadata);
 
@@ -147,21 +139,14 @@ class RequestAttributesFactoryTest extends TestCase
         $routeContextThree = new RouteContext('index2', ['page' => 5]);
         $routeContextFour = $routeContextThree;
 
-        $this->cache->method('hasItem')
-            ->willReturn(true);
-
-        $this->cache->method('getItem')
+        $this->metadataFactory->method('createMetadata')
             ->willReturn($routeMetadata);
 
         $this->urlGeneratorContext->method('getParameters')
             ->willReturn([]);
 
-        $this->cache->expects($this->exactly(2))
-            ->method('hasItem')
-            ->withConsecutive([$routeContextOne->getName()], [$routeContextThree->getName()]);
-
-        $this->cache->expects($this->exactly(2))
-            ->method('getItem')
+        $this->metadataFactory->expects($this->exactly(2))
+            ->method('createMetadata')
             ->withConsecutive([$routeContextOne->getName()], [$routeContextThree->getName()]);
 
         $attributesOne = $this->factory->getAttributes($routeContextOne);

@@ -10,7 +10,6 @@
 
 namespace Yarhon\RouteGuardBundle\Controller;
 
-use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
@@ -26,9 +25,9 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 class ControllerArgumentResolver implements ControllerArgumentResolverInterface
 {
     /**
-     * @var CacheItemPoolInterface
+     * @var ControllerMetadataFactory
      */
-    private $controllerMetadataCache;
+    private $controllerMetadataFactory;
 
     /**
      * @var RequestAttributesFactoryInterface
@@ -53,14 +52,14 @@ class ControllerArgumentResolver implements ControllerArgumentResolverInterface
     /**
      * ControllerArgumentResolver constructor.
      *
-     * @param CacheItemPoolInterface                        $controllerMetadataCache
+     * @param ControllerMetadataFactory                     $controllerMetadataFactory
      * @param RequestAttributesFactoryInterface             $requestAttributesFactory
      * @param RequestStack                                  $requestStack
      * @param \Traversable|ArgumentValueResolverInterface[] $argumentValueResolvers
      */
-    public function __construct(CacheItemPoolInterface $controllerMetadataCache, RequestAttributesFactoryInterface $requestAttributesFactory, RequestStack $requestStack, $argumentValueResolvers = [])
+    public function __construct(ControllerMetadataFactory $controllerMetadataFactory, RequestAttributesFactoryInterface $requestAttributesFactory, RequestStack $requestStack, $argumentValueResolvers = [])
     {
-        $this->controllerMetadataCache = $controllerMetadataCache;
+        $this->controllerMetadataFactory = $controllerMetadataFactory;
         $this->requestAttributesFactory = $requestAttributesFactory;
         $this->requestStack = $requestStack;
         $this->argumentValueResolvers = $argumentValueResolvers;
@@ -77,12 +76,12 @@ class ControllerArgumentResolver implements ControllerArgumentResolverInterface
             return $this->cache[$cacheKey];
         }
 
-        if (!$this->controllerMetadataCache->hasItem($routeContext->getName())) {
-            throw new RuntimeException(sprintf('Cannot get ControllerMetadata for route "%s" from cache.', $routeContext->getName()));
-        }
+        $controllerMetadata = $this->controllerMetadataFactory->createMetadata($routeContext->getName());
 
-        /** @var ControllerMetadata $controllerMetadata */
-        $controllerMetadata = $this->controllerMetadataCache->getItem($routeContext->getName());
+        if (null === $controllerMetadata) {
+            $message = 'Route "%s" does not have controller or controller name is unresolvable.';
+            throw new RuntimeException(sprintf($message, $routeContext->getName()));
+        }
 
         if (!$controllerMetadata->has($name)) {
             $message = 'Route "%s" controller "%s" does not have argument "$%s".';
