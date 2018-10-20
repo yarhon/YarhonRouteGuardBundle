@@ -48,9 +48,9 @@ class RequestAttributesFactoryTest extends TestCase
     }
 
     /**
-     * @dataProvider getAttributesDataProvider
+     * @dataProvider createAttributesDataProvider
      */
-    public function testGetAttributes($routeMetadata, $routeContext, $generatorContext, $expected)
+    public function testCreateAttributes($routeMetadata, $routeContext, $generatorContext, $expected)
     {
         $this->metadataFactory->method('createMetadata')
             ->with($routeContext->getName())
@@ -59,12 +59,12 @@ class RequestAttributesFactoryTest extends TestCase
         $this->urlGeneratorContext->method('getParameters')
             ->willReturn($generatorContext);
 
-        $attributes = $this->factory->getAttributes($routeContext);
+        $attributes = $this->factory->createAttributes($routeContext);
 
         $this->assertEquals($expected, $attributes);
     }
 
-    public function getAttributesDataProvider()
+    public function createAttributesDataProvider()
     {
         return [
             [
@@ -112,7 +112,7 @@ class RequestAttributesFactoryTest extends TestCase
         ];
     }
 
-    public function testGetAttributesException()
+    public function testCreateAttributesException()
     {
         $routeMetadata = new RouteMetadata([], ['page']);
         $routeContext = new RouteContext('index', []);
@@ -127,10 +127,10 @@ class RequestAttributesFactoryTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Some mandatory parameters are missing ("page") to get attributes for route.');
 
-        $this->factory->getAttributes($routeContext);
+        $this->factory->createAttributes($routeContext);
     }
 
-    public function testGetAttributesCache()
+    public function testCreateAttributesCache()
     {
         $routeMetadata = new RouteMetadata([], ['page']);
 
@@ -149,10 +149,10 @@ class RequestAttributesFactoryTest extends TestCase
             ->method('createMetadata')
             ->withConsecutive([$routeContextOne->getName()], [$routeContextThree->getName()]);
 
-        $attributesOne = $this->factory->getAttributes($routeContextOne);
-        $attributesTwo = $this->factory->getAttributes($routeContextTwo);
-        $attributesThree = $this->factory->getAttributes($routeContextThree);
-        $attributesFour = $this->factory->getAttributes($routeContextFour);
+        $attributesOne = $this->factory->createAttributes($routeContextOne);
+        $attributesTwo = $this->factory->createAttributes($routeContextTwo);
+        $attributesThree = $this->factory->createAttributes($routeContextThree);
+        $attributesFour = $this->factory->createAttributes($routeContextFour);
 
         $this->assertSame($attributesOne, $attributesTwo);
         $this->assertSame($attributesThree, $attributesFour);

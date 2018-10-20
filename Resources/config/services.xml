@@ -5,7 +5,7 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
-        <defaults public="false" autowire="false" autoconfigure="false" />
+        <defaults public="false" />
 
         <service id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder">
             <argument type="collection" /> <!-- test providers -->
@@ -117,22 +117,22 @@
             <argument type="service" id="argument_metadata_factory" on-invalid="ignore" />
         </service>
 
-        <!-- cache services -->
-
-        <service id="Yarhon\RouteGuardBundle\Cache\AccessMapCacheWarmer">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMap" />
-            <tag name="kernel.cache_warmer" />
-        </service>
+        <!-- cache warmers services -->
 
         <service id="Yarhon\RouteGuardBundle\Cache\RouteMetadataCacheWarmer">
             <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory" />
-            <tag name="kernel.cache_warmer" />
+            <tag name="kernel.cache_warmer" priority="200" />
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Cache\ControllerMetadataCacheWarmer">
             <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory" />
-            <tag name="kernel.cache_warmer" />
+            <tag name="kernel.cache_warmer" priority="200" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Cache\AccessMapCacheWarmer">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMap" />
+            <tag name="kernel.cache_warmer" priority="100" />
         </service>
 
         <!-- authorization services -->

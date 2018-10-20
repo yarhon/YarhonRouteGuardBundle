@@ -21,7 +21,6 @@ use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentValueResolverInterface;
-use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContextInterface;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContext;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
@@ -65,7 +64,7 @@ class ControllerArgumentResolverTest extends TestCase
     {
         $routeContext = new RouteContext('index');
 
-        $argumentMetadata =  new ArgumentMetadata('arg1', 'int', false, false, null);
+        $argumentMetadata = new ArgumentMetadata('arg1', 'int', false, false, null);
 
         $controllerMetadata = new ControllerMetadata('class::method', [
             $argumentMetadata,
@@ -77,7 +76,7 @@ class ControllerArgumentResolverTest extends TestCase
             ->with($routeContext->getName())
             ->willReturn($controllerMetadata);
 
-        $this->requestAttributesFactory->method('getAttributes')
+        $this->requestAttributesFactory->method('createAttributes')
             ->with($routeContext)
             ->willReturn($requestAttributes);
 
@@ -102,23 +101,93 @@ class ControllerArgumentResolverTest extends TestCase
         $this->assertEquals(5, $value);
     }
 
-    public function atestGetArgumentException()
+    public function testGetArgumentNoControllerException()
     {
-        $context = $this->createMock(ArgumentResolverContextInterface::class);
-        $metadata = $this->createMock(ArgumentMetadata::class);
+        $routeContext = new RouteContext('index');
 
-        $context->method('getControllerName')
-            ->willReturn('a::b');
-
-        $metadata->method('getName')
-            ->willReturn('page');
-
-        $argumentResolver = new ControllerArgumentResolver($this->cache, $this->requestAttributesFactory, $this->requestStack);
+        $this->metadataFactory->method('createMetadata')
+            ->willReturn(null);
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Controller "a::b" requires that you provide a value for the "$page" argument.');
+        $this->expectExceptionMessage('Route "index" does not have controller or controller name is unresolvable.');
 
-        $argumentResolver->getArgument($context, $metadata);
+        $this->resolver->getArgument($routeContext, 'arg1');
     }
 
+    public function testGetArgumentNotExistingArgumentException()
+    {
+        $routeContext = new RouteContext('index');
+
+        $this->metadataFactory->method('createMetadata')
+            ->willReturn(new ControllerMetadata('class::method', []));
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Route "index" controller "class::method" does not have argument "$arg1".');
+
+        $this->resolver->getArgument($routeContext, 'arg1');
+    }
+
+    public function testGetArgumentNotResolvableArgumentException()
+    {
+        $routeContext = new RouteContext('index');
+
+        $argumentMetadata = new ArgumentMetadata('arg1', 'int', false, false, null);
+        $controllerMetadata = new ControllerMetadata('class::method', [$argumentMetadata]);
+
+        $this->metadataFactory->method('createMetadata')
+            ->willReturn($controllerMetadata);
+
+        $this->requestAttributesFactory->method('createAttributes')
+            ->willReturn(new ParameterBag());
+
+        $this->valueResolvers[0]->method('supports')
+            ->willReturn(false);
+
+        $this->valueResolvers[1]->method('supports')
+            ->willReturn(false);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Route "index" controller "class::method" requires that you provide a value for the "$arg1" argument.');
+
+        $this->resolver->getArgument($routeContext, 'arg1');
+    }
+
+    public function testGetArgumentCache()
+    {
+        $routeContext = new RouteContext('index');
+
+        $argumentMetadataOne = new ArgumentMetadata('arg1', 'int', false, false, null);
+        $argumentMetadataTwo = new ArgumentMetadata('arg2', 'int', false, false, null);
+        $controllerMetadata = new ControllerMetadata('class::method', [$argumentMetadataOne, $argumentMetadataTwo]);
+
+        $this->metadataFactory->method('createMetadata')
+            ->willReturn($controllerMetadata);
+
+        $this->requestAttributesFactory->method('createAttributes')
+            ->willReturn(new ParameterBag());
+
+        $this->valueResolvers[0]->method('supports')
+            ->willReturn(true);
+
+        $resolvedValueOne = new \stdClass();
+        $resolvedValueTwo = new \stdClass();
+
+        $this->valueResolvers[0]->method('resolve')
+            ->willReturnOnConsecutiveCalls($resolvedValueOne, $resolvedValueTwo);
+
+        $this->valueResolvers[0]->expects($this->exactly(2))
+            ->method('supports');
+
+        $this->valueResolvers[0]->expects($this->exactly(2))
+            ->method('resolve');
+
+        $resolvedOne = $this->resolver->getArgument($routeContext, 'arg1');
+        $resolvedTwo = $this->resolver->getArgument($routeContext, 'arg2');
+        $resolvedThree = $this->resolver->getArgument($routeContext, 'arg1');
+        $resolvedFour = $this->resolver->getArgument($routeContext, 'arg2');
+
+        $this->assertSame($resolvedOne, $resolvedThree);
+        $this->assertSame($resolvedTwo, $resolvedFour);
+        $this->assertNotSame($resolvedOne, $resolvedTwo);
+    }
 }

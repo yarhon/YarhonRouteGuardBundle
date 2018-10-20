@@ -12,7 +12,7 @@ namespace Yarhon\RouteGuardBundle\Security\Sensio;
 
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
-use Yarhon\RouteGuardBundle\Routing\RouteMetadataInterface;
+use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
@@ -44,41 +44,22 @@ class VariableResolver
     }
 
     /**
-     * @param RouteMetadataInterface $routeMetadata
-     * @param ControllerMetadata     $controllerMetadata
-     * @param array                  $parameters
-     *
-     * @return VariableResolverContext
-     */
-    public function createContext(RouteMetadataInterface $routeMetadata, ControllerMetadata $controllerMetadata, array $parameters)
-    {
-        $requestAttributes = $this->requestAttributesFactory->getAttributes($routeMetadata, $parameters);
-
-        $context = new VariableResolverContext($routeMetadata, $controllerMetadata, $requestAttributes);
-
-        return $context;
-    }
-
-    /**
      * @see \Sensio\Bundle\FrameworkExtraBundle\EventListener\IsGrantedListener::onKernelControllerArguments
      * @see \Sensio\Bundle\FrameworkExtraBundle\EventListener\SecurityListener::onKernelControllerArguments
      *
-     * @param VariableResolverContext $context
-     * @param string                  $name
+     * @param RouteContextInterface $routeContext
+     * @param string                $name
      *
      * @return mixed
      *
      * @throws RuntimeException
      */
-    public function getVariable(VariableResolverContext $context, $name)
+    public function getVariable(RouteContextInterface $routeContext, $name)
     {
         if ($context->getControllerMetadata()->has($name)) {
-            $argumentMetadata = $context->getControllerMetadata()->get($name);
-            $argumentResolverContext = $this->controllerArgumentResolver->createContext($context->getRequestAttributes(), $context->getRouteMetadata()->getControllerName());
-
-            return $this->controllerArgumentResolver->getArgument($argumentResolverContext, $argumentMetadata);
+            return $this->controllerArgumentResolver->getArgument($routeContext, $name);
         } elseif ($context->getRequestAttributes()->has($name)) {
-            return $context->getRequestAttributes()->get($name);
+            return $this->requestAttributesFactory->getAttributes($routeContext)->get($name);
         }
 
         throw new RuntimeException(sprintf('Variable is neither a controller argument nor request attribute.'));

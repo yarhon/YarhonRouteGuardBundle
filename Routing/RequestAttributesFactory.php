@@ -53,7 +53,7 @@ class RequestAttributesFactory implements RequestAttributesFactoryInterface
      *
      * {@inheritdoc}
      */
-    public function getAttributes(RouteContextInterface $routeContext)
+    public function createAttributes(RouteContextInterface $routeContext)
     {
         $cacheKey = spl_object_hash($routeContext);
 
@@ -81,7 +81,7 @@ class RequestAttributesFactory implements RequestAttributesFactoryInterface
         $parameters = array_replace($this->generatorContext->getParameters(), $parameters);
 
         // We should add only parameters being used as route variables, others wouldn't be presented in generated url,
-        // and therefore wouldn't be returned by the UrlMatcher.
+        // and therefore wouldn't be returned by the UrlMatcher as request attributes.
         $parameters = array_intersect_key($parameters, $variables);
 
         $attributes = array_replace($defaults, $parameters);

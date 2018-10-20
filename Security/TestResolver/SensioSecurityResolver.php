@@ -14,7 +14,6 @@ use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\Sensio\VariableResolver;
-use Yarhon\RouteGuardBundle\Security\Sensio\VariableResolverContext;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
@@ -53,11 +52,7 @@ class SensioSecurityResolver implements TestResolverInterface
      */
     public function resolve(AbstractTestBagInterface $testBag, RouteContextInterface $routeContext)
     {
-        list($routeMetadata, $controllerMetadata) = $testBag->getMetadata();
-
-        $context = $this->variableResolver->createContext($routeMetadata, $controllerMetadata, $routeContext->getParameters());
-
-        $this->resolveVariables($testBag, $context);
+        $this->resolveVariables($testBag, $routeContext);
 
         $tests = [];
 
@@ -69,16 +64,16 @@ class SensioSecurityResolver implements TestResolverInterface
     }
 
     /**
-     * @param TestBagInterface        $testBag
-     * @param VariableResolverContext $context
+     * @param TestBagInterface      $testBag
+     * @param RouteContextInterface $routeContext
      */
-    private function resolveVariables(TestBagInterface $testBag, VariableResolverContext $context)
+    private function resolveVariables(TestBagInterface $testBag, RouteContextInterface $routeContext)
     {
         $resolved = [];
 
-        $resolve = function ($name) use ($context, &$resolved) {
+        $resolve = function ($name) use ($routeContext, &$resolved) {
             if (!array_key_exists($name, $resolved)) {
-                $resolved[$name] = $this->variableResolver->getVariable($context, $name);
+                $resolved[$name] = $this->variableResolver->getVariable($routeContext, $name);
             }
 
             return $resolved[$name];

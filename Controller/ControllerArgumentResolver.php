@@ -88,7 +88,7 @@ class ControllerArgumentResolver implements ControllerArgumentResolverInterface
             throw new RuntimeException(sprintf($message, $routeContext->getName(), $controllerMetadata->getName(), $name));
         }
 
-        $requestAttributes = $this->requestAttributesFactory->getAttributes($routeContext);
+        $requestAttributes = $this->requestAttributesFactory->createAttributes($routeContext);
 
         $resolverContext = new ArgumentResolverContext($requestAttributes, $controllerMetadata->getName(), $this->requestStack->getCurrentRequest());
 
