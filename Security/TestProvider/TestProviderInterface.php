@@ -22,11 +22,12 @@ interface TestProviderInterface extends LoggerAwareInterface
 {
     /**
      * @param Route       $route
+     * @param string      $routeName
      * @param string|null $controllerName
      *
      * @return AbstractTestBagInterface|null
      *
      * @throws ExceptionInterface
      */
-    public function getTests(Route $route, $controllerName = null);
+    public function getTests(Route $route, $routeName, $controllerName = null);
 }

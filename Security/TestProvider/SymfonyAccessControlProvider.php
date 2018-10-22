@@ -120,7 +120,7 @@ class SymfonyAccessControlProvider implements TestProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getTests(Route $route, $controllerName = null)
+    public function getTests(Route $route, $routeName, $controllerName = null)
     {
         $matches = [];
 

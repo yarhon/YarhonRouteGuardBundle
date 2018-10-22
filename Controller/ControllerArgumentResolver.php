@@ -105,4 +105,18 @@ class ControllerArgumentResolver implements ControllerArgumentResolverInterface
         $message = 'Route "%s" controller "%s" requires that you provide a value for the "$%s" argument.';
         throw new RuntimeException(sprintf($message, $routeContext->getName(), $controllerMetadata->getName(), $name));
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getArgumentNames($routeName)
+    {
+        $controllerMetadata = $this->controllerMetadataFactory->createMetadata($routeName);
+
+        if (null === $controllerMetadata) {
+            return [];
+        }
+
+        return $controllerMetadata->keys();
+    }
 }

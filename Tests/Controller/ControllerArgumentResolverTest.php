@@ -66,9 +66,7 @@ class ControllerArgumentResolverTest extends TestCase
 
         $argumentMetadata = new ArgumentMetadata('arg1', 'int', false, false, null);
 
-        $controllerMetadata = new ControllerMetadata('class::method', [
-            $argumentMetadata,
-        ]);
+        $controllerMetadata = new ControllerMetadata('class::method', [$argumentMetadata]);
 
         $requestAttributes = new ParameterBag(['a' => 1]);
 
@@ -189,5 +187,32 @@ class ControllerArgumentResolverTest extends TestCase
         $this->assertSame($resolvedOne, $resolvedThree);
         $this->assertSame($resolvedTwo, $resolvedFour);
         $this->assertNotSame($resolvedOne, $resolvedTwo);
+    }
+
+    public function testGetArgumentNames()
+    {
+        $argumentMetadataOne = new ArgumentMetadata('arg1', 'int', false, false, null);
+        $argumentMetadataTwo = new ArgumentMetadata('arg2', 'int', false, false, null);
+
+        $controllerMetadata = new ControllerMetadata('class::method', [$argumentMetadataOne, $argumentMetadataTwo]);
+
+        $this->metadataFactory->method('createMetadata')
+            ->with('index')
+            ->willReturn($controllerMetadata);
+
+        $names = $this->resolver->getArgumentNames('index');
+
+        $this->assertEquals(['arg1', 'arg2'], $names);
+    }
+
+    public function testGetArgumentNamesNoController()
+    {
+        $this->metadataFactory->method('createMetadata')
+            ->with('index')
+            ->willReturn(null);
+
+        $names = $this->resolver->getArgumentNames('index');
+
+        $this->assertEquals([], $names);
     }
 }

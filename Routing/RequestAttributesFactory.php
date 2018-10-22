@@ -96,18 +96,15 @@ class RequestAttributesFactory implements RequestAttributesFactoryInterface
     }
 
     /**
-     * @param RouteMetadata $routeMetadata
-     *
-     * @return ParameterBag
+     * {@inheritdoc}
      */
-    public function getAttributesPrototype(RouteMetadata $routeMetadata)
+    public function getAttributeNames($routeName)
     {
-        $defaults = $routeMetadata->getDefaults();
+        $routeMetadata = $this->routeMetadataFactory->createMetadata($routeName);
 
-        $attributes = array_unique(array_merge($routeMetadata->getVariables(), array_keys($defaults)));
+        $names = array_merge($routeMetadata->getVariables(), array_keys($routeMetadata->getDefaults()));
+        $names = array_unique($names);
 
-        $attributes = array_fill_keys($attributes, null);
-
-        return new ParameterBag($attributes);
+        return $names;
     }
 }

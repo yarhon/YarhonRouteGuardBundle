@@ -26,4 +26,11 @@ interface RequestAttributesFactoryInterface
      * @throws RuntimeException
      */
     public function createAttributes(RouteContextInterface $routeContext);
+
+    /**
+     * @param string $routeName
+     *
+     * @return string[]
+     */
+    public function getAttributeNames($routeName);
 }

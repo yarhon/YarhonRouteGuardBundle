@@ -17,7 +17,7 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
 use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReaderInterface;
-use Yarhon\RouteGuardBundle\Security\Sensio\VariableResolver;
+use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
 use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
@@ -42,9 +42,9 @@ class SensioSecurityProvider implements TestProviderInterface
     private $reader;
 
     /**
-     * @var VariableResolver
+     * @var ControllerArgumentResolverInterface
      */
-    private $variableResolver;
+    private $controllerArgumentResolver;
 
     /**
      * @var ExpressionLanguage
@@ -59,13 +59,13 @@ class SensioSecurityProvider implements TestProviderInterface
     /**
      * SensioSecurityProvider constructor.
      *
-     * @param ClassMethodAnnotationReaderInterface  $reader
-     * @param VariableResolver                      $variableResolver
+     * @param ClassMethodAnnotationReaderInterface $reader
+     * @param ControllerArgumentResolverInterface  $controllerArgumentResolver
      */
-    public function __construct(ClassMethodAnnotationReaderInterface $reader, VariableResolver $variableResolver)
+    public function __construct(ClassMethodAnnotationReaderInterface $reader, ControllerArgumentResolverInterface $controllerArgumentResolver)
     {
         $this->reader = $reader;
-        $this->variableResolver = $variableResolver;
+        $this->controllerArgumentResolver = $controllerArgumentResolver;
     }
 
     /**
@@ -79,17 +79,16 @@ class SensioSecurityProvider implements TestProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getTests(Route $route, $controllerName = null)
+    public function getTests(Route $route, $routeName, $controllerName = null)
     {
         if (!$controllerName) {
             return null;
         }
 
         list($class, $method) = explode('::', $controllerName);
-
-        $variableNames = $this->variableResolver->getVariableNames($routeMetadata, $controllerMetadata);
-
         $annotations = $this->reader->read($class, $method, [SecurityAnnotation::class, IsGrantedAnnotation::class]);
+
+        $variableNames = $this->controllerArgumentResolver->getArgumentNames($routeName);
 
         $tests = [];
 
@@ -118,7 +117,7 @@ class SensioSecurityProvider implements TestProviderInterface
 
                 $subjectName = $annotation->getSubject() ?: null;
 
-                if ($subjectName && !in_array($subjectName, $variableNames)) {
+                if ($subjectName && !in_array($subjectName, $variableNames, true)) {
                     throw new InvalidArgumentException(sprintf('Unknown subject variable "%s". Known variables: "%s".', $subjectName, implode('", "', $variableNames)));
                 }
             }

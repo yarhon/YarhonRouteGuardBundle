@@ -11,13 +11,11 @@
 namespace Yarhon\RouteGuardBundle\Tests\Security\TestResolver;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\ExpressionLanguage\Expression;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
-use Yarhon\RouteGuardBundle\Security\Sensio\VariableResolver;
-use Yarhon\RouteGuardBundle\Security\Sensio\VariableResolverContext;
-use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
-use Yarhon\RouteGuardBundle\Routing\RouteMetadataInterface;
-use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
+use Yarhon\RouteGuardBundle\Routing\RouteContext;
+use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
 use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
 use Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver;
@@ -28,41 +26,15 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
  */
 class SensioSecurityResolverTest extends TestCase
 {
-    private $variableResolver;
-
-    private $variableResolverContext;
+    private $controllerArgumentResolver;
 
     private $resolver;
 
-    private $testArgumentsOne;
-
-    private $testArgumentsTwo;
-
-    private $routeMetadata;
-
-    private $controllerMetadata;
-
-    private $routeContext;
-
     public function setUp()
     {
-        $this->variableResolver = $this->createMock(VariableResolver::class);
-        $this->variableResolverContext = $this->createMock(VariableResolverContext::class);
+        $this->controllerArgumentResolver = $this->createMock(ControllerArgumentResolverInterface::class);
 
-        $this->variableResolver->method('createContext')
-            ->willReturn($this->variableResolverContext);
-
-        $this->resolver = new SensioSecurityResolver($this->variableResolver);
-
-        $this->testArgumentsOne = $this->createMock(TestArguments::class);
-        $this->testArgumentsTwo = $this->createMock(TestArguments::class);
-
-        $this->routeMetadata = $this->createMock(RouteMetadataInterface::class);
-        $this->controllerMetadata = $this->createMock(ControllerMetadata::class);
-
-        $this->routeContext = $this->createMock(RouteContextInterface::class);
-        $this->routeContext->method('getParameters')
-            ->willReturn([]);
+        $this->resolver = new SensioSecurityResolver($this->controllerArgumentResolver);
     }
 
     public function testGetProviderClass()
@@ -70,117 +42,103 @@ class SensioSecurityResolverTest extends TestCase
         $this->assertSame(SensioSecurityProvider::class, $this->resolver->getProviderClass());
     }
 
-    public function testVariableResolverCalls()
+    public function testResolve()
     {
-        $this->testArgumentsOne->method('getMetadata')
-            ->willReturn('foo');
+        $testArguments = [
+            new TestArguments(['foo']),
+            new TestArguments(['bar']),
+        ];
 
-        $this->testArgumentsOne->method('getAttributes')
-            ->willReturn([]);
+        $testBag = $this->createTestBag($testArguments);
 
-        $this->testArgumentsTwo->method('getMetadata')
-            ->willReturn('foo');
+        $routeContext = new RouteContext('index');
 
-        $this->testArgumentsTwo->method('getAttributes')
-            ->willReturn([]);
+        $resolved = $this->resolver->resolve($testBag, $routeContext);
 
-        $testBag = $this->createTestBag([$this->testArgumentsOne, $this->testArgumentsTwo]);
-
-        $this->variableResolver->expects($this->once())
-            ->method('createContext')
-            ->with($this->routeMetadata, $this->controllerMetadata, $this->routeContext->getParameters());
-
-        $this->variableResolver->expects($this->once())
-            ->method('getVariable')
-            ->with($this->variableResolverContext, 'foo');
-
-        $this->resolver->resolve($testBag, $this->routeContext);
+        $this->assertSame($testArguments, $resolved);
     }
 
-    public function testResolveSubjectVariables()
+    public function testResolveSubjectVariable()
     {
-        $this->testArgumentsOne->method('getMetadata')
-            ->willReturn('foo');
+        $testArguments = new TestArguments([]);
+        $testArguments->setMetadata('foo');
 
-        $this->testArgumentsOne->method('getAttributes')
-            ->willReturn([]);
+        $testBag = $this->createTestBag([$testArguments]);
 
-        $testBag = $this->createTestBag([$this->testArgumentsOne]);
+        $routeContext = new RouteContext('index');
 
-        $this->variableResolver->method('getVariable')
+        $this->controllerArgumentResolver->method('getArgument')
+            ->with($routeContext, 'foo')
             ->willReturn(5);
 
-        $this->testArgumentsOne->expects($this->once())
-            ->method('setSubject')
-            ->with(5);
+        $resolved = $this->resolver->resolve($testBag, $routeContext);
 
-        $resolved = $this->resolver->resolve($testBag, $this->routeContext);
+        $this->assertSame([$testArguments], $resolved);
 
-        $this->assertSame([$this->testArgumentsOne], $resolved);
+        $this->assertEquals(5, $testArguments->getSubject());
     }
 
-    public function testResolveSubjectVariablesException()
+    public function testResolveSubjectVariableException()
     {
-        $this->testArgumentsOne->method('getMetadata')
-            ->willReturn('foo');
+        $testArguments = new TestArguments([]);
+        $testArguments->setMetadata('foo');
 
-        $this->testArgumentsOne->method('getAttributes')
-            ->willReturn([]);
+        $testBag = $this->createTestBag([$testArguments]);
 
-        $testBag = $this->createTestBag([$this->testArgumentsOne]);
+        $routeContext = new RouteContext('index');
 
-        $this->variableResolver->method('getVariable')
-            ->willThrowException(new RuntimeException('inner exception'));
+        $this->controllerArgumentResolver->method('getArgument')
+            ->with($routeContext, 'foo')
+            ->willThrowException(new RuntimeException('Inner exception.'));
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Cannot resolve subject variable "foo". inner exception');
+        $this->expectExceptionMessage('Cannot resolve subject variable "foo". Inner exception.');
 
-        $this->resolver->resolve($testBag, $this->routeContext);
+        $this->resolver->resolve($testBag, $routeContext);
     }
 
     public function testResolveExpressionVariables()
     {
-        $expression = $this->createMock(ExpressionDecorator::class);
-        $expression->method('getNames')
-            ->willReturn(['foo']);
+        $expression = new ExpressionDecorator(new Expression('foo == true'), ['foo']);
 
-        $this->testArgumentsOne->method('getAttributes')
-            ->willReturn([$expression]);
+        $testArguments = new TestArguments([$expression]);
 
-        $testBag = $this->createTestBag([$this->testArgumentsOne]);
+        $testBag = $this->createTestBag([$testArguments]);
 
-        $this->variableResolver->method('getVariable')
+        $routeContext = new RouteContext('index');
+
+        $this->controllerArgumentResolver->method('getArgument')
+            ->with($routeContext, 'foo')
             ->willReturn(5);
 
-        $expression->expects($this->once())
-            ->method('setVariables')
-            ->with(['foo' => 5]);
+        $resolved = $this->resolver->resolve($testBag, $routeContext);
 
-        $resolved = $this->resolver->resolve($testBag, $this->routeContext);
+        $this->assertSame([$testArguments], $resolved);
 
-        $this->assertSame([$this->testArgumentsOne], $resolved);
+        $resolvedExpression = $testArguments->getAttributes()[0];
+
+        $this->assertSame($expression, $resolvedExpression);
+        $this->assertEquals(['foo' => 5], $resolvedExpression->getVariables());
     }
 
     public function testResolveExpressionVariablesException()
     {
-        $expression = $this->createMock(ExpressionDecorator::class);
-        $expression->method('getNames')
-            ->willReturn(['foo']);
-        $expression->method('getExpression')
-            ->willReturn('foo == true');
+        $expression = new ExpressionDecorator(new Expression('foo == true'), ['foo']);
 
-        $this->testArgumentsOne->method('getAttributes')
-            ->willReturn([$expression]);
+        $testArguments = new TestArguments([$expression]);
 
-        $testBag = $this->createTestBag([$this->testArgumentsOne]);
+        $testBag = $this->createTestBag([$testArguments]);
 
-        $this->variableResolver->method('getVariable')
-            ->willThrowException(new RuntimeException('inner exception'));
+        $routeContext = new RouteContext('index');
+
+        $this->controllerArgumentResolver->method('getArgument')
+            ->with($routeContext, 'foo')
+            ->willThrowException(new RuntimeException('Inner exception.'));
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Cannot resolve expression variable "foo" of expression "foo == true". inner exception');
+        $this->expectExceptionMessage('Cannot resolve expression variable "foo" of expression "foo == true". Inner exception.');
 
-        $this->resolver->resolve($testBag, $this->routeContext);
+        $this->resolver->resolve($testBag, $routeContext);
     }
 
     private function createTestBag(array $testArguments)
@@ -189,9 +147,6 @@ class SensioSecurityResolverTest extends TestCase
 
         $testBag->method('getIterator')
             ->willReturn(new \ArrayIterator($testArguments));
-
-        $testBag->method('getMetadata')
-            ->willReturn([$this->routeMetadata, $this->controllerMetadata]);
 
         return $testBag;
     }

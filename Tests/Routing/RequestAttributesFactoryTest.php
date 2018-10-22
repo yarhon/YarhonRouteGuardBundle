@@ -160,31 +160,40 @@ class RequestAttributesFactoryTest extends TestCase
     }
 
     /**
-     * @dataProvider getAttributesPrototypeDataProvider
+     * @dataProvider getAttributeNamesDataProvider
      */
-    public function atestGetAttributesPrototype($variables, $defaults, $expected)
+    public function testGetAttributeNames($routeMetadata, $expected)
     {
-        $routeMetadata = $this->createMock(RouteMetadata::class);
+        $this->metadataFactory->method('createMetadata')
+            ->with('index')
+            ->willReturn($routeMetadata);
 
-        $routeMetadata->method('getVariables')
-            ->willReturn($variables);
+        $this->urlGeneratorContext->method('getParameters')
+            ->willReturn([]);
 
-        $routeMetadata->method('getDefaults')
-            ->willReturn($defaults);
+        $names = $this->factory->getAttributeNames('index');
 
-        $attributesPrototype = $this->factory->getAttributesPrototype($routeMetadata);
-
-        $this->assertSame($expected, $attributesPrototype->keys());
+        $this->assertEquals($expected, $names);
     }
 
-    public function getAttributesPrototypeDataProvider()
+    public function getAttributeNamesDataProvider()
     {
         return [
             [
-                // general test
+                new RouteMetadata([], ['page']),
                 ['page'],
-                ['offset' => 1],
-                ['page', 'offset'],
+            ],
+            [
+                new RouteMetadata(['language' => 'en'], []),
+                ['language'],
+            ],
+            [
+                new RouteMetadata(['language' => 'en'], ['page']),
+                ['page', 'language'],
+            ],
+            [
+                new RouteMetadata(['language' => 'en'], ['page', 'language']),
+                ['page', 'language'],
             ],
         ];
     }

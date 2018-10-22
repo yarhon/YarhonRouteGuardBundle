@@ -28,10 +28,6 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
  */
 class AccessMapBuilderTest extends TestCase
 {
-    private $providerOne;
-
-    private $providerTwo;
-
     private $providers;
 
     private $controllerNameResolver;
@@ -42,10 +38,10 @@ class AccessMapBuilderTest extends TestCase
 
     public function setUp()
     {
-        $this->providerOne = $this->createMock(TestProviderInterface::class);
-        $this->providerTwo = $this->createMock(TestProviderInterface::class);
+        $providerOne = $this->createMock(TestProviderInterface::class);
+        $providerTwo = $this->createMock(TestProviderInterface::class);
 
-        $this->providers = [$this->providerOne, $this->providerTwo];
+        $this->providers = [$providerOne, $providerTwo];
 
         $this->controllerNameResolver = $this->createMock(ControllerNameResolverInterface::class);
 
@@ -58,11 +54,11 @@ class AccessMapBuilderTest extends TestCase
     {
         $builder = new AccessMapBuilder($this->providers);
 
-        $this->providerOne->expects($this->once())
+        $this->providers[0]->expects($this->once())
             ->method('setLogger')
             ->with($this->logger);
 
-        $this->providerTwo->expects($this->once())
+        $this->providers[1]->expects($this->once())
             ->method('setLogger')
             ->with($this->logger);
 
@@ -122,23 +118,23 @@ class AccessMapBuilderTest extends TestCase
 
         $route = $routeCollection->get('/path1');
 
-        $this->providerOne->expects($this->once())
+        $this->providers[0]->expects($this->once())
             ->method('getTests')
-            ->with($route, 'class::method')
+            ->with($route, '/path1', 'class::method')
             ->willReturn($testBagOne);
 
-        $this->providerTwo->expects($this->once())
+        $this->providers[1]->expects($this->once())
             ->method('getTests')
-            ->with($route, 'class::method')
+            ->with($route, '/path1', 'class::method')
             ->willReturn($testBagTwo);
 
         $testBagOne->expects($this->once())
             ->method('setProviderClass')
-            ->with(get_class($this->providerOne));
+            ->with(get_class($this->providers[0]));
 
         $testBagTwo->expects($this->once())
             ->method('setProviderClass')
-            ->with(get_class($this->providerTwo));
+            ->with(get_class($this->providers[1]));
 
         $this->accessMap->expects($this->once())
             ->method('set')
@@ -158,11 +154,11 @@ class AccessMapBuilderTest extends TestCase
 
         $testBagOne = $this->createMock(AbstractTestBagInterface::class);
 
-        $this->providerOne->expects($this->once())
+        $this->providers[0]->expects($this->once())
             ->method('getTests')
             ->willReturn($testBagOne);
 
-        $this->providerTwo->expects($this->once())
+        $this->providers[1]->expects($this->once())
             ->method('getTests')
             ->willThrowException(new InvalidArgumentException('bla bla'));
 
@@ -187,11 +183,11 @@ class AccessMapBuilderTest extends TestCase
 
         $testBagOne = $this->createMock(AbstractTestBagInterface::class);
 
-        $this->providerOne->expects($this->once())
+        $this->providers[0]->expects($this->once())
             ->method('getTests')
             ->willReturn($testBagOne);
 
-        $this->providerTwo->expects($this->once())
+        $this->providers[1]->expects($this->once())
             ->method('getTests')
             ->willThrowException(new InvalidArgumentException('bla bla'));
 
@@ -222,9 +218,9 @@ class AccessMapBuilderTest extends TestCase
 
         $route = $routeCollection->get('/path1');
 
-        $this->providerOne->expects($this->once())
+        $this->providers[0]->expects($this->once())
             ->method('getTests')
-            ->with($route, 'class2::method2');
+            ->with($route, '/path1', 'class2::method2');
 
         $builder->build($this->accessMap);
     }
@@ -242,7 +238,7 @@ class AccessMapBuilderTest extends TestCase
             'class2::method2',
         ];
 
-        $this->providerOne->expects($this->once())
+        $this->providers[0]->expects($this->once())
             ->method('getTests')
             ->with($routeCollection->get('/path2'));
 
