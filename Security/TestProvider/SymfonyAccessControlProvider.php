@@ -155,7 +155,7 @@ class SymfonyAccessControlProvider implements TestProviderInterface
             // so we don't need a TestBagMap for resolving it by RequestContext in runtime.
             $testBag = current($matches)[0];
         } else {
-            $this->logRuntimeMatching($route, $matches);
+            $this->logRuntimeMatching($route, $routeName, $matches);
             $testBag = new TestBagMap(array_values($matches));
         }
 
@@ -183,17 +183,18 @@ class SymfonyAccessControlProvider implements TestProviderInterface
     }
 
     /**
-     * @param Route $route
-     * @param array $matches
+     * @param Route  $route
+     * @param string $routeName
+     * @param array  $matches
      */
-    private function logRuntimeMatching(Route $route, array $matches)
+    private function logRuntimeMatching(Route $route, $routeName, array $matches)
     {
         if (!$this->logger) {
             return;
         }
 
-        $message = 'Route with path "%s" requires runtime matching to access_control rule(s) #%s (zero-based), this would reduce performance.';
-        $this->logger->warning(sprintf($message, $route->getPath(), implode(', #', array_keys($matches))));
+        $message = 'Route "%s" (path "%s") requires runtime matching to access_control rule(s) #%s (zero-based), this would reduce performance.';
+        $this->logger->warning(sprintf($message, $routeName, $route->getPath(), implode(', #', array_keys($matches))));
     }
 
     /**

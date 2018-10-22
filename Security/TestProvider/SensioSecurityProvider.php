@@ -39,7 +39,7 @@ class SensioSecurityProvider implements TestProviderInterface
     /**
      * @var ClassMethodAnnotationReaderInterface
      */
-    private $reader;
+    private $annotationReader;
 
     /**
      * @var ControllerArgumentResolverInterface
@@ -59,12 +59,12 @@ class SensioSecurityProvider implements TestProviderInterface
     /**
      * SensioSecurityProvider constructor.
      *
-     * @param ClassMethodAnnotationReaderInterface $reader
+     * @param ClassMethodAnnotationReaderInterface $annotationReader
      * @param ControllerArgumentResolverInterface  $controllerArgumentResolver
      */
-    public function __construct(ClassMethodAnnotationReaderInterface $reader, ControllerArgumentResolverInterface $controllerArgumentResolver)
+    public function __construct(ClassMethodAnnotationReaderInterface $annotationReader, ControllerArgumentResolverInterface $controllerArgumentResolver)
     {
-        $this->reader = $reader;
+        $this->annotationReader = $annotationReader;
         $this->controllerArgumentResolver = $controllerArgumentResolver;
     }
 
@@ -86,7 +86,7 @@ class SensioSecurityProvider implements TestProviderInterface
         }
 
         list($class, $method) = explode('::', $controllerName);
-        $annotations = $this->reader->read($class, $method, [SecurityAnnotation::class, IsGrantedAnnotation::class]);
+        $annotations = $this->annotationReader->read($class, $method, [SecurityAnnotation::class, IsGrantedAnnotation::class]);
 
         $variableNames = $this->controllerArgumentResolver->getArgumentNames($routeName);
 

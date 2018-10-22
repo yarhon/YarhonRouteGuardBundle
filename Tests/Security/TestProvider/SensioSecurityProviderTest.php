@@ -31,7 +31,7 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
  */
 class SensioSecurityProviderTest extends TestCase
 {
-    private $reader;
+    private $annotationReader;
 
     private $controllerArgumentResolver;
 
@@ -43,13 +43,13 @@ class SensioSecurityProviderTest extends TestCase
 
     public function setUp()
     {
-        $this->reader = $this->createMock(ClassMethodAnnotationReaderInterface::class);
+        $this->annotationReader = $this->createMock(ClassMethodAnnotationReaderInterface::class);
 
         $this->controllerArgumentResolver = $this->createMock(ControllerArgumentResolverInterface::class);
 
         $this->expressionLanguage = $this->createMock(ExpressionLanguage::class);
 
-        $this->provider = new SensioSecurityProvider($this->reader, $this->controllerArgumentResolver);
+        $this->provider = new SensioSecurityProvider($this->annotationReader, $this->controllerArgumentResolver);
 
         $this->route = new Route('/');
     }
@@ -60,7 +60,7 @@ class SensioSecurityProviderTest extends TestCase
 
         $annotation = new SecurityAnnotation(['expression' => 'request.getClientIp() == "127.0.0.1']);
 
-        $this->reader->method('read')
+        $this->annotationReader->method('read')
             ->willReturn([$annotation]);
 
         $variableNames = ['foo', 'bar'];
@@ -104,7 +104,7 @@ class SensioSecurityProviderTest extends TestCase
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Cannot create expression because ExpressionLanguage is not provided.');
 
-        $this->reader->method('read')
+        $this->annotationReader->method('read')
             ->willReturn([$annotation]);
 
         $this->provider->getTests($this->route, 'index', 'a::b');
@@ -116,7 +116,7 @@ class SensioSecurityProviderTest extends TestCase
 
         $annotation = new SecurityAnnotation(['expression' => 'request.getClientIp() == "127.0.0.1']);
 
-        $this->reader->method('read')
+        $this->annotationReader->method('read')
             ->willReturn([$annotation]);
 
         $this->controllerArgumentResolver->method('getArgumentNames')
@@ -135,7 +135,7 @@ class SensioSecurityProviderTest extends TestCase
     {
         $annotation = new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN', 'subject' => 'foo']);
 
-        $this->reader->method('read')
+        $this->annotationReader->method('read')
             ->willReturn([$annotation]);
 
         $this->controllerArgumentResolver->method('getArgumentNames')
@@ -157,7 +157,7 @@ class SensioSecurityProviderTest extends TestCase
     {
         $annotation = new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN', 'subject' => 'foo']);
 
-        $this->reader->method('read')
+        $this->annotationReader->method('read')
             ->willReturn([$annotation]);
 
         $this->controllerArgumentResolver->method('getArgumentNames')
@@ -171,7 +171,7 @@ class SensioSecurityProviderTest extends TestCase
 
     public function testNoAnnotations()
     {
-        $this->reader->method('read')
+        $this->annotationReader->method('read')
             ->willReturn([]);
 
         $testBag = $this->provider->getTests($this->route, 'index', 'a::b');

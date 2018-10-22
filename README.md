@@ -379,7 +379,7 @@ that needs to be resolved at runtime.
 
 For every route that needs a map of rules, RouteGuard will produce a log warning message during cache warmup, i.e.
 ```console
-11:04:03 WARNING [route_guard] Route with path "/secure1/{page}" requires runtime matching to access_control rule(s) #1 (zero-based), this would reduce performance.
+11:04:03 WARNING [route_guard] Route "secure" (path "/secure1/{page}") requires runtime matching to access_control rule(s) #1 (zero-based), this would reduce performance.
 ```
 
 #### Matching access_control rules to a route at compile time

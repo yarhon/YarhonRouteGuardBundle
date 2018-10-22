@@ -105,7 +105,7 @@ class SymfonyAccessControlProviderTest extends TestCase
 
         $logger->expects($this->once())
             ->method('warning')
-            ->with('Route with path "/" requires runtime matching to access_control rule(s) #0, #1 (zero-based), this would reduce performance.');
+            ->with('Route "index" (path "/") requires runtime matching to access_control rule(s) #0, #1 (zero-based), this would reduce performance.');
 
         $testArgumentsOne = new TestArguments(['ROLE_ADMIN']);
         $testArgumentsTwo = new TestArguments(['ROLE_USER']);
