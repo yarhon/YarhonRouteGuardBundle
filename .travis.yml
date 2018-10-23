@@ -11,13 +11,11 @@ env:
 matrix:
     fast_finish: true
     include:
-        # Minimum supported dependencies with the latest and oldest PHP version
         - php: 7.2
-          env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
+          env: COMPOSER_FLAGS="--prefer-lowest --prefer-stable"
         - php: 5.6
-          env: COMPOSER_FLAGS="--prefer-stable --prefer-lowest"
+          env: COMPOSER_FLAGS="--prefer-lowest --prefer-stable"
 
-        # Test the latest stable release
         - php: 5.6
         - php: 7.0
         - php: 7.1
@@ -33,15 +31,14 @@ matrix:
         #- env: STABILITY="dev"
 
 before_install:
-    #- if [[ $COVERAGE != true ]]; then phpenv config-rm xdebug.ini || true; fi
+    - if [[ $COVERAGE != true ]]; then phpenv config-rm xdebug.ini || true; fi
     #- if ! [ -z "$STABILITY" ]; then composer config minimum-stability ${STABILITY}; fi;
-    #- if ! [ -v "$DEPENDENCIES" ]; then composer require --no-update ${DEPENDENCIES}; fi;
 
 install:
     # To be removed when this issue will be resolved: https://github.com/composer/composer/issues/5355
-    - if [[ "$COMPOSER_FLAGS" == *"--prefer-lowest"* ]]; then composer update --prefer-dist --no-interaction --prefer-stable --quiet; fi
+    - if [[ "$COMPOSER_FLAGS" == *"--prefer-lowest"* ]]; then composer update --prefer-stable --quiet --prefer-dist --no-interaction; fi
     - composer update ${COMPOSER_FLAGS} --prefer-dist --no-interaction
-    - composer require phpunit/phpunit:"^7.0||^6.0||^5.2" --dev
+    - composer require phpunit/phpunit:"^7.0||^6.0||^5.2" --prefer-dist --no-interaction
 
 script:
     - composer validate --strict --no-check-lock
