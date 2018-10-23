@@ -34,7 +34,7 @@ class ControllerNameResolver implements ControllerNameResolverInterface
      */
     public function resolve($controller)
     {
-        if (is_array($controller) && isset($controller[0]) && isset($controller[1])) {
+        if (is_array($controller) && isset($controller[0], $controller[1])) {
             if (is_string($controller[0])) {
                 return $this->resolveClass($controller[0]).'::'.$controller[1];
             } elseif (is_object($controller[0])) {
