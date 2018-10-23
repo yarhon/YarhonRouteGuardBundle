@@ -13,6 +13,18 @@ build:
             environment:
                 php: { version: '7.2' }
 
+        tests_php_56:
+            environment:
+                php: { version: '5.6' }
+
+        tests_php_70:
+            environment:
+                php: { version: '7.0' }
+
+        tests_php_71:
+            environment:
+                php: { version: '7.1' }
+
         tests_php_72:
             environment:
                 php: { version: '7.2' }
@@ -22,21 +34,16 @@ build:
                     -   command: 'vendor/bin/phpunit --coverage-clover=coverage.xml'
                         coverage: { file: 'coverage.xml', format: 'clover' }
 
-        tests_php_71:
-            environment:
-                php: { version: '7.1' }
-
-        tests_php_70:
-            environment:
-                php: { version: '7.0' }
-
-        tests_php_56:
-            environment:
-                php: { version: '5.6' }
-
         tests_php_56_lowest:
             environment:
                 php: { version: '5.6' }
+            dependencies:
+                override:
+                    - composer update --prefer-lowest --prefer-stable
+
+        tests_php_72_lowest:
+            environment:
+                php: { version: '7.2' }
             dependencies:
                 override:
                     - composer update --prefer-lowest --prefer-stable
