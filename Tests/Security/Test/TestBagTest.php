@@ -21,11 +21,13 @@ class TestBagTest extends TestCase
 {
     public function testConstruct()
     {
-        $testOne = $this->createMock(TestArguments::class);
-        $testTwo = $this->createMock(TestArguments::class);
+        $tests = [
+            $this->createMock(TestArguments::class),
+            $this->createMock(TestArguments::class),
+        ];
 
-        $testBag = new TestBag([$testOne, $testTwo]);
+        $testBag = new TestBag($tests);
 
-        $this->assertEquals([$testOne, $testTwo], iterator_to_array($testBag));
+        $this->assertSame($tests, iterator_to_array($testBag));
     }
 }

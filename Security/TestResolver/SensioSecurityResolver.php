@@ -84,7 +84,7 @@ class SensioSecurityResolver implements TestResolverInterface
                     try {
                         $values[$name] = $this->controllerArgumentResolver->getArgument($routeContext, $name);
                     } catch (RuntimeException $e) {
-                        $message = sprintf('Cannot resolve expression variable "%s" of expression "%s". %s', $name, (string)$attribute->getExpression(), $e->getMessage());
+                        $message = sprintf('Cannot resolve expression variable "%s" of expression "%s". %s', $name, (string) $attribute->getExpression(), $e->getMessage());
                         throw new RuntimeException($message, 0, $e);
                     }
                 }

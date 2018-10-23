@@ -79,11 +79,8 @@ class RouteMetadataFactoryTest extends TestCase
 
     public function testCreateMetadataCache()
     {
-        $routeOne = new Route('/');
-        $routeTwo = new Route('/blog');
-
-        $this->routeCollection->add('index', $routeOne);
-        $this->routeCollection->add('blog', $routeTwo);
+        $this->routeCollection->add('index', new Route('/'));
+        $this->routeCollection->add('blog', new Route('/blog'));
 
         $metadataOne = $this->factory->createMetadata('index');
         $metadataTwo = $this->factory->createMetadata('index');
@@ -98,9 +95,7 @@ class RouteMetadataFactoryTest extends TestCase
 
     public function testCreateMetadataCacheSpecialSymbols()
     {
-        $route = new Route('/');
-
-        $this->routeCollection->add('blog{}()/\@:', $route);
+        $this->routeCollection->add('blog{}()/\@:', new Route('/'));
 
         $metadata = $this->factory->createMetadata('blog{}()/\@:');
         $metadataCached = $this->factory->createMetadata('blog{}()/\@:');
@@ -111,11 +106,8 @@ class RouteMetadataFactoryTest extends TestCase
 
     public function testWarmUp()
     {
-        $routeOne = new Route('/');
-        $routeTwo = new Route('/blog');
-
-        $this->routeCollection->add('index', $routeOne);
-        $this->routeCollection->add('blog', $routeTwo);
+        $this->routeCollection->add('index', new Route('/'));
+        $this->routeCollection->add('blog', new Route('/blog'));
 
         $this->factory->warmUp();
 

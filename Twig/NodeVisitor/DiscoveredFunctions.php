@@ -29,7 +29,7 @@ class DiscoveredFunctions
      */
     public function has($functionName)
     {
-        return in_array($functionName, $this->functions);
+        return in_array($functionName, $this->functions, true);
     }
 
     /**

@@ -21,23 +21,23 @@ use Yarhon\RouteGuardBundle\Security\Http\RequestContext;
  */
 class TestBagMapTest extends TestCase
 {
-    private $testBagOne;
+    private $testBags;
 
-    private $testBagTwo;
-
-    private $constraintOne;
-
-    private $constraintTwo;
+    private $constraints;
 
     private $context;
 
     public function setUp()
     {
-        $this->testBagOne = $this->createMock(TestBagInterface::class);
-        $this->testBagTwo = $this->createMock(TestBagInterface::class);
+        $this->testBags = [
+            $this->createMock(TestBagInterface::class),
+            $this->createMock(TestBagInterface::class),
+        ];
 
-        $this->constraintOne = $this->createMock(RequestConstraintInterface::class);
-        $this->constraintTwo = $this->createMock(RequestConstraintInterface::class);
+        $this->constraints = [
+            $this->createMock(RequestConstraintInterface::class),
+            $this->createMock(RequestConstraintInterface::class),
+        ];
 
         $this->context = $this->createMock(RequestContext::class);
     }
@@ -45,8 +45,8 @@ class TestBagMapTest extends TestCase
     public function testConstruct()
     {
         $map = [
-            [$this->testBagOne, $this->constraintOne],
-            [$this->testBagTwo, null],
+            [$this->testBags[0], $this->constraints[0]],
+            [$this->testBags[1], null],
         ];
 
         $testBagMap = new TestBagMap($map);
@@ -56,33 +56,33 @@ class TestBagMapTest extends TestCase
 
     public function testResolveWhenConstraintMatches()
     {
-        $this->constraintOne->method('matches')
+        $this->constraints[0]->method('matches')
             ->willReturn(false);
 
-        $this->constraintTwo->method('matches')
+        $this->constraints[1]->method('matches')
             ->willReturn(true);
 
         $map = [
-            [$this->testBagOne, $this->constraintOne],
-            [$this->testBagTwo, $this->constraintTwo],
+            [$this->testBags[0], $this->constraints[0]],
+            [$this->testBags[1], $this->constraints[1]],
         ];
 
         $testBagMap = new TestBagMap($map);
 
-        $this->assertSame($this->testBagTwo, $testBagMap->resolve($this->context));
+        $this->assertSame($this->testBags[1], $testBagMap->resolve($this->context));
     }
 
     public function testResolveWhenNoConstraintMatches()
     {
-        $this->constraintOne->method('matches')
+        $this->constraints[0]->method('matches')
             ->willReturn(false);
 
-        $this->constraintTwo->method('matches')
+        $this->constraints[1]->method('matches')
             ->willReturn(false);
 
         $map = [
-            [$this->testBagOne, $this->constraintOne],
-            [$this->testBagTwo, $this->constraintTwo],
+            [$this->testBags[0], $this->constraints[0]],
+            [$this->testBags[1], $this->constraints[1]],
         ];
 
         $testBagMap = new TestBagMap($map);
@@ -92,16 +92,16 @@ class TestBagMapTest extends TestCase
 
     public function testResolveWhenConstraintIsNull()
     {
-        $this->constraintOne->method('matches')
+        $this->constraints[0]->method('matches')
             ->willReturn(false);
 
         $map = [
-            [$this->testBagOne, $this->constraintOne],
-            [$this->testBagTwo, null],
+            [$this->testBags[0], $this->constraints[0]],
+            [$this->testBags[1], null],
         ];
 
         $testBagMap = new TestBagMap($map);
 
-        $this->assertSame($this->testBagTwo, $testBagMap->resolve($this->context));
+        $this->assertSame($this->testBags[1], $testBagMap->resolve($this->context));
     }
 }

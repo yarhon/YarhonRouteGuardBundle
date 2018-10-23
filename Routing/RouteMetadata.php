@@ -33,8 +33,8 @@ class RouteMetadata
     /**
      * RouteMetadata constructor.
      *
-     * @param array $defaults
-     * @param array $variables
+     * @param array  $defaults
+     * @param array  $variables
      * @param string $controllerName
      */
     public function __construct(array $defaults, array $variables, $controllerName = null)

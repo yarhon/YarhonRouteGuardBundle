@@ -75,6 +75,10 @@ class ControllerNameConverter
     /**
      * @see \Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver::createController Original source
      *
+     * @param string $controller
+     *
+     * @return string
+     *
      * @throws InvalidArgumentException
      */
     private function convertBundleNotation($controller)

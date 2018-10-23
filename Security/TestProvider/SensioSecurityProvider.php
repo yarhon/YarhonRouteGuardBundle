@@ -16,6 +16,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter as ParamConverterAnnotation;
 use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReaderInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
 use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
@@ -86,7 +87,7 @@ class SensioSecurityProvider implements TestProviderInterface
         }
 
         list($class, $method) = explode('::', $controllerName);
-        $annotations = $this->annotationReader->read($class, $method, [SecurityAnnotation::class, IsGrantedAnnotation::class]);
+        $annotations = $this->annotationReader->read($class, $method, [SecurityAnnotation::class, IsGrantedAnnotation::class, ParamConverterAnnotation::class]);
 
         $variableNames = $this->controllerArgumentResolver->getArgumentNames($routeName);
 
@@ -120,6 +121,8 @@ class SensioSecurityProvider implements TestProviderInterface
                 if ($subjectName && !in_array($subjectName, $variableNames, true)) {
                     throw new InvalidArgumentException(sprintf('Unknown subject variable "%s". Known variables: "%s".', $subjectName, implode('", "', $variableNames)));
                 }
+            } elseif ($annotation instanceof ParamConverterAnnotation) {
+                $variableName = $annotation->getName();
             }
 
             $arguments = $this->createTestArguments($attributes, $subjectName);

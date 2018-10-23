@@ -38,10 +38,10 @@ class AccessMapBuilderTest extends TestCase
 
     public function setUp()
     {
-        $providerOne = $this->createMock(TestProviderInterface::class);
-        $providerTwo = $this->createMock(TestProviderInterface::class);
-
-        $this->providers = [$providerOne, $providerTwo];
+        $this->providers = [
+            $this->createMock(TestProviderInterface::class),
+            $this->createMock(TestProviderInterface::class),
+        ];
 
         $this->controllerNameResolver = $this->createMock(ControllerNameResolverInterface::class);
 

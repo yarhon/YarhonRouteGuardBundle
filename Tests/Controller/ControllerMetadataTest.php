@@ -20,18 +20,18 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
  */
 class ControllerMetadataTest extends TestCase
 {
-    private $argumentOne;
-
-    private $argumentTwo;
+    private $arguments;
 
     private $controllerMetadata;
 
-    public function setUp()    {
+    public function setUp()
+    {
+        $this->arguments = [
+            new ArgumentMetadata('arg1', 'int', false, false, null),
+            new ArgumentMetadata('arg2', 'string', false, false, null),
+        ];
 
-        $this->argumentOne = new ArgumentMetadata('arg1', 'int', false, false, null);
-        $this->argumentTwo =  new ArgumentMetadata('arg2', 'string', false, false, null);
-
-        $this->controllerMetadata = new ControllerMetadata('class::method', [$this->argumentOne, $this->argumentTwo]);
+        $this->controllerMetadata = new ControllerMetadata('class::method', $this->arguments);
     }
 
     public function testGetName()
@@ -41,7 +41,7 @@ class ControllerMetadataTest extends TestCase
 
     public function testAll()
     {
-        $this->assertSame([$this->argumentOne, $this->argumentTwo], $this->controllerMetadata->all());
+        $this->assertSame($this->arguments, $this->controllerMetadata->all());
     }
 
     public function testKeys()
@@ -57,7 +57,7 @@ class ControllerMetadataTest extends TestCase
 
     public function testGet()
     {
-        $this->assertSame($this->argumentOne, $this->controllerMetadata->get('arg1'));
+        $this->assertSame($this->arguments[0], $this->controllerMetadata->get('arg1'));
     }
 
     public function testGetException()

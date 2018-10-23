@@ -56,33 +56,31 @@ class ControllerMetadataFactoryTest extends TestCase
 
     public function testCreateMetadata()
     {
-        $route = new Route('/', ['_controller' => 'zxc']);
-        $this->routeCollection->add('index', $route);
+        $this->routeCollection->add('index', new Route('/', ['_controller' => 'zxc']));
 
         $this->controllerNameResolver->method('resolve')
             ->with('zxc')
             ->willReturn('class::method');
 
-        $argumentsMetadatas = [
+        $argumentMetadatas = [
             new ArgumentMetadata('arg1', 'int', false, false, null),
             new ArgumentMetadata('arg2', 'string', false, false, null),
         ];
 
         $this->argumentMetadataFactory->method('createArgumentMetadata')
             ->with(['class', 'method'])
-            ->willReturn($argumentsMetadatas);
+            ->willReturn($argumentMetadatas);
 
         $metadata = $this->factory->createMetadata('index');
 
         $this->assertInstanceOf(ControllerMetadata::class, $metadata);
         $this->assertEquals('class::method', $metadata->getName());
-        $this->assertEquals($argumentsMetadatas, $metadata->all());
+        $this->assertEquals($argumentMetadatas, $metadata->all());
     }
 
     public function testCreateMetadataNoControllerName()
     {
-        $route = new Route('/', ['_controller' => 'zxc']);
-        $this->routeCollection->add('index', $route);
+        $this->routeCollection->add('index', new Route('/', ['_controller' => 'zxc']));
 
         $this->controllerNameResolver->method('resolve')
             ->with('zxc')
@@ -109,11 +107,8 @@ class ControllerMetadataFactoryTest extends TestCase
         $this->argumentMetadataFactory->method('createArgumentMetadata')
             ->willReturn([]);
 
-        $routeOne = new Route('/');
-        $routeTwo = new Route('/blog');
-
-        $this->routeCollection->add('index', $routeOne);
-        $this->routeCollection->add('blog', $routeTwo);
+        $this->routeCollection->add('index', new Route('/'));
+        $this->routeCollection->add('blog', new Route('/blog'));
 
         $metadataOne = $this->factory->createMetadata('index');
         $metadataTwo = $this->factory->createMetadata('index');
@@ -134,9 +129,7 @@ class ControllerMetadataFactoryTest extends TestCase
         $this->argumentMetadataFactory->method('createArgumentMetadata')
             ->willReturn([]);
 
-        $route = new Route('/');
-
-        $this->routeCollection->add('blog{}()/\@:', $route);
+        $this->routeCollection->add('blog{}()/\@:', new Route('/'));
 
         $metadata = $this->factory->createMetadata('blog{}()/\@:');
         $metadataCached = $this->factory->createMetadata('blog{}()/\@:');
@@ -153,11 +146,8 @@ class ControllerMetadataFactoryTest extends TestCase
         $this->argumentMetadataFactory->method('createArgumentMetadata')
             ->willReturn([]);
 
-        $routeOne = new Route('/');
-        $routeTwo = new Route('/blog');
-
-        $this->routeCollection->add('index', $routeOne);
-        $this->routeCollection->add('blog', $routeTwo);
+        $this->routeCollection->add('index', new Route('/'));
+        $this->routeCollection->add('blog', new Route('/blog'));
 
         $this->factory->warmUp();
 
