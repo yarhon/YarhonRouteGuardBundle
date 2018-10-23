@@ -43,10 +43,10 @@
         "ext-opcache": "Improves performance"
     },
     "autoload": {
-        "psr-4": { "Yarhon\\RouteGuardBundle\\": "" }
-    },
-    "autoload-dev": {
-        "psr-4": { "Yarhon\\RouteGuardBundle\\Tests\\": "" }
+        "psr-4": { "Yarhon\\RouteGuardBundle\\": "" },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
     },
     "minimum-stability": "stable"
 }
