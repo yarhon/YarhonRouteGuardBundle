@@ -113,32 +113,34 @@ class AccessMapBuilderTest extends TestCase
         $this->accessMap->expects($this->once())
             ->method('clear');
 
-        $testBagOne = $this->createMock(AbstractTestBagInterface::class);
-        $testBagTwo = $this->createMock(AbstractTestBagInterface::class);
+        $testBags = [
+            $this->createMock(AbstractTestBagInterface::class),
+            $this->createMock(AbstractTestBagInterface::class),
+        ];
 
         $route = $routeCollection->get('/path1');
 
         $this->providers[0]->expects($this->once())
             ->method('getTests')
             ->with($route, '/path1', 'class::method')
-            ->willReturn($testBagOne);
+            ->willReturn($testBags[0]);
 
         $this->providers[1]->expects($this->once())
             ->method('getTests')
             ->with($route, '/path1', 'class::method')
-            ->willReturn($testBagTwo);
+            ->willReturn($testBags[1]);
 
-        $testBagOne->expects($this->once())
+        $testBags[0]->expects($this->once())
             ->method('setProviderClass')
             ->with(get_class($this->providers[0]));
 
-        $testBagTwo->expects($this->once())
+        $testBags[1]->expects($this->once())
             ->method('setProviderClass')
             ->with(get_class($this->providers[1]));
 
         $this->accessMap->expects($this->once())
             ->method('set')
-            ->with('/path1', [$testBagOne, $testBagTwo]);
+            ->with('/path1', $testBags);
 
         $builder->build($this->accessMap);
     }
@@ -152,11 +154,11 @@ class AccessMapBuilderTest extends TestCase
         $builder = new AccessMapBuilder($this->providers);
         $builder->setRouteCollection($routeCollection);
 
-        $testBagOne = $this->createMock(AbstractTestBagInterface::class);
+        $testBag = $this->createMock(AbstractTestBagInterface::class);
 
         $this->providers[0]->expects($this->once())
             ->method('getTests')
-            ->willReturn($testBagOne);
+            ->willReturn($testBag);
 
         $this->providers[1]->expects($this->once())
             ->method('getTests')
@@ -181,11 +183,11 @@ class AccessMapBuilderTest extends TestCase
         $builder->setRouteCollection($routeCollection);
         $builder->setLogger($this->logger);
 
-        $testBagOne = $this->createMock(AbstractTestBagInterface::class);
+        $testBag = $this->createMock(AbstractTestBagInterface::class);
 
         $this->providers[0]->expects($this->once())
             ->method('getTests')
-            ->willReturn($testBagOne);
+            ->willReturn($testBag);
 
         $this->providers[1]->expects($this->once())
             ->method('getTests')

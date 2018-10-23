@@ -44,17 +44,20 @@ class DelegatingTestResolverTest extends TestCase
 
     public function testResolve()
     {
-        $resolverOne = $this->createMock(TestResolverInterface::class);
-        $resolverOne->method('getProviderClass')
+        $resolvers = [
+            $this->createMock(TestResolverInterface::class),
+            $this->createMock(TestResolverInterface::class),
+        ];
+
+        $resolvers[0]->method('getProviderClass')
             ->willReturn('class_one');
 
-        $resolverTwo = $this->createMock(TestResolverInterface::class);
-        $resolverTwo->method('getProviderClass')
+        $resolvers[1]->method('getProviderClass')
             ->willReturn('class_two');
 
-        $resolver = new DelegatingTestResolver([$resolverOne, $resolverTwo]);
+        $resolver = new DelegatingTestResolver($resolvers);
 
-        $resolverTwo->expects($this->once())
+        $resolvers[1]->expects($this->once())
             ->method('resolve')
             ->with($this->testBag, $this->routeContext)
             ->willReturn([]);
@@ -64,11 +67,14 @@ class DelegatingTestResolverTest extends TestCase
 
     public function testResolveException()
     {
-        $resolverOne = $this->createMock(TestResolverInterface::class);
-        $resolverOne->method('getProviderClass')
+        $resolvers = [
+            $this->createMock(TestResolverInterface::class),
+        ];
+
+        $resolvers[0]->method('getProviderClass')
             ->willReturn('class_one');
 
-        $resolver = new DelegatingTestResolver([$resolverOne]);
+        $resolver = new DelegatingTestResolver($resolvers);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('No resolver exists for provider "class_two".');

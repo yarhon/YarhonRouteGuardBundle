@@ -154,9 +154,10 @@ class ControllerArgumentResolverTest extends TestCase
     {
         $routeContext = new RouteContext('index');
 
-        $argumentMetadataOne = new ArgumentMetadata('arg1', 'int', false, false, null);
-        $argumentMetadataTwo = new ArgumentMetadata('arg2', 'int', false, false, null);
-        $controllerMetadata = new ControllerMetadata('class::method', [$argumentMetadataOne, $argumentMetadataTwo]);
+        $controllerMetadata = new ControllerMetadata('class::method', [
+            new ArgumentMetadata('arg1', 'int', false, false, null),
+            new ArgumentMetadata('arg2', 'int', false, false, null),
+        ]);
 
         $this->metadataFactory->method('createMetadata')
             ->willReturn($controllerMetadata);
@@ -191,10 +192,10 @@ class ControllerArgumentResolverTest extends TestCase
 
     public function testGetArgumentNames()
     {
-        $argumentMetadataOne = new ArgumentMetadata('arg1', 'int', false, false, null);
-        $argumentMetadataTwo = new ArgumentMetadata('arg2', 'int', false, false, null);
-
-        $controllerMetadata = new ControllerMetadata('class::method', [$argumentMetadataOne, $argumentMetadataTwo]);
+        $controllerMetadata = new ControllerMetadata('class::method', [
+            new ArgumentMetadata('arg1', 'int', false, false, null),
+            new ArgumentMetadata('arg2', 'int', false, false, null),
+        ]);
 
         $this->metadataFactory->method('createMetadata')
             ->with('index')
