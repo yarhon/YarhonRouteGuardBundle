@@ -72,12 +72,12 @@
         <!-- test resolvers -->
 
         <service id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory" />
+            <argument type="service" id="yarhon_route_guard.cache.route_metadata" />
             <argument type="service" id="router.default" />
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory" />
+            <argument type="service" id="yarhon_route_guard.cache.controller_metadata" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
             <argument type="service" id="request_stack" />
             <argument type="collection" /> <!-- argument value resolvers -->
@@ -106,28 +106,14 @@
         <!-- metadata services -->
 
         <service id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory">
-            <argument type="service" id="yarhon_route_guard.cache.route_metadata" />
-            <argument type="service" id="router.default" />
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory">
-            <argument type="service" id="yarhon_route_guard.cache.controller_metadata" />
-            <argument type="service" id="router.default" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ContainerControllerNameResolver" />
             <argument type="service" id="argument_metadata_factory" on-invalid="ignore" />
         </service>
 
         <!-- cache warmers services -->
-
-        <service id="Yarhon\RouteGuardBundle\Cache\RouteMetadataCacheWarmer">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory" />
-            <tag name="kernel.cache_warmer" priority="200" />
-        </service>
-
-        <service id="Yarhon\RouteGuardBundle\Cache\ControllerMetadataCacheWarmer">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory" />
-            <tag name="kernel.cache_warmer" priority="200" />
-        </service>
 
         <service id="Yarhon\RouteGuardBundle\Cache\AccessMapCacheWarmer">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
@@ -138,7 +124,7 @@
         <!-- authorization services -->
 
         <service id="Yarhon\RouteGuardBundle\Security\AccessMap">
-            <argument type="service" id="yarhon_route_guard.cache.tests" />
+            <argument type="service" id="yarhon_route_guard.cache.authorization" />
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\RouteTestResolver">

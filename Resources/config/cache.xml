@@ -12,7 +12,7 @@
             <argument>%kernel.cache_dir%/route-guard</argument> <!-- directory -->
         </service>
 
-        <service id="yarhon_route_guard.cache.tests" parent="yarhon_route_guard.cache" public="false">
+        <service id="yarhon_route_guard.cache.authorization" parent="yarhon_route_guard.cache" public="false">
             <argument>tests</argument> <!-- namespace -->
         </service>
 

@@ -27,11 +27,4 @@ interface ControllerArgumentResolverInterface
      * @throws RuntimeException
      */
     public function getArgument(RouteContextInterface $routeContext, $name);
-
-    /**
-     * @param string $routeName
-     *
-     * @return string[]
-     */
-    public function getArgumentNames($routeName);
 }

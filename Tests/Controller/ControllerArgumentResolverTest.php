@@ -11,17 +11,18 @@
 namespace Yarhon\RouteGuardBundle\Tests\Controller;
 
 use PHPUnit\Framework\TestCase;
+use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
-use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
-use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentValueResolverInterface;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContext;
+use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
+use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
@@ -29,7 +30,7 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
  */
 class ControllerArgumentResolverTest extends TestCase
 {
-    private $metadataFactory;
+    private $metadataCache;
 
     private $requestAttributesFactory;
 
@@ -41,7 +42,7 @@ class ControllerArgumentResolverTest extends TestCase
 
     public function setUp()
     {
-        $this->metadataFactory = $this->createMock(ControllerMetadataFactory::class);
+        $this->metadataCache = new ArrayAdapter(0, false);
 
         $this->requestAttributesFactory = $this->createMock(RequestAttributesFactory::class);
 
@@ -57,22 +58,18 @@ class ControllerArgumentResolverTest extends TestCase
             $this->createMock(ArgumentValueResolverInterface::class),
         ];
 
-        $this->resolver = new ControllerArgumentResolver($this->metadataFactory, $this->requestAttributesFactory, $requestStack, $this->valueResolvers);
+        $this->resolver = new ControllerArgumentResolver($this->metadataCache, $this->requestAttributesFactory, $requestStack, $this->valueResolvers);
     }
 
     public function testGetArgument()
     {
         $routeContext = new RouteContext('index');
 
-        $argumentMetadata = new ArgumentMetadata('arg1', 'int', false, false, null);
-
+        $argumentMetadata = $this->createArgumentMetadata('arg1');
         $controllerMetadata = new ControllerMetadata('class::method', [$argumentMetadata]);
+        $this->addMetadataCacheItem($routeContext->getName(), $controllerMetadata);
 
         $requestAttributes = new ParameterBag(['a' => 1]);
-
-        $this->metadataFactory->method('createMetadata')
-            ->with($routeContext->getName())
-            ->willReturn($controllerMetadata);
 
         $this->requestAttributesFactory->method('createAttributes')
             ->with($routeContext)
@@ -103,8 +100,7 @@ class ControllerArgumentResolverTest extends TestCase
     {
         $routeContext = new RouteContext('index');
 
-        $this->metadataFactory->method('createMetadata')
-            ->willReturn(null);
+        $this->addMetadataCacheItem($routeContext->getName(), null);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Route "index" does not have controller or controller name is unresolvable.');
@@ -116,8 +112,7 @@ class ControllerArgumentResolverTest extends TestCase
     {
         $routeContext = new RouteContext('index');
 
-        $this->metadataFactory->method('createMetadata')
-            ->willReturn(new ControllerMetadata('class::method', []));
+        $this->addMetadataCacheItem($routeContext->getName(), new ControllerMetadata('class::method', []));
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Route "index" controller "class::method" does not have argument "$arg1".');
@@ -129,11 +124,10 @@ class ControllerArgumentResolverTest extends TestCase
     {
         $routeContext = new RouteContext('index');
 
-        $argumentMetadata = new ArgumentMetadata('arg1', 'int', false, false, null);
+        $argumentMetadata = $this->createArgumentMetadata('arg1');
         $controllerMetadata = new ControllerMetadata('class::method', [$argumentMetadata]);
 
-        $this->metadataFactory->method('createMetadata')
-            ->willReturn($controllerMetadata);
+        $this->addMetadataCacheItem($routeContext->getName(), $controllerMetadata);
 
         $this->requestAttributesFactory->method('createAttributes')
             ->willReturn(new ParameterBag());
@@ -150,17 +144,25 @@ class ControllerArgumentResolverTest extends TestCase
         $this->resolver->getArgument($routeContext, 'arg1');
     }
 
-    public function testGetArgumentCache()
+    public function testGetArgumentNoMetadataException()
+    {
+        $routeContext = new RouteContext('index');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Cannot get ControllerMetadata for route "index".');
+
+        $this->resolver->getArgument($routeContext, 'arg1');
+    }
+
+    public function testGetArgumentInternalCache()
     {
         $routeContext = new RouteContext('index');
 
         $controllerMetadata = new ControllerMetadata('class::method', [
-            new ArgumentMetadata('arg1', 'int', false, false, null),
-            new ArgumentMetadata('arg2', 'int', false, false, null),
+            $this->createArgumentMetadata('arg1'),
+            $this->createArgumentMetadata('arg2'),
         ]);
-
-        $this->metadataFactory->method('createMetadata')
-            ->willReturn($controllerMetadata);
+        $this->addMetadataCacheItem($routeContext->getName(), $controllerMetadata);
 
         $this->requestAttributesFactory->method('createAttributes')
             ->willReturn(new ParameterBag());
@@ -190,30 +192,15 @@ class ControllerArgumentResolverTest extends TestCase
         $this->assertNotSame($resolvedOne, $resolvedTwo);
     }
 
-    public function testGetArgumentNames()
+    private function createArgumentMetadata($name)
     {
-        $controllerMetadata = new ControllerMetadata('class::method', [
-            new ArgumentMetadata('arg1', 'int', false, false, null),
-            new ArgumentMetadata('arg2', 'int', false, false, null),
-        ]);
-
-        $this->metadataFactory->method('createMetadata')
-            ->with('index')
-            ->willReturn($controllerMetadata);
-
-        $names = $this->resolver->getArgumentNames('index');
-
-        $this->assertEquals(['arg1', 'arg2'], $names);
+        return new ArgumentMetadata($name, 'int', false, false, null);
     }
 
-    public function testGetArgumentNamesNoController()
+    private function addMetadataCacheItem($name, $value)
     {
-        $this->metadataFactory->method('createMetadata')
-            ->with('index')
-            ->willReturn(null);
-
-        $names = $this->resolver->getArgumentNames('index');
-
-        $this->assertEquals([], $names);
+        $cacheItem = $this->metadataCache->getItem($name);
+        $cacheItem->set($value);
+        $this->metadataCache->save($cacheItem);
     }
 }

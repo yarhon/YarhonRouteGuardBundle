@@ -28,9 +28,9 @@ interface RequestAttributesFactoryInterface
     public function createAttributes(RouteContextInterface $routeContext);
 
     /**
-     * @param string $routeName
+     * @param RouteMetadata $routeMetadata
      *
      * @return string[]
      */
-    public function getAttributeNames($routeName);
+    public function getAttributeNames(RouteMetadata $routeMetadata);
 }

@@ -10,8 +10,7 @@
 
 namespace Yarhon\RouteGuardBundle\Security\Sensio;
 
-use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
-use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
+use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver as BaseControllerArgumentResolver;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
@@ -24,55 +23,28 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class ControllerArgumentResolver implements ControllerArgumentResolverInterface
+class ControllerArgumentResolver extends BaseControllerArgumentResolver
 {
-    /**
-     * @var ControllerArgumentResolverInterface
-     */
-    private $delegate;
-
-    /**
-     * @var RequestAttributesFactoryInterface
-     */
-    private $requestAttributesFactory;
-
-    /**
-     * VariableResolver constructor.
-     *
-     * @param ControllerArgumentResolverInterface $controllerArgumentResolver
-     * @param RequestAttributesFactoryInterface   $requestAttributesFactory
-     */
-    public function __construct(ControllerArgumentResolverInterface $controllerArgumentResolver, RequestAttributesFactoryInterface $requestAttributesFactory)
-    {
-        $this->delegate = $controllerArgumentResolver;
-        $this->requestAttributesFactory = $requestAttributesFactory;
-    }
-
     /**
      * {@inheritdoc}
      */
     public function getArgument(RouteContextInterface $routeContext, $name)
     {
-        if (!in_array($name, $this->delegate->getArgumentNames($routeContext->getName()), true)) {
-            if (!in_array($name, $this->requestAttributesFactory->getAttributeNames($routeContext->getName()), true)) {
+        $controllerMetadata = $this->getControllerMetadata($routeContext->getName());
+
+        $argumentNames = $controllerMetadata->keys();
+
+        if (!in_array($name, $argumentNames, true)) {
+            $requestAttributes = $this->requestAttributesFactory->createAttributes($routeContext);
+
+            if (!$requestAttributes->has($name)) {
                 $message = 'Route "%s" argument "%s" is neither a controller argument nor request attribute.';
                 throw new RuntimeException(sprintf($message, $routeContext->getName(), $name));
             }
 
-            return $this->requestAttributesFactory->createAttributes($routeContext)->get($name);
+            return $requestAttributes->get($name);
         }
 
-        return $this->delegate->getArgument($routeContext, $name);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getArgumentNames($routeName)
-    {
-        $controllerArguments = $this->delegate->getArgumentNames($routeName);
-        $requestAttributes = $this->requestAttributesFactory->getAttributeNames($routeName);
-
-        return array_values(array_unique(array_merge($controllerArguments, $requestAttributes)));
+        return parent::getArgument($routeContext, $name);
     }
 }

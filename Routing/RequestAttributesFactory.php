@@ -10,6 +10,7 @@
 
 namespace Yarhon\RouteGuardBundle\Routing;
 
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\Routing\RequestContext;
@@ -21,9 +22,9 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 class RequestAttributesFactory implements RequestAttributesFactoryInterface
 {
     /**
-     * @var RouteMetadataFactory
+     * @var CacheItemPoolInterface
      */
-    private $routeMetadataFactory;
+    private $routeMetadataCache;
 
     /**
      * @var RequestContext
@@ -38,12 +39,12 @@ class RequestAttributesFactory implements RequestAttributesFactoryInterface
     /**
      * RequestAttributesFactory constructor.
      *
-     * @param RouteMetadataFactory  $routeMetadataFactory
-     * @param UrlGeneratorInterface $urlGenerator
+     * @param CacheItemPoolInterface $routeMetadataCache
+     * @param UrlGeneratorInterface  $urlGenerator
      */
-    public function __construct(RouteMetadataFactory $routeMetadataFactory, UrlGeneratorInterface $urlGenerator)
+    public function __construct(CacheItemPoolInterface $routeMetadataCache, UrlGeneratorInterface $urlGenerator)
     {
-        $this->routeMetadataFactory = $routeMetadataFactory;
+        $this->routeMetadataCache = $routeMetadataCache;
         $this->generatorContext = $urlGenerator->getContext();
     }
 
@@ -61,7 +62,7 @@ class RequestAttributesFactory implements RequestAttributesFactoryInterface
             return $this->cache[$cacheKey];
         }
 
-        $routeMetadata = $this->routeMetadataFactory->createMetadata($routeContext->getName());
+        $routeMetadata = $this->getRouteMetadata($routeContext->getName());
 
         $parameters = $routeContext->getParameters();
 
@@ -98,13 +99,29 @@ class RequestAttributesFactory implements RequestAttributesFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getAttributeNames($routeName)
+    public function getAttributeNames(RouteMetadata $routeMetadata)
     {
-        $routeMetadata = $this->routeMetadataFactory->createMetadata($routeName);
-
         $names = array_merge($routeMetadata->getVariables(), array_keys($routeMetadata->getDefaults()));
         $names = array_unique($names);
 
         return $names;
+    }
+
+    /**
+     * @param string $routeName
+     *
+     * @return RouteMetadata
+     *
+     * @throws RuntimeException
+     */
+    private function getRouteMetadata($routeName)
+    {
+        $cacheItem = $this->routeMetadataCache->getItem($routeName);
+
+        if (!$cacheItem->isHit()) {
+            throw new RuntimeException(sprintf('Cannot get RouteMetadata for route "%s".', $routeName));
+        }
+
+        return $cacheItem->get();
     }
 }

@@ -10,9 +10,7 @@
 
 namespace Yarhon\RouteGuardBundle\Controller;
 
-use Psr\Cache\CacheItemPoolInterface;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Route;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactoryInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactory;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
@@ -22,16 +20,6 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
  */
 class ControllerMetadataFactory
 {
-    /**
-     * @var CacheItemPoolInterface
-     */
-    private $cache;
-
-    /**
-     * @var RouteCollection
-     */
-    private $routeCollection;
-
     /**
      * @var ControllerNameResolverInterface
      */
@@ -45,39 +33,24 @@ class ControllerMetadataFactory
     /**
      * ControllerMetadataFactory constructor.
      *
-     * @param CacheItemPoolInterface                $cache
-     * @param RouterInterface                       $router
      * @param ControllerNameResolverInterface       $controllerNameResolver
      * @param ArgumentMetadataFactoryInterface|null $argumentMetadataFactory
      */
-    public function __construct(CacheItemPoolInterface $cache, RouterInterface $router, ControllerNameResolverInterface $controllerNameResolver, ArgumentMetadataFactoryInterface $argumentMetadataFactory = null)
+    public function __construct(ControllerNameResolverInterface $controllerNameResolver, ArgumentMetadataFactoryInterface $argumentMetadataFactory = null)
     {
-        $this->cache = $cache;
-        $this->routeCollection = $router->getRouteCollection();
         $this->controllerNameResolver = $controllerNameResolver;
         $this->argumentMetadataFactory = $argumentMetadataFactory ?: new ArgumentMetadataFactory();
     }
 
     /**
-     * @param string $routeName
+     * @param Route $route
      *
      * @return ControllerMetadata|null
      *
      * @throws RuntimeException
      */
-    public function createMetadata($routeName)
+    public function createMetadata(Route $route)
     {
-        $cacheKey = $this->fixCacheKey($routeName);
-        $cacheItem = $this->cache->getItem($cacheKey);
-
-        if ($cacheItem->isHit()) {
-            return $cacheItem->get();
-        }
-
-        if (!$route = $this->routeCollection->get($routeName)) {
-            throw new RuntimeException(sprintf('Cannot create ControllerMetadata for route "%s" - unknown route.', $routeName));
-        }
-
         $controller = $route->getDefault('_controller');
 
         // TODO: check exceptions here?
@@ -90,32 +63,6 @@ class ControllerMetadataFactory
         list($class, $method) = explode('::', $controllerName);
         $arguments = $this->argumentMetadataFactory->createArgumentMetadata([$class, $method]);
 
-        $metadata = new ControllerMetadata($controllerName, $arguments);
-
-        $cacheItem->set($metadata);
-        $this->cache->save($cacheItem);
-
-        return $metadata;
-    }
-
-    public function warmUp()
-    {
-        $this->cache->clear();
-
-        foreach ($this->routeCollection as $name => $route) {
-            $this->createMetadata($name);
-        }
-    }
-
-    /**
-     * @see \Symfony\Component\Cache\CacheItem::validateKey
-     *
-     * @param string $key
-     *
-     * @return string
-     */
-    private function fixCacheKey($key)
-    {
-        return str_replace(['{', '}', '(', ')', '/', '\\', '@', ':'], '#', $key);
+        return new ControllerMetadata($controllerName, $arguments);
     }
 }
