@@ -12,6 +12,7 @@ namespace Yarhon\RouteGuardBundle\Security;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Psr\Cache\CacheItemPoolInterface;
 use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
@@ -24,18 +25,18 @@ class RouteTestResolver implements RouteTestResolverInterface, LoggerAwareInterf
     use LoggerAwareTrait;
 
     /**
-     * @var AccessMapInterface
+     * @var CacheItemPoolInterface
      */
-    private $accessMap;
+    private $authorizationCache;
 
     /**
      * @var TestResolverInterface
      */
     private $testResolver;
 
-    public function __construct(AccessMapInterface $accessMap, TestResolverInterface $testResolver)
+    public function __construct(CacheItemPoolInterface $authorizationCache, TestResolverInterface $testResolver)
     {
-        $this->accessMap = $accessMap;
+        $this->authorizationCache = $authorizationCache;
         $this->testResolver = $testResolver;
     }
 
@@ -48,11 +49,13 @@ class RouteTestResolver implements RouteTestResolverInterface, LoggerAwareInterf
 
         //var_dump($this->accessMap->has('blog1'), $this->accessMap->get('blog1'));
 
-        $testBags = $this->accessMap->get($routeContext->getName());
+        $cacheItem = $this->authorizationCache->getItem($routeContext->getName());
 
-        if (null === $testBags) {
+        if (!$cacheItem->isHit()) {
             return [];
         }
+
+        $testBags = $cacheItem->get();
 
         $tests = [];
         foreach ($testBags as $testBag) {

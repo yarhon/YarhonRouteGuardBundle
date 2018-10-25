@@ -11,24 +11,33 @@
 namespace Yarhon\RouteGuardBundle\Security;
 
 use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Routing\Route;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\RouterInterface;
-use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
-use Yarhon\RouteGuardBundle\Controller\ControllerNameResolverInterface;
+use Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory;
+use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
 use Yarhon\RouteGuardBundle\Exception\CatchableExceptionInterface;
-use Yarhon\RouteGuardBundle\Exception\LogicException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class AccessMapBuilder implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
-     * @var TestProviderInterface[]
+     * @var RouteTestCollector
      */
-    private $testProviders = [];
+    private $routeTestCollector;
+
+    /**
+     * @var ControllerMetadataFactory
+     */
+    private $controllerMetadataFactory;
+
+    /**
+     * @var RouteMetadataFactory
+     */
+    private $routeMetadataFactory;
 
     /**
      * @var array
@@ -36,31 +45,18 @@ class AccessMapBuilder implements LoggerAwareInterface
     private $options;
 
     /**
-     * @var RouteCollection
-     */
-    private $routeCollection;
-
-    /**
-     * @var ControllerNameResolverInterface
-     */
-    private $controllerNameResolver;
-
-    /**
-     * @var LoggerInterface;
-     */
-    private $logger;
-
-    /**
      * AccessMapBuilder constructor.
      *
-     * @param \Traversable|TestProviderInterface[] $testProviders
-     * @param array                                $options
+     * @param RouteTestCollector        $routeTestCollector
+     * @param ControllerMetadataFactory $controllerMetadataFactory
+     * @param RouteMetadataFactory      $routeMetadataFactory
+     * @param array                     $options
      */
-    public function __construct($testProviders = [], array $options = [])
+    public function __construct(RouteTestCollector $routeTestCollector, ControllerMetadataFactory $controllerMetadataFactory, RouteMetadataFactory $routeMetadataFactory, $options = [])
     {
-        foreach ($testProviders as $testProvider) {
-            $this->addTestProvider($testProvider);
-        }
+        $this->routeTestCollector = $routeTestCollector;
+        $this->controllerMetadataFactory = $controllerMetadataFactory;
+        $this->routeMetadataFactory = $routeMetadataFactory;
 
         $this->options = array_merge([
             'ignore_controllers' => [],
@@ -70,131 +66,48 @@ class AccessMapBuilder implements LoggerAwareInterface
 
     /**
      * @param RouteCollection $routeCollection
-     */
-    public function setRouteCollection(RouteCollection $routeCollection)
-    {
-        $this->routeCollection = $routeCollection;
-    }
-
-    /**
-     * @param RouterInterface $router
-     */
-    public function importRouteCollection(RouterInterface $router)
-    {
-        $this->setRouteCollection($router->getRouteCollection());
-    }
-
-    /**
-     * @param ControllerNameResolverInterface $resolver
-     */
-    public function setControllerNameResolver(ControllerNameResolverInterface $resolver)
-    {
-        $this->controllerNameResolver = $resolver;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-
-        foreach ($this->testProviders as $provider) {
-            $provider->setLogger($this->logger);
-        }
-    }
-
-    /**
-     * @param AccessMapInterface $accessMap
      *
-     * @throws ???
+     * @return \Generator
      */
-    public function build(AccessMapInterface $accessMap)
+    public function build(RouteCollection $routeCollection)
     {
-        if (!$this->routeCollection) {
-            throw new LogicException('Cannot build access map - route collection is not provided.');
-        }
-
-        if (0 === count($this->testProviders)) {
-            throw new LogicException('Cannot build access map - no test providers are set.');
-        }
-
         if ($this->logger) {
-            $this->logger->info('Build access map. Route collection count', ['count' => count($this->routeCollection)]);
+            $this->logger->info('Build access map. Route collection count', ['count' => count($routeCollection)]);
         }
-
-        $accessMap->clear();
 
         $ignoredRoutes = [];
-        $exceptionRoutes = [];
 
-        foreach ($this->routeCollection as $routeName => $route) {
+        foreach ($routeCollection as $routeName => $route) {
             try {
-                $controllerName = $this->getControllerName($route);
+                $controllerMetadata = $this->controllerMetadataFactory->createMetadata($route);
+                $routeMetadata = $this->routeMetadataFactory->createMetadata($route);
 
-                if (null !== $controllerName && $this->isControllerIgnored($controllerName)) {
+                if (null !== $controllerMetadata && $this->isControllerIgnored($controllerMetadata->getName())) {
                     $ignoredRoutes[] = $routeName;
-                    continue;
+                    yield $routeName => null;
                 }
 
-                $testBags = [];
+                // Note: empty arrays are also added to authorization cache
+                $tests = $this->routeTestCollector->getTests($routeName, $route, $controllerMetadata);
 
-                foreach ($this->testProviders as $provider) {
-                    $testBag = $provider->getTests($route, $routeName, $controllerName);
+                yield $routeName => [$tests, $routeMetadata, $controllerMetadata];
 
-                    if (null !== $testBag) {
-                        $testBag->setProviderClass(get_class($provider));
-                        $testBags[] = $testBag;
-                    }
-                }
-
-                // Note: empty arrays are also added to access map
-                $result = $accessMap->set($routeName, $testBags);
-                // TODO: check set result
             } catch (CatchableExceptionInterface $e) {
                 if (!$this->options['catch_exceptions']) {
                     throw $e;
                 }
 
-                $exceptionRoutes[] = $routeName;
-
                 if ($this->logger) {
                     $this->logger->error(sprintf('Exception caught while processing route "%s": %s', $routeName, $e->getMessage()), ['exception' => $e]);
                 }
+
+                yield $routeName => null;
             }
         }
 
-        if ($this->logger) {
-            if (count($ignoredRoutes)) {
-                $this->logger->info('Ignored routes count', ['count' => count($ignoredRoutes)]);
-            }
+        if ($this->logger && count($ignoredRoutes)) {
+            $this->logger->info('Ignored routes count', ['count' => count($ignoredRoutes)]);
         }
-    }
-
-    /**
-     * @param TestProviderInterface $provider
-     */
-    private function addTestProvider(TestProviderInterface $provider)
-    {
-        $this->testProviders[] = $provider;
-    }
-
-    /**
-     * @param Route $route
-     *
-     * @return string|null
-     */
-    private function getControllerName(Route $route)
-    {
-        $controller = $route->getDefault('_controller');
-
-        if ($this->controllerNameResolver) {
-            $controller = $this->controllerNameResolver->resolve($controller);
-        }
-
-        // TODO: check controllers format in case when no resolver added ?
-
-        return $controller;
     }
 
     /**

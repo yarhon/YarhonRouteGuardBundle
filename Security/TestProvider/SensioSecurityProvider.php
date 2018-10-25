@@ -18,7 +18,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotat
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter as ParamConverterAnnotation;
 use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReaderInterface;
-use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
+use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
@@ -43,11 +43,6 @@ class SensioSecurityProvider implements TestProviderInterface
     private $annotationReader;
 
     /**
-     * @var ControllerArgumentResolverInterface
-     */
-    private $controllerArgumentResolver;
-
-    /**
      * @var ExpressionLanguage
      */
     private $expressionLanguage;
@@ -61,12 +56,10 @@ class SensioSecurityProvider implements TestProviderInterface
      * SensioSecurityProvider constructor.
      *
      * @param ClassMethodAnnotationReaderInterface $annotationReader
-     * @param ControllerArgumentResolverInterface  $controllerArgumentResolver
      */
-    public function __construct(ClassMethodAnnotationReaderInterface $annotationReader, ControllerArgumentResolverInterface $controllerArgumentResolver)
+    public function __construct(ClassMethodAnnotationReaderInterface $annotationReader)
     {
         $this->annotationReader = $annotationReader;
-        $this->controllerArgumentResolver = $controllerArgumentResolver;
     }
 
     /**
@@ -80,9 +73,9 @@ class SensioSecurityProvider implements TestProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getTests(Route $route, $routeName, $controllerName = null)
+    public function getTests($routeName, Route $route, ControllerMetadata $controllerMetadata = null)
     {
-        if (!$controllerName) {
+        if (!$controllerMetadata) {
             return null;
         }
 

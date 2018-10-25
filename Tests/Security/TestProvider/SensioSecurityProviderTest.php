@@ -19,7 +19,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotat
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter as ParamConverterAnnotation;
 use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReaderInterface;
-use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
 use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter;
@@ -34,8 +33,6 @@ class SensioSecurityProviderTest extends TestCase
 {
     private $annotationReader;
 
-    private $controllerArgumentResolver;
-
     private $expressionLanguage;
 
     private $provider;
@@ -46,11 +43,9 @@ class SensioSecurityProviderTest extends TestCase
     {
         $this->annotationReader = $this->createMock(ClassMethodAnnotationReaderInterface::class);
 
-        $this->controllerArgumentResolver = $this->createMock(ControllerArgumentResolverInterface::class);
-
         $this->expressionLanguage = $this->createMock(ExpressionLanguage::class);
 
-        $this->provider = new SensioSecurityProvider($this->annotationReader, $this->controllerArgumentResolver);
+        $this->provider = new SensioSecurityProvider($this->annotationReader);
 
         $this->route = new Route('/');
     }
@@ -85,7 +80,7 @@ class SensioSecurityProviderTest extends TestCase
             ->with($annotation->getExpression(), $namesToParse)
             ->willReturn($expression);
 
-        $testBag = $this->provider->getTests($this->route, 'index', 'a::b');
+        $testBag = $this->provider->getTests('index', $this->route, 'a::b');
 
         $this->assertInstanceOf(TestBag::class, $testBag);
         $testArguments = iterator_to_array($testBag)[0];
@@ -108,7 +103,7 @@ class SensioSecurityProviderTest extends TestCase
         $this->annotationReader->method('read')
             ->willReturn([$annotation]);
 
-        $this->provider->getTests($this->route, 'index', 'a::b');
+        $this->provider->getTests('index', $this->route, 'a::b');
     }
 
     public function testSecurityAnnotationExpressionException()
@@ -129,7 +124,7 @@ class SensioSecurityProviderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot parse expression "request.getClientIp() == "127.0.0.1" with following variables: "token", "user", "object", "subject", "roles", "trust_resolver", "auth_checker", "request", "foo", "bar".');
 
-        $this->provider->getTests($this->route, 'index', 'a::b');
+        $this->provider->getTests('index', $this->route, 'a::b');
     }
 
     public function testIsGrantedAnnotation()
@@ -142,7 +137,7 @@ class SensioSecurityProviderTest extends TestCase
         $this->controllerArgumentResolver->method('getArgumentNames')
             ->willReturn(['foo']);
 
-        $testBag = $this->provider->getTests($this->route, 'index', 'a::b');
+        $testBag = $this->provider->getTests('index', $this->route, 'a::b');
 
         $this->assertInstanceOf(TestBag::class, $testBag);
         $testArguments = iterator_to_array($testBag)[0];
@@ -167,7 +162,7 @@ class SensioSecurityProviderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unknown subject variable "foo". Known variables: "bar", "baz".');
 
-        $this->provider->getTests($this->route, 'index', 'a::b');
+        $this->provider->getTests('index', $this->route, 'a::b');
     }
 
     public function testNoAnnotations()
@@ -175,14 +170,14 @@ class SensioSecurityProviderTest extends TestCase
         $this->annotationReader->method('read')
             ->willReturn([]);
 
-        $testBag = $this->provider->getTests($this->route, 'index', 'a::b');
+        $testBag = $this->provider->getTests('index', $this->route, 'a::b');
 
         $this->assertNull($testBag);
     }
 
     public function testNoControllerName()
     {
-        $testBag = $this->provider->getTests($this->route, 'index', null);
+        $testBag = $this->provider->getTests('index', $this->route, null);
 
         $this->assertNull($testBag);
     }

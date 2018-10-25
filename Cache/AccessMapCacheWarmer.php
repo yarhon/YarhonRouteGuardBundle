@@ -10,9 +10,11 @@
 
 namespace Yarhon\RouteGuardBundle\Cache;
 
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\RouteCollection;
 use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
-use Yarhon\RouteGuardBundle\Security\AccessMapInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -25,20 +27,42 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
     private $accessMapBuilder;
 
     /**
-     * @var AccessMapBuilder
+     * @var RouteCollection
      */
-    private $accessMap;
+    private $routeCollection;
+
+    /**
+     * @var CacheItemPoolInterface
+     */
+    private $authorizationCache;
+
+    /**
+     * @var CacheItemPoolInterface
+     */
+    private $routeMetadataCache;
+
+    /**
+     * @var CacheItemPoolInterface
+     */
+    private $controllerMetadataCache;
 
     /**
      * AccessMapCacheWarmer constructor.
      *
-     * @param AccessMapBuilder   $accessMapBuilder
-     * @param AccessMapInterface $accessMap
+     * @param AccessMapBuilder $accessMapBuilder
+     * @param RouterInterface $router
+     * @param CacheItemPoolInterface $authorizationCache
+     * @param CacheItemPoolInterface $routeMetadataCache
+     * @param CacheItemPoolInterface $controllerMetadataCache
      */
-    public function __construct(AccessMapBuilder $accessMapBuilder, AccessMapInterface $accessMap)
+    public function __construct(AccessMapBuilder $accessMapBuilder, RouterInterface $router, CacheItemPoolInterface $authorizationCache, CacheItemPoolInterface $routeMetadataCache, CacheItemPoolInterface $controllerMetadataCache)
     {
         $this->accessMapBuilder = $accessMapBuilder;
-        $this->accessMap = $accessMap;
+        $this->routeCollection = $router->getRouteCollection();
+
+        $this->authorizationCache = $authorizationCache;
+        $this->routeMetadataCache = $routeMetadataCache;
+        $this->controllerMetadataCache = $controllerMetadataCache;
     }
 
     /**
@@ -54,6 +78,18 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
      */
     public function warmUp($cacheDir)
     {
-        $this->accessMapBuilder->build($this->accessMap);
+        $accessMap = $this->accessMapBuilder->build($this->routeCollection);
+
+        foreach ($accessMap as $routeName => $accessInfo) {
+
+            if (null === $accessInfo) {
+                var_dump($routeName.' $accessInfo is null');
+                continue;
+            }
+
+            list($tests, $routeMetadata, $controllerMetadata) = $accessInfo;
+
+            var_dump($routeName, $routeMetadata, $controllerMetadata);
+        }
     }
 }

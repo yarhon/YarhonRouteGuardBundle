@@ -61,7 +61,7 @@ class SymfonyAccessControlProviderTest extends TestCase
         $this->routeMatcher->method('matches')
             ->willReturnOnConsecutiveCalls(false, true);
 
-        $testBag = $this->provider->getTests($this->route, 'index');
+        $testBag = $this->provider->getTests('index', $this->route);
 
         $this->assertInstanceOf(TestBag::class, $testBag);
         $testArguments = iterator_to_array($testBag)[0];
@@ -82,7 +82,7 @@ class SymfonyAccessControlProviderTest extends TestCase
         $this->routeMatcher->method('matches')
             ->willReturnOnConsecutiveCalls($requestConstraintForMap, true);
 
-        $testBag = $this->provider->getTests($this->route, 'index');
+        $testBag = $this->provider->getTests('index', $this->route);
 
         $this->assertInstanceOf(TestBagMap::class, $testBag);
         $map = iterator_to_array($testBag);
@@ -118,12 +118,12 @@ class SymfonyAccessControlProviderTest extends TestCase
         $this->routeMatcher->method('matches')
             ->willReturnOnConsecutiveCalls($requestConstraintForMap, true);
 
-        $this->provider->getTests($this->route, 'index');
+        $this->provider->getTests('index', $this->route);
     }
 
     public function testGetTestsWithoutMatches()
     {
-        $testBag = $this->provider->getTests($this->route, 'index');
+        $testBag = $this->provider->getTests('index', $this->route);
 
         $this->assertNull($testBag);
     }

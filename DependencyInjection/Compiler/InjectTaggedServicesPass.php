@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
-use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
+use Yarhon\RouteGuardBundle\Security\RouteTestCollector;
 use Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
 
@@ -35,7 +35,7 @@ class InjectTaggedServicesPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $this->injectAsArgument($container, [AccessMapBuilder::class, 0], 'yarhon_route_guard.test_provider');
+        $this->injectAsArgument($container, [RouteTestCollector::class, 0], 'yarhon_route_guard.test_provider');
         $this->injectAsArgument($container, [DelegatingTestResolver::class, 0], 'yarhon_route_guard.test_resolver');
         $this->injectAsArgument($container, [ControllerArgumentResolver::class, 3], 'yarhon_route_guard.argument_value_resolver');
     }
