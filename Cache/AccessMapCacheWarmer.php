@@ -21,8 +21,6 @@ use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
  */
 class AccessMapCacheWarmer implements CacheWarmerInterface
 {
-    use CacheKeyTrait;
-
     /**
      * @var AccessMapBuilder
      */
@@ -111,7 +109,7 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
      */
     private function save($routeName, $accessInfo)
     {
-        $cacheKey = $this->getValidCacheKey($routeName);
+        $cacheKey = CacheFactory::getValidCacheKey($routeName);
 
         list($tests, $routeMetadata, $controllerMetadata) = $accessInfo;
 

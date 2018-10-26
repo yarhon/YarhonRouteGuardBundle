@@ -54,6 +54,15 @@ class CacheFactoryTest extends TestCase
         $this->assertInstanceOf(PhpFilesAdapter::class, $cache);
     }
 
+    public function testGetGetValidCacheKey()
+    {
+        $key = 'index{}()/\\@:route';
+
+        $validKey = CacheFactory::getValidCacheKey($key);
+
+        $this->assertEquals('index%7B%7D%28%29%2F%5C%40%3Aroute', $validKey);
+    }
+
     /**
      * @runInSeparateProcess
      */

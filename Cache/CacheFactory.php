@@ -19,6 +19,17 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
  */
 class CacheFactory
 {
+    private static $keyEncodedChars = [
+        '{' => '%7B',
+        '}' => '%7D',
+        '(' => '%28',
+        ')' => '%29',
+        '/' => '%2F',
+        '\\' => '%5C',
+        '@' => '%40',
+        ':' => '%3A',
+    ];
+
     /**
      * @param string $directory
      * @param string $namespace
@@ -32,5 +43,17 @@ class CacheFactory
         }
 
         return new FilesystemAdapter($namespace, 0, $directory);
+    }
+
+    /**
+     * @see \Symfony\Component\Cache\CacheItem::validateKey
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    public static function getValidCacheKey($key)
+    {
+        return strtr($key, static::$keyEncodedChars);
     }
 }

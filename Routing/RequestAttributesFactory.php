@@ -14,7 +14,7 @@ use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\Routing\RequestContext;
-use Yarhon\RouteGuardBundle\Cache\CacheKeyTrait;
+use Yarhon\RouteGuardBundle\Cache\CacheFactory;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
@@ -22,8 +22,6 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
  */
 class RequestAttributesFactory implements RequestAttributesFactoryInterface
 {
-    use CacheKeyTrait;
-
     /**
      * @var CacheItemPoolInterface
      */
@@ -119,7 +117,7 @@ class RequestAttributesFactory implements RequestAttributesFactoryInterface
      */
     private function getRouteMetadata($routeName)
     {
-        $cacheKey = $this->getValidCacheKey($routeName);
+        $cacheKey = CacheFactory::getValidCacheKey($routeName);
         $cacheItem = $this->routeMetadataCache->getItem($cacheKey);
 
         if (!$cacheItem->isHit()) {

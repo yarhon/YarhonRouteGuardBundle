@@ -12,7 +12,7 @@ namespace Yarhon\RouteGuardBundle\Controller;
 
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Yarhon\RouteGuardBundle\Cache\CacheKeyTrait;
+use Yarhon\RouteGuardBundle\Cache\CacheFactory;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContext;
@@ -26,8 +26,6 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
  */
 class ControllerArgumentResolver implements ControllerArgumentResolverInterface
 {
-    use CacheKeyTrait;
-
     /**
      * @var CacheItemPoolInterface
      */
@@ -119,7 +117,7 @@ class ControllerArgumentResolver implements ControllerArgumentResolverInterface
      */
     protected function getControllerMetadata($routeName)
     {
-        $cacheKey = $this->getValidCacheKey($routeName);
+        $cacheKey = CacheFactory::getValidCacheKey($routeName);
         $cacheItem = $this->controllerMetadataCache->getItem($cacheKey);
 
         if (!$cacheItem->isHit()) {
