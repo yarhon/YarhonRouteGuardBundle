@@ -79,10 +79,14 @@ class SensioSecurityProvider implements TestProviderInterface
             return null;
         }
 
-        list($class, $method) = explode('::', $controllerName);
-        $annotations = $this->annotationReader->read($class, $method, [SecurityAnnotation::class, IsGrantedAnnotation::class, ParamConverterAnnotation::class]);
+        list($class, $method) = explode('::', $controllerMetadata->getName());
+        $annotations = $this->annotationReader->read($class, $method, [SecurityAnnotation::class, IsGrantedAnnotation::class]);
 
-        $variableNames = $this->controllerArgumentResolver->getArgumentNames($routeName);
+        if (!count($annotations)) {
+            return null;
+        }
+
+        // $variableNames = $this->getVariableNames($controllerMetadata);
 
         $tests = [];
 
@@ -114,8 +118,6 @@ class SensioSecurityProvider implements TestProviderInterface
                 if ($subjectName && !in_array($subjectName, $variableNames, true)) {
                     throw new InvalidArgumentException(sprintf('Unknown subject variable "%s". Known variables: "%s".', $subjectName, implode('", "', $variableNames)));
                 }
-            } elseif ($annotation instanceof ParamConverterAnnotation) {
-                $variableName = $annotation->getName();
             }
 
             $arguments = $this->createTestArguments($attributes, $subjectName);
@@ -123,11 +125,18 @@ class SensioSecurityProvider implements TestProviderInterface
             $tests[] = $arguments;
         }
 
-        if (!count($tests)) {
-            return null;
+        return new TestBag($tests);
+    }
+
+    private function getVariableNames(ControllerMetadata $controllerMetadata = null)
+    {
+        $names = [];
+
+        if (null !== $controllerMetadata) {
+            $names = array_merge($names, $controllerMetadata->keys());
         }
 
-        return new TestBag($tests);
+        return $names;
     }
 
     /**
