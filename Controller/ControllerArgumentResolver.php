@@ -12,6 +12,7 @@ namespace Yarhon\RouteGuardBundle\Controller;
 
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Yarhon\RouteGuardBundle\Cache\CacheKeyTrait;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContext;
@@ -25,15 +26,17 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
  */
 class ControllerArgumentResolver implements ControllerArgumentResolverInterface
 {
-    /**
-     * @var RequestAttributesFactoryInterface
-     */
-    protected $requestAttributesFactory;
+    use CacheKeyTrait;
 
     /**
      * @var CacheItemPoolInterface
      */
     private $controllerMetadataCache;
+
+    /**
+     * @var RequestAttributesFactoryInterface
+     */
+    protected $requestAttributesFactory;
 
     /**
      * @var RequestStack
@@ -48,7 +51,7 @@ class ControllerArgumentResolver implements ControllerArgumentResolverInterface
     /**
      * @var array
      */
-    private $cache = [];
+    private $internalCache = [];
 
     /**
      * ControllerArgumentResolver constructor.
@@ -73,8 +76,8 @@ class ControllerArgumentResolver implements ControllerArgumentResolverInterface
     {
         $cacheKey = spl_object_hash($routeContext).'#'.$name;
 
-        if (array_key_exists($cacheKey, $this->cache)) {
-            return $this->cache[$cacheKey];
+        if (array_key_exists($cacheKey, $this->internalCache)) {
+            return $this->internalCache[$cacheKey];
         }
 
         $controllerMetadata = $this->getControllerMetadata($routeContext->getName());
@@ -100,7 +103,7 @@ class ControllerArgumentResolver implements ControllerArgumentResolverInterface
                 continue;
             }
 
-            return $this->cache[$cacheKey] = $resolver->resolve($resolverContext, $argumentMetadata);
+            return $this->internalCache[$cacheKey] = $resolver->resolve($resolverContext, $argumentMetadata);
         }
 
         $message = 'Route "%s" controller "%s" requires that you provide a value for the "$%s" argument.';
@@ -116,7 +119,8 @@ class ControllerArgumentResolver implements ControllerArgumentResolverInterface
      */
     protected function getControllerMetadata($routeName)
     {
-        $cacheItem = $this->controllerMetadataCache->getItem($routeName);
+        $cacheKey = $this->getValidCacheKey($routeName);
+        $cacheItem = $this->controllerMetadataCache->getItem($cacheKey);
 
         if (!$cacheItem->isHit()) {
             throw new RuntimeException(sprintf('Cannot get ControllerMetadata for route "%s".', $routeName));

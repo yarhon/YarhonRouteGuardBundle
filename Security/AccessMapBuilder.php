@@ -78,20 +78,19 @@ class AccessMapBuilder implements LoggerAwareInterface
         $ignoredRoutes = [];
 
         foreach ($routeCollection as $routeName => $route) {
+            $routeInfo = null;
+
             try {
                 $controllerMetadata = $this->controllerMetadataFactory->createMetadata($route);
                 $routeMetadata = $this->routeMetadataFactory->createMetadata($route);
 
                 if (null !== $controllerMetadata && $this->isControllerIgnored($controllerMetadata->getName())) {
                     $ignoredRoutes[] = $routeName;
-                    yield $routeName => null;
+                } else {
+                    // Note: empty arrays are also added to authorization cache
+                    $tests = $this->routeTestCollector->getTests($routeName, $route, $controllerMetadata);
+                    $routeInfo = [$tests, $routeMetadata, $controllerMetadata];
                 }
-
-                // Note: empty arrays are also added to authorization cache
-                $tests = $this->routeTestCollector->getTests($routeName, $route, $controllerMetadata);
-
-                yield $routeName => [$tests, $routeMetadata, $controllerMetadata];
-
             } catch (CatchableExceptionInterface $e) {
                 if (!$this->options['catch_exceptions']) {
                     throw $e;
@@ -100,9 +99,9 @@ class AccessMapBuilder implements LoggerAwareInterface
                 if ($this->logger) {
                     $this->logger->error(sprintf('Exception caught while processing route "%s": %s', $routeName, $e->getMessage()), ['exception' => $e]);
                 }
-
-                yield $routeName => null;
             }
+
+            yield $routeName => $routeInfo;
         }
 
         if ($this->logger && count($ignoredRoutes)) {

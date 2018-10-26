@@ -14,6 +14,7 @@ use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\Routing\RequestContext;
+use Yarhon\RouteGuardBundle\Cache\CacheKeyTrait;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
@@ -21,6 +22,8 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
  */
 class RequestAttributesFactory implements RequestAttributesFactoryInterface
 {
+    use CacheKeyTrait;
+
     /**
      * @var CacheItemPoolInterface
      */
@@ -34,7 +37,7 @@ class RequestAttributesFactory implements RequestAttributesFactoryInterface
     /**
      * @var array
      */
-    private $cache = [];
+    private $internalCache = [];
 
     /**
      * RequestAttributesFactory constructor.
@@ -58,8 +61,8 @@ class RequestAttributesFactory implements RequestAttributesFactoryInterface
     {
         $cacheKey = spl_object_hash($routeContext);
 
-        if (isset($this->cache[$cacheKey])) {
-            return $this->cache[$cacheKey];
+        if (isset($this->internalCache[$cacheKey])) {
+            return $this->internalCache[$cacheKey];
         }
 
         $routeMetadata = $this->getRouteMetadata($routeContext->getName());
@@ -93,7 +96,7 @@ class RequestAttributesFactory implements RequestAttributesFactoryInterface
             throw new RuntimeException(sprintf('Some mandatory parameters are missing ("%s") to get attributes for route.', $missing));
         }
 
-        return $this->cache[$cacheKey] = new ParameterBag($attributes);
+        return $this->internalCache[$cacheKey] = new ParameterBag($attributes);
     }
 
     /**
@@ -116,7 +119,8 @@ class RequestAttributesFactory implements RequestAttributesFactoryInterface
      */
     private function getRouteMetadata($routeName)
     {
-        $cacheItem = $this->routeMetadataCache->getItem($routeName);
+        $cacheKey = $this->getValidCacheKey($routeName);
+        $cacheItem = $this->routeMetadataCache->getItem($cacheKey);
 
         if (!$cacheItem->isHit()) {
             throw new RuntimeException(sprintf('Cannot get RouteMetadata for route "%s".', $routeName));

@@ -21,6 +21,8 @@ use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
  */
 class AccessMapCacheWarmer implements CacheWarmerInterface
 {
+    use CacheKeyTrait;
+
     /**
      * @var AccessMapBuilder
      */
@@ -78,18 +80,51 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
      */
     public function warmUp($cacheDir)
     {
-        $accessMap = $this->accessMapBuilder->build($this->routeCollection);
+        $this->clear();
 
-        foreach ($accessMap as $routeName => $accessInfo) {
+        $accessInfoGenerator = $this->accessMapBuilder->build($this->routeCollection);
+        $accessMap = [];
 
+        foreach ($accessInfoGenerator as $routeName => $accessInfo) {
             if (null === $accessInfo) {
-                var_dump($routeName.' $accessInfo is null');
                 continue;
             }
 
-            list($tests, $routeMetadata, $controllerMetadata) = $accessInfo;
-
-            var_dump($routeName, $routeMetadata, $controllerMetadata);
+            $accessMap[$routeName] = $accessInfo;
         }
+
+        foreach ($accessMap as $routeName => $accessInfo) {
+            $this->save($routeName, $accessInfo);
+        }
+    }
+
+    private function clear()
+    {
+        $this->authorizationCache->clear();
+        $this->routeMetadataCache->clear();
+        $this->controllerMetadataCache->clear();
+    }
+
+    /**
+     * @param string $routeName
+     * @param array  $accessInfo
+     */
+    private function save($routeName, $accessInfo)
+    {
+        $cacheKey = $this->getValidCacheKey($routeName);
+
+        list($tests, $routeMetadata, $controllerMetadata) = $accessInfo;
+
+        $cacheItem = $this->authorizationCache->getItem($cacheKey);
+        $cacheItem->set($tests);
+        $this->authorizationCache->save($cacheItem);
+
+        $cacheItem = $this->routeMetadataCache->getItem($cacheKey);
+        $cacheItem->set($routeMetadata);
+        $this->routeMetadataCache->save($cacheItem);
+
+        $cacheItem = $this->controllerMetadataCache->getItem($cacheKey);
+        $cacheItem->set($controllerMetadata);
+        $this->controllerMetadataCache->save($cacheItem);
     }
 }

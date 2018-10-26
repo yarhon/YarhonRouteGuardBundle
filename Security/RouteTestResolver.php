@@ -13,6 +13,7 @@ namespace Yarhon\RouteGuardBundle\Security;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Cache\CacheItemPoolInterface;
+use Yarhon\RouteGuardBundle\Cache\CacheKeyTrait;
 use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
@@ -23,6 +24,7 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 class RouteTestResolver implements RouteTestResolverInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use CacheKeyTrait;
 
     /**
      * @var CacheItemPoolInterface
@@ -49,7 +51,8 @@ class RouteTestResolver implements RouteTestResolverInterface, LoggerAwareInterf
 
         //var_dump($this->accessMap->has('blog1'), $this->accessMap->get('blog1'));
 
-        $cacheItem = $this->authorizationCache->getItem($routeContext->getName());
+        $cacheKey = $this->getValidCacheKey($routeContext->getName());
+        $cacheItem = $this->authorizationCache->getItem($cacheKey);
 
         if (!$cacheItem->isHit()) {
             return [];
