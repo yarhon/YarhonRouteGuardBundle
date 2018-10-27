@@ -46,6 +46,8 @@
 
         <service id="Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider">
             <argument type="service" id="Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReader" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory" />
             <call method="setExpressionLanguage">
                 <argument type="service" id="sensio_framework_extra.security.expression_language.default" on-invalid="ignore"/>
             </call>
@@ -95,17 +97,9 @@
             <argument type="collection" /> <!-- argument value resolvers -->
         </service>
 
-        <!-- !!!!!!!!! replace arguments by parent, argument value resolvers needs to be additionally set in compiler pass -->
-        <!--- move this functionality to SensioSecurityResolver -->
-        <service id="Yarhon\RouteGuardBundle\Security\Sensio\ControllerArgumentResolver">
-            <argument type="service" id="yarhon_route_guard.cache.controller_metadata" />
-            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
-            <argument type="service" id="request_stack" />
-            <argument type="collection" /> <!-- argument value resolvers -->
-        </service>
-
         <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\Sensio\ControllerArgumentResolver" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
             <tag name="yarhon_route_guard.test_resolver" />
         </service>
 

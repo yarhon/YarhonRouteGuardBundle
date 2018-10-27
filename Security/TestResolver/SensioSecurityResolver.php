@@ -13,6 +13,7 @@ namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
+use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
@@ -29,13 +30,20 @@ class SensioSecurityResolver implements TestResolverInterface
     private $controllerArgumentResolver;
 
     /**
+     * @var RequestAttributesFactoryInterface
+     */
+    private $requestAttributesFactory;
+
+    /**
      * SensioSecurityResolver constructor.
      *
      * @param ControllerArgumentResolverInterface $controllerArgumentResolver
+     * @param RequestAttributesFactoryInterface   $requestAttributesFactory
      */
-    public function __construct(ControllerArgumentResolverInterface $controllerArgumentResolver)
+    public function __construct(ControllerArgumentResolverInterface $controllerArgumentResolver, RequestAttributesFactoryInterface $requestAttributesFactory)
     {
         $this->controllerArgumentResolver = $controllerArgumentResolver;
+        $this->requestAttributesFactory = $requestAttributesFactory;
     }
 
     /**
@@ -67,13 +75,9 @@ class SensioSecurityResolver implements TestResolverInterface
      */
     private function resolveVariables(TestArguments $testArguments, RouteContextInterface $routeContext)
     {
-        if ($subjectName = $testArguments->getMetadata()) {
-            try {
-                $value = $this->controllerArgumentResolver->getArgument($routeContext, $subjectName);
-            } catch (RuntimeException $e) {
-                $message = sprintf('Cannot resolve subject variable "%s". %s', $subjectName, $e->getMessage());
-                throw new RuntimeException($message, 0, $e);
-            }
+        if ($subjectName = $testArguments->getMetadata('subject_name')) {
+            $exceptionMessage = sprintf('subject variable "%s"', $subjectName);
+            $value = $this->resolveVariable($routeContext, $subjectName, $exceptionMessage);
             $testArguments->setSubject($value);
         }
 
@@ -81,15 +85,25 @@ class SensioSecurityResolver implements TestResolverInterface
             if ($attribute instanceof ExpressionDecorator) {
                 $values = [];
                 foreach ($attribute->getNames() as $name) {
-                    try {
-                        $values[$name] = $this->controllerArgumentResolver->getArgument($routeContext, $name);
-                    } catch (RuntimeException $e) {
-                        $message = sprintf('Cannot resolve expression variable "%s" of expression "%s". %s', $name, (string) $attribute->getExpression(), $e->getMessage());
-                        throw new RuntimeException($message, 0, $e);
-                    }
+                    $exceptionMessage = sprintf('expression variable "%s" of expression "%s"', $name, (string) $attribute->getExpression());
+                    $value = $this->resolveVariable($routeContext, $name, $exceptionMessage);
+                    $values[$name] = $value;
+
                 }
                 $attribute->setVariables($values);
             }
         }
+    }
+
+    private function resolveVariable(RouteContextInterface $routeContext, $name, $exceptionMessage)
+    {
+        try {
+            $value = $this->controllerArgumentResolver->getArgument($routeContext, $name);
+        } catch (RuntimeException $e) {
+            $message = sprintf('Cannot resolve %s. %s', $exceptionMessage, $e->getMessage());
+            throw new RuntimeException($message, 0, $e);
+        }
+
+        return $value;
     }
 }

@@ -16,9 +16,10 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter as ParamConverterAnnotation;
 use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReaderInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
+use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
+use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
 use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
@@ -48,6 +49,16 @@ class SensioSecurityProvider implements TestProviderInterface
     private $expressionLanguage;
 
     /**
+     * @var RequestAttributesFactory
+     */
+    private $requestAttributesFactory;
+
+    /**
+     * @var RouteMetadataFactory
+     */
+    private $routeMetadataFactory;
+
+    /**
      * @var array
      */
     private $testArguments = [];
@@ -56,10 +67,14 @@ class SensioSecurityProvider implements TestProviderInterface
      * SensioSecurityProvider constructor.
      *
      * @param ClassMethodAnnotationReaderInterface $annotationReader
+     * @param RequestAttributesFactory             $requestAttributesFactory
+     * @param RouteMetadataFactory                 $routeMetadataFactory
      */
-    public function __construct(ClassMethodAnnotationReaderInterface $annotationReader)
+    public function __construct(ClassMethodAnnotationReaderInterface $annotationReader, RequestAttributesFactory $requestAttributesFactory, RouteMetadataFactory $routeMetadataFactory)
     {
         $this->annotationReader = $annotationReader;
+        $this->requestAttributesFactory = $requestAttributesFactory;
+        $this->routeMetadataFactory = $routeMetadataFactory;
     }
 
     /**
@@ -86,41 +101,47 @@ class SensioSecurityProvider implements TestProviderInterface
             return null;
         }
 
-        // $variableNames = $this->getVariableNames($controllerMetadata);
+        $controllerArguments = $controllerMetadata->keys();
+        $requestAttributes = $this->getRequestAttributeNames($route);
+        $requestAttributes = array_diff($requestAttributes, $controllerArguments);
+        $allowedVariables = array_merge($controllerArguments, $requestAttributes);
 
         $tests = [];
 
         foreach ($annotations as $annotation) {
-            $attributes = [];
             $subjectName = null;
 
             if ($annotation instanceof SecurityAnnotation) {
-                if (!$this->expressionLanguage) {
-                    throw new LogicException('Cannot create expression because ExpressionLanguage is not provided.');
-                }
-
-                $expression = $annotation->getExpression();
-
-                try {
-                    // At first try to create expression without any variable names to save time during expression resolving
-                    $expression = $this->createExpression($expression);
-                } catch (InvalidArgumentException $e) {
-                    $expression = $this->createExpression($expression, $variableNames);
-                }
-
-                $attributes[] = $expression;
+                $expression = $this->processSecurityAnnotation($annotation, $allowedVariables);
+                $attributes = [$expression];
+                $usedVariables = $expression->getNames();
             } elseif ($annotation instanceof IsGrantedAnnotation) {
-                // Despite of the name, $annotation->getAttributes() is a string (annotation value)
-                $attributes[] = $annotation->getAttributes();
-
-                $subjectName = $annotation->getSubject() ?: null;
-
-                if ($subjectName && !in_array($subjectName, $variableNames, true)) {
-                    throw new InvalidArgumentException(sprintf('Unknown subject variable "%s". Known variables: "%s".', $subjectName, implode('", "', $variableNames)));
-                }
+                list ($role, $subjectName) = $this->processIsGrantedAnnotation($annotation, $allowedVariables);
+                $attributes = [$role];
+                $usedVariables = $subjectName ? [$subjectName] : [];
             }
 
-            $arguments = $this->createTestArguments($attributes, $subjectName);
+            if (count($usedVariables)) {
+                $arguments = new TestArguments($attributes);
+
+                if ($subjectName) {
+                    $arguments->setMetadata('subject_name', $subjectName);
+                }
+
+                $usedRequestAttributes = array_intersect($usedVariables, $requestAttributes);
+
+                if (count($usedRequestAttributes)) {
+                    $arguments->setMetadata('request_attributes', $usedRequestAttributes);
+                }
+            } else {
+                $uniqueKey = $this->getTestAttributesUniqueKey($attributes);
+
+                if (!isset($this->testArguments[$uniqueKey])) {
+                    $this->testArguments[$uniqueKey] = new TestArguments($attributes);
+                }
+
+                $arguments = $this->testArguments[$uniqueKey];
+            }
 
             $tests[] = $arguments;
         }
@@ -128,15 +149,60 @@ class SensioSecurityProvider implements TestProviderInterface
         return new TestBag($tests);
     }
 
-    private function getVariableNames(ControllerMetadata $controllerMetadata = null)
+    /**
+     * @param SecurityAnnotation $annotation
+     * @param array              $allowedVariables
+     *
+     * @return ExpressionDecorator
+     */
+    private function processSecurityAnnotation(SecurityAnnotation $annotation, array $allowedVariables)
     {
-        $names = [];
-
-        if (null !== $controllerMetadata) {
-            $names = array_merge($names, $controllerMetadata->keys());
+        if (!$this->expressionLanguage) {
+            throw new LogicException('Cannot create expression because ExpressionLanguage is not provided.');
         }
 
-        return $names;
+        $expression = $annotation->getExpression();
+
+        try {
+            // At first try to create expression without any variable names to save time during expression resolving
+            $expression = $this->createExpression($expression);
+        } catch (InvalidArgumentException $e) {
+            $expression = $this->createExpression($expression, $allowedVariables);
+        }
+
+        return $expression;
+    }
+
+    /**
+     * @param IsGrantedAnnotation $annotation
+     * @param array               $allowedVariables
+     *
+     * @return array
+     */
+    private function processIsGrantedAnnotation(IsGrantedAnnotation $annotation, array $allowedVariables)
+    {
+        // Despite of the name, $annotation->getAttributes() is a string (annotation value)
+        $role = $annotation->getAttributes();
+
+        $subjectName = $annotation->getSubject() ?: null;
+
+        if (null !== $subjectName && !in_array($subjectName, $allowedVariables, true)) {
+            throw new InvalidArgumentException(sprintf('Unknown subject variable "%s". Allowed variables: "%s".', $subjectName, implode('", "', $allowedVariables)));
+        }
+
+        return [$role, $subjectName];
+    }
+
+    /**
+     * @param Route $route
+     *
+     * @return string[]
+     */
+    private function getRequestAttributeNames(Route $route)
+    {
+        $routeMetadata = $this->routeMetadataFactory->createMetadata($route);
+
+        return $this->requestAttributesFactory->getAttributeNames($routeMetadata);
     }
 
     /**
@@ -160,32 +226,16 @@ class SensioSecurityProvider implements TestProviderInterface
             throw new InvalidArgumentException(sprintf('Cannot parse expression "%s" with following variables: "%s".', $expression, implode('", "', $namesToParse)), 0, $e);
         }
 
-        $expression = new ExpressionDecorator($parsed, $variableNames);
-
-        return $expression;
+        return new ExpressionDecorator($parsed, $variableNames);
     }
 
     /**
-     * @param array       $attributes
-     * @param string|null $subjectName
+     * @param array $attributes
      *
-     * @return TestArguments
+     * @return string
      */
-    private function createTestArguments(array $attributes, $subjectName)
+    private function getTestAttributesUniqueKey(array $attributes)
     {
-        $expressionsWithContext = array_filter($attributes, function ($attribute) {
-            return $attribute instanceof ExpressionDecorator && 0 !== count($attribute->getNames());
-        });
-
-        if (null !== $subjectName || count($expressionsWithContext)) {
-            $testArguments = new TestArguments($attributes);
-            if (null !== $subjectName) {
-                $testArguments->setMetadata($subjectName);
-            }
-
-            return $testArguments;
-        }
-
         $roles = $attributes;
 
         $expressions = array_filter($attributes, function ($attribute) {
@@ -201,12 +251,6 @@ class SensioSecurityProvider implements TestProviderInterface
         $roles = array_unique($roles);
         sort($roles);
 
-        $uniqueKey = implode('#', array_merge($roles, $expressions));
-
-        if (!isset($this->testArguments[$uniqueKey])) {
-            $this->testArguments[$uniqueKey] = new TestArguments($attributes);
-        }
-
-        return $this->testArguments[$uniqueKey];
+        return implode('#', array_merge($roles, $expressions));
     }
 }

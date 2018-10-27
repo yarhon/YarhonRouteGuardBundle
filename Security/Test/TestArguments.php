@@ -30,9 +30,9 @@ class TestArguments
     private $subject;
 
     /**
-     * @var mixed
+     * @var array
      */
-    private $metadata;
+    private $metadata = [];
 
     /**
      * @param mixed[] $attributes
@@ -67,18 +67,21 @@ class TestArguments
     }
 
     /**
-     * @param mixed $metadata
+     * @param string $name
+     * @param mixed  $value
      */
-    public function setMetadata($metadata)
+    public function setMetadata($name, $value)
     {
-        $this->metadata = $metadata;
+        $this->metadata[$name] = $value;
     }
 
     /**
+     * @param string $name
+     *
      * @return mixed
      */
-    public function getMetadata()
+    public function getMetadata($name)
     {
-        return $this->metadata;
+        return isset($this->metadata[$name]) ? $this->metadata[$name] : null;
     }
 }

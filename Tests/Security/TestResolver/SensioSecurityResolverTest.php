@@ -15,6 +15,7 @@ use Symfony\Component\ExpressionLanguage\Expression;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
+use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
 use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
@@ -28,13 +29,17 @@ class SensioSecurityResolverTest extends TestCase
 {
     private $controllerArgumentResolver;
 
+    private $requestAttributesFactory;
+
     private $resolver;
 
     public function setUp()
     {
         $this->controllerArgumentResolver = $this->createMock(ControllerArgumentResolverInterface::class);
 
-        $this->resolver = new SensioSecurityResolver($this->controllerArgumentResolver);
+        $this->requestAttributesFactory = $this->createMock(RequestAttributesFactoryInterface::class);
+
+        $this->resolver = new SensioSecurityResolver($this->controllerArgumentResolver, $this->requestAttributesFactory);
     }
 
     public function testGetProviderClass()
@@ -61,7 +66,7 @@ class SensioSecurityResolverTest extends TestCase
     public function testResolveSubjectVariable()
     {
         $testArguments = new TestArguments([]);
-        $testArguments->setMetadata('foo');
+        $testArguments->setMetadata('subject_name', 'foo');
 
         $testBag = $this->createTestBag([$testArguments]);
 
@@ -81,7 +86,7 @@ class SensioSecurityResolverTest extends TestCase
     public function testResolveSubjectVariableException()
     {
         $testArguments = new TestArguments([]);
-        $testArguments->setMetadata('foo');
+        $testArguments->setMetadata('subject_name', 'foo');
 
         $testBag = $this->createTestBag([$testArguments]);
 

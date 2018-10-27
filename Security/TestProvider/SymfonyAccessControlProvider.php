@@ -113,7 +113,13 @@ class SymfonyAccessControlProvider implements TestProviderInterface
             $attributes[] = $expression;
         }
 
-        $arguments = $this->createTestArguments($attributes);
+        $uniqueKey = $this->getTestAttributesUniqueKey($attributes);
+
+        if (!isset($this->testArguments[$uniqueKey])) {
+            $this->testArguments[$uniqueKey] = new TestArguments($attributes);
+        }
+
+        $arguments = $this->testArguments[$uniqueKey];
 
         return [$constraint, $arguments];
     }
@@ -200,9 +206,9 @@ class SymfonyAccessControlProvider implements TestProviderInterface
     /**
      * @param array $attributes
      *
-     * @return TestArguments
+     * @return string
      */
-    private function createTestArguments(array $attributes)
+    private function getTestAttributesUniqueKey(array $attributes)
     {
         $roles = $attributes;
 
@@ -219,12 +225,6 @@ class SymfonyAccessControlProvider implements TestProviderInterface
         $roles = array_unique($roles);
         sort($roles);
 
-        $uniqueKey = implode('#', array_merge($roles, $expressions));
-
-        if (!isset($this->testArguments[$uniqueKey])) {
-            $this->testArguments[$uniqueKey] = new TestArguments($attributes);
-        }
-
-        return $this->testArguments[$uniqueKey];
+        return implode('#', array_merge($roles, $expressions));
     }
 }
