@@ -94,7 +94,6 @@ class SensioSecurityResolver implements TestResolverInterface
                     $exceptionMessage = sprintf('expression variable "%s" of expression "%s"', $name, (string) $attribute->getExpression());
                     $value = $this->resolveVariable($routeContext, $name, $exceptionMessage);
                     $values[$name] = $value;
-
                 }
                 $attribute->setVariables($values);
             }

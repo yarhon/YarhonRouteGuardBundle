@@ -39,7 +39,7 @@ class ControllerMetadata
         $this->name = $name;
 
         foreach ($arguments as $argument) {
-            $this->addArgument($argument);
+            $this->arguments[$argument->getName()] = $argument;
         }
     }
 
@@ -54,17 +54,9 @@ class ControllerMetadata
     /**
      * @return ArgumentMetadata[]
      */
-    public function all()
+    public function getArguments()
     {
-        return array_values($this->arguments);
-    }
-
-    /**
-     * @return string[]
-     */
-    public function keys()
-    {
-        return array_keys($this->arguments);
+        return $this->arguments;
     }
 
     /**
@@ -72,7 +64,7 @@ class ControllerMetadata
      *
      * @return bool
      */
-    public function has($name)
+    public function hasArgument($name)
     {
         return isset($this->arguments[$name]);
     }
@@ -84,20 +76,12 @@ class ControllerMetadata
      *
      * @throws InvalidArgumentException
      */
-    public function get($name)
+    public function getArgument($name)
     {
         if (!isset($this->arguments[$name])) {
             throw new InvalidArgumentException(sprintf('Invalid argument name: "%s"', $name));
         }
 
         return $this->arguments[$name];
-    }
-
-    /**
-     * @param ArgumentMetadata $argument
-     */
-    private function addArgument(ArgumentMetadata $argument)
-    {
-        $this->arguments[$argument->getName()] = $argument;
     }
 }

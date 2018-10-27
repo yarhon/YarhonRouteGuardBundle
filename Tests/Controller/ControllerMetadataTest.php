@@ -39,32 +39,28 @@ class ControllerMetadataTest extends TestCase
         $this->assertSame('class::method', $this->controllerMetadata->getName());
     }
 
-    public function testAll()
+    public function testGetArguments()
     {
-        $this->assertSame($this->arguments, $this->controllerMetadata->all());
+        $expected = array_combine(['arg1', 'arg2'], $this->arguments);
+        $this->assertSame($expected, $this->controllerMetadata->getArguments());
     }
 
-    public function testKeys()
+    public function testHasArgument()
     {
-        $this->assertSame(['arg1', 'arg2'], $this->controllerMetadata->keys());
+        $this->assertTrue($this->controllerMetadata->hasArgument('arg1'));
+        $this->assertFalse($this->controllerMetadata->hasArgument('arg3'));
     }
 
-    public function testHas()
+    public function testGetArgument()
     {
-        $this->assertTrue($this->controllerMetadata->has('arg1'));
-        $this->assertFalse($this->controllerMetadata->has('arg3'));
+        $this->assertSame($this->arguments[0], $this->controllerMetadata->getArgument('arg1'));
     }
 
-    public function testGet()
-    {
-        $this->assertSame($this->arguments[0], $this->controllerMetadata->get('arg1'));
-    }
-
-    public function testGetException()
+    public function testGetArgumentException()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid argument name: "arg3"');
 
-        $this->controllerMetadata->get('arg3');
+        $this->controllerMetadata->getArgument('arg3');
     }
 }

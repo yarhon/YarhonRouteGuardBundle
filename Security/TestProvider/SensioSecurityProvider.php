@@ -101,7 +101,7 @@ class SensioSecurityProvider implements TestProviderInterface
             return null;
         }
 
-        $controllerArguments = $controllerMetadata->keys();
+        $controllerArguments = array_keys($controllerMetadata->getArguments());
         $requestAttributes = $this->getRequestAttributeNames($route);
         $requestAttributes = array_diff($requestAttributes, $controllerArguments);
         $allowedVariables = array_merge($controllerArguments, $requestAttributes);

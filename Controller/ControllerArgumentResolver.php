@@ -85,7 +85,7 @@ class ControllerArgumentResolver implements ControllerArgumentResolverInterface
             throw new RuntimeException(sprintf($message, $routeContext->getName()));
         }
 
-        if (!$controllerMetadata->has($name)) {
+        if (!$controllerMetadata->hasArgument($name)) {
             $message = 'Route "%s" controller "%s" does not have argument "$%s".';
             throw new RuntimeException(sprintf($message, $routeContext->getName(), $controllerMetadata->getName(), $name));
         }
@@ -94,7 +94,7 @@ class ControllerArgumentResolver implements ControllerArgumentResolverInterface
 
         $resolverContext = new ArgumentResolverContext($requestAttributes, $controllerMetadata->getName(), $this->requestStack->getCurrentRequest());
 
-        $argumentMetadata = $controllerMetadata->get($name);
+        $argumentMetadata = $controllerMetadata->getArgument($name);
 
         foreach ($this->argumentValueResolvers as $resolver) {
             if (!$resolver->supports($resolverContext, $argumentMetadata)) {

@@ -59,7 +59,7 @@ class ControllerMetadataFactoryTest extends TestCase
 
         $this->assertInstanceOf(ControllerMetadata::class, $metadata);
         $this->assertEquals('class::method', $metadata->getName());
-        $this->assertEquals($argumentMetadatas, $metadata->all());
+        $this->assertEquals(array_combine(['arg1', 'arg2'], $argumentMetadatas), $metadata->getArguments());
     }
 
     public function testCreateMetadataNoControllerName()
