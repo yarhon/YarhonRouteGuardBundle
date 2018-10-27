@@ -16,11 +16,6 @@ namespace Yarhon\RouteGuardBundle\Routing;
 class RouteMetadata
 {
     /**
-     * @var string
-     */
-    private $controllerName;
-
-    /**
      * @var array
      */
     private $defaults;
@@ -35,21 +30,11 @@ class RouteMetadata
      *
      * @param array  $defaults
      * @param array  $variables
-     * @param string $controllerName
      */
-    public function __construct(array $defaults, array $variables, $controllerName = null)
+    public function __construct(array $defaults, array $variables)
     {
         $this->defaults = $defaults;
         $this->variables = $variables;
-        $this->controllerName = $controllerName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getControllerName()
-    {
-        return $this->controllerName;
     }
 
     /**

@@ -30,6 +30,6 @@ class RouteMetadataFactory
         $compiledRoute = $route->compile();
         $variables = $compiledRoute->getVariables();
 
-        return new RouteMetadata($defaults, $variables, null);
+        return new RouteMetadata($defaults, $variables);
     }
 }
