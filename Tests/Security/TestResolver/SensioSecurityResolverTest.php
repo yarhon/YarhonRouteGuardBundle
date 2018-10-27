@@ -17,7 +17,7 @@ use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
-use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
+use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
 use Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;

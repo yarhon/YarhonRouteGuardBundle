@@ -19,7 +19,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotat
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter as ParamConverterAnnotation;
 use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReaderInterface;
-use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
+use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;

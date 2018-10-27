@@ -20,7 +20,7 @@ use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReaderInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
-use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
+use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter;
@@ -114,7 +114,7 @@ class SensioSecurityProvider implements TestProviderInterface
             if ($annotation instanceof SecurityAnnotation) {
                 $expression = $this->processSecurityAnnotation($annotation, $allowedVariables);
                 $attributes = [$expression];
-                $usedVariables = $expression->getNames();
+                $usedVariables = $expression->getVariableNames();
             } elseif ($annotation instanceof IsGrantedAnnotation) {
                 list ($role, $subjectName) = $this->processIsGrantedAnnotation($annotation, $allowedVariables);
                 $attributes = [$role];

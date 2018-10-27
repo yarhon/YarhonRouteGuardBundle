@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Security\Sensio;
+namespace Yarhon\RouteGuardBundle\ExpressionLanguage;
 
 use Symfony\Component\ExpressionLanguage\Expression;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
@@ -26,7 +26,7 @@ class ExpressionDecorator
     /**
      * @var array
      */
-    private $names;
+    private $variableNames;
 
     /**
      * @var array
@@ -37,12 +37,12 @@ class ExpressionDecorator
      * ExpressionDecorator constructor.
      *
      * @param Expression $expression
-     * @param array      $names
+     * @param array      $variableNames
      */
-    public function __construct(Expression $expression, array $names = [])
+    public function __construct(Expression $expression, array $variableNames = [])
     {
         $this->expression = $expression;
-        $this->names = $names;
+        $this->variableNames = $variableNames;
     }
 
     /**
@@ -56,9 +56,9 @@ class ExpressionDecorator
     /**
      * @return array
      */
-    public function getNames()
+    public function getVariableNames()
     {
-        return $this->names;
+        return $this->variableNames;
     }
 
     /**
@@ -74,13 +74,13 @@ class ExpressionDecorator
      */
     public function setVariables(array $variables)
     {
-        $missed = array_diff($this->names, array_keys($variables));
+        $missed = array_diff($this->variableNames, array_keys($variables));
 
         if (count($missed)) {
             throw new InvalidArgumentException(sprintf('Missed variables: "%s".', implode('", "', $missed)));
         }
 
-        $unknown = array_diff(array_keys($variables), $this->names);
+        $unknown = array_diff(array_keys($variables), $this->variableNames);
 
         if (count($unknown)) {
             throw new InvalidArgumentException(sprintf('Unknown variables: "%s".', implode('", "', $unknown)));

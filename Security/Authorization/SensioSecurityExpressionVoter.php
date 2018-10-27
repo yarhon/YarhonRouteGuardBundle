@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\ExpressionLanguage;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
+use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator;
 
 /**
  * Sensio FrameworkExtraBundle executes security expressions in place, bypassing the traditional flow to

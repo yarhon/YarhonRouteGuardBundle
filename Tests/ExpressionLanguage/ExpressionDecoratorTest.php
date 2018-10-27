@@ -8,11 +8,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Tests\Security\Sensio;
+namespace Yarhon\RouteGuardBundle\Tests\ExpressionLanguage;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\ExpressionLanguage\Expression;
-use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
+use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
@@ -34,7 +34,7 @@ class ExpressionDecoratorTest extends TestCase
         $expressionDecorator = new ExpressionDecorator($this->expression, ['foo']);
 
         $this->assertSame($this->expression, $expressionDecorator->getExpression());
-        $this->assertSame(['foo'], $expressionDecorator->getNames());
+        $this->assertSame(['foo'], $expressionDecorator->getVariableNames());
     }
 
     public function testVariables()

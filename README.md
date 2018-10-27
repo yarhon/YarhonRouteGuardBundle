@@ -419,7 +419,7 @@ Sensio FrameworkExtraBundle executes expressions from `@Security` annotation in-
 (passing authorization test arguments to security voters via "isGranted" call). 
 See `Sensio\Bundle\FrameworkExtraBundle\EventListener\SecurityListener`.
 
-To be consistent in its flow, RouteGuard wraps those expressions into `Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator`
+To be consistent in its flow, RouteGuard wraps those expressions into `Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator`
 instances, and registers security voter `Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter` to handle them.
 
 

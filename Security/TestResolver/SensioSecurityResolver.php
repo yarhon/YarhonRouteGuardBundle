@@ -15,11 +15,17 @@ use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
-use Yarhon\RouteGuardBundle\Security\Sensio\ExpressionDecorator;
+use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
+ * Sensio FrameworkExtraBundle allows to use Request attributes, in addition to the controller arguments, as variables
+ * in "@Security" annotation expressions and in "@IsGranted" annotation "subject" arguments.
+ * SensioSecurityResolver allows to fallback to the Request attribute, if controller doesn't have requested argument.
+ *
+ * @see \Sensio\Bundle\FrameworkExtraBundle\Request\ArgumentNameConverter::getControllerArguments
+ *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class SensioSecurityResolver implements TestResolverInterface
@@ -84,7 +90,7 @@ class SensioSecurityResolver implements TestResolverInterface
         foreach ($testArguments->getAttributes() as $attribute) {
             if ($attribute instanceof ExpressionDecorator) {
                 $values = [];
-                foreach ($attribute->getNames() as $name) {
+                foreach ($attribute->getVariableNames() as $name) {
                     $exceptionMessage = sprintf('expression variable "%s" of expression "%s"', $name, (string) $attribute->getExpression());
                     $value = $this->resolveVariable($routeContext, $name, $exceptionMessage);
                     $values[$name] = $value;
