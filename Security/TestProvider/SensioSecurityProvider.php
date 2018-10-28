@@ -111,6 +111,8 @@ class SensioSecurityProvider implements TestProviderInterface
         foreach ($annotations as $annotation) {
             $subjectName = null;
 
+            //var_dump(get_class($annotation));
+
             if ($annotation instanceof SecurityAnnotation) {
                 $expression = $this->processSecurityAnnotation($annotation, $allowedVariables);
                 $attributes = [$expression];
@@ -128,7 +130,7 @@ class SensioSecurityProvider implements TestProviderInterface
                     $arguments->setMetadata('subject_name', $subjectName);
                 }
 
-                $usedRequestAttributes = array_intersect($usedVariables, $requestAttributes);
+                $usedRequestAttributes = array_values(array_intersect($usedVariables, $requestAttributes));
 
                 if (count($usedRequestAttributes)) {
                     $arguments->setMetadata('request_attributes', $usedRequestAttributes);

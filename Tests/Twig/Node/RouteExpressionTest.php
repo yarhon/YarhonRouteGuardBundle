@@ -139,7 +139,9 @@ class RouteExpressionTest extends TestCase
             new ConstantExpression('secure1', 0),
         ]));
 
-        $expression->setGenerateAs(...$generateAs);
+        $self = $expression->setGenerateAs(...$generateAs);
+
+        $this->assertSame($expression, $self);
 
         $arguments = $expression->getNode('arguments');
         $this->assertTrue($arguments->hasNode(3));

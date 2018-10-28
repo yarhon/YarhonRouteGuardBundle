@@ -37,7 +37,10 @@ class TestArgumentsTest extends TestCase
     {
         $arguments = new TestArguments([]);
 
-        $arguments->setMetadata('foo', 5);
+        $self = $arguments->setMetadata('foo', 5);
+
+        $this->assertSame($arguments, $self);
+
         $this->assertSame(5, $arguments->getMetadata('foo'));
 
         $this->assertNull($arguments->getMetadata('bar'));

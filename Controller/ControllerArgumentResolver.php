@@ -34,7 +34,7 @@ class ControllerArgumentResolver implements ControllerArgumentResolverInterface
     /**
      * @var RequestAttributesFactoryInterface
      */
-    protected $requestAttributesFactory;
+    private $requestAttributesFactory;
 
     /**
      * @var RequestStack
@@ -115,7 +115,7 @@ class ControllerArgumentResolver implements ControllerArgumentResolverInterface
      *
      * @throws RuntimeException
      */
-    protected function getControllerMetadata($routeName)
+    private function getControllerMetadata($routeName)
     {
         $cacheKey = CacheFactory::getValidCacheKey($routeName);
         $cacheItem = $this->controllerMetadataCache->getItem($cacheKey);

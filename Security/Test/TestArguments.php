@@ -69,10 +69,14 @@ class TestArguments
     /**
      * @param string $name
      * @param mixed  $value
+     *
+     * @return self
      */
     public function setMetadata($name, $value)
     {
         $this->metadata[$name] = $value;
+
+        return $this;
     }
 
     /**
