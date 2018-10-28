@@ -111,8 +111,6 @@ class SensioSecurityProvider implements TestProviderInterface
         foreach ($annotations as $annotation) {
             $subjectName = null;
 
-            //var_dump(get_class($annotation));
-
             if ($annotation instanceof SecurityAnnotation) {
                 $expression = $this->processSecurityAnnotation($annotation, $allowedVariables);
                 $attributes = [$expression];

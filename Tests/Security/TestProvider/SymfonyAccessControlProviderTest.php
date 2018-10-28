@@ -50,55 +50,43 @@ class SymfonyAccessControlProviderTest extends TestCase
         $this->route = new Route('/');
     }
 
-    public function testGetTestsWithOneMatch()
+    /**
+     * @dataProvider getTestsDataProvider
+     */
+    public function testGetTests($testArguments, $routeMatcherResults, $expected)
     {
-        $testArgumentsOne = new TestArguments(['ROLE_ADMIN']);
-        $testArgumentsTwo = new TestArguments(['ROLE_USER']);
-
-        $this->provider->addRule(new RequestConstraint(), $testArgumentsOne);
-        $this->provider->addRule(new RequestConstraint(), $testArgumentsTwo);
+        foreach ($testArguments as $testArgumentsItem) {
+            $this->provider->addRule(new RequestConstraint(), $testArgumentsItem);
+        }
 
         $this->routeMatcher->method('matches')
-            ->willReturnOnConsecutiveCalls(false, true);
+            ->willReturnOnConsecutiveCalls(...$routeMatcherResults);
 
         $testBag = $this->provider->getTests('index', $this->route);
 
-        $this->assertInstanceOf(TestBag::class, $testBag);
-        $testArguments = iterator_to_array($testBag)[0];
-
-        $this->assertSame($testArguments, $testArgumentsTwo);
+        $this->assertEquals($expected, $testBag);
     }
 
-    public function testGetTestsWithSeveralMatches()
+    public function getTestsDataProvider()
     {
-        $testArgumentsOne = new TestArguments(['ROLE_ADMIN']);
-        $testArgumentsTwo = new TestArguments(['ROLE_USER']);
-
-        $this->provider->addRule(new RequestConstraint(), $testArgumentsOne);
-        $this->provider->addRule(new RequestConstraint(), $testArgumentsTwo);
-
-        $requestConstraintForMap = new RequestConstraint();
-
-        $this->routeMatcher->method('matches')
-            ->willReturnOnConsecutiveCalls($requestConstraintForMap, true);
-
-        $testBag = $this->provider->getTests('index', $this->route);
-
-        $this->assertInstanceOf(TestBagMap::class, $testBag);
-        $map = iterator_to_array($testBag);
-
-        $this->assertCount(2, $map);
-
-        list($firstItem, $secondItem) = $map;
-
-        $this->assertEquals($firstItem[1], $requestConstraintForMap);
-        $this->assertNull($secondItem[1]);
-
-        $this->assertSame($testArgumentsOne, iterator_to_array($firstItem[0])[0]);
-        $this->assertSame($testArgumentsTwo, iterator_to_array($secondItem[0])[0]);
+        return [
+            [
+                [new TestArguments(['ROLE_ADMIN']), new TestArguments(['ROLE_USER'])],
+                [false, true],
+                new TestBag([new TestArguments(['ROLE_USER'])]),
+            ],
+            [
+                [new TestArguments(['ROLE_ADMIN']), new TestArguments(['ROLE_USER'])],
+                [new RequestConstraint('/admin'), true],
+                new TestBagMap([
+                    [new TestBag([new TestArguments(['ROLE_ADMIN'])]), new RequestConstraint('/admin')],
+                    [new TestBag([new TestArguments(['ROLE_USER'])]), null],
+                ]),
+            ]
+        ];
     }
 
-    public function testGetTestsWithSeveralMatchesLoggerMessage()
+    public function testLogRuntimeMatching()
     {
         $logger = $this->createMock(LoggerInterface::class);
         $this->provider->setLogger($logger);
@@ -107,11 +95,8 @@ class SymfonyAccessControlProviderTest extends TestCase
             ->method('warning')
             ->with('Route "index" (path "/") requires runtime matching to access_control rule(s) #0, #1 (zero-based), this would reduce performance.');
 
-        $testArgumentsOne = new TestArguments(['ROLE_ADMIN']);
-        $testArgumentsTwo = new TestArguments(['ROLE_USER']);
-
-        $this->provider->addRule(new RequestConstraint(), $testArgumentsOne);
-        $this->provider->addRule(new RequestConstraint(), $testArgumentsTwo);
+        $this->provider->addRule(new RequestConstraint(), new TestArguments(['ROLE_ADMIN']));
+        $this->provider->addRule(new RequestConstraint(), new TestArguments(['ROLE_USER']));
 
         $requestConstraintForMap = new RequestConstraint();
 
@@ -144,22 +129,21 @@ class SymfonyAccessControlProviderTest extends TestCase
 
     public function testImportRulesWithExpression()
     {
-        $rule = $this->createRuleArray();
+        $rule = $this->createRuleArray(['allow_if' => 'request.isSecure']);
 
-        $expression = $this->createMock(Expression::class);
         $names = ExpressionVoter::getVariableNames();
+
+        $this->provider->setExpressionLanguage($this->expressionLanguage);
 
         $this->expressionLanguage->expects($this->once())
             ->method('parse')
             ->with($rule['allow_if'], $names)
-            ->willReturn($expression);
-
-        $this->provider->setExpressionLanguage($this->expressionLanguage);
+            ->willReturnCallback(function($expressionString) {
+                return new Expression($expressionString);
+            });
 
         $expectedConstraint = new RequestConstraint($rule['path'], $rule['host'], $rule['methods'], $rule['ips']);
-        $expectedAttributes = $rule['roles'];
-        $expectedAttributes[] = $expression;
-        $expectedTestArguments = new TestArguments($expectedAttributes);
+        $expectedTestArguments = new TestArguments(array_merge($rule['roles'], [new Expression('request.isSecure')]));
 
         $this->provider->importRules([$rule]);
 
@@ -169,7 +153,7 @@ class SymfonyAccessControlProviderTest extends TestCase
 
     public function testImportRulesWithInvalidExpressionException()
     {
-        $rule = $this->createRuleArray();
+        $rule = $this->createRuleArray(['allow_if' => 'request.isSecure']);
 
         $this->expressionLanguage->method('parse')
             ->willThrowException(new SyntaxError('syntax'));
@@ -177,14 +161,14 @@ class SymfonyAccessControlProviderTest extends TestCase
         $this->provider->setExpressionLanguage($this->expressionLanguage);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot parse expression "request.getClientIp() == "127.0.0.1" with following variables: "token", "user", "object", "subject", "roles", "trust_resolver", "request".');
+        $this->expectExceptionMessage('Cannot parse expression "request.isSecure" with following variables: "token", "user", "object", "subject", "roles", "trust_resolver", "request".');
 
         $this->provider->importRules([$rule]);
     }
 
     public function testImportRulesWithExpressionWithoutExpressionLanguage()
     {
-        $rule = $this->createRuleArray();
+        $rule = $this->createRuleArray(['allow_if' => 'request.isSecure']);
 
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Cannot create expression because ExpressionLanguage is not provided.');
@@ -192,15 +176,86 @@ class SymfonyAccessControlProviderTest extends TestCase
         $this->provider->importRules([$rule]);
     }
 
-    private function createRuleArray()
+    /**
+     * @dataProvider argumentsEqualityDataProvider
+     */
+    public function testArgumentsEquality($ruleOne, $ruleTwo, $expected)
+    {
+        $ruleOne = $this->createRuleArray($ruleOne);
+        $ruleTwo = $this->createRuleArray($ruleTwo);
+
+        $this->provider->setExpressionLanguage($this->expressionLanguage);
+
+        $this->expressionLanguage->method('parse')
+            ->willReturnCallback(function($expressionString) {
+                return new Expression($expressionString);
+            });
+
+        $this->provider->importRules([$ruleOne, $ruleTwo]);
+
+        $this->routeMatcher->method('matches')
+            ->willReturnOnConsecutiveCalls(true, false, true);
+
+        $testBag = $this->provider->getTests('index', $this->route);
+        $testArgumentsOne = iterator_to_array($testBag)[0];
+
+        $testBag = $this->provider->getTests('index', $this->route);
+        $testArgumentsTwo = iterator_to_array($testBag)[0];
+
+        if ($expected) {
+            $this->assertSame($testArgumentsOne, $testArgumentsTwo);
+        } else {
+            $this->assertNotSame($testArgumentsOne, $testArgumentsTwo);
+        }
+    }
+
+    public function argumentsEqualityDataProvider()
     {
         return [
-            'path' => '/foo',
-            'host' => 'site.com',
-            'methods' => ['GET'],
-            'ips' => ['127.0.0.1'],
-            'allow_if' => 'request.getClientIp() == "127.0.0.1',
-            'roles' => ['ROLE_ADMIN'],
+            [
+                ['roles' => ['ROLE_ADMIN']],
+                ['roles' => ['ROLE_ADMIN']],
+                true,
+            ],
+            [
+                ['roles' => ['ROLE_ADMIN', 'ROLE_USER']],
+                ['roles' => ['ROLE_USER', 'ROLE_ADMIN']],
+                true,
+            ],
+            [
+                ['roles' => ['ROLE_ADMIN', 'ROLE_USER']],
+                ['roles' => ['ROLE_USER']],
+                false,
+            ],
+            [
+                ['roles' => ['ROLE_ADMIN'], 'allow_if' => 'request.isSecure'],
+                ['roles' => ['ROLE_ADMIN']],
+                false,
+            ],
+            [
+                ['roles' => ['ROLE_ADMIN'], 'allow_if' => 'request.isSecure'],
+                ['roles' => ['ROLE_ADMIN'], 'allow_if' => 'request.isSecure'],
+                true,
+            ],
+            [
+                ['roles' => ['ROLE_ADMIN'], 'allow_if' => 'request.isSecure'],
+                ['roles' => ['ROLE_ADMIN'], 'allow_if' => 'not request.isSecure'],
+                false,
+            ],
         ];
+    }
+
+    private function createRuleArray(array $values = [])
+    {
+        $defaults = [
+            'path' => null,
+            'host' => null,
+            'methods' => [],
+            'ips' => [],
+            'allow_if' => null,
+            'roles' => [],
+        ];
+
+        return array_merge($defaults, $values);
     }
 }

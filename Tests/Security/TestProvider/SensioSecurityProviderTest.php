@@ -19,7 +19,6 @@ use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter as ParamConverterAnnotation;
-use Symfony\Component\Security\Core\Security;
 use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReaderInterface;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
@@ -68,23 +67,17 @@ class SensioSecurityProviderTest extends TestCase
     /**
      * @dataProvider securityAnnotationDataProvider
      */
-    public function testSecurityAnnotation($controllerArguments, $requestAttributes, $expected)
+    public function testSecurityAnnotation($annotation, $controllerArguments, $requestAttributes, $expected)
     {
         $allowedVariables = array_unique(array_merge($controllerArguments, $requestAttributes));
 
         $this->provider->setExpressionLanguage($this->expressionLanguage);
-
-        $annotation = new SecurityAnnotation(['expression' => 'request.isSecure']);
 
         $this->annotationReader->method('read')
             ->willReturn([$annotation]);
 
         $this->requestAttributesFactory->method('getAttributeNames')
             ->willReturn($requestAttributes);
-
-        $controllerMetadata = $this->createControllerMetadata('class::method', $controllerArguments);
-
-        $expression = $this->createMock(Expression::class);
 
         $namesToParse = SensioSecurityExpressionVoter::getVariableNames();
 
@@ -98,7 +91,11 @@ class SensioSecurityProviderTest extends TestCase
         $this->expressionLanguage->expects($this->at(1))
             ->method('parse')
             ->with($annotation->getExpression(), $namesToParse)
-            ->willReturn($expression);
+            ->willReturnCallback(function($expressionString) {
+                return new Expression($expressionString);
+        });
+
+        $controllerMetadata = $this->createControllerMetadata('class::method', $controllerArguments);
 
         $testBag = $this->provider->getTests('index', $this->route, $controllerMetadata);
 
@@ -110,23 +107,24 @@ class SensioSecurityProviderTest extends TestCase
 
     public function securityAnnotationDataProvider()
     {
-        $expression = $this->createMock(Expression::class);
-
         return [
             [
+                new SecurityAnnotation(['expression' => 'request.isSecure']),
                 [],
                 [],
-                new TestArguments([new ExpressionDecorator($expression, [])]),
+                new TestArguments([new ExpressionDecorator(new Expression('request.isSecure'), [])]),
             ],
             [
+                new SecurityAnnotation(['expression' => 'request.isSecure']),
                 ['foo'],
                 ['foo'],
-                new TestArguments([new ExpressionDecorator($expression, ['foo'])]),
+                new TestArguments([new ExpressionDecorator(new Expression('request.isSecure'), ['foo'])]),
             ],
             [
+                new SecurityAnnotation(['expression' => 'request.isSecure']),
                 ['foo', 'bar'],
                 ['baz'],
-                (new TestArguments([new ExpressionDecorator($expression, ['foo', 'bar', 'baz'])]))->setMetadata('request_attributes', ['baz']),
+                (new TestArguments([new ExpressionDecorator(new Expression('request.isSecure'), ['foo', 'bar', 'baz'])]))->setMetadata('request_attributes', ['baz']),
             ],
         ];
     }
@@ -161,17 +159,16 @@ class SensioSecurityProviderTest extends TestCase
         $this->requestAttributesFactory->method('getAttributeNames')
             ->willReturn(['bar', 'baz']);
 
-        $controllerMetadata = $this->createControllerMetadata('class::method', ['foo', 'bar']);
-
         $this->expressionLanguage->method('parse')
             ->willThrowException(new SyntaxError('syntax'));
+
+        $controllerMetadata = $this->createControllerMetadata('class::method', ['foo', 'bar']);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot parse expression "request.isSecure" with following variables: "token", "user", "object", "subject", "roles", "trust_resolver", "auth_checker", "request", "foo", "bar", "baz".');
 
         $this->provider->getTests('index', $this->route, $controllerMetadata);
     }
-
 
     /**
      * @dataProvider isGrantedAnnotationDataProvider
@@ -264,32 +261,38 @@ class SensioSecurityProviderTest extends TestCase
     /**
      * @dataProvider argumentsEqualityDataProvider
      */
-    public function atestArgumentsEquality($annotationOnCallOne, $annotationOnCallTwo, $expected)
+    public function testArgumentsEquality($callOne, $callTwo, $expected)
     {
+        $annotations = [$callOne[0], $callTwo[0]];
+        $controllerArguments = [$callOne[1], $callTwo[1]];
+        $requestAttributes = [$callOne[2], $callTwo[2]];
+
         $this->provider->setExpressionLanguage($this->expressionLanguage);
 
         $this->annotationReader->method('read')
-            ->willReturnOnConsecutiveCalls([$annotationOnCallOne], [$annotationOnCallTwo]);
+            ->willReturnOnConsecutiveCalls([$annotations[0]], [$annotations[1]]);
 
         $this->requestAttributesFactory->method('getAttributeNames')
-            ->willReturn([]);
-
-        $controllerMetadata = $this->createControllerMetadata('class::method', []);
-
-        $expression = $this->createMock(Expression::class);
+            ->willReturnOnConsecutiveCalls($requestAttributes[0], $requestAttributes[1]);
 
         $this->expressionLanguage->method('parse')
-            ->willReturn($expression);
+            ->willReturnCallback(function($expressionString) {
+                return new Expression($expressionString);
+            });
+
+        $controllerMetadata = $this->createControllerMetadata('class::method', $controllerArguments[0]);
 
         $testBag = $this->provider->getTests('index', $this->route, $controllerMetadata);
         $testArgumentsOne = iterator_to_array($testBag)[0];
 
+        $controllerMetadata = $this->createControllerMetadata('class::method', $controllerArguments[1]);
+
         $testBag = $this->provider->getTests('index', $this->route, $controllerMetadata);
         $testArgumentsTwo = iterator_to_array($testBag)[0];
 
-        if (true === $expected) {
+        if ($expected) {
             $this->assertSame($testArgumentsOne, $testArgumentsTwo);
-        } elseif (false === $expected) {
+        } else {
             $this->assertNotSame($testArgumentsOne, $testArgumentsTwo);
         }
     }
@@ -298,8 +301,41 @@ class SensioSecurityProviderTest extends TestCase
     {
         return [
             [
-                new SecurityAnnotation(['expression' => 'request.isSecure']),
-                new SecurityAnnotation(['expression' => 'not request.isSecure']),
+                [ new SecurityAnnotation(['expression' => 'request.isSecure']), [], [] ],
+                [ new SecurityAnnotation(['expression' => 'not request.isSecure']), [], [] ],
+                false,
+            ],
+            [
+                [ new SecurityAnnotation(['expression' => 'request.isSecure']), [], [] ],
+                [ new SecurityAnnotation(['expression' => 'request.isSecure']), [], [] ],
+                true,
+            ],
+            // TODO: uncomment this tests when Expression parser would be ready
+            /*
+            [
+                [ new SecurityAnnotation(['expression' => 'request.isSecure']), ['arg1'], [] ],
+                [ new SecurityAnnotation(['expression' => 'request.isSecure']), [], [] ],
+                false,
+            ],
+            [
+                [ new SecurityAnnotation(['expression' => 'request.isSecure']), [], ['attr1'] ],
+                [ new SecurityAnnotation(['expression' => 'request.isSecure']), [], [] ],
+                false,
+            ],
+            */
+            [
+                [ new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN']), ['arg1'], ['attr1'] ],
+                [ new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN']), ['arg1'], ['attr1'] ],
+                true,
+            ],
+            [
+                [ new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN']), ['arg1'], ['attr1'] ],
+                [ new IsGrantedAnnotation(['attributes' => 'ROLE_USER']), ['arg1'], ['attr1'] ],
+                false,
+            ],
+            [
+                [ new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN', 'subject' => 'arg1']), ['arg1'], ['attr1'] ],
+                [ new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN']), ['arg1'], ['attr1'] ],
                 false,
             ],
         ];
