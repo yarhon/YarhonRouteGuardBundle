@@ -81,9 +81,11 @@ class SensioSecurityResolver implements TestResolverInterface
      */
     private function resolveVariables(TestArguments $testArguments, RouteContextInterface $routeContext)
     {
+        $requestAttributes = $testArguments->getMetadata('request_attributes') ?: [];
+
         if ($subjectName = $testArguments->getMetadata('subject_name')) {
-            $exceptionMessage = sprintf('subject variable "%s"', $subjectName);
-            $value = $this->resolveVariable($routeContext, $subjectName, $exceptionMessage);
+            $variableDescription = sprintf('subject variable "%s"', $subjectName);
+            $value = $this->resolveVariable($routeContext, $subjectName, $requestAttributes, $variableDescription);
             $testArguments->setSubject($value);
         }
 
@@ -91,8 +93,8 @@ class SensioSecurityResolver implements TestResolverInterface
             if ($attribute instanceof ExpressionDecorator) {
                 $values = [];
                 foreach ($attribute->getVariableNames() as $name) {
-                    $exceptionMessage = sprintf('expression variable "%s" of expression "%s"', $name, (string) $attribute->getExpression());
-                    $value = $this->resolveVariable($routeContext, $name, $exceptionMessage);
+                    $variableDescription = sprintf('expression variable "%s" of expression "%s"', $name, (string) $attribute->getExpression());
+                    $value = $this->resolveVariable($routeContext, $name, $requestAttributes, $variableDescription);
                     $values[$name] = $value;
                 }
                 $attribute->setVariables($values);
@@ -100,12 +102,22 @@ class SensioSecurityResolver implements TestResolverInterface
         }
     }
 
-    private function resolveVariable(RouteContextInterface $routeContext, $name, $exceptionMessage)
+    private function resolveVariable(RouteContextInterface $routeContext, $name, $requestAttributes, $variableDescription)
     {
+        if (in_array($name, $requestAttributes, true)) {
+            $requestAttributes = $this->requestAttributesFactory->createAttributes($routeContext);
+            if (!$requestAttributes->has($name)) {
+                $message = sprintf('Cannot resolve %s directly from Request attributes.', $variableDescription);
+                throw new RuntimeException(sprintf($message, $routeContext->getName(), $name));
+            }
+
+            return $requestAttributes->get($name);
+        }
+
         try {
             $value = $this->controllerArgumentResolver->getArgument($routeContext, $name);
         } catch (RuntimeException $e) {
-            $message = sprintf('Cannot resolve %s. %s', $exceptionMessage, $e->getMessage());
+            $message = sprintf('Cannot resolve %s. %s', $variableDescription, $e->getMessage());
             throw new RuntimeException($message, 0, $e);
         }
 

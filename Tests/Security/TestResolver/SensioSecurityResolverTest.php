@@ -12,6 +12,7 @@ namespace Yarhon\RouteGuardBundle\Tests\Security\TestResolver;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
@@ -142,6 +143,47 @@ class SensioSecurityResolverTest extends TestCase
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot resolve expression variable "foo" of expression "foo == true". Inner exception.');
+
+        $this->resolver->resolve($testBag, $routeContext);
+    }
+
+    public function testResolveVariableFromRequestAttributes()
+    {
+        $testArguments = new TestArguments([]);
+        $testArguments->setMetadata('subject_name', 'foo');
+        $testArguments->setMetadata('request_attributes', ['foo']);
+
+        $testBag = $this->createTestBag([$testArguments]);
+
+        $routeContext = new RouteContext('index');
+
+        $this->requestAttributesFactory->method('createAttributes')
+            ->with($routeContext)
+            ->willReturn(new ParameterBag(['foo' => 5]));
+
+        $resolved = $this->resolver->resolve($testBag, $routeContext);
+
+        $this->assertSame([$testArguments], $resolved);
+
+        $this->assertEquals(5, $testArguments->getSubject());
+    }
+
+    public function testResolveVariableFromRequestAttributesException()
+    {
+        $testArguments = new TestArguments([]);
+        $testArguments->setMetadata('subject_name', 'foo');
+        $testArguments->setMetadata('request_attributes', ['foo']);
+
+        $testBag = $this->createTestBag([$testArguments]);
+
+        $routeContext = new RouteContext('index');
+
+        $this->requestAttributesFactory->method('createAttributes')
+            ->with($routeContext)
+            ->willReturn(new ParameterBag());
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Cannot resolve subject variable "foo" directly from Request attributes.');
 
         $this->resolver->resolve($testBag, $routeContext);
     }
