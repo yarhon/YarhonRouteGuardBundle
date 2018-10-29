@@ -94,8 +94,9 @@ class SensioSecurityProvider implements TestProviderInterface
             return null;
         }
 
-        list($class, $method) = explode('::', $controllerMetadata->getName());
-        $annotations = $this->annotationReader->read($class, $method, [SecurityAnnotation::class, IsGrantedAnnotation::class]);
+        $annotations = $this->annotationReader->read($controllerMetadata->getClass(), $controllerMetadata->getMethod(),
+            [SecurityAnnotation::class, IsGrantedAnnotation::class]
+        );
 
         if (!count($annotations)) {
             return null;

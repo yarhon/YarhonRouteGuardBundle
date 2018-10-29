@@ -349,6 +349,6 @@ class SensioSecurityProviderTest extends TestCase
             $arguments[] = new ArgumentMetadata($name, 'int', false, false, null);
         }
 
-        return new ControllerMetadata($controllerName, $arguments);
+        return new ControllerMetadata($controllerName, 'class', 'method', $arguments);
     }
 }

@@ -31,12 +31,22 @@ class ControllerMetadataTest extends TestCase
             new ArgumentMetadata('arg2', 'string', false, false, null),
         ];
 
-        $this->controllerMetadata = new ControllerMetadata('class::method', $this->arguments);
+        $this->controllerMetadata = new ControllerMetadata('class::method', 'class', 'method', $this->arguments, 'service1');
     }
 
     public function testGetName()
     {
         $this->assertSame('class::method', $this->controllerMetadata->getName());
+    }
+
+    public function testGetClass()
+    {
+        $this->assertSame('class', $this->controllerMetadata->getClass());
+    }
+
+    public function testGetMethod()
+    {
+        $this->assertSame('method', $this->controllerMetadata->getMethod());
     }
 
     public function testGetArguments()
@@ -62,5 +72,10 @@ class ControllerMetadataTest extends TestCase
         $this->expectExceptionMessage('Invalid argument name: "arg3"');
 
         $this->controllerMetadata->getArgument('arg3');
+    }
+
+    public function testGetServiceId()
+    {
+        $this->assertSame('service1', $this->controllerMetadata->getServiceId());
     }
 }

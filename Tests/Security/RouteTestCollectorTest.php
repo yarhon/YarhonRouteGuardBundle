@@ -69,7 +69,7 @@ class RouteTestCollectorTest extends TestCase
 
         $route = new Route('/');
         $routeName = 'index';
-        $controllerMetadata = new ControllerMetadata('class::method');
+        $controllerMetadata = new ControllerMetadata('class::method', 'class', 'method');
 
         $testBags = [
             $this->createMock(AbstractTestBagInterface::class),

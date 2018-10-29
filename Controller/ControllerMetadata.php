@@ -24,23 +24,45 @@ class ControllerMetadata
     private $name;
 
     /**
+     * @var string
+     */
+    private $class;
+
+    /**
+     * @var string
+     */
+    private $method;
+
+    /**
      * @var ArgumentMetadata[]
      */
     private $arguments = [];
 
     /**
+     * @var string|null
+     */
+    private $serviceId;
+
+    /**
      * ControllerMetadata constructor.
      *
      * @param string             $name
+     * @param string             $class
+     * @param string             $method
      * @param ArgumentMetadata[] $arguments
+     * @param string|null        $serviceId
      */
-    public function __construct($name, array $arguments = [])
+    public function __construct($name, $class, $method, array $arguments = [], $serviceId = null)
     {
         $this->name = $name;
+        $this->class = $class;
+        $this->method = $method;
 
         foreach ($arguments as $argument) {
             $this->arguments[$argument->getName()] = $argument;
         }
+
+        $this->serviceId = $serviceId;
     }
 
     /**
@@ -50,6 +72,23 @@ class ControllerMetadata
     {
         return $this->name;
     }
+
+    /**
+     * @return string
+     */
+    public function getClass()
+    {
+        return $this->class;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMethod()
+    {
+        return $this->method;
+    }
+
 
     /**
      * @return ArgumentMetadata[]
@@ -83,5 +122,13 @@ class ControllerMetadata
         }
 
         return $this->arguments[$name];
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getServiceId()
+    {
+        return $this->serviceId;
     }
 }

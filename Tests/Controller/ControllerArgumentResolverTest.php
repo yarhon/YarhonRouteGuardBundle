@@ -66,7 +66,7 @@ class ControllerArgumentResolverTest extends TestCase
         $routeContext = new RouteContext('index');
 
         $argumentMetadata = $this->createArgumentMetadata('arg1');
-        $controllerMetadata = new ControllerMetadata('class::method', [$argumentMetadata]);
+        $controllerMetadata = new ControllerMetadata('class::method', 'class', 'method', [$argumentMetadata]);
         $this->addMetadataCacheItem($routeContext->getName(), $controllerMetadata);
 
         $requestAttributes = new ParameterBag(['a' => 1]);
@@ -112,7 +112,7 @@ class ControllerArgumentResolverTest extends TestCase
     {
         $routeContext = new RouteContext('index');
 
-        $this->addMetadataCacheItem($routeContext->getName(), new ControllerMetadata('class::method', []));
+        $this->addMetadataCacheItem($routeContext->getName(), new ControllerMetadata('class::method', 'class', 'method', []));
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Route "index" controller "class::method" does not have argument "$arg1".');
@@ -125,7 +125,7 @@ class ControllerArgumentResolverTest extends TestCase
         $routeContext = new RouteContext('index');
 
         $argumentMetadata = $this->createArgumentMetadata('arg1');
-        $controllerMetadata = new ControllerMetadata('class::method', [$argumentMetadata]);
+        $controllerMetadata = new ControllerMetadata('class::method', 'class', 'method', [$argumentMetadata]);
 
         $this->addMetadataCacheItem($routeContext->getName(), $controllerMetadata);
 
@@ -158,7 +158,7 @@ class ControllerArgumentResolverTest extends TestCase
     {
         $routeContext = new RouteContext('index');
 
-        $controllerMetadata = new ControllerMetadata('class::method', [
+        $controllerMetadata = new ControllerMetadata('class::method', 'class', 'method', [
             $this->createArgumentMetadata('arg1'),
             $this->createArgumentMetadata('arg2'),
         ]);
