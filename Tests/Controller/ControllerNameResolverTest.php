@@ -21,9 +21,6 @@ use Yarhon\RouteGuardBundle\Tests\Fixtures\Controller\SimpleController;
  */
 class ControllerNameResolverTest extends TestCase
 {
-    /**
-     * @var ControllerNameResolver
-     */
     private $resolver;
 
     public function setUp()
@@ -74,8 +71,9 @@ class ControllerNameResolverTest extends TestCase
     public function testResolveException()
     {
         $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Unable to resolve controller name, the controller is not callable.');
 
-        $resolved = $this->resolver->resolve([]);
+        $this->resolver->resolve([]);
     }
 
     public function testConverterCall()

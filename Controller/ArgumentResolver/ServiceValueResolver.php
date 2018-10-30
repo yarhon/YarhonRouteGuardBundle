@@ -37,10 +37,7 @@ final class ServiceValueResolver implements ArgumentValueResolverInterface
     public function supports(ArgumentResolverContextInterface $context, ArgumentMetadata $argument)
     {
         $controller = $context->getControllerName();
-
-        if (!$controller) {
-            return false;
-        }
+        $controller = ltrim($controller, '\\');
 
         if (!$serviceLocator = $this->getServiceLocator($controller)) {
             return false;
@@ -55,6 +52,7 @@ final class ServiceValueResolver implements ArgumentValueResolverInterface
     public function resolve(ArgumentResolverContextInterface $context, ArgumentMetadata $argument)
     {
         $controller = $context->getControllerName();
+        $controller = ltrim($controller, '\\');
         $serviceLocator = $this->getServiceLocator($controller);
 
         try {

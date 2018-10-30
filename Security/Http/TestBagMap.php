@@ -37,10 +37,8 @@ class TestBagMap extends AbstractTestBag implements TestBagMapInterface
     {
         $resolved = null;
 
-        foreach ($this->elements as $item) {
+        foreach ($this->elements as list($testBag, $requestConstraint)) {
             /** @var RequestConstraintInterface $requestConstraint */
-            list($testBag, $requestConstraint) = $item;
-
             if (null === $requestConstraint || $requestConstraint->matches($requestContext)) {
                 $resolved = $testBag;
                 break;

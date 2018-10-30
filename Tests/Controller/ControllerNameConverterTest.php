@@ -21,14 +21,8 @@ use Yarhon\RouteGuardBundle\Controller\ControllerNameConverter;
  */
 class ControllerNameConverterTest extends TestCase
 {
-    /**
-     * @var ControllerNameConverter
-     */
     private $converter;
 
-    /**
-     * @var MockObject
-     */
     private $kernel;
 
     public function setUp()

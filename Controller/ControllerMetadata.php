@@ -66,7 +66,9 @@ class ControllerMetadata
     }
 
     /**
-     * @return string
+     * @return string Controller name in class::method notation (even if originally it was specified in service:method or bundle:controller:action notation).
+     *                Can contain leading "\", if it was originally present (i.e., "controller: \App\Controller\DefaultController::index" in route definition).
+     *                "class" part can contain real class name or service id (if controller is a service).
      */
     public function getName()
     {
@@ -74,7 +76,7 @@ class ControllerMetadata
     }
 
     /**
-     * @return string
+     * @return string Real class name, without leading "\".
      */
     public function getClass()
     {
@@ -91,7 +93,7 @@ class ControllerMetadata
 
 
     /**
-     * @return ArgumentMetadata[]
+     * @return ArgumentMetadata[] Controller arguments, indexed by name.
      */
     public function getArguments()
     {
@@ -125,7 +127,7 @@ class ControllerMetadata
     }
 
     /**
-     * @return string|null
+     * @return string|null Service id, if controller is a service, null otherwise.
      */
     public function getServiceId()
     {

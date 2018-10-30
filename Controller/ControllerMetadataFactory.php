@@ -65,13 +65,13 @@ class ControllerMetadataFactory
     {
         $controller = $route->getDefault('_controller');
 
-        $controllerName = $this->controllerNameResolver->resolve($controller);
+        $name = $this->controllerNameResolver->resolve($controller);
 
-        if (null === $controllerName) {
+        if (null === $name) {
             return null;
         }
 
-        list($class, $method) = explode('::', $controllerName);
+        list($class, $method) = explode('::', $name);
 
         if (null === $serviceClass = $this->detectContainerController($class)) {
             $serviceId = null;
@@ -82,7 +82,9 @@ class ControllerMetadataFactory
 
         $arguments = $this->argumentMetadataFactory->createArgumentMetadata([$class, $method]);
 
-        return new ControllerMetadata($controllerName, $class, $method, $arguments, $serviceId);
+        $class = ltrim($class, '\\');
+
+        return new ControllerMetadata($name, $class, $method, $arguments, $serviceId);
     }
 
     /**

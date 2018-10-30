@@ -65,8 +65,6 @@ class ControllerNameConverter
     {
         if (1 === substr_count($controller, ':')) {
             $controller = str_replace(':', '::', $controller);
-
-            // @trigger_error(sprintf('Referencing controllers with a single colon is deprecated since Symfony 4.1. Use %s instead.', $controller), E_USER_DEPRECATED);
         }
 
         return $controller;
@@ -84,14 +82,11 @@ class ControllerNameConverter
     private function convertBundleNotation($controller)
     {
         if (false === strpos($controller, '::') && 2 === substr_count($controller, ':')) {
-            $deprecatedNotation = $controller;
             try {
                 $controller = $this->parseBundleNotation($controller);
             } catch (\InvalidArgumentException $e) {
                 throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
             }
-
-            // @trigger_error(sprintf('Referencing controllers with %s is deprecated since Symfony 4.1. Use %s instead.', $deprecatedNotation, $controller), E_USER_DEPRECATED);
         }
 
         return $controller;

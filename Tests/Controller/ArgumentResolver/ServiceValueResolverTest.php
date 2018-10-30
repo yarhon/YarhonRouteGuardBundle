@@ -45,24 +45,45 @@ class ServiceValueResolverTest extends TestCase
         $this->resolver = new ServiceValueResolver($this->container);
     }
 
-    public function testSupportsNoController()
+    /**
+     * @dataProvider supportsDataProvider
+     */
+    public function testSupports($controllerName, $serviceLocator, $expected)
     {
         $this->context->method('getControllerName')
-            ->willReturn(false);
+            ->willReturn($controllerName);
 
-        $this->assertFalse($this->resolver->supports($this->context, $this->argument));
+        $this->container->method('has')
+            ->willReturn((bool) $serviceLocator);
+
+        $this->container->method('get')
+            ->willReturn($serviceLocator);
+
+        $this->assertSame($expected, $this->resolver->supports($this->context, $this->argument));
     }
 
-    public function testSupportsNoServiceLocator()
+    public function supportsDataProvider()
     {
-        $this->context->method('getControllerName')
-            ->willReturn('a::b');
-
-        $this->container->expects($this->atLeastOnce())
-            ->method('has')
-            ->willReturn(false);
-
-        $this->assertFalse($this->resolver->supports($this->context, $this->argument));
+        return [
+            // no service locator
+            [
+                'a::b',
+                null,
+                false,
+            ],
+            // no service in service locator
+            [
+                'a::b',
+                $this->createServiceLocator(),
+                false,
+            ],
+            // has service in service locator
+            [
+                'a::b',
+                $this->createServiceLocator('arg'),
+                true,
+            ],
+        ];
     }
 
     public function testSupportsTriesOldServiceNaming()
@@ -87,51 +108,16 @@ class ServiceValueResolverTest extends TestCase
         $this->resolver->supports($this->context, $this->argument);
     }
 
-    public function testSupportsNoServiceInServiceLocator()
+    public function testSupportsTrimsLeadingBackslashes()
     {
         $this->context->method('getControllerName')
-            ->willReturn('a::b');
+            ->willReturn('\\a::b');
 
-        $serviceLocator = $this->createMock(ContainerInterface::class);
-
-        $serviceLocator->method('has')
-            ->willReturn(false);
-
-        $this->container->expects($this->once())
+        $this->container->expects($this->at(0))
             ->method('has')
-            ->with('a::b')
-            ->willReturn(true);
+            ->with('a::b');
 
-        $this->container->expects($this->once())
-            ->method('get')
-            ->with('a::b')
-            ->willReturn($serviceLocator);
-
-        $this->assertFalse($this->resolver->supports($this->context, $this->argument));
-    }
-
-    public function testSupportsHasServiceInServiceLocator()
-    {
-        $this->context->method('getControllerName')
-            ->willReturn('a::b');
-
-        $serviceLocator = $this->createMock(ContainerInterface::class);
-
-        $serviceLocator->method('has')
-            ->with('arg')
-            ->willReturn(true);
-
-        $this->container->expects($this->once())
-            ->method('has')
-            ->with('a::b')
-            ->willReturn(true);
-
-        $this->container->expects($this->once())
-            ->method('get')
-            ->with('a::b')
-            ->willReturn($serviceLocator);
-
-        $this->assertTrue($this->resolver->supports($this->context, $this->argument));
+        $this->resolver->supports($this->context, $this->argument);
     }
 
     public function testResolve()
@@ -139,21 +125,15 @@ class ServiceValueResolverTest extends TestCase
         $this->context->method('getControllerName')
             ->willReturn('a::b');
 
-        $serviceLocator = $this->createMock(ContainerInterface::class);
-
         $value = new \stdClass();
 
-        $serviceLocator->method('get')
-            ->with('arg')
-            ->willReturn($value);
+        $serviceLocator = $this->createServiceLocator('arg', $value);
 
-        $this->container->expects($this->once())
-            ->method('has')
+        $this->container->method('has')
             ->with('a::b')
             ->willReturn(true);
 
-        $this->container->expects($this->once())
-            ->method('get')
+        $this->container->method('get')
             ->with('a::b')
             ->willReturn($serviceLocator);
 
@@ -165,11 +145,7 @@ class ServiceValueResolverTest extends TestCase
         $this->context->method('getControllerName')
             ->willReturn('a::b');
 
-        $serviceLocator = $this->createMock(ContainerInterface::class);
-
-        $serviceLocator->method('has')
-            ->with('arg')
-            ->willReturn(true);
+        $serviceLocator = $this->createServiceLocator('arg');
 
         $exception = new ContainerRuntimeException('original text');
 
@@ -177,13 +153,11 @@ class ServiceValueResolverTest extends TestCase
             ->with('arg')
             ->willThrowException($exception);
 
-        $this->container->expects($this->once())
-            ->method('has')
+        $this->container->method('has')
             ->with('a::b')
             ->willReturn(true);
 
-        $this->container->expects($this->once())
-            ->method('get')
+        $this->container->method('get')
             ->with('a::b')
             ->willReturn($serviceLocator);
 
@@ -191,5 +165,27 @@ class ServiceValueResolverTest extends TestCase
         $this->expectExceptionMessage('Cannot resolve argument $arg of "a::b()": original text');
 
         $this->resolver->resolve($this->context, $this->argument);
+    }
+
+    private function createServiceLocator($serviceId = null, $serviceValue = null)
+    {
+        $serviceLocator = $this->createMock(ContainerInterface::class);
+
+        if (null !== $serviceId) {
+            $serviceLocator->method('has')
+                ->with($serviceId)
+                ->willReturn(true);
+        } else {
+            $serviceLocator->method('has')
+                ->willReturn(false);
+        }
+
+        if (null !== $serviceValue) {
+            $serviceLocator->method('get')
+                ->with($serviceId)
+                ->willReturn($serviceValue);
+        }
+
+        return $serviceLocator;
     }
 }

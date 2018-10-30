@@ -38,7 +38,8 @@ class ControllerMetadataFactoryTest extends TestCase
 
         $classMap = [
             'service1' => 'service1_class',
-            'service2' => null,
+            'service2' => '\\service2_class',
+            'service3' => null,
         ];
 
         $classMap = new ClassMap($classMap);
@@ -46,51 +47,61 @@ class ControllerMetadataFactoryTest extends TestCase
         $this->factory = new ControllerMetadataFactory($this->controllerNameResolver, $this->argumentMetadataFactory, $classMap);
     }
 
-    public function testCreateMetadata()
+    /**
+     * @dataProvider createMetadataDataProvider
+     */
+    public function testCreateMetadata($controllerName, $argumentMetadatas, $expected)
     {
         $route = new Route('/', ['_controller' => 'zxc']);
 
         $this->controllerNameResolver->method('resolve')
             ->with('zxc')
-            ->willReturn('class::method');
-
-        $argumentMetadatas = [
-            new ArgumentMetadata('arg1', 'int', false, false, null),
-            new ArgumentMetadata('arg2', 'string', false, false, null),
-        ];
+            ->willReturn($controllerName);
 
         $this->argumentMetadataFactory->method('createArgumentMetadata')
-            ->with(['class', 'method'])
             ->willReturn($argumentMetadatas);
 
         $metadata = $this->factory->createMetadata($route);
 
-        $this->assertInstanceOf(ControllerMetadata::class, $metadata);
-        $this->assertEquals('class::method', $metadata->getName());
-        $this->assertEquals('class', $metadata->getClass());
-        $this->assertEquals('method', $metadata->getMethod());
-        $this->assertEquals(array_combine(['arg1', 'arg2'], $argumentMetadatas), $metadata->getArguments());
-        $this->assertNull($metadata->getServiceId());
+        $this->assertEquals($expected, $metadata);
     }
 
-    public function testCreateMetadataForControllerAsService()
+    public function createMetadataDataProvider()
     {
-        $route = new Route('/', ['_controller' => 'zxc']);
+        return [
+            [
+                'class::method',
+                [
+                    new ArgumentMetadata('arg1', 'int', false, false, null),
+                    new ArgumentMetadata('arg2', 'string', false, false, null),
+                ],
 
-        $this->controllerNameResolver->method('resolve')
-            ->with('zxc')
-            ->willReturn('service1::method');
-
-        $this->argumentMetadataFactory->method('createArgumentMetadata')
-            ->willReturn([]);
-
-        $metadata = $this->factory->createMetadata($route);
-
-        $this->assertInstanceOf(ControllerMetadata::class, $metadata);
-        $this->assertEquals('service1::method', $metadata->getName());
-        $this->assertEquals('service1_class', $metadata->getClass());
-        $this->assertEquals('method', $metadata->getMethod());
-        $this->assertEquals('service1', $metadata->getServiceId());
+                new ControllerMetadata('class::method', 'class', 'method', [
+                    new ArgumentMetadata('arg1', 'int', false, false, null),
+                    new ArgumentMetadata('arg2', 'string', false, false, null),
+                ], null),
+            ],
+            [
+                'service1::method',
+                [],
+                new ControllerMetadata('service1::method', 'service1_class', 'method', [], 'service1'),
+            ],
+            [
+                '\\class::method',
+                [],
+                new ControllerMetadata('\\class::method', 'class', 'method', [], null),
+            ],
+            [
+                'service2::method',
+                [],
+                new ControllerMetadata('service2::method', 'service2_class', 'method', [], 'service2'),
+            ],
+            [
+                null,
+                [],
+                null,
+            ],
+        ];
     }
 
     public function testCreateMetadataForControllerAsServiceException()
@@ -99,27 +110,14 @@ class ControllerMetadataFactoryTest extends TestCase
 
         $this->controllerNameResolver->method('resolve')
             ->with('zxc')
-            ->willReturn('service2::method');
+            ->willReturn('service3::method');
 
         $this->argumentMetadataFactory->method('createArgumentMetadata')
             ->willReturn([]);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unable to resolve class for service "service2".');
+        $this->expectExceptionMessage('Unable to resolve class for service "service3".');
 
         $this->factory->createMetadata($route);
-    }
-
-    public function testCreateMetadataNoControllerName()
-    {
-        $route = new Route('/', ['_controller' => 'zxc']);
-
-        $this->controllerNameResolver->method('resolve')
-            ->with('zxc')
-            ->willReturn(null);
-
-        $metadata = $this->factory->createMetadata($route);
-
-        $this->assertNull($metadata);
     }
 }

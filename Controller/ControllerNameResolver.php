@@ -36,7 +36,7 @@ class ControllerNameResolver implements ControllerNameResolverInterface
     {
         if (is_array($controller) && isset($controller[0], $controller[1])) {
             if (is_string($controller[0])) {
-                return $this->resolveClass($controller[0]).'::'.$controller[1];
+                return $controller[0].'::'.$controller[1];
             }
 
             if (is_object($controller[0])) {
@@ -58,26 +58,14 @@ class ControllerNameResolver implements ControllerNameResolverInterface
             }
 
             if (false === strpos($controller, '::')) {
-                return $this->resolveClass($controller).'::__invoke';
+                return $controller.'::__invoke';
             }
 
-            list($class, $method) = explode('::', $controller);
+            // TODO: check if controller has exactly two parts here?
 
-            return $this->resolveClass($class).'::'.$method;
+            return $controller;
         }
 
         throw new InvalidArgumentException('Unable to resolve controller name, the controller is not callable.');
-    }
-
-    /**
-     * @param string $class
-     *
-     * @return string
-     */
-    protected function resolveClass($class)
-    {
-        // TODO: can controller class start from  "\" symbol ?
-
-        return $class;
     }
 }

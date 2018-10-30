@@ -14,6 +14,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Routing\RouteCollection;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory;
+use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
 use Yarhon\RouteGuardBundle\Exception\CatchableExceptionInterface;
 
@@ -84,7 +85,7 @@ class AccessMapBuilder implements LoggerAwareInterface
                 $controllerMetadata = $this->controllerMetadataFactory->createMetadata($route);
                 $routeMetadata = $this->routeMetadataFactory->createMetadata($route);
 
-                if (null !== $controllerMetadata && $this->isControllerIgnored($controllerMetadata->getName())) {
+                if (null !== $controllerMetadata && $this->isControllerIgnored($controllerMetadata)) {
                     $ignoredRoutes[] = $routeName;
                 } else {
                     // Note: empty arrays are also added to authorization cache
@@ -110,12 +111,14 @@ class AccessMapBuilder implements LoggerAwareInterface
     }
 
     /**
-     * @param string $controllerName
+     * @param ControllerMetadata $controllerMetadata
      *
      * @return bool
      */
-    private function isControllerIgnored($controllerName)
+    private function isControllerIgnored($controllerMetadata)
     {
+        $controllerName = $controllerMetadata->getClass().'::'.$controllerMetadata->getMethod();
+
         foreach ($this->options['ignore_controllers'] as $ignored) {
             if (0 === strpos($controllerName, $ignored)) {
                 return true;
