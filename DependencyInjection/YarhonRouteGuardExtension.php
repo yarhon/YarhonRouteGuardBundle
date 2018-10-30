@@ -52,7 +52,7 @@ class YarhonRouteGuardExtension extends Extension
         ];
 
         $definition = $container->getDefinition(AccessMapBuilder::class);
-        $definition->replaceArgument(3, $builderOptions);
+        $definition->replaceArgument(4, $builderOptions);
 
         $definition = $container->getDefinition(RoutingExtension::class);
         $definition->replaceArgument(0, $config['twig']);

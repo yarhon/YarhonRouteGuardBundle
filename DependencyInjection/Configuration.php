@@ -21,10 +21,10 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 class Configuration implements ConfigurationInterface
 {
     private static $symfonyControllers = [
-        'Symfony\Bundle\TwigBundle\Controller\PreviewErrorController',
-        'Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController',
-        'Symfony\Bundle\WebProfilerBundle\Controller\RouterController',
-        'Symfony\Bundle\WebProfilerBundle\Controller\ExceptionController',
+        'twig.controller.preview_error',     // 'Symfony\Bundle\TwigBundle\Controller\PreviewErrorController'
+        'web_profiler.controller.profiler',  // 'Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController'
+        'web_profiler.controller.router',    // 'Symfony\Bundle\WebProfilerBundle\Controller\RouterController',
+        'web_profiler.controller.exception', // 'Symfony\Bundle\WebProfilerBundle\Controller\ExceptionController'
     ];
 
     /**

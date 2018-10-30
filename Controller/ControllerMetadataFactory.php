@@ -10,7 +10,6 @@
 
 namespace Yarhon\RouteGuardBundle\Controller;
 
-use Symfony\Component\Routing\Route;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactoryInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactory;
 use Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMapInterface;
@@ -26,11 +25,6 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 class ControllerMetadataFactory
 {
     /**
-     * @var ControllerNameResolverInterface
-     */
-    private $controllerNameResolver;
-
-    /**
      * @var ArgumentMetadataFactoryInterface
      */
     private $argumentMetadataFactory;
@@ -43,35 +37,25 @@ class ControllerMetadataFactory
     /**
      * ControllerMetadataFactory constructor.
      *
-     * @param ControllerNameResolverInterface       $controllerNameResolver
      * @param ArgumentMetadataFactoryInterface|null $argumentMetadataFactory
-     * @param ClassMapInterface                     $containerClassMap
+     * @param ClassMapInterface|null                $containerClassMap
      */
-    public function __construct(ControllerNameResolverInterface $controllerNameResolver, ArgumentMetadataFactoryInterface $argumentMetadataFactory = null, ClassMapInterface $containerClassMap = null)
+    public function __construct(ArgumentMetadataFactoryInterface $argumentMetadataFactory = null, ClassMapInterface $containerClassMap = null)
     {
-        $this->controllerNameResolver = $controllerNameResolver;
         $this->argumentMetadataFactory = $argumentMetadataFactory ?: new ArgumentMetadataFactory();
         $this->containerClassMap = $containerClassMap;
     }
 
     /**
-     * @param Route $route
+     * @param string $controllerName Controller name in class::method (service::method) notation
      *
-     * @return ControllerMetadata|null
+     * @return ControllerMetadata
      *
      * @throws InvalidArgumentException
      */
-    public function createMetadata(Route $route)
+    public function createMetadata($controllerName)
     {
-        $controller = $route->getDefault('_controller');
-
-        $name = $this->controllerNameResolver->resolve($controller);
-
-        if (null === $name) {
-            return null;
-        }
-
-        list($class, $method) = explode('::', $name);
+        list($class, $method) = explode('::', $controllerName);
 
         if (null === $serviceClass = $this->detectContainerController($class)) {
             $serviceId = null;
@@ -84,7 +68,7 @@ class ControllerMetadataFactory
 
         $class = ltrim($class, '\\');
 
-        return new ControllerMetadata($name, $class, $method, $arguments, $serviceId);
+        return new ControllerMetadata($controllerName, $class, $method, $arguments, $serviceId);
     }
 
     /**

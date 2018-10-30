@@ -56,7 +56,7 @@ class YarhonRouteGuardExtensionTest extends TestCase
         $this->container->getCompilerPassConfig()->setRemovingPasses([]);
         $this->container->compile();
 
-        $argument = $this->container->getDefinition(AccessMapBuilder::class)->getArgument(3);
+        $argument = $this->container->getDefinition(AccessMapBuilder::class)->getArgument(4);
         $this->assertInternalType('array', $argument);
         $this->assertArrayHasKey('ignore_controllers', $argument);
         $this->assertArraySubset(['class'], $argument['ignore_controllers']);

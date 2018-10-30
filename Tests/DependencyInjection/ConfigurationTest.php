@@ -29,10 +29,10 @@ class ConfigurationTest extends TestCase
 
         $defaults = [
             'ignore_controllers' => [
-                'Symfony\Bundle\TwigBundle\Controller\PreviewErrorController',
-                'Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController',
-                'Symfony\Bundle\WebProfilerBundle\Controller\RouterController',
-                'Symfony\Bundle\WebProfilerBundle\Controller\ExceptionController',
+                'twig.controller.preview_error',
+                'web_profiler.controller.profiler',
+                'web_profiler.controller.router',
+                'web_profiler.controller.exception',
             ],
             'twig' => [
                 'tag_name' => 'route',

@@ -13,6 +13,7 @@ namespace Yarhon\RouteGuardBundle\Security;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Routing\RouteCollection;
+use Yarhon\RouteGuardBundle\Controller\ControllerNameResolverInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
@@ -29,6 +30,11 @@ class AccessMapBuilder implements LoggerAwareInterface
      * @var RouteTestCollector
      */
     private $routeTestCollector;
+
+    /**
+     * @var ControllerNameResolverInterface
+     */
+    private $controllerNameResolver;
 
     /**
      * @var ControllerMetadataFactory
@@ -48,14 +54,16 @@ class AccessMapBuilder implements LoggerAwareInterface
     /**
      * AccessMapBuilder constructor.
      *
-     * @param RouteTestCollector        $routeTestCollector
-     * @param ControllerMetadataFactory $controllerMetadataFactory
-     * @param RouteMetadataFactory      $routeMetadataFactory
-     * @param array                     $options
+     * @param RouteTestCollector              $routeTestCollector
+     * @param ControllerNameResolverInterface $controllerNameResolver
+     * @param ControllerMetadataFactory       $controllerMetadataFactory
+     * @param RouteMetadataFactory            $routeMetadataFactory
+     * @param array                           $options
      */
-    public function __construct(RouteTestCollector $routeTestCollector, ControllerMetadataFactory $controllerMetadataFactory, RouteMetadataFactory $routeMetadataFactory, $options = [])
+    public function __construct(RouteTestCollector $routeTestCollector, ControllerNameResolverInterface $controllerNameResolver, ControllerMetadataFactory $controllerMetadataFactory, RouteMetadataFactory $routeMetadataFactory, $options = [])
     {
         $this->routeTestCollector = $routeTestCollector;
+        $this->controllerNameResolver = $controllerNameResolver;
         $this->controllerMetadataFactory = $controllerMetadataFactory;
         $this->routeMetadataFactory = $routeMetadataFactory;
 
@@ -82,12 +90,15 @@ class AccessMapBuilder implements LoggerAwareInterface
             $routeInfo = null;
 
             try {
-                $controllerMetadata = $this->controllerMetadataFactory->createMetadata($route);
-                $routeMetadata = $this->routeMetadataFactory->createMetadata($route);
+                $controller = $route->getDefault('_controller');
+                $controllerName = $this->controllerNameResolver->resolve($controller);
 
-                if (null !== $controllerMetadata && $this->isControllerIgnored($controllerMetadata)) {
+                if (null !== $controllerName && $this->isControllerIgnored($controllerName)) {
                     $ignoredRoutes[] = $routeName;
                 } else {
+                    $controllerMetadata = $controllerName ? $this->controllerMetadataFactory->createMetadata($controllerName) : null;
+                    $routeMetadata = $this->routeMetadataFactory->createMetadata($route);
+
                     // Note: empty arrays are also added to authorization cache
                     $tests = $this->routeTestCollector->getTests($routeName, $route, $controllerMetadata);
                     $routeInfo = [$tests, $routeMetadata, $controllerMetadata];
@@ -111,14 +122,12 @@ class AccessMapBuilder implements LoggerAwareInterface
     }
 
     /**
-     * @param ControllerMetadata $controllerMetadata
+     * @param string $controllerName
      *
      * @return bool
      */
-    private function isControllerIgnored($controllerMetadata)
+    private function isControllerIgnored($controllerName)
     {
-        $controllerName = $controllerMetadata->getClass().'::'.$controllerMetadata->getMethod();
-
         foreach ($this->options['ignore_controllers'] as $ignored) {
             if (0 === strpos($controllerName, $ignored)) {
                 return true;

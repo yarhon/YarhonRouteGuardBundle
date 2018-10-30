@@ -22,6 +22,7 @@ interface ControllerNameResolverInterface
      *
      * @return string|null A controller name in the class::method notation, or null if controller name is unavailable
      *
+     *
      * @throws InvalidArgumentException If failed to resolve controller name when controller is not callable
      *                                  If failed to resolve controller class
      */

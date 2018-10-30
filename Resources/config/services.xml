@@ -22,6 +22,7 @@
 
         <service id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\RouteTestCollector" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerNameResolver" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory" />
             <argument type="collection" /> <!-- options -->
@@ -122,7 +123,6 @@
         <service id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory" />
 
         <service id="Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerNameResolver" />
             <argument type="service" id="argument_metadata_factory" on-invalid="ignore" />
             <argument type="service" id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" on-invalid="ignore" />
         </service>

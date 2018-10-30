@@ -13,9 +13,7 @@ namespace Yarhon\RouteGuardBundle\Tests\Controller;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactoryInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
-use Symfony\Component\Routing\Route;
 use Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap;
-use Yarhon\RouteGuardBundle\Controller\ControllerNameResolverInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
@@ -33,7 +31,6 @@ class ControllerMetadataFactoryTest extends TestCase
 
     public function setUp()
     {
-        $this->controllerNameResolver = $this->createMock(ControllerNameResolverInterface::class);
         $this->argumentMetadataFactory = $this->createMock(ArgumentMetadataFactoryInterface::class);
 
         $classMap = [
@@ -44,7 +41,7 @@ class ControllerMetadataFactoryTest extends TestCase
 
         $classMap = new ClassMap($classMap);
 
-        $this->factory = new ControllerMetadataFactory($this->controllerNameResolver, $this->argumentMetadataFactory, $classMap);
+        $this->factory = new ControllerMetadataFactory($this->argumentMetadataFactory, $classMap);
     }
 
     /**
@@ -52,16 +49,10 @@ class ControllerMetadataFactoryTest extends TestCase
      */
     public function testCreateMetadata($controllerName, $argumentMetadatas, $expected)
     {
-        $route = new Route('/', ['_controller' => 'zxc']);
-
-        $this->controllerNameResolver->method('resolve')
-            ->with('zxc')
-            ->willReturn($controllerName);
-
         $this->argumentMetadataFactory->method('createArgumentMetadata')
             ->willReturn($argumentMetadatas);
 
-        $metadata = $this->factory->createMetadata($route);
+        $metadata = $this->factory->createMetadata($controllerName);
 
         $this->assertEquals($expected, $metadata);
     }
@@ -96,28 +87,17 @@ class ControllerMetadataFactoryTest extends TestCase
                 [],
                 new ControllerMetadata('service2::method', 'service2_class', 'method', [], 'service2'),
             ],
-            [
-                null,
-                [],
-                null,
-            ],
         ];
     }
 
     public function testCreateMetadataForControllerAsServiceException()
     {
-        $route = new Route('/', ['_controller' => 'zxc']);
-
-        $this->controllerNameResolver->method('resolve')
-            ->with('zxc')
-            ->willReturn('service3::method');
-
         $this->argumentMetadataFactory->method('createArgumentMetadata')
             ->willReturn([]);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unable to resolve class for service "service3".');
 
-        $this->factory->createMetadata($route);
+        $this->factory->createMetadata('service3::method');
     }
 }

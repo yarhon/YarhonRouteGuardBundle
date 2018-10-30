@@ -107,7 +107,7 @@ class::method notation. You can specify:
   * controller class name, i.e. `App\Controller\DefaultController`
   * controller name prefix, i.e. `App\Controller\`
   
-  Note: for "controller-as-a-service" controllers you have to specify class name, not service name.
+  Note: for "controller-as-a-service" controllers you have to specify service name, not class name.
   
   Default value: `[]`
 * `ignore_controllers_symfony`. Array of default Symfony controllers that would be ignored by RouteGuard.
@@ -115,10 +115,10 @@ class::method notation. You can specify:
   Default value: 
   ```php 
   [
-      'Symfony\Bundle\TwigBundle\Controller\PreviewErrorController',
-      'Symfony\Bundle\WebProfilerBundle\Controller\ProfilerController',
-      'Symfony\Bundle\WebProfilerBundle\Controller\RouterController',
-      'Symfony\Bundle\WebProfilerBundle\Controller\ExceptionController',
+      'twig.controller.preview_error',
+      'web_profiler.controller.profiler',
+      'web_profiler.controller.router',
+      'web_profiler.controller.exception',
   ]
   ```
 * `twig`
