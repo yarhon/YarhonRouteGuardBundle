@@ -13,6 +13,6 @@ namespace Yarhon\RouteGuardBundle\Exception;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class InvalidArgumentException extends \InvalidArgumentException implements CatchableExceptionInterface
+class InvalidArgumentException extends \InvalidArgumentException implements ExceptionInterface
 {
 }

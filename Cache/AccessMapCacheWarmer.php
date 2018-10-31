@@ -84,16 +84,21 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
         $accessMap = [];
 
         foreach ($accessInfoGenerator as $routeName => $accessInfo) {
-            if (null === $accessInfo) {
-                continue;
-            }
+            // TODO: isn't it magic, that generator can return less items than present in initial collection,
+            // because of ignored / exception routes?
 
-            $accessMap[$routeName] = $accessInfo;
+            // var_dump($routeName);
+
+            list($tests, $routeMetadata, $controllerMetadata) = $accessInfo;
+
+            // !!!! saves even without commit (on destruct) !!!
+
+            $this->saveDeferred($this->authorizationCache, $routeName, $tests);
+            $this->saveDeferred($this->routeMetadataCache, $routeName, $routeMetadata);
+            $this->saveDeferred($this->controllerMetadataCache, $routeName, $controllerMetadata);
         }
 
-        foreach ($accessMap as $routeName => $accessInfo) {
-            $this->save($routeName, $accessInfo);
-        }
+        // $this->commit();
     }
 
     private function clear()
@@ -103,26 +108,19 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
         $this->controllerMetadataCache->clear();
     }
 
-    /**
-     * @param string $routeName
-     * @param array  $accessInfo
-     */
-    private function save($routeName, $accessInfo)
+    private function commit()
+    {
+        $this->authorizationCache->commit();
+        $this->routeMetadataCache->commit();
+        $this->controllerMetadataCache->commit();
+    }
+
+    private function saveDeferred(CacheItemPoolInterface $cache, $routeName, $item)
     {
         $cacheKey = CacheFactory::getValidCacheKey($routeName);
 
-        list($tests, $routeMetadata, $controllerMetadata) = $accessInfo;
-
-        $cacheItem = $this->authorizationCache->getItem($cacheKey);
-        $cacheItem->set($tests);
-        $this->authorizationCache->save($cacheItem);
-
-        $cacheItem = $this->routeMetadataCache->getItem($cacheKey);
-        $cacheItem->set($routeMetadata);
-        $this->routeMetadataCache->save($cacheItem);
-
-        $cacheItem = $this->controllerMetadataCache->getItem($cacheKey);
-        $cacheItem->set($controllerMetadata);
-        $this->controllerMetadataCache->save($cacheItem);
+        $cacheItem = $cache->getItem($cacheKey);
+        $cacheItem->set($item);
+        $cache->saveDeferred($cacheItem);
     }
 }

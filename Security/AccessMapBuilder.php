@@ -15,9 +15,8 @@ use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Routing\RouteCollection;
 use Yarhon\RouteGuardBundle\Controller\ControllerNameResolverInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory;
-use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
-use Yarhon\RouteGuardBundle\Exception\CatchableExceptionInterface;
+use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -85,39 +84,40 @@ class AccessMapBuilder implements LoggerAwareInterface
         }
 
         $ignoredRoutes = [];
+        $catchExceptions = $this->options['catch_exceptions'] && $this->logger;
 
         foreach ($routeCollection as $routeName => $route) {
-            $routeInfo = null;
-
             try {
                 $controller = $route->getDefault('_controller');
                 $controllerName = $this->controllerNameResolver->resolve($controller);
 
                 if (null !== $controllerName && $this->isControllerIgnored($controllerName)) {
                     $ignoredRoutes[] = $routeName;
-                } else {
-                    $controllerMetadata = $controllerName ? $this->controllerMetadataFactory->createMetadata($controllerName) : null;
-                    $routeMetadata = $this->routeMetadataFactory->createMetadata($route);
-
-                    // Note: empty arrays are also added to authorization cache
-                    $tests = $this->routeTestCollector->getTests($routeName, $route, $controllerMetadata);
-                    $routeInfo = [$tests, $routeMetadata, $controllerMetadata];
+                    continue;
                 }
-            } catch (CatchableExceptionInterface $e) {
-                if (!$this->options['catch_exceptions']) {
+
+                $controllerMetadata = $controllerName ? $this->controllerMetadataFactory->createMetadata($controllerName) : null;
+                $routeMetadata = $this->routeMetadataFactory->createMetadata($route);
+
+                // Note: currently empty arrays (no tests) are also added to authorization cache
+                $tests = $this->routeTestCollector->getTests($routeName, $route, $controllerMetadata);
+
+                yield $routeName => [$tests, $routeMetadata, $controllerMetadata];
+
+            } catch (ExceptionInterface $e) {
+                if (!$catchExceptions) {
                     throw $e;
                 }
 
-                if ($this->logger) {
-                    $this->logger->error(sprintf('Exception caught while processing route "%s": %s', $routeName, $e->getMessage()), ['exception' => $e]);
-                }
+                $this->logger->error(sprintf('Exception caught while processing route "%s": %s', $routeName, $e->getMessage()), ['exception' => $e]);
+                continue;
             }
-
-            yield $routeName => $routeInfo;
         }
 
+        // TODO: add exception routes to ignored log message?
+
         if ($this->logger && count($ignoredRoutes)) {
-            $this->logger->info('Ignored routes count', ['count' => count($ignoredRoutes)]);
+            $this->logger->info('Ignored routes', ['count' => count($ignoredRoutes), 'list' => $ignoredRoutes]);
         }
     }
 
