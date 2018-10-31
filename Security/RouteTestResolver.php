@@ -28,16 +28,16 @@ class RouteTestResolver implements RouteTestResolverInterface, LoggerAwareInterf
     /**
      * @var CacheItemPoolInterface
      */
-    private $authorizationCache;
+    private $testsCache;
 
     /**
      * @var TestResolverInterface
      */
     private $testResolver;
 
-    public function __construct(CacheItemPoolInterface $authorizationCache, TestResolverInterface $testResolver)
+    public function __construct(CacheItemPoolInterface $testsCache, TestResolverInterface $testResolver)
     {
-        $this->authorizationCache = $authorizationCache;
+        $this->testsCache = $testsCache;
         $this->testResolver = $testResolver;
     }
 
@@ -50,7 +50,7 @@ class RouteTestResolver implements RouteTestResolverInterface, LoggerAwareInterf
 
         //var_dump($this->accessMap->has('blog1'), $this->accessMap->get('blog1'));
         $cacheKey = CacheFactory::getValidCacheKey($routeContext->getName());
-        $cacheItem = $this->authorizationCache->getItem($cacheKey);
+        $cacheItem = $this->testsCache->getItem($cacheKey);
 
         if (!$cacheItem->isHit()) {
             return [];

@@ -34,7 +34,7 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
     /**
      * @var CacheItemPoolInterface
      */
-    private $authorizationCache;
+    private $testsCache;
 
     /**
      * @var CacheItemPoolInterface
@@ -51,16 +51,16 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
      *
      * @param AccessMapBuilder $accessMapBuilder
      * @param RouterInterface $router
-     * @param CacheItemPoolInterface $authorizationCache
+     * @param CacheItemPoolInterface $testsCache
      * @param CacheItemPoolInterface $routeMetadataCache
      * @param CacheItemPoolInterface $controllerMetadataCache
      */
-    public function __construct(AccessMapBuilder $accessMapBuilder, RouterInterface $router, CacheItemPoolInterface $authorizationCache, CacheItemPoolInterface $routeMetadataCache, CacheItemPoolInterface $controllerMetadataCache)
+    public function __construct(AccessMapBuilder $accessMapBuilder, RouterInterface $router, CacheItemPoolInterface $testsCache, CacheItemPoolInterface $routeMetadataCache, CacheItemPoolInterface $controllerMetadataCache)
     {
         $this->accessMapBuilder = $accessMapBuilder;
         $this->routeCollection = $router->getRouteCollection();
 
-        $this->authorizationCache = $authorizationCache;
+        $this->testsCache = $testsCache;
         $this->routeMetadataCache = $routeMetadataCache;
         $this->controllerMetadataCache = $controllerMetadataCache;
     }
@@ -80,7 +80,7 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
     {
         $this->clear();
 
-        $accessInfoGenerator = $this->accessMapBuilder->build($this->routeCollection);
+        $accessInfoGenerator = $this->accessMapBuilder->collect($this->routeCollection);
         $accessMap = [];
 
         foreach ($accessInfoGenerator as $routeName => $accessInfo) {
@@ -93,7 +93,7 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
 
             // !!!! saves even without commit (on destruct) !!!
 
-            $this->saveDeferred($this->authorizationCache, $routeName, $tests);
+            $this->saveDeferred($this->testsCache, $routeName, $tests);
             $this->saveDeferred($this->routeMetadataCache, $routeName, $routeMetadata);
             $this->saveDeferred($this->controllerMetadataCache, $routeName, $controllerMetadata);
         }
@@ -103,14 +103,14 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
 
     private function clear()
     {
-        $this->authorizationCache->clear();
+        $this->testsCache->clear();
         $this->routeMetadataCache->clear();
         $this->controllerMetadataCache->clear();
     }
 
     private function commit()
     {
-        $this->authorizationCache->commit();
+        $this->testsCache->commit();
         $this->routeMetadataCache->commit();
         $this->controllerMetadataCache->commit();
     }

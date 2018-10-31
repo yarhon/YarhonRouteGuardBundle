@@ -13,6 +13,7 @@ namespace Yarhon\RouteGuardBundle\Security;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Route;
 use Yarhon\RouteGuardBundle\Controller\ControllerNameResolverInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
@@ -77,7 +78,7 @@ class AccessMapBuilder implements LoggerAwareInterface
      *
      * @return \Generator
      */
-    public function build(RouteCollection $routeCollection)
+    public function collect(RouteCollection $routeCollection)
     {
         if ($this->logger) {
             $this->logger->info('Build access map. Route collection count', ['count' => count($routeCollection)]);
@@ -96,13 +97,7 @@ class AccessMapBuilder implements LoggerAwareInterface
                     continue;
                 }
 
-                $controllerMetadata = $controllerName ? $this->controllerMetadataFactory->createMetadata($controllerName) : null;
-                $routeMetadata = $this->routeMetadataFactory->createMetadata($route);
-
-                // Note: currently empty arrays (no tests) are also added to authorization cache
-                $tests = $this->routeTestCollector->getTests($routeName, $route, $controllerMetadata);
-
-                yield $routeName => [$tests, $routeMetadata, $controllerMetadata];
+                yield $routeName => $this->collectForRoute($routeName, $route, $controllerName);
 
             } catch (ExceptionInterface $e) {
                 if (!$catchExceptions) {
@@ -119,6 +114,24 @@ class AccessMapBuilder implements LoggerAwareInterface
         if ($this->logger && count($ignoredRoutes)) {
             $this->logger->info('Ignored routes', ['count' => count($ignoredRoutes), 'list' => $ignoredRoutes]);
         }
+    }
+
+    /**
+     * @param string      $routeName
+     * @param Route       $route
+     * @param string|null $controllerName
+     *
+     * @return array
+     */
+    private function collectForRoute($routeName, Route $route, $controllerName = null)
+    {
+        $controllerMetadata = $controllerName ? $this->controllerMetadataFactory->createMetadata($controllerName) : null;
+        $routeMetadata = $this->routeMetadataFactory->createMetadata($route);
+
+        // Note: currently empty arrays (no tests) are also added to authorization cache
+        $tests = $this->routeTestCollector->getTests($routeName, $route, $controllerMetadata);
+
+        return [$tests, $routeMetadata, $controllerMetadata];
     }
 
     /**
