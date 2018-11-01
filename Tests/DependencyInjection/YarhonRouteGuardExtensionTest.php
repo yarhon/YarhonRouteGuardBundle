@@ -127,9 +127,9 @@ class YarhonRouteGuardExtensionTest extends TestCase
         $this->container->register('security.authorization_checker')->setSynthetic(true);
 
         $services = [
-            'yarhon_route_guard.route_authorization_checker',
-            'yarhon_route_guard.route_test_resolver',
             'yarhon_route_guard.authorized_url_generator',
+            'yarhon_route_guard.route_authorization_checker',
+            'yarhon_route_guard.test_loader',
         ];
 
         //$this->container->getCompilerPassConfig()->setOptimizationPasses([]);

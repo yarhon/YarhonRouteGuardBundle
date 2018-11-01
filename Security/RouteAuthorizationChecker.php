@@ -21,18 +21,18 @@ use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
 class RouteAuthorizationChecker implements RouteAuthorizationCheckerInterface
 {
     /**
-     * @var RouteTestResolver
+     * @var TestLoaderInterface
      */
-    private $routeTestResolver;
+    private $testLoader;
 
     /**
      * @var AuthorizationCheckerInterface
      */
     private $authorizationChecker;
 
-    public function __construct(RouteTestResolver $routeTestResolver, AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(TestLoaderInterface $testLoader, AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->routeTestResolver = $routeTestResolver;
+        $this->testLoader = $testLoader;
         $this->authorizationChecker = $authorizationChecker;
     }
 
@@ -41,7 +41,7 @@ class RouteAuthorizationChecker implements RouteAuthorizationCheckerInterface
      */
     public function isGranted(RouteContextInterface $routeContext)
     {
-        $tests = $this->routeTestResolver->getTests($routeContext);
+        $tests = $this->testLoader->getTests($routeContext);
 
         foreach ($tests as $test) {
             if ($test instanceof IsGrantedTest) {

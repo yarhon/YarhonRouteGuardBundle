@@ -20,7 +20,7 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
 class IsGrantedTest implements TestInterface
 {
     /**
-     * @var mixed[]
+     * @var array
      */
     private $attributes;
 
@@ -35,7 +35,7 @@ class IsGrantedTest implements TestInterface
     private $metadata = [];
 
     /**
-     * @param mixed[] $attributes
+     * @param array $attributes
      */
     public function __construct(array $attributes)
     {
@@ -43,7 +43,7 @@ class IsGrantedTest implements TestInterface
     }
 
     /**
-     * @return mixed[]
+     * @return array
      */
     public function getAttributes()
     {

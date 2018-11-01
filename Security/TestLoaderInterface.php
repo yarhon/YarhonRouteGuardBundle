@@ -16,7 +16,7 @@ use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface RouteTestResolverInterface
+interface TestLoaderInterface
 {
     /**
      * @param RouteContextInterface $routeContext
