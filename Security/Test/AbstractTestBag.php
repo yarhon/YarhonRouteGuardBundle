@@ -16,30 +16,9 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
 abstract class AbstractTestBag implements AbstractTestBagInterface
 {
     /**
-     * @var array
-     */
-    protected $elements = [];
-
-    /**
      * @var string
      */
     protected $providerClass;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIterator()
-    {
-        return new \ArrayIterator($this->elements);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function count()
-    {
-        return count($this->elements);
-    }
 
     /**
      * {@inheritdoc}

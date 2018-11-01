@@ -11,7 +11,8 @@
 namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
-use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
+use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
+use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
@@ -65,31 +66,34 @@ class SensioSecurityResolver implements TestResolverInterface
      */
     public function resolve(AbstractTestBagInterface $testBag, RouteContextInterface $routeContext)
     {
-        $tests = [];
+        if (!($testBag instanceof TestBagInterface)) {
+            // TODO: throw exception
+        }
 
-        foreach ($testBag as $testArguments) {
-            $this->resolveVariables($testArguments, $routeContext);
-            $tests[] = $testArguments;
+        $tests = $testBag->getTests();
+
+        foreach ($tests as $test) {
+            $this->resolveVariables($test, $routeContext);
         }
 
         return $tests;
     }
 
     /**
-     * @param TestArguments         $testArguments
+     * @param IsGrantedTest         $test
      * @param RouteContextInterface $routeContext
      */
-    private function resolveVariables(TestArguments $testArguments, RouteContextInterface $routeContext)
+    private function resolveVariables(IsGrantedTest $test, RouteContextInterface $routeContext)
     {
-        $requestAttributes = $testArguments->getMetadata('request_attributes') ?: [];
+        $requestAttributes = $test->getMetadata('request_attributes') ?: [];
 
-        if ($subjectName = $testArguments->getMetadata('subject_name')) {
+        if ($subjectName = $test->getMetadata('subject_name')) {
             $variableDescription = sprintf('subject variable "%s"', $subjectName);
             $value = $this->resolveVariable($routeContext, $subjectName, $requestAttributes, $variableDescription);
-            $testArguments->setSubject($value);
+            $test->setSubject($value);
         }
 
-        foreach ($testArguments->getAttributes() as $attribute) {
+        foreach ($test->getAttributes() as $attribute) {
             if ($attribute instanceof ExpressionDecorator) {
                 $values = [];
                 foreach ($attribute->getVariableNames() as $name) {

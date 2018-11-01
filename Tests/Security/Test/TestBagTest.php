@@ -12,22 +12,22 @@ namespace Yarhon\RouteGuardBundle\Tests\Security\Test;
 
 use PHPUnit\Framework\TestCase;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
-use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
+use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class TestBagTest extends TestCase
 {
-    public function testConstruct()
+    public function testGetTests()
     {
         $tests = [
-            $this->createMock(TestArguments::class),
-            $this->createMock(TestArguments::class),
+            $this->createMock(TestInterface::class),
+            $this->createMock(TestInterface::class),
         ];
 
         $testBag = new TestBag($tests);
 
-        $this->assertSame($tests, iterator_to_array($testBag));
+        $this->assertSame($tests, $testBag->getTests());
     }
 }

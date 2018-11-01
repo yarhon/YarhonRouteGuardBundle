@@ -11,17 +11,21 @@
 namespace Yarhon\RouteGuardBundle\Security\Test;
 
 /**
- * TestBag holds a set of authorization tests (calls of AuthorizationChecker::isGranted()).
- * Each test is represented by an Arguments instance.
+ * TestBag holds a set of authorization tests. Each test is represented by a TestInterface instance.
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class TestBag extends AbstractTestBag implements TestBagInterface
 {
     /**
+     * @var TestInterface[]
+     */
+    private $tests = [];
+
+    /**
      * TestBag constructor.
      *
-     * @param TestArguments[] $tests
+     * @param TestInterface[] $tests
      */
     public function __construct(array $tests)
     {
@@ -31,10 +35,18 @@ class TestBag extends AbstractTestBag implements TestBagInterface
     }
 
     /**
-     * @param TestArguments $arguments
+     * {@inheritdoc}
      */
-    private function add(TestArguments $arguments)
+    public function getTests()
     {
-        $this->elements[] = $arguments;
+        return $this->tests;
+    }
+
+    /**
+     * @param TestInterface $test
+     */
+    private function add(TestInterface $test)
+    {
+        $this->tests[] = $test;
     }
 }

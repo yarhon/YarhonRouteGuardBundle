@@ -15,9 +15,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory;
 use Yarhon\RouteGuardBundle\Security\Http\RequestContext;
-use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
+use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
-use Yarhon\RouteGuardBundle\Security\Http\TestBagMap;
+use Yarhon\RouteGuardBundle\Security\Http\RequestDependentTestBag;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
 use Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver;
@@ -32,10 +32,6 @@ class SymfonyAccessControlResolverTest extends TestCase
     private $requestContext;
 
     private $resolver;
-
-    private $testBag;
-
-    private $testArguments;
 
     private $routeContext;
 
@@ -55,12 +51,6 @@ class SymfonyAccessControlResolverTest extends TestCase
 
         $this->resolver = new SymfonyAccessControlResolver($requestStack, $requestContextFactory);
 
-        $this->testArguments = $this->createMock(TestArguments::class);
-        $this->testBag = $this->createMock(TestBag::class);
-
-        $this->testBag->method('getIterator')
-            ->willReturn(new \ArrayIterator([$this->testArguments]));
-
         $this->routeContext = new RouteContext('main', [], 'POST');
     }
 
@@ -71,41 +61,49 @@ class SymfonyAccessControlResolverTest extends TestCase
 
     public function testResolveTestBag()
     {
-        $this->testArguments->expects($this->once())
+        $test = $this->createMock(IsGrantedTest::class);
+
+        $testBag = $this->createMock(TestBag::class);
+        $testBag->method('getTests')
+            ->willReturn([$test]);
+
+        $test->expects($this->once())
             ->method('setSubject')
             ->with($this->request);
 
-        $resolved = $this->resolver->resolve($this->testBag, $this->routeContext);
+        $resolved = $this->resolver->resolve($testBag, $this->routeContext);
 
-        $this->assertSame([$this->testArguments], $resolved);
+        $this->assertSame([$test], $resolved);
     }
 
-    public function testResolveTestBagMapWhenHasMatch()
+    public function testResolveRequestDependentTestBagWhenHasMatch()
     {
-        $testBagMap = $this->createMock(TestBagMap::class);
-        $testBagMap->expects($this->once())
-            ->method('resolve')
-            ->with($this->requestContext)
-            ->willReturn($this->testBag);
+        $test = $this->createMock(IsGrantedTest::class);
 
-        $this->testArguments->expects($this->once())
+        $testBag = $this->createMock(RequestDependentTestBag::class);
+        $testBag->expects($this->once())
+            ->method('getTests')
+            ->with($this->requestContext)
+            ->willReturn([$test]);
+
+        $test->expects($this->once())
             ->method('setSubject')
             ->with($this->request);
 
-        $resolved = $this->resolver->resolve($testBagMap, $this->routeContext);
+        $resolved = $this->resolver->resolve($testBag, $this->routeContext);
 
-        $this->assertSame([$this->testArguments], $resolved);
+        $this->assertSame([$test], $resolved);
     }
 
-    public function testResolveTestBagMapWhenNotHasMatch()
+    public function testResolveRequestDependentTestBagWhenNotHasMatch()
     {
-        $testBagMap = $this->createMock(TestBagMap::class);
-        $testBagMap->expects($this->once())
-            ->method('resolve')
+        $testBag = $this->createMock(RequestDependentTestBag::class);
+        $testBag->expects($this->once())
+            ->method('getTests')
             ->with($this->requestContext)
-            ->willReturn(null);
+            ->willReturn([]);
 
-        $resolved = $this->resolver->resolve($testBagMap, $this->routeContext);
+        $resolved = $this->resolver->resolve($testBag, $this->routeContext);
 
         $this->assertSame([], $resolved);
     }

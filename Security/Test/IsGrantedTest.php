@@ -11,13 +11,13 @@
 namespace Yarhon\RouteGuardBundle\Security\Test;
 
 /**
- * TestArguments is a value object class for storing arguments for AuthorizationChecker::isGranted() authorization test.
+ * IsGrantedTest is a value object class for storing arguments for AuthorizationChecker::isGranted() authorization test.
  *
  * @see \Symfony\Component\Security\Core\Authorization\AuthorizationChecker::isGranted
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class TestArguments
+class IsGrantedTest implements TestInterface
 {
     /**
      * @var mixed[]

@@ -25,22 +25,6 @@ class AbstractTestBagTest extends TestCase
         $this->testBag = $this->getMockForAbstractClass(AbstractTestBag::class);
     }
 
-    public function testIterator()
-    {
-        $this->assertInstanceOf(\ArrayIterator::class, $this->testBag->getIterator());
-    }
-
-    public function testCount()
-    {
-        $this->assertSame(0, $this->testBag->count());
-
-        $r = new \ReflectionProperty($this->testBag, 'elements');
-        $r->setAccessible(true);
-        $r->setValue($this->testBag, [1, 2]);
-
-        $this->assertSame(2, $this->testBag->count());
-    }
-
     public function testProviderClass()
     {
         $this->testBag->setProviderClass('foo');

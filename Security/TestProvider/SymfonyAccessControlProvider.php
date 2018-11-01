@@ -19,8 +19,8 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Yarhon\RouteGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\RouteGuardBundle\Security\Http\RouteMatcher;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
-use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
-use Yarhon\RouteGuardBundle\Security\Http\TestBagMap;
+use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
+use Yarhon\RouteGuardBundle\Security\Http\RequestDependentTestBag;
 use Yarhon\RouteGuardBundle\Security\Authorization\ExpressionVoter;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
@@ -54,7 +54,7 @@ class SymfonyAccessControlProvider implements TestProviderInterface
     /**
      * @var array
      */
-    private $testArguments = [];
+    private $tests = [];
 
     /**
      * SymfonyAccessControlProvider constructor.
@@ -87,11 +87,11 @@ class SymfonyAccessControlProvider implements TestProviderInterface
 
     /**
      * @param RequestConstraint $constraint
-     * @param TestArguments     $arguments
+     * @param IsGrantedTest     $test
      */
-    public function addRule(RequestConstraint $constraint, TestArguments $arguments)
+    public function addRule(RequestConstraint $constraint, IsGrantedTest $test)
     {
-        $this->rules[] = [$constraint, $arguments];
+        $this->rules[] = [$constraint, $test];
     }
 
     /**
@@ -115,13 +115,13 @@ class SymfonyAccessControlProvider implements TestProviderInterface
 
         $uniqueKey = $this->getTestAttributesUniqueKey($attributes);
 
-        if (!isset($this->testArguments[$uniqueKey])) {
-            $this->testArguments[$uniqueKey] = new TestArguments($attributes);
+        if (!isset($this->tests[$uniqueKey])) {
+            $this->tests[$uniqueKey] = new IsGrantedTest($attributes);
         }
 
-        $arguments = $this->testArguments[$uniqueKey];
+        $test = $this->tests[$uniqueKey];
 
-        return [$constraint, $arguments];
+        return [$constraint, $test];
     }
 
     /**
@@ -131,7 +131,7 @@ class SymfonyAccessControlProvider implements TestProviderInterface
     {
         $matches = [];
 
-        foreach ($this->rules as $index => list($constraint, $arguments)) {
+        foreach ($this->rules as $index => list($constraint, $test)) {
 
             $matchResult = $this->routeMatcher->matches($route, $constraint);
 
@@ -139,15 +139,15 @@ class SymfonyAccessControlProvider implements TestProviderInterface
                 continue;
             }
 
-            $testBag = new TestBag([$arguments]);
+            $tests = [$test];
 
             if (true === $matchResult) {
-                $matches[$index] = [$testBag, null];
+                $matches[$index] = [$tests, null];
                 break;
             }
 
             if ($matchResult instanceof RequestConstraint) {
-                $matches[$index] = [$testBag, $matchResult];
+                $matches[$index] = [$tests, $matchResult];
                 continue;
             }
         }
@@ -156,13 +156,16 @@ class SymfonyAccessControlProvider implements TestProviderInterface
             return null;
         }
 
-        if (1 === count($matches) && null === current($matches)[1]) {
+        $originalMatches = $matches;
+        $matches = array_values($matches);
+
+        if (1 === count($matches) && null === $matches[0][1]) {
             // Always matching rule was found, and there were no possibly matching rules found before,
-            // so we don't need a TestBagMap for resolving it by RequestContext in runtime.
-            $testBag = current($matches)[0];
+            // so we don't need a RequestDependentTestBag for resolving it by RequestContext in runtime.
+            $testBag = new TestBag($matches[0][0]);
         } else {
-            $this->logRuntimeMatching($route, $routeName, $matches);
-            $testBag = new TestBagMap(array_values($matches));
+            $this->logRuntimeMatching($route, $routeName, $originalMatches);
+            $testBag = new RequestDependentTestBag($matches);
         }
 
         return $testBag;

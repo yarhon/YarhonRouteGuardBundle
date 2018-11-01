@@ -25,7 +25,7 @@ use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
-use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
+use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
@@ -100,9 +100,9 @@ class SensioSecurityProviderTest extends TestCase
         $testBag = $this->provider->getTests('index', $this->route, $controllerMetadata);
 
         $this->assertInstanceOf(TestBag::class, $testBag);
-        $testArguments = iterator_to_array($testBag)[0];
+        $test = $testBag->getTests()[0];
 
-        $this->assertEquals($expected, $testArguments);
+        $this->assertEquals($expected, $test);
     }
 
     public function securityAnnotationDataProvider()
@@ -112,19 +112,19 @@ class SensioSecurityProviderTest extends TestCase
                 new SecurityAnnotation(['expression' => 'request.isSecure']),
                 [],
                 [],
-                new TestArguments([new ExpressionDecorator(new Expression('request.isSecure'), [])]),
+                new IsGrantedTest([new ExpressionDecorator(new Expression('request.isSecure'), [])]),
             ],
             [
                 new SecurityAnnotation(['expression' => 'request.isSecure']),
                 ['foo'],
                 ['foo'],
-                new TestArguments([new ExpressionDecorator(new Expression('request.isSecure'), ['foo'])]),
+                new IsGrantedTest([new ExpressionDecorator(new Expression('request.isSecure'), ['foo'])]),
             ],
             [
                 new SecurityAnnotation(['expression' => 'request.isSecure']),
                 ['foo', 'bar'],
                 ['baz'],
-                (new TestArguments([new ExpressionDecorator(new Expression('request.isSecure'), ['foo', 'bar', 'baz'])]))->setMetadata('request_attributes', ['baz']),
+                (new IsGrantedTest([new ExpressionDecorator(new Expression('request.isSecure'), ['foo', 'bar', 'baz'])]))->setMetadata('request_attributes', ['baz']),
             ],
         ];
     }
@@ -186,9 +186,9 @@ class SensioSecurityProviderTest extends TestCase
         $testBag = $this->provider->getTests('index', $this->route, $controllerMetadata);
 
         $this->assertInstanceOf(TestBag::class, $testBag);
-        $testArguments = iterator_to_array($testBag)[0];
+        $test = $testBag->getTests()[0];
 
-        $this->assertEquals($expected, $testArguments);
+        $this->assertEquals($expected, $test);
     }
 
     public function isGrantedAnnotationDataProvider()
@@ -198,25 +198,25 @@ class SensioSecurityProviderTest extends TestCase
                 new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN']),
                 ['foo', 'bar'],
                 ['bar', 'baz'],
-                new TestArguments(['ROLE_ADMIN']),
+                new IsGrantedTest(['ROLE_ADMIN']),
             ],
             [
                 new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN', 'subject' => 'foo']),
                 ['foo', 'bar'],
                 ['bar', 'baz'],
-                (new TestArguments(['ROLE_ADMIN']))->setMetadata('subject_name', 'foo'),
+                (new IsGrantedTest(['ROLE_ADMIN']))->setMetadata('subject_name', 'foo'),
             ],
             [
                 new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN', 'subject' => 'bar']),
                 ['foo', 'bar'],
                 ['bar', 'baz'],
-                (new TestArguments(['ROLE_ADMIN']))->setMetadata('subject_name', 'bar'),
+                (new IsGrantedTest(['ROLE_ADMIN']))->setMetadata('subject_name', 'bar'),
             ],
             [
                 new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN', 'subject' => 'baz']),
                 ['foo', 'bar'],
                 ['bar', 'baz'],
-                (new TestArguments(['ROLE_ADMIN']))->setMetadata('subject_name', 'baz')->setMetadata('request_attributes', ['baz']),
+                (new IsGrantedTest(['ROLE_ADMIN']))->setMetadata('subject_name', 'baz')->setMetadata('request_attributes', ['baz']),
             ],
         ];
     }
@@ -259,9 +259,9 @@ class SensioSecurityProviderTest extends TestCase
     }
 
     /**
-     * @dataProvider argumentsEqualityDataProvider
+     * @dataProvider sameInstancesOfEqualTestsDataProvider
      */
-    public function testArgumentsEquality($callOne, $callTwo, $expected)
+    public function testSameInstancesOfEqualTests($callOne, $callTwo, $expected)
     {
         $annotations = [$callOne[0], $callTwo[0]];
         $controllerArguments = [$callOne[1], $callTwo[1]];
@@ -283,21 +283,21 @@ class SensioSecurityProviderTest extends TestCase
         $controllerMetadata = $this->createControllerMetadata('class::method', $controllerArguments[0]);
 
         $testBag = $this->provider->getTests('index', $this->route, $controllerMetadata);
-        $testArgumentsOne = iterator_to_array($testBag)[0];
+        $testOne = $testBag->getTests()[0];
 
         $controllerMetadata = $this->createControllerMetadata('class::method', $controllerArguments[1]);
 
         $testBag = $this->provider->getTests('index', $this->route, $controllerMetadata);
-        $testArgumentsTwo = iterator_to_array($testBag)[0];
+        $testTwo = $testBag->getTests()[0];
 
         if ($expected) {
-            $this->assertSame($testArgumentsOne, $testArgumentsTwo);
+            $this->assertSame($testOne, $testTwo);
         } else {
-            $this->assertNotSame($testArgumentsOne, $testArgumentsTwo);
+            $this->assertNotSame($testOne, $testTwo);
         }
     }
 
-    public function argumentsEqualityDataProvider()
+    public function sameInstancesOfEqualTestsDataProvider()
     {
         return [
             [

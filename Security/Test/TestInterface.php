@@ -13,10 +13,6 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface TestBagInterface extends AbstractTestBagInterface
+interface TestInterface
 {
-    /**
-     * @return TestInterface[]
-     */
-    public function getTests();
 }

@@ -11,17 +11,17 @@
 namespace Yarhon\RouteGuardBundle\Security\Http;
 
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
-use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
+use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface TestBagMapInterface extends AbstractTestBagInterface
+interface RequestDependentTestBagInterface extends AbstractTestBagInterface
 {
     /**
      * @param RequestContext $requestContext
      *
-     * @return TestBagInterface|null
+     * @return TestInterface[]
      */
-    public function resolve(RequestContext $requestContext);
+    public function getTests(RequestContext $requestContext);
 }

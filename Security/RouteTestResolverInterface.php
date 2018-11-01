@@ -11,7 +11,7 @@
 namespace Yarhon\RouteGuardBundle\Security;
 
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
-use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
+use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -21,7 +21,7 @@ interface RouteTestResolverInterface
     /**
      * @param RouteContextInterface $routeContext
      *
-     * @return TestArguments[]
+     * @return TestInterface[]
      */
     public function getTests(RouteContextInterface $routeContext);
 }

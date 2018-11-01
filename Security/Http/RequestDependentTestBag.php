@@ -11,15 +11,21 @@
 namespace Yarhon\RouteGuardBundle\Security\Http;
 
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBag;
-use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
+use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
 
 /**
+ *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class TestBagMap extends AbstractTestBag implements TestBagMapInterface
+class RequestDependentTestBag extends AbstractTestBag implements RequestDependentTestBagInterface
 {
     /**
-     * TestBagMap constructor.
+     * @var array
+     */
+    private $map = [];
+
+    /**
+     * RequestDependentTestBag constructor.
      *
      * @param array $map
      */
@@ -33,27 +39,25 @@ class TestBagMap extends AbstractTestBag implements TestBagMapInterface
     /**
      * {@inheritdoc}
      */
-    public function resolve(RequestContext $requestContext)
+    public function getTests(RequestContext $requestContext)
     {
-        $resolved = null;
-
-        foreach ($this->elements as list($testBag, $requestConstraint)) {
+        foreach ($this->map as list($tests, $requestConstraint)) {
             /** @var RequestConstraintInterface $requestConstraint */
             if (null === $requestConstraint || $requestConstraint->matches($requestContext)) {
-                $resolved = $testBag;
-                break;
+                return $tests;
             }
         }
 
-        return $resolved;
+        return [];
     }
 
     /**
-     * @param TestBagInterface                $testBag
+     * @param TestInterface[]                 $tests
      * @param RequestConstraintInterface|null $constraint
      */
-    private function add(TestBagInterface $testBag, RequestConstraintInterface $constraint = null)
+    private function add(array $tests, RequestConstraintInterface $constraint = null)
     {
-        $this->elements[] = [$testBag, $constraint];
+        // TODO: check $test array elements
+        $this->map[] = [$tests, $constraint];
     }
 }

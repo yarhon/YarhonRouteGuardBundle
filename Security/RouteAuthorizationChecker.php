@@ -12,7 +12,8 @@ namespace Yarhon\RouteGuardBundle\Security;
 
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
-use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
+use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
+use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -42,12 +43,13 @@ class RouteAuthorizationChecker implements RouteAuthorizationCheckerInterface
     {
         $tests = $this->routeTestResolver->getTests($routeContext);
 
-        foreach ($tests as $testArguments) {
-            /** @var TestArguments $testArguments */
-            $result = $this->authorizationChecker->isGranted($testArguments->getAttributes(), $testArguments->getSubject());
+        foreach ($tests as $test) {
+            if ($test instanceof IsGrantedTest) {
+                $result = $this->authorizationChecker->isGranted($test->getAttributes(), $test->getSubject());
 
-            if (!$result) {
-                return false;
+                if (!$result) {
+                    return false;
+                }
             }
         }
 

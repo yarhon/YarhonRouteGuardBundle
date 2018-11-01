@@ -19,8 +19,8 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Yarhon\RouteGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\RouteGuardBundle\Security\Http\RouteMatcher;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
-use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
-use Yarhon\RouteGuardBundle\Security\Http\TestBagMap;
+use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
+use Yarhon\RouteGuardBundle\Security\Http\RequestDependentTestBag;
 use Yarhon\RouteGuardBundle\Security\Authorization\ExpressionVoter;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
@@ -53,10 +53,10 @@ class SymfonyAccessControlProviderTest extends TestCase
     /**
      * @dataProvider getTestsDataProvider
      */
-    public function testGetTests($testArguments, $routeMatcherResults, $expected)
+    public function testGetTests($tests, $routeMatcherResults, $expected)
     {
-        foreach ($testArguments as $testArgumentsItem) {
-            $this->provider->addRule(new RequestConstraint(), $testArgumentsItem);
+        foreach ($tests as $test) {
+            $this->provider->addRule(new RequestConstraint(), $test);
         }
 
         $this->routeMatcher->method('matches')
@@ -71,16 +71,16 @@ class SymfonyAccessControlProviderTest extends TestCase
     {
         return [
             [
-                [new TestArguments(['ROLE_ADMIN']), new TestArguments(['ROLE_USER'])],
+                [new IsGrantedTest(['ROLE_ADMIN']), new IsGrantedTest(['ROLE_USER'])],
                 [false, true],
-                new TestBag([new TestArguments(['ROLE_USER'])]),
+                new TestBag([new IsGrantedTest(['ROLE_USER'])]),
             ],
             [
-                [new TestArguments(['ROLE_ADMIN']), new TestArguments(['ROLE_USER'])],
+                [new IsGrantedTest(['ROLE_ADMIN']), new IsGrantedTest(['ROLE_USER'])],
                 [new RequestConstraint('/admin'), true],
-                new TestBagMap([
-                    [new TestBag([new TestArguments(['ROLE_ADMIN'])]), new RequestConstraint('/admin')],
-                    [new TestBag([new TestArguments(['ROLE_USER'])]), null],
+                new RequestDependentTestBag([
+                    [[new IsGrantedTest(['ROLE_ADMIN'])], new RequestConstraint('/admin')],
+                    [[new IsGrantedTest(['ROLE_USER'])], null],
                 ]),
             ]
         ];
@@ -95,8 +95,8 @@ class SymfonyAccessControlProviderTest extends TestCase
             ->method('warning')
             ->with('Route "index" (path "/") requires runtime matching to access_control rule(s) #0, #1 (zero-based), this would reduce performance.');
 
-        $this->provider->addRule(new RequestConstraint(), new TestArguments(['ROLE_ADMIN']));
-        $this->provider->addRule(new RequestConstraint(), new TestArguments(['ROLE_USER']));
+        $this->provider->addRule(new RequestConstraint(), new IsGrantedTest(['ROLE_ADMIN']));
+        $this->provider->addRule(new RequestConstraint(), new IsGrantedTest(['ROLE_USER']));
 
         $requestConstraintForMap = new RequestConstraint();
 
@@ -119,11 +119,11 @@ class SymfonyAccessControlProviderTest extends TestCase
         $rule['allow_if'] = null;
 
         $expectedConstraint = new RequestConstraint($rule['path'], $rule['host'], $rule['methods'], $rule['ips']);
-        $expectedTestArguments = new TestArguments($rule['roles']);
+        $expectedTest = new IsGrantedTest($rule['roles']);
 
         $this->provider->importRules([$rule]);
 
-        $expectedRules = [[$expectedConstraint, $expectedTestArguments]];
+        $expectedRules = [[$expectedConstraint, $expectedTest]];
         $this->assertAttributeEquals($expectedRules, 'rules', $this->provider);
     }
 
@@ -143,11 +143,11 @@ class SymfonyAccessControlProviderTest extends TestCase
             });
 
         $expectedConstraint = new RequestConstraint($rule['path'], $rule['host'], $rule['methods'], $rule['ips']);
-        $expectedTestArguments = new TestArguments(array_merge($rule['roles'], [new Expression('request.isSecure')]));
+        $expectedTest = new IsGrantedTest(array_merge($rule['roles'], [new Expression('request.isSecure')]));
 
         $this->provider->importRules([$rule]);
 
-        $expectedRules = [[$expectedConstraint, $expectedTestArguments]];
+        $expectedRules = [[$expectedConstraint, $expectedTest]];
         $this->assertAttributeEquals($expectedRules, 'rules', $this->provider);
     }
 
@@ -177,9 +177,9 @@ class SymfonyAccessControlProviderTest extends TestCase
     }
 
     /**
-     * @dataProvider argumentsEqualityDataProvider
+     * @dataProvider sameInstancesOfEqualTestsDataProvider
      */
-    public function testArgumentsEquality($ruleOne, $ruleTwo, $expected)
+    public function testSameInstancesOfEqualTests($ruleOne, $ruleTwo, $expected)
     {
         $ruleOne = $this->createRuleArray($ruleOne);
         $ruleTwo = $this->createRuleArray($ruleTwo);
@@ -197,19 +197,19 @@ class SymfonyAccessControlProviderTest extends TestCase
             ->willReturnOnConsecutiveCalls(true, false, true);
 
         $testBag = $this->provider->getTests('index', $this->route);
-        $testArgumentsOne = iterator_to_array($testBag)[0];
+        $testOne = $testBag->getTests()[0];
 
         $testBag = $this->provider->getTests('index', $this->route);
-        $testArgumentsTwo = iterator_to_array($testBag)[0];
+        $testTwo = $testBag->getTests()[0];
 
         if ($expected) {
-            $this->assertSame($testArgumentsOne, $testArgumentsTwo);
+            $this->assertSame($testOne, $testTwo);
         } else {
-            $this->assertNotSame($testArgumentsOne, $testArgumentsTwo);
+            $this->assertNotSame($testOne, $testTwo);
         }
     }
 
-    public function argumentsEqualityDataProvider()
+    public function sameInstancesOfEqualTestsDataProvider()
     {
         return [
             [

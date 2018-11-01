@@ -22,7 +22,7 @@ use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
-use Yarhon\RouteGuardBundle\Security\Test\TestArguments;
+use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
 use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
@@ -61,7 +61,7 @@ class SensioSecurityProvider implements TestProviderInterface
     /**
      * @var array
      */
-    private $testArguments = [];
+    private $tests = [];
 
     /**
      * SensioSecurityProvider constructor.
@@ -123,28 +123,28 @@ class SensioSecurityProvider implements TestProviderInterface
             }
 
             if (count($usedVariables)) {
-                $arguments = new TestArguments($attributes);
+                $test = new IsGrantedTest($attributes);
 
                 if ($subjectName) {
-                    $arguments->setMetadata('subject_name', $subjectName);
+                    $test->setMetadata('subject_name', $subjectName);
                 }
 
                 $usedRequestAttributes = array_values(array_intersect($usedVariables, $requestAttributes));
 
                 if (count($usedRequestAttributes)) {
-                    $arguments->setMetadata('request_attributes', $usedRequestAttributes);
+                    $test->setMetadata('request_attributes', $usedRequestAttributes);
                 }
             } else {
                 $uniqueKey = $this->getTestAttributesUniqueKey($attributes);
 
-                if (!isset($this->testArguments[$uniqueKey])) {
-                    $this->testArguments[$uniqueKey] = new TestArguments($attributes);
+                if (!isset($this->tests[$uniqueKey])) {
+                    $this->tests[$uniqueKey] = new IsGrantedTest($attributes);
                 }
 
-                $arguments = $this->testArguments[$uniqueKey];
+                $test = $this->tests[$uniqueKey];
             }
 
-            $tests[] = $arguments;
+            $tests[] = $test;
         }
 
         return new TestBag($tests);
