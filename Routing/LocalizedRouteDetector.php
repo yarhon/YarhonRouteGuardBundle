@@ -30,8 +30,6 @@ class LocalizedRouteDetector
     private $context;
 
     /**
-     * LocalizedRouteDetector constructor.
-     *
      * @param RouterInterface $router
      */
     public function __construct(RouterInterface $router)

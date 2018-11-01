@@ -52,8 +52,6 @@ class ControllerArgumentResolver implements ControllerArgumentResolverInterface
     private $internalCache = [];
 
     /**
-     * ControllerArgumentResolver constructor.
-     *
      * @param CacheItemPoolInterface                        $controllerMetadataCache
      * @param RequestAttributesFactoryInterface             $requestAttributesFactory
      * @param RequestStack                                  $requestStack

@@ -30,8 +30,6 @@ class RouteMatcher
     private $regexParser;
 
     /**
-     * RouteMatcher constructor.
-     *
      * @param string|null      $defaultHost
      * @param RegexParser|null $regexParser
      */

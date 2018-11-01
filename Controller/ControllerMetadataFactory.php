@@ -35,8 +35,6 @@ class ControllerMetadataFactory
     private $containerClassMap;
 
     /**
-     * ControllerMetadataFactory constructor.
-     *
      * @param ArgumentMetadataFactoryInterface|null $argumentMetadataFactory
      * @param ClassMapInterface|null                $containerClassMap
      */

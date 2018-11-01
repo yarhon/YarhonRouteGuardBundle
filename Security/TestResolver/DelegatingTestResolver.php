@@ -25,8 +25,6 @@ class DelegatingTestResolver implements TestResolverInterface
     private $resolvers;
 
     /**
-     * DelegatingTestResolver constructor.
-     *
      * @param \Traversable|TestResolverInterface[] $resolvers
      */
     public function __construct($resolvers = [])

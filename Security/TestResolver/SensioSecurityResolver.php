@@ -42,8 +42,6 @@ class SensioSecurityResolver implements TestResolverInterface
     private $requestAttributesFactory;
 
     /**
-     * SensioSecurityResolver constructor.
-     *
      * @param ControllerArgumentResolverInterface $controllerArgumentResolver
      * @param RequestAttributesFactoryInterface   $requestAttributesFactory
      */

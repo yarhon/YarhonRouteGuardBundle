@@ -52,8 +52,6 @@ class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
     private $scope;
 
     /**
-     * DiscoverRoutingFunctionNodeVisitor constructor.
-     *
      * @param string $tagName
      * @param string $tagVariableName
      */

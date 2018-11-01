@@ -36,8 +36,6 @@ class RequestContext
     private $clientIp;
 
     /**
-     * RequestContext constructor.
-     *
      * @param string|\Closure|null $pathInfo
      * @param string|\Closure|null $host
      * @param string|null          $method

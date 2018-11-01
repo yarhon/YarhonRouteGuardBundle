@@ -34,8 +34,6 @@ class ArgumentResolverContext implements ArgumentResolverContextInterface
     private $controllerName;
 
     /**
-     * ArgumentResolverContext constructor.
-     *
      * @param Request|null $request
      * @param ParameterBag $attributes
      * @param string       $controllerName

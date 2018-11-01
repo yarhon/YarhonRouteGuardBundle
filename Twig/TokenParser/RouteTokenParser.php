@@ -41,8 +41,6 @@ class RouteTokenParser extends AbstractTokenParser
     private $expressionParser;
 
     /**
-     * RouteTokenParser constructor.
-     *
      * @param string $tagName
      * @param bool   $allowDiscover
      */

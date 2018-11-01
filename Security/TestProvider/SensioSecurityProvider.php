@@ -64,8 +64,6 @@ class SensioSecurityProvider implements TestProviderInterface
     private $tests = [];
 
     /**
-     * SensioSecurityProvider constructor.
-     *
      * @param ClassMethodAnnotationReaderInterface $annotationReader
      * @param RequestAttributesFactory             $requestAttributesFactory
      * @param RouteMetadataFactory                 $routeMetadataFactory

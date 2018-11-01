@@ -44,8 +44,6 @@ class ControllerMetadata
     private $serviceId;
 
     /**
-     * ControllerMetadata constructor.
-     *
      * @param string             $name
      * @param string             $class
      * @param string             $method

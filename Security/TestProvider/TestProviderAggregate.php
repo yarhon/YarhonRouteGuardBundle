@@ -33,8 +33,6 @@ class TestProviderAggregate implements LoggerAwareInterface
     private $logger;
 
     /**
-     * RouteTestCollector constructor.
-     *
      * @param \Traversable|TestProviderInterface[] $testProviders
      */
     public function __construct($testProviders = [])

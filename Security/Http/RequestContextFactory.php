@@ -31,8 +31,6 @@ class RequestContextFactory
     private $urlGenerator;
 
     /**
-     * RequestContextFactory constructor.
-     *
      * @param RequestStack          $requestStack
      * @param UrlGeneratorInterface $urlGenerator
      */

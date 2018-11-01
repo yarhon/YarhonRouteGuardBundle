@@ -32,8 +32,6 @@ class ControllerNameConverter
     private $kernel;
 
     /**
-     * ControllerNameConverter constructor.
-     *
      * @param KernelInterface $kernel
      */
     public function __construct(KernelInterface $kernel)

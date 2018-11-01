@@ -34,8 +34,6 @@ class ExpressionDecorator
     private $variables = [];
 
     /**
-     * ExpressionDecorator constructor.
-     *
      * @param Expression $expression
      * @param array      $variableNames
      */

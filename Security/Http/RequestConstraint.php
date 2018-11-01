@@ -44,8 +44,6 @@ class RequestConstraint implements RequestConstraintInterface
     private $ips;
 
     /**
-     * RequestConstraint constructor.
-     *
      * @param string|null   $pathPattern
      * @param string|null   $hostPattern
      * @param string[]|null $methods

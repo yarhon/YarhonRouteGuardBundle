@@ -25,8 +25,6 @@ class RequestDependentTestBag extends AbstractTestBag implements RequestDependen
     private $map = [];
 
     /**
-     * RequestDependentTestBag constructor.
-     *
      * @param array $map
      */
     public function __construct(array $map)

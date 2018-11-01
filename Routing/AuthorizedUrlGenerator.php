@@ -34,8 +34,6 @@ class AuthorizedUrlGenerator implements AuthorizedUrlGeneratorInterface
     protected $localizedRouteDetector;
 
     /**
-     * AuthorizedUrlGenerator constructor.
-     *
      * @param UrlGeneratorInterface              $urlGenerator
      * @param RouteAuthorizationCheckerInterface $authorizationChecker
      * @param LocalizedRouteDetector|null        $localizedRouteDetector

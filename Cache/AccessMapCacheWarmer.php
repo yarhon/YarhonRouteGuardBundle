@@ -47,8 +47,6 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
     private $controllerMetadataCache;
 
     /**
-     * AccessMapCacheWarmer constructor.
-     *
      * @param AccessMapBuilder $accessMapBuilder
      * @param RouterInterface $router
      * @param CacheItemPoolInterface $testsCache

@@ -26,8 +26,6 @@ class RouteMetadata
     private $variables;
 
     /**
-     * RouteMetadata constructor.
-     *
      * @param array  $defaults
      * @param array  $variables
      */

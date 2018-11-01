@@ -62,8 +62,6 @@ class SensioSecurityExpressionVoter extends Voter
     protected $roleHierarchy;
 
     /**
-     * SensioSecurityExpressionVoter constructor.
-     *
      * @param ExpressionLanguage                   $expressionLanguage
      * @param AuthenticationTrustResolverInterface $trustResolver
      * @param AuthorizationCheckerInterface        $authChecker

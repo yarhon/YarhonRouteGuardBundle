@@ -25,8 +25,6 @@ class ClassMethodAnnotationReader implements ClassMethodAnnotationReaderInterfac
     private $delegate;
 
     /**
-     * ClassMethodAnnotationReader constructor.
-     *
      * @param Reader|null $reader
      *
      * @throws AnnotationException

@@ -23,8 +23,6 @@ use Twig\Error\SyntaxError;
 class RouteExpression extends FunctionExpression
 {
     /**
-     * RouteExpression constructor.
-     *
      * @param Node $arguments
      * @param int  $line
      *

@@ -27,8 +27,6 @@ class ClassMap implements ClassMapInterface
     private $map;
 
     /**
-     * ClassMap constructor.
-     *
      * @param array $map
      */
     public function __construct(array $map = [])

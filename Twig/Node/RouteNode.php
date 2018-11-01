@@ -27,8 +27,6 @@ class RouteNode extends Node
     private static $variableName;
 
     /**
-     * RouteNode constructor.
-     *
      * @param RouteExpression|null $condition
      * @param Node                 $bodyNode
      * @param Node|null            $elseNode

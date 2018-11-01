@@ -23,8 +23,6 @@ class TestBag extends AbstractTestBag implements TestBagInterface
     private $tests = [];
 
     /**
-     * TestBag constructor.
-     *
      * @param TestInterface[] $tests
      */
     public function __construct(array $tests)

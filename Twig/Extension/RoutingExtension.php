@@ -28,8 +28,6 @@ class RoutingExtension extends AbstractExtension
     private $options;
 
     /**
-     * RoutingExtension constructor.
-     *
      * @param array $options
      */
     public function __construct(array $options = [])

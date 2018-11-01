@@ -35,8 +35,6 @@ class SymfonyAccessControlResolver implements TestResolverInterface
     private $requestStack;
 
     /**
-     * SymfonyAccessControlResolver constructor.
-     *
      * @param RequestStack          $requestStack
      * @param RequestContextFactory $requestContextFactory
      */

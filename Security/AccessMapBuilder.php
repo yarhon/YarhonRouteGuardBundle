@@ -53,8 +53,6 @@ class AccessMapBuilder implements LoggerAwareInterface
     private $options;
 
     /**
-     * AccessMapBuilder constructor.
-     *
      * @param TestProviderAggregate           $testProvider
      * @param ControllerNameResolverInterface $controllerNameResolver
      * @param ControllerMetadataFactory       $controllerMetadataFactory

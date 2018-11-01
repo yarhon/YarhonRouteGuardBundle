@@ -28,8 +28,6 @@ class ForeignExtensionAccessor
     private $processor;
 
     /**
-     * ForeignExtensionAccessor constructor.
-     *
      * @param Processor|null $processor
      */
     public function __construct(Processor $processor = null)

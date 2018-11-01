@@ -34,8 +34,6 @@ class Scope
     private $left = false;
 
     /**
-     * Scope constructor.
-     *
      * @param self|null $parent
      */
     public function __construct(self $parent = null)

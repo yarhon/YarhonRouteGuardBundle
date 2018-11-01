@@ -57,8 +57,6 @@ class SymfonyAccessControlProvider implements TestProviderInterface
     private $tests = [];
 
     /**
-     * SymfonyAccessControlProvider constructor.
-     *
      * @param RouteMatcher $routeMatcher
      */
     public function __construct(RouteMatcher $routeMatcher)

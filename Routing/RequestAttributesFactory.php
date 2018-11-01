@@ -38,8 +38,6 @@ class RequestAttributesFactory implements RequestAttributesFactoryInterface
     private $internalCache = [];
 
     /**
-     * RequestAttributesFactory constructor.
-     *
      * @param CacheItemPoolInterface $routeMetadataCache
      * @param UrlGeneratorInterface  $urlGenerator
      */
