@@ -8,20 +8,19 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Security;
+namespace Yarhon\RouteGuardBundle\Security\TestProvider;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Symfony\Component\Routing\Route;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
-use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RouteTestCollector implements LoggerAwareInterface
+class TestProviderAggregate implements LoggerAwareInterface
 {
     /**
      * @var TestProviderInterface[]

@@ -21,7 +21,7 @@
         <!-- cache builder services -->
 
         <service id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\RouteTestCollector" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderAggregate" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerNameResolver" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory" />
@@ -32,15 +32,15 @@
             <tag name="monolog.logger" channel="route_guard" />
         </service>
 
-        <service id="Yarhon\RouteGuardBundle\Security\RouteTestCollector">
+        <!-- test providers -->
+
+        <service id="Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderAggregate">
             <argument type="collection" /> <!-- test providers -->
             <call method="setLogger">
                 <argument type="service" id="logger" on-invalid="ignore" />
             </call>
             <tag name="monolog.logger" channel="route_guard" />
         </service>
-
-        <!-- test providers -->
 
         <service id="Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReader">
         </service>

@@ -37,9 +37,9 @@ class DelegatingTestResolverTest extends TestCase
 
     public function testGetProviderClass()
     {
-        $resolver = new DelegatingTestResolver();
+        $delegatingResolver = new DelegatingTestResolver();
 
-        $this->assertEquals('', $resolver->getProviderClass());
+        $this->assertEquals('', $delegatingResolver->getProviderClass());
     }
 
     public function testResolve()
@@ -55,14 +55,14 @@ class DelegatingTestResolverTest extends TestCase
         $resolvers[1]->method('getProviderClass')
             ->willReturn('class_two');
 
-        $resolver = new DelegatingTestResolver($resolvers);
+        $delegatingResolver = new DelegatingTestResolver($resolvers);
 
         $resolvers[1]->expects($this->once())
             ->method('resolve')
             ->with($this->testBag, $this->routeContext)
             ->willReturn([]);
 
-        $this->assertSame([], $resolver->resolve($this->testBag, $this->routeContext));
+        $this->assertSame([], $delegatingResolver->resolve($this->testBag, $this->routeContext));
     }
 
     public function testResolveException()
@@ -74,11 +74,11 @@ class DelegatingTestResolverTest extends TestCase
         $resolvers[0]->method('getProviderClass')
             ->willReturn('class_one');
 
-        $resolver = new DelegatingTestResolver($resolvers);
+        $delegatingResolver = new DelegatingTestResolver($resolvers);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('No resolver exists for provider "class_two".');
 
-        $resolver->resolve($this->testBag, $this->routeContext);
+        $delegatingResolver->resolve($this->testBag, $this->routeContext);
     }
 }

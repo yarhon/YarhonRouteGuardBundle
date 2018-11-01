@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Tests\Security;
+namespace Yarhon\RouteGuardBundle\Tests\Security\TestProvider;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Route;
-use Yarhon\RouteGuardBundle\Security\RouteTestCollector;
+use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderAggregate;
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
@@ -22,7 +22,7 @@ use Yarhon\RouteGuardBundle\Exception\LogicException;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RouteTestCollectorTest extends TestCase
+class TestProviderAggregateTest extends TestCase
 {
     private $providers;
 
@@ -40,7 +40,7 @@ class RouteTestCollectorTest extends TestCase
 
     public function testSetLogger()
     {
-        $collector = new RouteTestCollector($this->providers);
+        $providerAggregate = new TestProviderAggregate($this->providers);
 
         $this->providers[0]->expects($this->once())
             ->method('setLogger')
@@ -50,22 +50,22 @@ class RouteTestCollectorTest extends TestCase
             ->method('setLogger')
             ->with($this->logger);
 
-        $collector->setLogger($this->logger);
+        $providerAggregate->setLogger($this->logger);
     }
 
     public function testBuildWithoutTestProvidersException()
     {
-        $collector = new RouteTestCollector();
+        $providerAggregate = new TestProviderAggregate();
 
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Test providers collection is empty.');
 
-        $collector->getTests('index', new Route('/'));
+        $providerAggregate->getTests('index', new Route('/'));
     }
 
     public function testGetTests()
     {
-        $collector = new RouteTestCollector($this->providers);
+        $providerAggregate = new TestProviderAggregate($this->providers);
 
         $route = new Route('/');
         $routeName = 'index';
@@ -94,7 +94,7 @@ class RouteTestCollectorTest extends TestCase
             ->method('setProviderClass')
             ->with(get_class($this->providers[1]));
 
-        $tests = $collector->getTests($routeName, $route, $controllerMetadata);
+        $tests = $providerAggregate->getTests($routeName, $route, $controllerMetadata);
 
         $this->assertSame($testBags, $tests);
     }

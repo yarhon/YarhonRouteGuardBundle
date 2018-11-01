@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Tests\DependencyInjection\Compiler;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\InjectTaggedServicesPass;
-use Yarhon\RouteGuardBundle\Security\RouteTestCollector;
+use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderAggregate;
 use Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
 
@@ -36,11 +36,11 @@ class InjectTaggedServicesPassTest extends TestCase
     {
         $this->container = new ContainerBuilder();
 
-        $this->container->register(RouteTestCollector::class)->addArgument([]);
-
-        $this->container->register(ControllerArgumentResolver::class)->setArguments([null, null, null, []]);
+        $this->container->register(TestProviderAggregate::class)->addArgument([]);
 
         $this->container->register(DelegatingTestResolver::class)->addArgument([]);
+
+        $this->container->register(ControllerArgumentResolver::class)->setArguments([null, null, null, []]);
 
         $this->pass = new InjectTaggedServicesPass();
     }
@@ -69,7 +69,7 @@ class InjectTaggedServicesPassTest extends TestCase
     {
         return [
             [
-                [RouteTestCollector::class, 0],
+                [TestProviderAggregate::class, 0],
                 'yarhon_route_guard.test_provider',
             ],
             [

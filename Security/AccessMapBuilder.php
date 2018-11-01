@@ -17,6 +17,7 @@ use Symfony\Component\Routing\Route;
 use Yarhon\RouteGuardBundle\Controller\ControllerNameResolverInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
+use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderAggregate;
 use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
 
 /**
@@ -27,9 +28,9 @@ class AccessMapBuilder implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     /**
-     * @var RouteTestCollector
+     * @var TestProviderAggregate
      */
-    private $routeTestCollector;
+    private $testProvider;
 
     /**
      * @var ControllerNameResolverInterface
@@ -54,15 +55,15 @@ class AccessMapBuilder implements LoggerAwareInterface
     /**
      * AccessMapBuilder constructor.
      *
-     * @param RouteTestCollector              $routeTestCollector
+     * @param TestProviderAggregate           $testProvider
      * @param ControllerNameResolverInterface $controllerNameResolver
      * @param ControllerMetadataFactory       $controllerMetadataFactory
      * @param RouteMetadataFactory            $routeMetadataFactory
      * @param array                           $options
      */
-    public function __construct(RouteTestCollector $routeTestCollector, ControllerNameResolverInterface $controllerNameResolver, ControllerMetadataFactory $controllerMetadataFactory, RouteMetadataFactory $routeMetadataFactory, $options = [])
+    public function __construct(TestProviderAggregate $testProvider, ControllerNameResolverInterface $controllerNameResolver, ControllerMetadataFactory $controllerMetadataFactory, RouteMetadataFactory $routeMetadataFactory, $options = [])
     {
-        $this->routeTestCollector = $routeTestCollector;
+        $this->testProvider = $testProvider;
         $this->controllerNameResolver = $controllerNameResolver;
         $this->controllerMetadataFactory = $controllerMetadataFactory;
         $this->routeMetadataFactory = $routeMetadataFactory;
@@ -129,7 +130,7 @@ class AccessMapBuilder implements LoggerAwareInterface
         $routeMetadata = $this->routeMetadataFactory->createMetadata($route);
 
         // Note: currently empty arrays (no tests) are also added to authorization cache
-        $tests = $this->routeTestCollector->getTests($routeName, $route, $controllerMetadata);
+        $tests = $this->testProvider->getTests($routeName, $route, $controllerMetadata);
 
         return [$tests, $routeMetadata, $controllerMetadata];
     }
