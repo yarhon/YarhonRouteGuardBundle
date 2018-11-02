@@ -19,7 +19,7 @@ use Yarhon\RouteGuardBundle\Cache\DataCollector\RouteCollectionDataCollector;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class AccessMapCacheWarmer implements CacheWarmerInterface
+class AuthorizationCacheWarmer implements CacheWarmerInterface
 {
     /**
      * @var RouteCollectionDataCollector

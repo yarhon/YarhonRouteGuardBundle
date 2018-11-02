@@ -81,7 +81,6 @@ class RouteCollectionDataCollector implements LoggerAwareInterface
                 }
 
                 yield $routeName => $this->routeDataCollector->collect($routeName, $route, $controllerName);
-
             } catch (ExceptionInterface $e) {
                 if (!$catchExceptions) {
                     throw $e;

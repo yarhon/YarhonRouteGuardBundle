@@ -9,7 +9,7 @@
 
         <!-- cache warmer service -->
 
-        <service id="Yarhon\RouteGuardBundle\Cache\AccessMapCacheWarmer">
+        <service id="Yarhon\RouteGuardBundle\Cache\AuthorizationCacheWarmer">
             <argument type="service" id="Yarhon\RouteGuardBundle\Cache\DataCollector\RouteCollectionDataCollector" />
             <argument type="service" id="router.default" />
             <argument type="service" id="yarhon_route_guard.cache.tests" />

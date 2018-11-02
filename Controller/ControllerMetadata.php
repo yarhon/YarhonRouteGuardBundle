@@ -74,7 +74,7 @@ class ControllerMetadata
     }
 
     /**
-     * @return string Real class name, without leading "\".
+     * @return string Real class name, without leading "\"
      */
     public function getClass()
     {
@@ -89,9 +89,8 @@ class ControllerMetadata
         return $this->method;
     }
 
-
     /**
-     * @return ArgumentMetadata[] Controller arguments, indexed by name.
+     * @return ArgumentMetadata[] Controller arguments, indexed by name
      */
     public function getArguments()
     {
@@ -125,7 +124,7 @@ class ControllerMetadata
     }
 
     /**
-     * @return string|null Service id, if controller is a service, null otherwise.
+     * @return string|null Service id, if controller is a service, null otherwise
      */
     public function getServiceId()
     {

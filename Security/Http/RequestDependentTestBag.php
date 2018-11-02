@@ -14,7 +14,6 @@ use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBag;
 use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
 
 /**
- *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class RequestDependentTestBag extends AbstractTestBag implements RequestDependentTestBagInterface

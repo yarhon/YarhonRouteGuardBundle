@@ -91,9 +91,9 @@ class SensioSecurityProviderTest extends TestCase
         $this->expressionLanguage->expects($this->at(1))
             ->method('parse')
             ->with($annotation->getExpression(), $namesToParse)
-            ->willReturnCallback(function($expressionString) {
+            ->willReturnCallback(function ($expressionString) {
                 return new Expression($expressionString);
-        });
+            });
 
         $controllerMetadata = $this->createControllerMetadata('class::method', $controllerArguments);
 
@@ -276,7 +276,7 @@ class SensioSecurityProviderTest extends TestCase
             ->willReturnOnConsecutiveCalls($requestAttributes[0], $requestAttributes[1]);
 
         $this->expressionLanguage->method('parse')
-            ->willReturnCallback(function($expressionString) {
+            ->willReturnCallback(function ($expressionString) {
                 return new Expression($expressionString);
             });
 
@@ -301,13 +301,13 @@ class SensioSecurityProviderTest extends TestCase
     {
         return [
             [
-                [ new SecurityAnnotation(['expression' => 'request.isSecure']), [], [] ],
-                [ new SecurityAnnotation(['expression' => 'not request.isSecure']), [], [] ],
+                [new SecurityAnnotation(['expression' => 'request.isSecure']), [], []],
+                [new SecurityAnnotation(['expression' => 'not request.isSecure']), [], []],
                 false,
             ],
             [
-                [ new SecurityAnnotation(['expression' => 'request.isSecure']), [], [] ],
-                [ new SecurityAnnotation(['expression' => 'request.isSecure']), [], [] ],
+                [new SecurityAnnotation(['expression' => 'request.isSecure']), [], []],
+                [new SecurityAnnotation(['expression' => 'request.isSecure']), [], []],
                 true,
             ],
             // TODO: uncomment this tests when Expression parser would be ready
@@ -324,18 +324,18 @@ class SensioSecurityProviderTest extends TestCase
             ],
             */
             [
-                [ new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN']), ['arg1'], ['attr1'] ],
-                [ new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN']), ['arg1'], ['attr1'] ],
+                [new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN']), ['arg1'], ['attr1']],
+                [new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN']), ['arg1'], ['attr1']],
                 true,
             ],
             [
-                [ new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN']), ['arg1'], ['attr1'] ],
-                [ new IsGrantedAnnotation(['attributes' => 'ROLE_USER']), ['arg1'], ['attr1'] ],
+                [new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN']), ['arg1'], ['attr1']],
+                [new IsGrantedAnnotation(['attributes' => 'ROLE_USER']), ['arg1'], ['attr1']],
                 false,
             ],
             [
-                [ new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN', 'subject' => 'arg1']), ['arg1'], ['attr1'] ],
-                [ new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN']), ['arg1'], ['attr1'] ],
+                [new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN', 'subject' => 'arg1']), ['arg1'], ['attr1']],
+                [new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN']), ['arg1'], ['attr1']],
                 false,
             ],
         ];

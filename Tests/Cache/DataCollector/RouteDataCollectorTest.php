@@ -18,7 +18,6 @@ use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
 use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderAggregate;
 use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
-use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
 use Yarhon\RouteGuardBundle\Cache\DataCollector\RouteDataCollector;
 
 /**

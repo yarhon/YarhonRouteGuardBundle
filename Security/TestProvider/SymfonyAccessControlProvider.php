@@ -130,7 +130,6 @@ class SymfonyAccessControlProvider implements TestProviderInterface
         $matches = [];
 
         foreach ($this->rules as $index => list($constraint, $test)) {
-
             $matchResult = $this->routeMatcher->matches($route, $constraint);
 
             if (false === $matchResult) {

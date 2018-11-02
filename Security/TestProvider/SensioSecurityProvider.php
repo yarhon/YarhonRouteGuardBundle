@@ -115,7 +115,7 @@ class SensioSecurityProvider implements TestProviderInterface
                 $attributes = [$expression];
                 $usedVariables = $expression->getVariableNames();
             } elseif ($annotation instanceof IsGrantedAnnotation) {
-                list ($role, $subjectName) = $this->processIsGrantedAnnotation($annotation, $allowedVariables);
+                list($role, $subjectName) = $this->processIsGrantedAnnotation($annotation, $allowedVariables);
                 $attributes = [$role];
                 $usedVariables = $subjectName ? [$subjectName] : [];
             }

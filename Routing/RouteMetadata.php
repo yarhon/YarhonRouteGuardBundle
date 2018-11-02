@@ -26,8 +26,8 @@ class RouteMetadata
     private $variables;
 
     /**
-     * @param array  $defaults
-     * @param array  $variables
+     * @param array $defaults
+     * @param array $variables
      */
     public function __construct(array $defaults, array $variables)
     {

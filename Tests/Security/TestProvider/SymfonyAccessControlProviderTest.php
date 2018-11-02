@@ -82,7 +82,7 @@ class SymfonyAccessControlProviderTest extends TestCase
                     [[new IsGrantedTest(['ROLE_ADMIN'])], new RequestConstraint('/admin')],
                     [[new IsGrantedTest(['ROLE_USER'])], null],
                 ]),
-            ]
+            ],
         ];
     }
 
@@ -138,7 +138,7 @@ class SymfonyAccessControlProviderTest extends TestCase
         $this->expressionLanguage->expects($this->once())
             ->method('parse')
             ->with($rule['allow_if'], $names)
-            ->willReturnCallback(function($expressionString) {
+            ->willReturnCallback(function ($expressionString) {
                 return new Expression($expressionString);
             });
 
@@ -187,7 +187,7 @@ class SymfonyAccessControlProviderTest extends TestCase
         $this->provider->setExpressionLanguage($this->expressionLanguage);
 
         $this->expressionLanguage->method('parse')
-            ->willReturnCallback(function($expressionString) {
+            ->willReturnCallback(function ($expressionString) {
                 return new Expression($expressionString);
             });
 
