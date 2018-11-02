@@ -38,20 +38,28 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->validate()
-                ->always(function ($node) {
-                    $node['ignore_controllers'] = array_merge($node['ignore_controllers'], $node['ignore_controllers_symfony']);
-                    unset($node['ignore_controllers_symfony']);
+                ->always(function ($rootNode) {
+                    $dataCollectorNode = &$rootNode['data_collector'];
 
-                    return $node;
+                    $dataCollectorNode['ignore_controllers'] = array_merge($dataCollectorNode['ignore_controllers'], $dataCollectorNode['ignore_controllers_symfony']);
+                    unset($dataCollectorNode['ignore_controllers_symfony']);
+
+                    return $rootNode;
                 })
             ->end()
             ->children()
-                ->arrayNode('ignore_controllers')
-                    ->prototype('scalar')->end()
-                ->end()
-                ->arrayNode('ignore_controllers_symfony')
-                    ->prototype('scalar')->end()
-                    ->defaultValue(static::$symfonyControllers)
+                ->arrayNode('data_collector')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->arrayNode('ignore_controllers')
+                            ->prototype('scalar')->end()
+                        ->end()
+                        ->arrayNode('ignore_controllers_symfony')
+                            ->prototype('scalar')->end()
+                            ->defaultValue(static::$symfonyControllers)
+                        ->end()
+                        ->booleanNode('ignore_exceptions')->defaultValue(false)->end()
+                    ->end()
                 ->end()
                 ->arrayNode('twig')
                     ->addDefaultsIfNotSet()

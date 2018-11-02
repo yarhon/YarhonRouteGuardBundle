@@ -14,7 +14,7 @@ use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\RouteCollection;
-use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
+use Yarhon\RouteGuardBundle\Cache\DataCollector\RouteCollectionDataCollector;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -22,9 +22,9 @@ use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
 class AccessMapCacheWarmer implements CacheWarmerInterface
 {
     /**
-     * @var AccessMapBuilder
+     * @var RouteCollectionDataCollector
      */
-    private $accessMapBuilder;
+    private $dataCollector;
 
     /**
      * @var RouteCollection
@@ -39,28 +39,28 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
     /**
      * @var CacheItemPoolInterface
      */
-    private $routeMetadataCache;
+    private $controllerMetadataCache;
 
     /**
      * @var CacheItemPoolInterface
      */
-    private $controllerMetadataCache;
+    private $routeMetadataCache;
 
     /**
-     * @param AccessMapBuilder $accessMapBuilder
-     * @param RouterInterface $router
-     * @param CacheItemPoolInterface $testsCache
-     * @param CacheItemPoolInterface $routeMetadataCache
-     * @param CacheItemPoolInterface $controllerMetadataCache
+     * @param RouteCollectionDataCollector $dataCollector
+     * @param RouterInterface              $router
+     * @param CacheItemPoolInterface       $testsCache
+     * @param CacheItemPoolInterface       $controllerMetadataCache
+     * @param CacheItemPoolInterface       $routeMetadataCache
      */
-    public function __construct(AccessMapBuilder $accessMapBuilder, RouterInterface $router, CacheItemPoolInterface $testsCache, CacheItemPoolInterface $routeMetadataCache, CacheItemPoolInterface $controllerMetadataCache)
+    public function __construct(RouteCollectionDataCollector $dataCollector, RouterInterface $router, CacheItemPoolInterface $testsCache, CacheItemPoolInterface $controllerMetadataCache, CacheItemPoolInterface $routeMetadataCache)
     {
-        $this->accessMapBuilder = $accessMapBuilder;
+        $this->dataCollector = $dataCollector;
         $this->routeCollection = $router->getRouteCollection();
 
         $this->testsCache = $testsCache;
-        $this->routeMetadataCache = $routeMetadataCache;
         $this->controllerMetadataCache = $controllerMetadataCache;
+        $this->routeMetadataCache = $routeMetadataCache;
     }
 
     /**
@@ -78,7 +78,7 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
     {
         $this->clear();
 
-        $accessInfoGenerator = $this->accessMapBuilder->collect($this->routeCollection);
+        $accessInfoGenerator = $this->dataCollector->collect($this->routeCollection);
         $accessMap = [];
 
         foreach ($accessInfoGenerator as $routeName => $accessInfo) {
@@ -87,13 +87,15 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
 
             // var_dump($routeName);
 
-            list($tests, $routeMetadata, $controllerMetadata) = $accessInfo;
+            list($tests, $controllerMetadata, $routeMetadata) = $accessInfo;
 
             // !!!! saves even without commit (on destruct) !!!
 
+            // Note: currently empty arrays (no tests) are also added to testsCache
+
             $this->saveDeferred($this->testsCache, $routeName, $tests);
-            $this->saveDeferred($this->routeMetadataCache, $routeName, $routeMetadata);
             $this->saveDeferred($this->controllerMetadataCache, $routeName, $controllerMetadata);
+            $this->saveDeferred($this->routeMetadataCache, $routeName, $routeMetadata);
         }
 
         // $this->commit();
@@ -102,15 +104,15 @@ class AccessMapCacheWarmer implements CacheWarmerInterface
     private function clear()
     {
         $this->testsCache->clear();
-        $this->routeMetadataCache->clear();
         $this->controllerMetadataCache->clear();
+        $this->routeMetadataCache->clear();
     }
 
     private function commit()
     {
         $this->testsCache->commit();
-        $this->routeMetadataCache->commit();
         $this->controllerMetadataCache->commit();
+        $this->routeMetadataCache->commit();
     }
 
     private function saveDeferred(CacheItemPoolInterface $cache, $routeName, $item)

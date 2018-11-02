@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\Config\FileLocator;
-use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
+use Yarhon\RouteGuardBundle\Cache\DataCollector\RouteCollectionDataCollector;
 use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
 use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
 use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
@@ -47,12 +47,8 @@ class YarhonRouteGuardExtension extends Extension
      */
     private function setConfigParameters(ContainerBuilder $container, array $config)
     {
-        $builderOptions = [
-            'ignore_controllers' => $config['ignore_controllers'],
-        ];
-
-        $definition = $container->getDefinition(AccessMapBuilder::class);
-        $definition->replaceArgument(4, $builderOptions);
+        $definition = $container->getDefinition(RouteCollectionDataCollector::class);
+        $definition->replaceArgument(2, $config['data_collector']);
 
         $definition = $container->getDefinition(RoutingExtension::class);
         $definition->replaceArgument(0, $config['twig']);

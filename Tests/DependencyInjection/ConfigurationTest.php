@@ -28,11 +28,14 @@ class ConfigurationTest extends TestCase
         $config = $processor->processConfiguration(new Configuration(), [$input]);
 
         $defaults = [
-            'ignore_controllers' => [
-                'twig.controller.preview_error',
-                'web_profiler.controller.profiler',
-                'web_profiler.controller.router',
-                'web_profiler.controller.exception',
+            'data_collector' => [
+                'ignore_controllers' => [
+                    'twig.controller.preview_error',
+                    'web_profiler.controller.profiler',
+                    'web_profiler.controller.router',
+                    'web_profiler.controller.exception',
+                ],
+                'ignore_exceptions' => false,
             ],
             'twig' => [
                 'tag_name' => 'route',

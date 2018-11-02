@@ -15,8 +15,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouterInterface;
-use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
-use Yarhon\RouteGuardBundle\Security\AccessMapInterface;
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerNameResolverInterface;
@@ -26,7 +24,7 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class AccessMapBuilderTest extends TestCase
+class AccessMapBuilder extends TestCase
 {
     private $providers;
 

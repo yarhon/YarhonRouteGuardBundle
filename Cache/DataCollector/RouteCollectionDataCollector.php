@@ -8,29 +8,25 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Security;
+namespace Yarhon\RouteGuardBundle\Cache\DataCollector;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Route;
 use Yarhon\RouteGuardBundle\Controller\ControllerNameResolverInterface;
-use Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory;
-use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
-use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderAggregate;
 use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class AccessMapBuilder implements LoggerAwareInterface
+class RouteCollectionDataCollector implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
     /**
-     * @var TestProviderAggregate
+     * @var RouteDataCollector
      */
-    private $testProvider;
+    private $routeDataCollector;
 
     /**
      * @var ControllerNameResolverInterface
@@ -38,37 +34,23 @@ class AccessMapBuilder implements LoggerAwareInterface
     private $controllerNameResolver;
 
     /**
-     * @var ControllerMetadataFactory
-     */
-    private $controllerMetadataFactory;
-
-    /**
-     * @var RouteMetadataFactory
-     */
-    private $routeMetadataFactory;
-
-    /**
      * @var array
      */
     private $options;
 
     /**
-     * @param TestProviderAggregate           $testProvider
+     * @param RouteDataCollector              $routeDataCollector
      * @param ControllerNameResolverInterface $controllerNameResolver
-     * @param ControllerMetadataFactory       $controllerMetadataFactory
-     * @param RouteMetadataFactory            $routeMetadataFactory
      * @param array                           $options
      */
-    public function __construct(TestProviderAggregate $testProvider, ControllerNameResolverInterface $controllerNameResolver, ControllerMetadataFactory $controllerMetadataFactory, RouteMetadataFactory $routeMetadataFactory, $options = [])
+    public function __construct(RouteDataCollector $routeDataCollector, ControllerNameResolverInterface $controllerNameResolver, $options = [])
     {
-        $this->testProvider = $testProvider;
+        $this->routeDataCollector = $routeDataCollector;
         $this->controllerNameResolver = $controllerNameResolver;
-        $this->controllerMetadataFactory = $controllerMetadataFactory;
-        $this->routeMetadataFactory = $routeMetadataFactory;
 
         $this->options = array_merge([
             'ignore_controllers' => [],
-            'catch_exceptions' => false,
+            'ignore_exceptions' => false,
         ], $options);
     }
 
@@ -76,15 +58,17 @@ class AccessMapBuilder implements LoggerAwareInterface
      * @param RouteCollection $routeCollection
      *
      * @return \Generator
+     *
+     * @throws ExceptionInterface
      */
     public function collect(RouteCollection $routeCollection)
     {
         if ($this->logger) {
-            $this->logger->info('Build access map. Route collection count', ['count' => count($routeCollection)]);
+            $this->logger->info('Collect data for route collection', ['count' => count($routeCollection)]);
         }
 
         $ignoredRoutes = [];
-        $catchExceptions = $this->options['catch_exceptions'] && $this->logger;
+        $catchExceptions = $this->options['ignore_exceptions'] && $this->logger;
 
         foreach ($routeCollection as $routeName => $route) {
             try {
@@ -96,14 +80,14 @@ class AccessMapBuilder implements LoggerAwareInterface
                     continue;
                 }
 
-                yield $routeName => $this->collectForRoute($routeName, $route, $controllerName);
+                yield $routeName => $this->routeDataCollector->collect($routeName, $route, $controllerName);
 
             } catch (ExceptionInterface $e) {
                 if (!$catchExceptions) {
                     throw $e;
                 }
 
-                $this->logger->error(sprintf('Exception caught while processing route "%s": %s', $routeName, $e->getMessage()), ['exception' => $e]);
+                $this->logger->error(sprintf('Route "%s" would be ignored because of exception caught: %s', $routeName, $e->getMessage()), ['exception' => $e]);
                 continue;
             }
         }
@@ -113,24 +97,6 @@ class AccessMapBuilder implements LoggerAwareInterface
         if ($this->logger && count($ignoredRoutes)) {
             $this->logger->info('Ignored routes', ['count' => count($ignoredRoutes), 'list' => $ignoredRoutes]);
         }
-    }
-
-    /**
-     * @param string      $routeName
-     * @param Route       $route
-     * @param string|null $controllerName
-     *
-     * @return array
-     */
-    private function collectForRoute($routeName, Route $route, $controllerName = null)
-    {
-        $controllerMetadata = $controllerName ? $this->controllerMetadataFactory->createMetadata($controllerName) : null;
-        $routeMetadata = $this->routeMetadataFactory->createMetadata($route);
-
-        // Note: currently empty arrays (no tests) are also added to authorization cache
-        $tests = $this->testProvider->getTests($routeName, $route, $controllerMetadata);
-
-        return [$tests, $routeMetadata, $controllerMetadata];
     }
 
     /**

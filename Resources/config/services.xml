@@ -10,26 +10,30 @@
         <!-- cache warmer service -->
 
         <service id="Yarhon\RouteGuardBundle\Cache\AccessMapCacheWarmer">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Cache\DataCollector\RouteCollectionDataCollector" />
             <argument type="service" id="router.default" />
             <argument type="service" id="yarhon_route_guard.cache.tests" />
-            <argument type="service" id="yarhon_route_guard.cache.route_metadata" />
             <argument type="service" id="yarhon_route_guard.cache.controller_metadata" />
+            <argument type="service" id="yarhon_route_guard.cache.route_metadata" />
             <tag name="kernel.cache_warmer" priority="100" />
         </service>
 
-        <!-- cache builder services -->
+        <!-- data collector services -->
 
-        <service id="Yarhon\RouteGuardBundle\Security\AccessMapBuilder">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderAggregate" />
+        <service id="Yarhon\RouteGuardBundle\Cache\DataCollector\RouteCollectionDataCollector">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Cache\DataCollector\RouteDataCollector" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerNameResolver" />
-            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory" />
-            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory" />
             <argument type="collection" /> <!-- options -->
             <call method="setLogger">
                 <argument type="service" id="logger" on-invalid="ignore" />
             </call>
             <tag name="monolog.logger" channel="route_guard" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Cache\DataCollector\RouteDataCollector">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderAggregate" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory" />
         </service>
 
         <!-- test providers -->

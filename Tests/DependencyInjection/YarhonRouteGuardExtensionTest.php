@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Tests\DependencyInjection;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yarhon\RouteGuardBundle\DependencyInjection\YarhonRouteGuardExtension;
-use Yarhon\RouteGuardBundle\Security\AccessMapBuilder;
+use Yarhon\RouteGuardBundle\Cache\DataCollector\RouteCollectionDataCollector;
 use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
 use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
 use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
@@ -45,7 +45,7 @@ class YarhonRouteGuardExtensionTest extends TestCase
     public function testSetConfigParameters()
     {
         $config = [
-            'ignore_controllers' => ['class'],
+            'data_collector' => ['ignore_controllers' => ['class']],
             'twig' => ['tag_name' => 'test'],
         ];
 
@@ -56,7 +56,7 @@ class YarhonRouteGuardExtensionTest extends TestCase
         $this->container->getCompilerPassConfig()->setRemovingPasses([]);
         $this->container->compile();
 
-        $argument = $this->container->getDefinition(AccessMapBuilder::class)->getArgument(4);
+        $argument = $this->container->getDefinition(RouteCollectionDataCollector::class)->getArgument(2);
         $this->assertInternalType('array', $argument);
         $this->assertArrayHasKey('ignore_controllers', $argument);
         $this->assertArraySubset(['class'], $argument['ignore_controllers']);
@@ -95,12 +95,10 @@ class YarhonRouteGuardExtensionTest extends TestCase
     public function testPrivateServices()
     {
         $services = [
-            'Yarhon\RouteGuardBundle\Security\AccessMapBuilder',
             'Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker',
         ];
 
         $aliases = [
-            'yarhon_route_guard.route_authorization_checker',
             'Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface',
         ];
 
