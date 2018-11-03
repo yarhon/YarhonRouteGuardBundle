@@ -70,8 +70,8 @@ class SymfonyAccessControlResolver implements TestResolverInterface
         foreach ($tests as $test) {
             /* @var IsGrantedTest $test */
             $test->setSubject($request); // See \Symfony\Component\Security\Http\Firewall\AccessListener::handle
-
-            yield $test;
         }
+
+        return $tests;
     }
 }

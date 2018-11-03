@@ -59,9 +59,7 @@ class SensioSecurityResolverTest extends TestCase
 
         $routeContext = new RouteContext('index');
 
-        $generator = $this->resolver->resolve($testBag, $routeContext);
-
-        $resolved = $this->processGenerator($generator);
+        $resolved = $this->resolver->resolve($testBag, $routeContext);
 
         $this->assertSame($tests, $resolved);
     }
@@ -79,9 +77,7 @@ class SensioSecurityResolverTest extends TestCase
             ->with($routeContext, 'foo')
             ->willReturn(5);
 
-        $generator = $this->resolver->resolve($testBag, $routeContext);
-
-        $resolved = $this->processGenerator($generator);
+        $resolved = $this->resolver->resolve($testBag, $routeContext);
 
         $this->assertSame([$test], $resolved);
 
@@ -104,9 +100,7 @@ class SensioSecurityResolverTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot resolve subject variable "foo". Inner exception.');
 
-        $generator = $this->resolver->resolve($testBag, $routeContext);
-
-        $this->processGenerator($generator);
+        $this->resolver->resolve($testBag, $routeContext);
     }
 
     public function testResolveExpressionVariables()
@@ -123,9 +117,7 @@ class SensioSecurityResolverTest extends TestCase
             ->with($routeContext, 'foo')
             ->willReturn(5);
 
-        $generator = $this->resolver->resolve($testBag, $routeContext);
-
-        $resolved = $this->processGenerator($generator);
+        $resolved = $this->resolver->resolve($testBag, $routeContext);
 
         $this->assertSame([$test], $resolved);
 
@@ -152,9 +144,7 @@ class SensioSecurityResolverTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot resolve expression variable "foo" of expression "foo == true". Inner exception.');
 
-        $generator = $this->resolver->resolve($testBag, $routeContext);
-
-        $this->processGenerator($generator);
+        $this->resolver->resolve($testBag, $routeContext);
     }
 
     public function testResolveVariableFromRequestAttributes()
@@ -171,9 +161,7 @@ class SensioSecurityResolverTest extends TestCase
             ->with($routeContext)
             ->willReturn(new ParameterBag(['foo' => 5]));
 
-        $generator = $this->resolver->resolve($testBag, $routeContext);
-
-        $resolved = $this->processGenerator($generator);
+        $resolved = $this->resolver->resolve($testBag, $routeContext);
 
         $this->assertSame([$test], $resolved);
 
@@ -197,20 +185,11 @@ class SensioSecurityResolverTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot resolve subject variable "foo" directly from Request attributes.');
 
-        $generator = $this->resolver->resolve($testBag, $routeContext);
-
-        $this->processGenerator($generator);
+        $this->resolver->resolve($testBag, $routeContext);
     }
 
     private function createTestBag(array $tests)
     {
         return new TestBag($tests);
-    }
-
-    private function processGenerator($generator)
-    {
-        $this->assertInstanceOf(\Generator::class, $generator);
-
-        return iterator_to_array($generator);
     }
 }

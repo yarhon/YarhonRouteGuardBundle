@@ -60,13 +60,9 @@ class DelegatingTestResolverTest extends TestCase
         $resolvers[1]->expects($this->once())
             ->method('resolve')
             ->with($this->testBag, $this->routeContext)
-            ->willReturn($this->createGenerator());
+            ->willReturn([]);
 
-        $generator = $delegatingResolver->resolve($this->testBag, $this->routeContext);
-
-        $resolved = $this->processGenerator($generator);
-
-        $this->assertSame([], $resolved);
+        $this->assertSame([], $delegatingResolver->resolve($this->testBag, $this->routeContext));
     }
 
     public function testResolveException()
@@ -84,19 +80,5 @@ class DelegatingTestResolverTest extends TestCase
         $this->expectExceptionMessage('No resolver exists for provider "class_two".');
 
         $delegatingResolver->resolve($this->testBag, $this->routeContext);
-    }
-
-    private function createGenerator(array $values = [])
-    {
-        foreach ($values as $value) {
-            yield $value;
-        }
-    }
-
-    private function processGenerator($generator)
-    {
-        $this->assertInstanceOf(\Generator::class, $generator);
-
-        return iterator_to_array($generator);
     }
 }

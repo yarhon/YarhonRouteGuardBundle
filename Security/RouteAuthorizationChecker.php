@@ -41,7 +41,7 @@ class RouteAuthorizationChecker implements RouteAuthorizationCheckerInterface
      */
     public function isGranted(RouteContextInterface $routeContext)
     {
-        $tests = $this->testLoader->load($routeContext);
+        $tests = $this->testLoader->getTests($routeContext);
 
         foreach ($tests as $test) {
             if ($test instanceof IsGrantedTest) {

@@ -71,9 +71,7 @@ class SymfonyAccessControlResolverTest extends TestCase
             ->method('setSubject')
             ->with($this->request);
 
-        $generator = $this->resolver->resolve($testBag, $this->routeContext);
-
-        $resolved = $this->processGenerator($generator);
+        $resolved = $this->resolver->resolve($testBag, $this->routeContext);
 
         $this->assertSame([$test], $resolved);
     }
@@ -92,9 +90,7 @@ class SymfonyAccessControlResolverTest extends TestCase
             ->method('setSubject')
             ->with($this->request);
 
-        $generator = $this->resolver->resolve($testBag, $this->routeContext);
-
-        $resolved = $this->processGenerator($generator);
+        $resolved = $this->resolver->resolve($testBag, $this->routeContext);
 
         $this->assertSame([$test], $resolved);
     }
@@ -107,17 +103,8 @@ class SymfonyAccessControlResolverTest extends TestCase
             ->with($this->requestContext)
             ->willReturn([]);
 
-        $generator = $this->resolver->resolve($testBag, $this->routeContext);
-
-        $resolved = $this->processGenerator($generator);
+        $resolved = $this->resolver->resolve($testBag, $this->routeContext);
 
         $this->assertSame([], $resolved);
-    }
-
-    private function processGenerator($generator)
-    {
-        $this->assertInstanceOf(\Generator::class, $generator);
-
-        return iterator_to_array($generator);
     }
 }
