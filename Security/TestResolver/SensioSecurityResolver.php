@@ -72,9 +72,9 @@ class SensioSecurityResolver implements TestResolverInterface
 
         foreach ($tests as $test) {
             $this->resolveVariables($test, $routeContext);
-        }
 
-        return $tests;
+            yield $test;
+        }
     }
 
     /**

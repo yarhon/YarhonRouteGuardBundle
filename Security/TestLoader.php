@@ -44,7 +44,7 @@ class TestLoader implements TestLoaderInterface, LoggerAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function getTests(RouteContextInterface $routeContext)
+    public function load(RouteContextInterface $routeContext)
     {
         // TODO: add @throws to interface doc
 
@@ -58,15 +58,16 @@ class TestLoader implements TestLoaderInterface, LoggerAwareInterface
 
         $testBags = $cacheItem->get();
 
-        $tests = [];
         foreach ($testBags as $testBag) {
-            $tests = array_merge($tests, $this->testResolver->resolve($testBag, $routeContext));
+            $generator = $this->testResolver->resolve($testBag, $routeContext);
+
+            foreach ($generator as $test) {
+                yield $test;
+            }
         }
 
         if ($this->logger) {
             // ....................
         }
-
-        return $tests;
     }
 }

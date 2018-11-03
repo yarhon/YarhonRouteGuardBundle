@@ -24,7 +24,7 @@ interface TestResolverInterface
      * @param AbstractTestBagInterface $testBag
      * @param RouteContextInterface    $routeContext
      *
-     * @return TestInterface[]
+     * @return \Generator
      *
      * @throws RuntimeException
      */

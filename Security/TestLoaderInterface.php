@@ -21,7 +21,7 @@ interface TestLoaderInterface
     /**
      * @param RouteContextInterface $routeContext
      *
-     * @return TestInterface[]
+     * @return \Generator
      */
-    public function getTests(RouteContextInterface $routeContext);
+    public function load(RouteContextInterface $routeContext);
 }
