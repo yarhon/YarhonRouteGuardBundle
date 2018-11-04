@@ -11,24 +11,19 @@
 namespace Yarhon\RouteGuardBundle\Tests\Security\Test;
 
 use PHPUnit\Framework\TestCase;
-use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBag;
+use Yarhon\RouteGuardBundle\Security\Test\ProviderAwareTrait;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class AbstractTestBagTest extends TestCase
+class ProviderAwareTraitTest extends TestCase
 {
-    private $testBag;
-
-    public function setUp()
-    {
-        $this->testBag = $this->getMockForAbstractClass(AbstractTestBag::class);
-    }
-
     public function testProviderClass()
     {
-        $this->testBag->setProviderClass('foo');
+        $providerAware = $this->getMockForTrait(ProviderAwareTrait::class);
 
-        $this->assertSame('foo', $this->testBag->getProviderClass());
+        $providerAware->setProviderClass('foo');
+
+        $this->assertSame('foo', $providerAware->getProviderClass());
     }
 }

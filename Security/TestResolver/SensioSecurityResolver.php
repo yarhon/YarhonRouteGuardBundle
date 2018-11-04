@@ -10,8 +10,7 @@
 
 namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 
-use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
-use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
+use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
 use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
@@ -62,36 +61,21 @@ class SensioSecurityResolver implements TestResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function resolve(AbstractTestBagInterface $testBag, RouteContextInterface $routeContext)
+    public function resolve(TestInterface $test, RouteContextInterface $routeContext)
     {
-        if (!($testBag instanceof TestBagInterface)) {
-            // TODO: throw exception
-        }
+        /* @var IsGrantedTest $test */
 
-        $tests = $testBag->getTests();
-
-        foreach ($tests as $test) {
-            $this->resolveVariables($test, $routeContext);
-        }
-
-        return $tests;
-    }
-
-    /**
-     * @param IsGrantedTest         $test
-     * @param RouteContextInterface $routeContext
-     */
-    private function resolveVariables(IsGrantedTest $test, RouteContextInterface $routeContext)
-    {
         $requestAttributes = $test->getMetadata('request_attributes') ?: [];
 
-        if ($subjectName = $test->getMetadata('subject_name')) {
-            $variableDescription = sprintf('subject variable "%s"', $subjectName);
-            $value = $this->resolveVariable($routeContext, $subjectName, $requestAttributes, $variableDescription);
-            $test->setSubject($value);
+        $attributes = $test->getAttributes();
+        $subject = $test->getSubject();
+
+        if ($subject) {
+            $variableDescription = sprintf('subject variable "%s"', $subject);
+            $subject = $this->resolveVariable($routeContext, $subject, $requestAttributes, $variableDescription);
         }
 
-        foreach ($test->getAttributes() as $attribute) {
+        foreach ($attributes as $attribute) {
             if ($attribute instanceof ExpressionDecorator) {
                 $values = [];
                 foreach ($attribute->getVariableNames() as $name) {
@@ -102,6 +86,8 @@ class SensioSecurityResolver implements TestResolverInterface
                 $attribute->setVariables($values);
             }
         }
+
+        return [$attributes, $subject];
     }
 
     private function resolveVariable(RouteContextInterface $routeContext, $name, $requestAttributes, $variableDescription)

@@ -11,11 +11,8 @@
 namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 
 use Symfony\Component\HttpFoundation\RequestStack;
-use Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory;
-use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
-use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
+use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
 use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
-use Yarhon\RouteGuardBundle\Security\Http\RequestDependentTestBagInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
 
@@ -25,23 +22,16 @@ use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
 class SymfonyAccessControlResolver implements TestResolverInterface
 {
     /**
-     * @var RequestContextFactory
-     */
-    private $requestContextFactory;
-
-    /**
      * @var RequestStack
      */
     private $requestStack;
 
     /**
-     * @param RequestStack          $requestStack
-     * @param RequestContextFactory $requestContextFactory
+     * @param RequestStack $requestStack
      */
-    public function __construct(RequestStack $requestStack, RequestContextFactory $requestContextFactory)
+    public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
-        $this->requestContextFactory = $requestContextFactory;
     }
 
     /**
@@ -55,23 +45,10 @@ class SymfonyAccessControlResolver implements TestResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function resolve(AbstractTestBagInterface $testBag, RouteContextInterface $routeContext)
+    public function resolve(TestInterface $test, RouteContextInterface $routeContext)
     {
-        if ($testBag instanceof RequestDependentTestBagInterface) {
-            $requestContext = $this->requestContextFactory->createContext($routeContext);
-            $tests = $testBag->getTests($requestContext);
-        } elseif ($testBag instanceof TestBagInterface) {
-            $tests = $testBag->getTests();
-        }
-        // TODO: throw exception if not supported $testBag passed
+        /* @var IsGrantedTest $test */
 
-        $request = $this->requestStack->getCurrentRequest();
-
-        foreach ($tests as $test) {
-            /* @var IsGrantedTest $test */
-            $test->setSubject($request); // See \Symfony\Component\Security\Http\Firewall\AccessListener::handle
-        }
-
-        return $tests;
+        return [$test->getAttributes(), $this->requestStack->getCurrentRequest()];
     }
 }

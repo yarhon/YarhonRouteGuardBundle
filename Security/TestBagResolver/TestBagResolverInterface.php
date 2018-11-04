@@ -8,8 +8,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Security\TestResolver;
+namespace Yarhon\RouteGuardBundle\Security\TestBagResolver;
 
+use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
@@ -17,20 +18,15 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface TestResolverInterface
+interface TestBagResolverInterface
 {
     /**
-     * @param TestInterface         $test
-     * @param RouteContextInterface $routeContext
+     * @param AbstractTestBagInterface $testBag
+     * @param RouteContextInterface    $routeContext
      *
-     * @return array An array of arguments to pass to the test call
+     * @return TestInterface[]
      *
-     * @throws RuntimeException
+     * @throws RuntimeException TODO: check this
      */
-    public function resolve(TestInterface $test, RouteContextInterface $routeContext);
-
-    /**
-     * @return string
-     */
-    public function getProviderClass();
+    public function resolve(AbstractTestBagInterface $testBag, RouteContextInterface $routeContext);
 }

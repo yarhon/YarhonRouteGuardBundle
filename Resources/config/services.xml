@@ -87,6 +87,17 @@
             <argument type="collection" /> <!-- map -->
         </service>
 
+        <!-- test bag resolvers -->
+
+        <service id="Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory">
+            <argument type="service" id="request_stack" />
+            <argument type="service" id="router.default" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Security\TestBagResolver\TestBagResolver">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory" />
+        </service>
+
         <!-- test resolvers -->
 
         <service id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory">
@@ -107,14 +118,8 @@
             <tag name="yarhon_route_guard.test_resolver" />
         </service>
 
-        <service id="Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory">
-            <argument type="service" id="request_stack" />
-            <argument type="service" id="router.default" />
-        </service>
-
         <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver">
             <argument type="service" id="request_stack" />
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory" />
             <tag name="yarhon_route_guard.test_resolver" />
         </service>
 
@@ -135,18 +140,19 @@
 
         <service id="Yarhon\RouteGuardBundle\Security\TestLoader">
             <argument type="service" id="yarhon_route_guard.cache.tests" />
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver" />
-            <call method="setLogger">
-                <argument type="service" id="logger" on-invalid="ignore" />
-            </call>
-            <tag name="monolog.logger" channel="route_guard" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\TestBagResolver\TestBagResolver" />
         </service>
         <service id="yarhon_route_guard.test_loader" alias="Yarhon\RouteGuardBundle\Security\TestLoader" public="true"/>
         <service id="Yarhon\RouteGuardBundle\Security\TestLoaderInterface" alias="yarhon_route_guard.test_loader" />
 
         <service id="Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker">
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\TestLoaderInterface" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver" />
             <argument type="service" id="security.authorization_checker" />
+            <call method="setLogger">
+                <argument type="service" id="logger" on-invalid="ignore" />
+            </call>
+            <tag name="monolog.logger" channel="route_guard" />
         </service>
         <service id="yarhon_route_guard.route_authorization_checker" alias="Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker" public="true"/>
         <service id="Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface" alias="yarhon_route_guard.route_authorization_checker" />

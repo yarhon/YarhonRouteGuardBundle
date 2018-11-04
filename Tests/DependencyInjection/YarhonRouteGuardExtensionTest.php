@@ -121,6 +121,7 @@ class YarhonRouteGuardExtensionTest extends TestCase
     {
         $this->container->setParameter('kernel.cache_dir', 'test_cache_dir');
 
+        $this->container->register('request_stack')->setSynthetic(true);
         $this->container->register('router.default')->setSynthetic(true);
         $this->container->register('security.authorization_checker')->setSynthetic(true);
 

@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-abstract class AbstractTestBag implements AbstractTestBagInterface
+trait ProviderAwareTrait
 {
     /**
      * @var string
@@ -21,7 +21,7 @@ abstract class AbstractTestBag implements AbstractTestBagInterface
     protected $providerClass;
 
     /**
-     * {@inheritdoc}
+     * @param string $class
      */
     public function setProviderClass($class)
     {
@@ -29,7 +29,7 @@ abstract class AbstractTestBag implements AbstractTestBagInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return string
      */
     public function getProviderClass()
     {

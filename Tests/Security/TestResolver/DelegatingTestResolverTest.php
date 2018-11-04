@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Tests\Security\TestResolver;
 use PHPUnit\Framework\TestCase;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
-use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
+use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver;
 
@@ -22,14 +22,14 @@ use Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver;
  */
 class DelegatingTestResolverTest extends TestCase
 {
-    private $testBag;
+    private $test;
 
     private $routeContext;
 
     public function setUp()
     {
-        $this->testBag = $this->createMock(AbstractTestBagInterface::class);
-        $this->testBag->method('getProviderClass')
+        $this->test = $this->createMock(TestInterface::class);
+        $this->test->method('getProviderClass')
             ->willReturn('class_two');
 
         $this->routeContext = $this->createMock(RouteContextInterface::class);
@@ -59,10 +59,10 @@ class DelegatingTestResolverTest extends TestCase
 
         $resolvers[1]->expects($this->once())
             ->method('resolve')
-            ->with($this->testBag, $this->routeContext)
-            ->willReturn([]);
+            ->with($this->test, $this->routeContext)
+            ->willReturn(['foo']);
 
-        $this->assertSame([], $delegatingResolver->resolve($this->testBag, $this->routeContext));
+        $this->assertSame(['foo'], $delegatingResolver->resolve($this->test, $this->routeContext));
     }
 
     public function testResolveException()
@@ -79,6 +79,6 @@ class DelegatingTestResolverTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('No resolver exists for provider "class_two".');
 
-        $delegatingResolver->resolve($this->testBag, $this->routeContext);
+        $delegatingResolver->resolve($this->test, $this->routeContext);
     }
 }

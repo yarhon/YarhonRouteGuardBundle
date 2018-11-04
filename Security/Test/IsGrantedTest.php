@@ -19,6 +19,8 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
  */
 class IsGrantedTest implements TestInterface
 {
+    use ProviderAwareTrait;
+
     /**
      * @var array
      */
@@ -36,10 +38,12 @@ class IsGrantedTest implements TestInterface
 
     /**
      * @param array $attributes
+     * @param mixed $subject
      */
-    public function __construct(array $attributes)
+    public function __construct(array $attributes, $subject = null)
     {
         $this->attributes = $attributes;
+        $this->subject = $subject;
     }
 
     /**
@@ -56,14 +60,6 @@ class IsGrantedTest implements TestInterface
     public function getSubject()
     {
         return $this->subject;
-    }
-
-    /**
-     * @param mixed $subject
-     */
-    public function setSubject($subject)
-    {
-        $this->subject = $subject;
     }
 
     /**

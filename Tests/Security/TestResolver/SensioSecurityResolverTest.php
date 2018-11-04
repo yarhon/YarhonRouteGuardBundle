@@ -13,7 +13,6 @@ namespace Yarhon\RouteGuardBundle\Tests\Security\TestResolver;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
@@ -50,26 +49,16 @@ class SensioSecurityResolverTest extends TestCase
 
     public function testResolve()
     {
-        $tests = [
-            new IsGrantedTest(['foo']),
-            new IsGrantedTest(['bar']),
-        ];
-
-        $testBag = $this->createTestBag($tests);
-
         $routeContext = new RouteContext('index');
 
-        $resolved = $this->resolver->resolve($testBag, $routeContext);
+        $resolved = $this->resolver->resolve(new IsGrantedTest(['ROLE_USER']), $routeContext);
 
-        $this->assertSame($tests, $resolved);
+        $this->assertSame([['ROLE_USER'], null], $resolved);
     }
 
     public function testResolveSubjectVariable()
     {
-        $test = new IsGrantedTest([]);
-        $test->setMetadata('subject_name', 'foo');
-
-        $testBag = $this->createTestBag([$test]);
+        $test = new IsGrantedTest(['ROLE_USER'],'foo');
 
         $routeContext = new RouteContext('index');
 
@@ -77,19 +66,14 @@ class SensioSecurityResolverTest extends TestCase
             ->with($routeContext, 'foo')
             ->willReturn(5);
 
-        $resolved = $this->resolver->resolve($testBag, $routeContext);
+        $resolved = $this->resolver->resolve($test, $routeContext);
 
-        $this->assertSame([$test], $resolved);
-
-        $this->assertEquals(5, $test->getSubject());
+        $this->assertSame([['ROLE_USER'], 5], $resolved);
     }
 
     public function testResolveSubjectVariableException()
     {
-        $test = new IsGrantedTest([]);
-        $test->setMetadata('subject_name', 'foo');
-
-        $testBag = $this->createTestBag([$test]);
+        $test = new IsGrantedTest(['ROLE_USER'], 'foo');
 
         $routeContext = new RouteContext('index');
 
@@ -100,7 +84,7 @@ class SensioSecurityResolverTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot resolve subject variable "foo". Inner exception.');
 
-        $this->resolver->resolve($testBag, $routeContext);
+        $this->resolver->resolve($test, $routeContext);
     }
 
     public function testResolveExpressionVariables()
@@ -109,22 +93,16 @@ class SensioSecurityResolverTest extends TestCase
 
         $test = new IsGrantedTest([$expression]);
 
-        $testBag = $this->createTestBag([$test]);
-
         $routeContext = new RouteContext('index');
 
         $this->controllerArgumentResolver->method('getArgument')
             ->with($routeContext, 'foo')
             ->willReturn(5);
 
-        $resolved = $this->resolver->resolve($testBag, $routeContext);
+        $resolved = $this->resolver->resolve($test, $routeContext);
 
-        $this->assertSame([$test], $resolved);
-
-        $resolvedExpression = $test->getAttributes()[0];
-
-        $this->assertSame($expression, $resolvedExpression);
-        $this->assertEquals(['foo' => 5], $resolvedExpression->getVariables());
+        $this->assertSame([[$expression], null], $resolved);
+        $this->assertEquals(['foo' => 5], $expression->getVariables());
     }
 
     public function testResolveExpressionVariablesException()
@@ -132,8 +110,6 @@ class SensioSecurityResolverTest extends TestCase
         $expression = new ExpressionDecorator(new Expression('foo == true'), ['foo']);
 
         $test = new IsGrantedTest([$expression]);
-
-        $testBag = $this->createTestBag([$test]);
 
         $routeContext = new RouteContext('index');
 
@@ -144,16 +120,13 @@ class SensioSecurityResolverTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot resolve expression variable "foo" of expression "foo == true". Inner exception.');
 
-        $this->resolver->resolve($testBag, $routeContext);
+        $this->resolver->resolve($test, $routeContext);
     }
 
     public function testResolveVariableFromRequestAttributes()
     {
-        $test = new IsGrantedTest([]);
-        $test->setMetadata('subject_name', 'foo');
+        $test = new IsGrantedTest(['ROLE_USER'], 'foo');
         $test->setMetadata('request_attributes', ['foo']);
-
-        $testBag = $this->createTestBag([$test]);
 
         $routeContext = new RouteContext('index');
 
@@ -161,20 +134,15 @@ class SensioSecurityResolverTest extends TestCase
             ->with($routeContext)
             ->willReturn(new ParameterBag(['foo' => 5]));
 
-        $resolved = $this->resolver->resolve($testBag, $routeContext);
+        $resolved = $this->resolver->resolve($test, $routeContext);
 
-        $this->assertSame([$test], $resolved);
-
-        $this->assertEquals(5, $test->getSubject());
+        $this->assertSame([['ROLE_USER'], 5], $resolved);
     }
 
     public function testResolveVariableFromRequestAttributesException()
     {
-        $test = new IsGrantedTest([]);
-        $test->setMetadata('subject_name', 'foo');
+        $test = new IsGrantedTest(['ROLE_USER'], 'foo');
         $test->setMetadata('request_attributes', ['foo']);
-
-        $testBag = $this->createTestBag([$test]);
 
         $routeContext = new RouteContext('index');
 
@@ -185,11 +153,6 @@ class SensioSecurityResolverTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Cannot resolve subject variable "foo" directly from Request attributes.');
 
-        $this->resolver->resolve($testBag, $routeContext);
-    }
-
-    private function createTestBag(array $tests)
-    {
-        return new TestBag($tests);
+        $this->resolver->resolve($test, $routeContext);
     }
 }

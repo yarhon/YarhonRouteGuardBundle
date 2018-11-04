@@ -121,11 +121,7 @@ class SensioSecurityProvider implements TestProviderInterface
             }
 
             if (count($usedVariables)) {
-                $test = new IsGrantedTest($attributes);
-
-                if ($subjectName) {
-                    $test->setMetadata('subject_name', $subjectName);
-                }
+                $test = new IsGrantedTest($attributes, $subjectName);
 
                 $usedRequestAttributes = array_values(array_intersect($usedVariables, $requestAttributes));
 

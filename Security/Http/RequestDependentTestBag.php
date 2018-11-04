@@ -10,14 +10,16 @@
 
 namespace Yarhon\RouteGuardBundle\Security\Http;
 
-use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBag;
+use Yarhon\RouteGuardBundle\Security\Test\ProviderAwareTrait;
 use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RequestDependentTestBag extends AbstractTestBag implements RequestDependentTestBagInterface
+class RequestDependentTestBag implements RequestDependentTestBagInterface
 {
+    use ProviderAwareTrait;
+
     /**
      * @var array
      */

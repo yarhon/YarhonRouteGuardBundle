@@ -13,15 +13,6 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface AbstractTestBagInterface
+interface AbstractTestBagInterface extends ProviderAwareInterface
 {
-    /**
-     * @param string $class
-     */
-    public function setProviderClass($class);
-
-    /**
-     * @return string
-     */
-    public function getProviderClass();
 }

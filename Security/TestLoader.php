@@ -10,45 +10,43 @@
 
 namespace Yarhon\RouteGuardBundle\Security;
 
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
 use Psr\Cache\CacheItemPoolInterface;
 use Yarhon\RouteGuardBundle\Cache\CacheFactory;
-use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
+use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
+use Yarhon\RouteGuardBundle\Security\TestBagResolver\TestBagResolverInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
-use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
+ *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class TestLoader implements TestLoaderInterface, LoggerAwareInterface
+class TestLoader implements TestLoaderInterface
 {
-    use LoggerAwareTrait;
-
     /**
      * @var CacheItemPoolInterface
      */
     private $testsCache;
 
     /**
-     * @var TestResolverInterface
+     * @var TestBagResolverInterface
      */
-    private $testResolver;
+    private $testBagResolver;
 
-    public function __construct(CacheItemPoolInterface $testsCache, TestResolverInterface $testResolver)
+    /**
+     * @param CacheItemPoolInterface   $testsCache
+     * @param TestBagResolverInterface $testBagResolver
+     */
+    public function __construct(CacheItemPoolInterface $testsCache, TestBagResolverInterface $testBagResolver)
     {
         $this->testsCache = $testsCache;
-        $this->testResolver = $testResolver;
+        $this->testBagResolver = $testBagResolver;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getTests(RouteContextInterface $routeContext)
+    public function load(RouteContextInterface $routeContext)
     {
-        // TODO: add @throws to interface doc
-
-        //var_dump($this->accessMap->has('blog1'), $this->accessMap->get('blog1'));
         $cacheKey = CacheFactory::getValidCacheKey($routeContext->getName());
         $cacheItem = $this->testsCache->getItem($cacheKey);
 
@@ -60,11 +58,13 @@ class TestLoader implements TestLoaderInterface, LoggerAwareInterface
 
         $tests = [];
         foreach ($testBags as $testBag) {
-            $tests = array_merge($tests, $this->testResolver->resolve($testBag, $routeContext));
-        }
-
-        if ($this->logger) {
-            // ....................
+            /** @var AbstractTestBagInterface $testBag */
+            $providerClass = $testBag->getProviderClass();
+            $providerTests = $this->testBagResolver->resolve($testBag, $routeContext);
+            foreach ($providerTests as $test) {
+                $test->setProviderClass($providerClass);
+                $tests[] = $test;
+            }
         }
 
         return $tests;

@@ -204,19 +204,19 @@ class SensioSecurityProviderTest extends TestCase
                 new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN', 'subject' => 'foo']),
                 ['foo', 'bar'],
                 ['bar', 'baz'],
-                (new IsGrantedTest(['ROLE_ADMIN']))->setMetadata('subject_name', 'foo'),
+                new IsGrantedTest(['ROLE_ADMIN'], 'foo'),
             ],
             [
                 new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN', 'subject' => 'bar']),
                 ['foo', 'bar'],
                 ['bar', 'baz'],
-                (new IsGrantedTest(['ROLE_ADMIN']))->setMetadata('subject_name', 'bar'),
+                new IsGrantedTest(['ROLE_ADMIN'], 'bar'),
             ],
             [
                 new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN', 'subject' => 'baz']),
                 ['foo', 'bar'],
                 ['bar', 'baz'],
-                (new IsGrantedTest(['ROLE_ADMIN']))->setMetadata('subject_name', 'baz')->setMetadata('request_attributes', ['baz']),
+                (new IsGrantedTest(['ROLE_ADMIN'], 'baz'))->setMetadata('request_attributes', ['baz']),
             ],
         ];
     }

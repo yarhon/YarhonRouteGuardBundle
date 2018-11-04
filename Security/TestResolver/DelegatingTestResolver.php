@@ -10,7 +10,7 @@
 
 namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 
-use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
+use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
@@ -45,15 +45,15 @@ class DelegatingTestResolver implements TestResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function resolve(AbstractTestBagInterface $testBag, RouteContextInterface $routeContext)
+    public function resolve(TestInterface $test, RouteContextInterface $routeContext)
     {
-        if (!isset($this->resolvers[$testBag->getProviderClass()])) {
-            throw new RuntimeException(sprintf('No resolver exists for provider "%s".', $testBag->getProviderClass()));
+        if (!isset($this->resolvers[$test->getProviderClass()])) {
+            throw new RuntimeException(sprintf('No resolver exists for provider "%s".', $test->getProviderClass()));
         }
 
-        $resolver = $this->resolvers[$testBag->getProviderClass()];
+        $resolver = $this->resolvers[$test->getProviderClass()];
 
-        return $resolver->resolve($testBag, $routeContext);
+        return $resolver->resolve($test, $routeContext);
     }
 
     /**

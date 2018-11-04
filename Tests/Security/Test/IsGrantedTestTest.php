@@ -27,9 +27,8 @@ class IsGrantedTestTest extends TestCase
 
     public function testSubject()
     {
-        $test = new IsGrantedTest([]);
+        $test = new IsGrantedTest([], 'foo');
 
-        $test->setSubject('foo');
         $this->assertSame('foo', $test->getSubject());
     }
 

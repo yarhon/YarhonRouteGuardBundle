@@ -23,5 +23,5 @@ interface TestLoaderInterface
      *
      * @return TestInterface[]
      */
-    public function getTests(RouteContextInterface $routeContext);
+    public function load(RouteContextInterface $routeContext);
 }
