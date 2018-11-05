@@ -15,7 +15,6 @@ use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory;
 use Yarhon\RouteGuardBundle\Security\Http\RequestDependentTestBagInterface;
-use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>

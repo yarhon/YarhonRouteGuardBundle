@@ -38,9 +38,12 @@ class SymfonyAccessControlResolverTest extends TestCase
         $this->resolver = new SymfonyAccessControlResolver($requestStack);
     }
 
-    public function testGetProviderClass()
+    public function testSupports()
     {
-        $this->assertSame(SymfonyAccessControlProvider::class, $this->resolver->getProviderClass());
+        $test = new IsGrantedTest(['ROLE_USER']);
+        $test->setProviderClass(SymfonyAccessControlProvider::class);
+
+        $this->assertTrue($this->resolver->supports($test));
     }
 
     public function testResolve()

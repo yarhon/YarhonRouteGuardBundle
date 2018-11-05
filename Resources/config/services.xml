@@ -136,6 +136,18 @@
             <argument type="service" id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" on-invalid="ignore" />
         </service>
 
+        <!-- authorization checkers -->
+
+        <service id="Yarhon\RouteGuardBundle\Security\AuthorizationChecker\IsGrantedAuthorizationChecker">
+            <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver" />
+            <tag name="yarhon_route_guard.authorization_checker" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Security\AuthorizationChecker\DelegatingAuthorizationChecker">
+            <argument type="collection" /> <!-- authorization checkers -->
+        </service>
+
         <!-- authorization services -->
 
         <service id="Yarhon\RouteGuardBundle\Security\TestLoader">
@@ -146,9 +158,8 @@
         <service id="Yarhon\RouteGuardBundle\Security\TestLoaderInterface" alias="yarhon_route_guard.test_loader" />
 
         <service id="Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\TestLoaderInterface" />
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver" />
-            <argument type="service" id="security.authorization_checker" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\TestLoader" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\AuthorizationChecker\DelegatingAuthorizationChecker" />
             <call method="setLogger">
                 <argument type="service" id="logger" on-invalid="ignore" />
             </call>

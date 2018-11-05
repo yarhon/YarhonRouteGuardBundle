@@ -29,17 +29,15 @@ class DelegatingTestResolver implements TestResolverInterface
      */
     public function __construct($resolvers = [])
     {
-        foreach ($resolvers as $resolver) {
-            $this->addResolver($resolver);
-        }
+        $this->resolvers = $resolvers;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getProviderClass()
+    public function supports(TestInterface $test)
     {
-        return '';
+        return true;
     }
 
     /**
@@ -47,20 +45,12 @@ class DelegatingTestResolver implements TestResolverInterface
      */
     public function resolve(TestInterface $test, RouteContextInterface $routeContext)
     {
-        if (!isset($this->resolvers[$test->getProviderClass()])) {
-            throw new RuntimeException(sprintf('No resolver exists for provider "%s".', $test->getProviderClass()));
+        foreach ($this->resolvers as $resolver) {
+            if ($resolver->supports($test)) {
+                return $resolver->resolve($test, $routeContext);
+            }
         }
 
-        $resolver = $this->resolvers[$test->getProviderClass()];
-
-        return $resolver->resolve($test, $routeContext);
-    }
-
-    /**
-     * @param TestResolverInterface $resolver
-     */
-    private function addResolver(TestResolverInterface $resolver)
-    {
-        $this->resolvers[$resolver->getProviderClass()] = $resolver;
+        throw new RuntimeException(sprintf('No resolver exists for test instance of "%s", provider "%s".', get_class($test), $test->getProviderClass()));
     }
 }

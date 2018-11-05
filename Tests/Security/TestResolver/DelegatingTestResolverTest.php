@@ -12,8 +12,9 @@ namespace Yarhon\RouteGuardBundle\Tests\Security\TestResolver;
 
 use PHPUnit\Framework\TestCase;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
+use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
-use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
+use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver;
 
@@ -22,24 +23,19 @@ use Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver;
  */
 class DelegatingTestResolverTest extends TestCase
 {
-    private $test;
-
-    private $routeContext;
 
     public function setUp()
     {
-        $this->test = $this->createMock(TestInterface::class);
-        $this->test->method('getProviderClass')
-            ->willReturn('class_two');
 
-        $this->routeContext = $this->createMock(RouteContextInterface::class);
     }
 
-    public function testGetProviderClass()
+    public function testSupports()
     {
         $delegatingResolver = new DelegatingTestResolver();
 
-        $this->assertEquals('', $delegatingResolver->getProviderClass());
+        $test = new IsGrantedTest(['ROLE_USER']);
+
+        $this->assertTrue($delegatingResolver->supports($test));
     }
 
     public function testResolve()
@@ -49,20 +45,23 @@ class DelegatingTestResolverTest extends TestCase
             $this->createMock(TestResolverInterface::class),
         ];
 
-        $resolvers[0]->method('getProviderClass')
-            ->willReturn('class_one');
+        $resolvers[0]->method('supports')
+            ->willReturn(false);
 
-        $resolvers[1]->method('getProviderClass')
-            ->willReturn('class_two');
+        $resolvers[1]->method('supports')
+            ->willReturn(true);
 
         $delegatingResolver = new DelegatingTestResolver($resolvers);
 
+        $test = new IsGrantedTest(['ROLE_USER']);
+        $routeContext = new RouteContext('index');
+
         $resolvers[1]->expects($this->once())
             ->method('resolve')
-            ->with($this->test, $this->routeContext)
+            ->with($test, $routeContext)
             ->willReturn(['foo']);
 
-        $this->assertSame(['foo'], $delegatingResolver->resolve($this->test, $this->routeContext));
+        $this->assertSame(['foo'], $delegatingResolver->resolve($test, $routeContext));
     }
 
     public function testResolveException()
@@ -71,14 +70,18 @@ class DelegatingTestResolverTest extends TestCase
             $this->createMock(TestResolverInterface::class),
         ];
 
-        $resolvers[0]->method('getProviderClass')
-            ->willReturn('class_one');
+        $resolvers[0]->method('supports')
+            ->willReturn(false);
 
         $delegatingResolver = new DelegatingTestResolver($resolvers);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('No resolver exists for provider "class_two".');
+        $test = new IsGrantedTest(['ROLE_USER']);
+        $test->setProviderClass('class1');
+        $routeContext = new RouteContext('index');
 
-        $delegatingResolver->resolve($this->test, $this->routeContext);
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('No resolver exists for test instance of "Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest", provider "class1".');
+
+        $delegatingResolver->resolve($test, $routeContext);
     }
 }

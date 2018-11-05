@@ -11,10 +11,11 @@
 namespace Yarhon\RouteGuardBundle\Tests\Security\TestBagResolver;
 
 use PHPUnit\Framework\TestCase;
-use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
-use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
+use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
+use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory;
+use Yarhon\RouteGuardBundle\Security\Http\RequestContext;
 use Yarhon\RouteGuardBundle\Security\Http\RequestDependentTestBagInterface;
 use Yarhon\RouteGuardBundle\Security\TestBagResolver\TestBagResolver;
 
@@ -32,5 +33,45 @@ class TestBagResolverTest extends TestCase
         $this->requestContextFactory = $this->createMock(RequestContextFactory::class);
 
         $this->resolver = new TestBagResolver($this->requestContextFactory);
+    }
+
+    public function testResolveTestBag()
+    {
+        $tests = [
+            $this->createMock(TestInterface::class),
+        ];
+
+        $testBag = $this->createMock(TestBagInterface::class);
+        $testBag->method('getTests')
+            ->willReturn($tests);
+
+        $routeContext = new RouteContext('index');
+
+        $resolved = $this->resolver->resolve($testBag, $routeContext);
+
+        $this->assertSame($tests, $resolved);
+    }
+
+    public function testResolveRequestDependentTestBag()
+    {
+        $tests = [
+            $this->createMock(TestInterface::class),
+        ];
+
+        $requestContext = new RequestContext('/');
+
+        $this->requestContextFactory->method('createContext')
+            ->willReturn($requestContext);
+
+        $testBag = $this->createMock(RequestDependentTestBagInterface::class);
+        $testBag->method('getTests')
+            ->with($requestContext)
+            ->willReturn($tests);
+
+        $routeContext = new RouteContext('index');
+
+        $resolved = $this->resolver->resolve($testBag, $routeContext);
+
+        $this->assertSame($tests, $resolved);
     }
 }

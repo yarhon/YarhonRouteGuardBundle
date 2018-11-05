@@ -20,6 +20,13 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 interface TestResolverInterface
 {
     /**
+     * @param TestInterface $test
+     *
+     * @return bool
+     */
+    public function supports(TestInterface $test);
+
+    /**
      * @param TestInterface         $test
      * @param RouteContextInterface $routeContext
      *
@@ -28,9 +35,4 @@ interface TestResolverInterface
      * @throws RuntimeException
      */
     public function resolve(TestInterface $test, RouteContextInterface $routeContext);
-
-    /**
-     * @return string
-     */
-    public function getProviderClass();
 }

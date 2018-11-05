@@ -16,6 +16,7 @@ use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\InjectTaggedServicesPas
 use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderAggregate;
 use Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
+use Yarhon\RouteGuardBundle\Security\AuthorizationChecker\DelegatingAuthorizationChecker;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -41,6 +42,8 @@ class InjectTaggedServicesPassTest extends TestCase
         $this->container->register(DelegatingTestResolver::class)->addArgument([]);
 
         $this->container->register(ControllerArgumentResolver::class)->setArguments([null, null, null, []]);
+
+        $this->container->register(DelegatingAuthorizationChecker::class)->addArgument([]);
 
         $this->pass = new InjectTaggedServicesPass();
     }
@@ -79,6 +82,10 @@ class InjectTaggedServicesPassTest extends TestCase
             [
                 [DelegatingTestResolver::class, 0],
                 'yarhon_route_guard.test_resolver',
+            ],
+            [
+                [DelegatingAuthorizationChecker::class, 0],
+                'yarhon_route_guard.authorization_checker',
             ],
         ];
     }

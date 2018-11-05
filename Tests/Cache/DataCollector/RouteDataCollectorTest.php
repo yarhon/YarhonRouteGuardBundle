@@ -31,7 +31,7 @@ class RouteDataCollectorTest extends TestCase
 
     private $routeMetadataFactory;
 
-    private $routeDataCollector;
+    private $collector;
 
     public function setUp()
     {
@@ -39,7 +39,7 @@ class RouteDataCollectorTest extends TestCase
         $this->controllerMetadataFactory = $this->createMock(ControllerMetadataFactory::class);
         $this->routeMetadataFactory = $this->createMock(RouteMetadataFactory::class);
 
-        $this->routeDataCollector = new RouteDataCollector($this->testProvider, $this->controllerMetadataFactory, $this->routeMetadataFactory);
+        $this->collector = new RouteDataCollector($this->testProvider, $this->controllerMetadataFactory, $this->routeMetadataFactory);
     }
 
     public function testCollect()
@@ -57,7 +57,7 @@ class RouteDataCollectorTest extends TestCase
         $this->testProvider->method('getTests')
             ->willReturn($testBags);
 
-        $collected = $this->routeDataCollector->collect('index', new Route('/'), 'class::method');
+        $collected = $this->collector->collect('index', new Route('/'), 'class::method');
 
         $expected = [$testBags, $controllerMetadata, $routeMetadata];
 
@@ -75,7 +75,7 @@ class RouteDataCollectorTest extends TestCase
         $this->testProvider->method('getTests')
             ->willReturn($testBags);
 
-        $collected = $this->routeDataCollector->collect('index', new Route('/'), null);
+        $collected = $this->collector->collect('index', new Route('/'), null);
 
         $expected = [$testBags, null, $routeMetadata];
 

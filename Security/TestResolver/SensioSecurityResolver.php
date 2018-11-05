@@ -53,9 +53,9 @@ class SensioSecurityResolver implements TestResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function getProviderClass()
+    public function supports(TestInterface $test)
     {
-        return SensioSecurityProvider::class;
+        return SensioSecurityProvider::class === $test->getProviderClass();
     }
 
     /**

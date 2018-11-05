@@ -42,9 +42,12 @@ class SensioSecurityResolverTest extends TestCase
         $this->resolver = new SensioSecurityResolver($this->controllerArgumentResolver, $this->requestAttributesFactory);
     }
 
-    public function testGetProviderClass()
+    public function testSupports()
     {
-        $this->assertSame(SensioSecurityProvider::class, $this->resolver->getProviderClass());
+        $test = new IsGrantedTest(['ROLE_USER']);
+        $test->setProviderClass(SensioSecurityProvider::class);
+
+        $this->assertTrue($this->resolver->supports($test));
     }
 
     public function testResolve()

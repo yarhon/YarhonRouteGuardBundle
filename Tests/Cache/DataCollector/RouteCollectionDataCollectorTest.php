@@ -14,8 +14,10 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
+use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Controller\ControllerNameResolverInterface;
-use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
+use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 use Yarhon\RouteGuardBundle\Cache\DataCollector\RouteDataCollector;
 use Yarhon\RouteGuardBundle\Cache\DataCollector\RouteCollectionDataCollector;
 
@@ -37,6 +39,183 @@ class RouteCollectionDataCollectorTest extends TestCase
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 
+    public function testCollect()
+    {
+        $collector = $this->createCollector();
+
+        $this->controllerNameResolver->method('resolve')
+            ->willReturnArgument(0);
+
+        $routeData = $this->createRouteData();
+
+        $this->routeDataCollector->method('collect')
+            ->willReturn($routeData);
+
+        $routeCollection = $this->createRouteCollection([
+            '/path1' => 'class::method',
+            '/path2' => 'class::method2',
+        ]);
+
+        $generator = $collector->collect($routeCollection);
+
+        $data = $this->processGenerator($generator);
+
+        $expected = [
+            '/path1' => $routeData,
+            '/path2' => $routeData,
+        ];
+
+        $this->assertSame($expected, $data);
+    }
+
+    public function testCollectWithControllerNameResolverException()
+    {
+        $collector = $this->createCollector();
+
+        $this->controllerNameResolver->method('resolve')
+            ->willThrowException(new InvalidArgumentException('Inner exception.'));
+
+        $routeCollection = $this->createRouteCollection([
+            '/path1' => 'class::method',
+        ]);
+
+        $generator = $collector->collect($routeCollection);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Inner exception.');
+
+        $this->processGenerator($generator);
+    }
+
+    public function testCollectWithRouteDataCollectorException()
+    {
+        $collector = $this->createCollector();
+
+        $this->controllerNameResolver->method('resolve')
+            ->willReturnArgument(0);
+
+        $this->routeDataCollector->method('collect')
+            ->willThrowException(new InvalidArgumentException('Inner exception.'));
+
+        $routeCollection = $this->createRouteCollection([
+            '/path1' => 'class::method',
+        ]);
+
+        $generator = $collector->collect($routeCollection);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Inner exception.');
+
+        $this->processGenerator($generator);
+    }
+
+    public function testCollectWithControllerNameResolverExceptionCaught()
+    {
+        $collector = $this->createCollector(['ignore_exceptions' => true]);
+        $collector->setLogger($this->logger);
+
+        $this->controllerNameResolver->method('resolve')
+            ->will($this->onConsecutiveCalls(
+                $this->throwException(new InvalidArgumentException('Inner exception.')),
+                $this->returnArgument(0)
+            ));
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with('Route "/path1" would be ignored because of exception caught: Inner exception.');
+
+        $routeData = $this->createRouteData();
+
+        $this->routeDataCollector->method('collect')
+            ->with('/path2')
+            ->willReturn($routeData);
+
+        $routeCollection = $this->createRouteCollection([
+            '/path1' => 'class::method',
+            '/path2' => 'class::method2',
+        ]);
+
+        $generator = $collector->collect($routeCollection);
+
+        $data = $this->processGenerator($generator);
+
+        $expected = [
+            '/path2' => $routeData,
+        ];
+
+        $this->assertSame($expected, $data);
+    }
+
+    public function testCollectWithRouteDataCollectorExceptionCaught()
+    {
+        $collector = $this->createCollector(['ignore_exceptions' => true]);
+        $collector->setLogger($this->logger);
+
+        $this->controllerNameResolver->method('resolve')
+            ->willReturnArgument(0);
+
+        $routeData = $this->createRouteData();
+
+        $this->routeDataCollector->method('collect')
+            ->will($this->onConsecutiveCalls(
+                $this->throwException(new InvalidArgumentException('Inner exception.')),
+                $this->returnValue($routeData)
+            ));
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with('Route "/path1" would be ignored because of exception caught: Inner exception.');
+
+        $routeCollection = $this->createRouteCollection([
+            '/path1' => 'class::method',
+            '/path2' => 'class::method2',
+        ]);
+
+        $generator = $collector->collect($routeCollection);
+
+        $data = $this->processGenerator($generator);
+
+        $expected = [
+            '/path2' => $routeData,
+        ];
+
+        $this->assertSame($expected, $data);
+    }
+
+    public function testIgnoredControllers()
+    {
+        $ignoredControllers = [
+            'class1',
+            'class2::method2',
+        ];
+
+        $collector = $this->createCollector(['ignore_controllers' => $ignoredControllers]);
+
+        $this->controllerNameResolver->method('resolve')
+            ->willReturnArgument(0);
+
+        $routeData = $this->createRouteData();
+
+        $this->routeDataCollector->method('collect')
+            ->willReturn($routeData);
+
+        $routeCollection = $this->createRouteCollection([
+            '/path1' => 'class1::method',
+            '/path2' => 'class2::method1',
+            '/path3' => 'class2::method2',
+        ]);
+
+        $generator = $collector->collect($routeCollection);
+
+        $data = $this->processGenerator($generator);
+
+        $expected = [
+            '/path2' => $routeData,
+        ];
+
+        $this->assertSame($expected, $data);
+    }
+
     private function createRouteCollection($routes = [])
     {
         $routeCollection = new RouteCollection();
@@ -47,5 +226,22 @@ class RouteCollectionDataCollectorTest extends TestCase
         }
 
         return $routeCollection;
+    }
+
+    private function processGenerator($generator)
+    {
+        $this->assertInstanceOf(\Generator::class, $generator);
+
+        return iterator_to_array($generator);
+    }
+
+    private function createCollector(array $options = [])
+    {
+        return new RouteCollectionDataCollector($this->routeDataCollector, $this->controllerNameResolver, $options);
+    }
+
+    private function createRouteData()
+    {
+        return [[], $this->createMock(ControllerMetadata::class), $this->createMock(RouteMetadata::class)];
     }
 }

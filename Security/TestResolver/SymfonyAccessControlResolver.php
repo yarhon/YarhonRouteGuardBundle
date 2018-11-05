@@ -37,9 +37,9 @@ class SymfonyAccessControlResolver implements TestResolverInterface
     /**
      * {@inheritdoc}
      */
-    public function getProviderClass()
+    public function supports(TestInterface $test)
     {
-        return SymfonyAccessControlProvider::class;
+        return SymfonyAccessControlProvider::class === $test->getProviderClass();
     }
 
     /**
