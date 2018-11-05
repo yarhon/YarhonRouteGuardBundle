@@ -14,6 +14,8 @@ use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\RouteCollection;
+use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
+use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
 use Yarhon\RouteGuardBundle\Cache\DataCollector\RouteCollectionDataCollector;
 use Yarhon\RouteGuardBundle\Cache\AuthorizationCacheWarmer;
 

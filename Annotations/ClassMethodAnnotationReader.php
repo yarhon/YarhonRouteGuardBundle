@@ -47,9 +47,7 @@ class ClassMethodAnnotationReader implements ClassMethodAnnotationReaderInterfac
         $classAnnotations = $this->filter($this->delegate->getClassAnnotations($object), $annotationClasses);
         $methodAnnotations = $this->filter($this->delegate->getMethodAnnotations($method), $annotationClasses);
 
-        $annotations = array_merge($classAnnotations, $methodAnnotations);
-
-        return $annotations;
+        return array_merge($classAnnotations, $methodAnnotations);
     }
 
     /**
@@ -63,7 +61,7 @@ class ClassMethodAnnotationReader implements ClassMethodAnnotationReaderInterfac
         $filtered = [];
 
         foreach ($annotations as $annotation) {
-            if (false === array_search(get_class($annotation), $classes, true)) {
+            if (!in_array(get_class($annotation), $classes, true)) {
                 continue;
             }
 

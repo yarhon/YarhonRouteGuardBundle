@@ -23,8 +23,6 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
  */
 class ControllerMetadataFactoryTest extends TestCase
 {
-    private $controllerNameResolver;
-
     private $argumentMetadataFactory;
 
     private $factory;

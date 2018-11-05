@@ -97,9 +97,7 @@ class RouteTokenParser extends AbstractTokenParser
 
         $stream->expect(Token::BLOCK_END_TYPE);
 
-        $node = new RouteNode($condition, $bodyNode, $elseNode, $token->getLine());
-
-        return $node;
+        return new RouteNode($condition, $bodyNode, $elseNode, $token->getLine());
     }
 
     /**
