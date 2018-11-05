@@ -43,6 +43,7 @@ class TestBagResolver implements TestBagResolverInterface
             return $testBag->getTests();
         } elseif ($testBag instanceof RequestDependentTestBagInterface) {
             $requestContext = $this->requestContextFactory->createContext($routeContext);
+
             return $testBag->getTests($requestContext);
         }
 

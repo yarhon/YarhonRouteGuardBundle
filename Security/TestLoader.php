@@ -17,7 +17,6 @@ use Yarhon\RouteGuardBundle\Security\TestBagResolver\TestBagResolverInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 
 /**
- *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class TestLoader implements TestLoaderInterface

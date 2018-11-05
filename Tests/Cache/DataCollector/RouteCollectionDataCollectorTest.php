@@ -56,9 +56,7 @@ class RouteCollectionDataCollectorTest extends TestCase
             '/path2' => 'class::method2',
         ]);
 
-        $generator = $collector->collect($routeCollection);
-
-        $data = $this->processGenerator($generator);
+        $data = $collector->collect($routeCollection);
 
         $expected = [
             '/path1' => $routeData,
@@ -79,12 +77,10 @@ class RouteCollectionDataCollectorTest extends TestCase
             '/path1' => 'class::method',
         ]);
 
-        $generator = $collector->collect($routeCollection);
-
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Inner exception.');
 
-        $this->processGenerator($generator);
+        $collector->collect($routeCollection);
     }
 
     public function testCollectWithRouteDataCollectorException()
@@ -101,12 +97,10 @@ class RouteCollectionDataCollectorTest extends TestCase
             '/path1' => 'class::method',
         ]);
 
-        $generator = $collector->collect($routeCollection);
-
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Inner exception.');
 
-        $this->processGenerator($generator);
+        $collector->collect($routeCollection);
     }
 
     public function testCollectWithControllerNameResolverExceptionCaught()
@@ -135,9 +129,7 @@ class RouteCollectionDataCollectorTest extends TestCase
             '/path2' => 'class::method2',
         ]);
 
-        $generator = $collector->collect($routeCollection);
-
-        $data = $this->processGenerator($generator);
+        $data = $collector->collect($routeCollection);
 
         $expected = [
             '/path2' => $routeData,
@@ -171,9 +163,7 @@ class RouteCollectionDataCollectorTest extends TestCase
             '/path2' => 'class::method2',
         ]);
 
-        $generator = $collector->collect($routeCollection);
-
-        $data = $this->processGenerator($generator);
+        $data = $collector->collect($routeCollection);
 
         $expected = [
             '/path2' => $routeData,
@@ -205,9 +195,7 @@ class RouteCollectionDataCollectorTest extends TestCase
             '/path3' => 'class2::method2',
         ]);
 
-        $generator = $collector->collect($routeCollection);
-
-        $data = $this->processGenerator($generator);
+        $data = $collector->collect($routeCollection);
 
         $expected = [
             '/path2' => $routeData,
@@ -226,13 +214,6 @@ class RouteCollectionDataCollectorTest extends TestCase
         }
 
         return $routeCollection;
-    }
-
-    private function processGenerator($generator)
-    {
-        $this->assertInstanceOf(\Generator::class, $generator);
-
-        return iterator_to_array($generator);
     }
 
     private function createCollector(array $options = [])

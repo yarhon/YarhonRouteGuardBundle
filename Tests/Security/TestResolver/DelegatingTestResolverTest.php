@@ -23,10 +23,8 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
  */
 class DelegatingTestResolverTest extends TestCase
 {
-
     public function setUp()
     {
-
     }
 
     public function testSupports()

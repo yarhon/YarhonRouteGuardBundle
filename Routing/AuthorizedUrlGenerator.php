@@ -65,7 +65,7 @@ class AuthorizedUrlGenerator implements AuthorizedUrlGeneratorInterface
             unset($parameters['_locale']);
         }
 
-        $routeContext = new RouteContext($name, $parameters, $method);
+        $routeContext = new GeneratedUrlAwareRouteContext($name, $parameters, $method);
         $routeContext->setReferenceType($referenceType);
 
         $isGranted = $this->authorizationChecker->isGranted($routeContext);

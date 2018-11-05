@@ -84,8 +84,8 @@ class SymfonyAccessControlProvider implements TestProviderInterface
     }
 
     /**
-     * @param RequestConstraint $constraint
-     * @param SymfonySecurityTest     $test
+     * @param RequestConstraint   $constraint
+     * @param SymfonySecurityTest $test
      */
     public function addRule(RequestConstraint $constraint, SymfonySecurityTest $test)
     {

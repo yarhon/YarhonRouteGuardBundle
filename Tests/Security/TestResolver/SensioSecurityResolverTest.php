@@ -61,7 +61,7 @@ class SensioSecurityResolverTest extends TestCase
 
     public function testResolveSubjectVariable()
     {
-        $test = new SymfonySecurityTest(['ROLE_USER'],'foo');
+        $test = new SymfonySecurityTest(['ROLE_USER'], 'foo');
 
         $routeContext = new RouteContext('index');
 

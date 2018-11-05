@@ -86,5 +86,4 @@ class TestLoaderTest extends TestCase
         $tests = $this->loader->load($routeContext);
         $this->assertSame([], $tests);
     }
-
 }

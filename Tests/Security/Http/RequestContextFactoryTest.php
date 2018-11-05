@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RequestContext;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
+use Yarhon\RouteGuardBundle\Routing\GeneratedUrlAwareRouteContext;
 use Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory;
 
 /**
@@ -51,7 +52,7 @@ class RequestContextFactoryTest extends TestCase
 
     public function testPathInfoClosure()
     {
-        $routeContext = new RouteContext('main');
+        $routeContext = new GeneratedUrlAwareRouteContext('main');
         $routeContext->setReferenceType(UrlGeneratorInterface::ABSOLUTE_PATH);
 
         $context = $this->factory->createContext($routeContext);
@@ -68,7 +69,7 @@ class RequestContextFactoryTest extends TestCase
 
     public function testPathInfoClosureWithRelativePath()
     {
-        $routeContext = new RouteContext('main', [], 'POST');
+        $routeContext = new GeneratedUrlAwareRouteContext('main', [], 'POST');
         $routeContext->setReferenceType(UrlGeneratorInterface::RELATIVE_PATH);
 
         $context = $this->factory->createContext($routeContext);
@@ -85,7 +86,7 @@ class RequestContextFactoryTest extends TestCase
 
     public function testPathInfoClosureWithContextBaseUrl()
     {
-        $routeContext = new RouteContext('main');
+        $routeContext = new GeneratedUrlAwareRouteContext('main');
         $routeContext->setReferenceType(UrlGeneratorInterface::ABSOLUTE_PATH);
 
         $context = $this->factory->createContext($routeContext);
@@ -102,7 +103,7 @@ class RequestContextFactoryTest extends TestCase
 
     public function testPathInfoClosureNoReferenceType()
     {
-        $routeContext = new RouteContext('main');
+        $routeContext = new GeneratedUrlAwareRouteContext('main');
 
         $context = $this->factory->createContext($routeContext);
 
@@ -117,7 +118,7 @@ class RequestContextFactoryTest extends TestCase
 
     public function testHostClosure()
     {
-        $routeContext = new RouteContext('main');
+        $routeContext = new GeneratedUrlAwareRouteContext('main');
         $routeContext->setReferenceType(UrlGeneratorInterface::ABSOLUTE_PATH);
 
         $context = $this->factory->createContext($routeContext);
@@ -133,7 +134,7 @@ class RequestContextFactoryTest extends TestCase
 
     public function testHostClosureWithContextHost()
     {
-        $routeContext = new RouteContext('main');
+        $routeContext = new GeneratedUrlAwareRouteContext('main');
         $routeContext->setReferenceType(UrlGeneratorInterface::ABSOLUTE_PATH);
 
         $context = $this->factory->createContext($routeContext);

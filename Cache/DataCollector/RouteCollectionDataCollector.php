@@ -57,7 +57,7 @@ class RouteCollectionDataCollector implements LoggerAwareInterface
     /**
      * @param RouteCollection $routeCollection
      *
-     * @return \Generator
+     * @return array
      *
      * @throws ExceptionInterface
      */
@@ -70,6 +70,8 @@ class RouteCollectionDataCollector implements LoggerAwareInterface
         $ignoredRoutes = [];
         $catchExceptions = $this->options['ignore_exceptions'] && $this->logger;
 
+        $data = [];
+
         foreach ($routeCollection as $routeName => $route) {
             try {
                 $controller = $route->getDefault('_controller');
@@ -80,7 +82,7 @@ class RouteCollectionDataCollector implements LoggerAwareInterface
                     continue;
                 }
 
-                yield $routeName => $this->routeDataCollector->collect($routeName, $route, $controllerName);
+                $data[$routeName] = $this->routeDataCollector->collect($routeName, $route, $controllerName);
             } catch (ExceptionInterface $e) {
                 if (!$catchExceptions) {
                     throw $e;
@@ -96,6 +98,8 @@ class RouteCollectionDataCollector implements LoggerAwareInterface
         if ($this->logger && count($ignoredRoutes)) {
             $this->logger->info('Ignored routes', ['count' => count($ignoredRoutes), 'list' => $ignoredRoutes]);
         }
+
+        return $data;
     }
 
     /**

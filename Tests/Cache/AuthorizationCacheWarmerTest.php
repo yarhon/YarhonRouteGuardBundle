@@ -55,4 +55,9 @@ class AuthorizationCacheWarmerTest extends TestCase
     {
         $this->assertFalse($this->cacheWarmer->isOptional());
     }
+
+    private function createRouteData()
+    {
+        return [[], $this->createMock(ControllerMetadata::class), $this->createMock(RouteMetadata::class)];
+    }
 }

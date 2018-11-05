@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Yarhon\RouteGuardBundle\Routing\AuthorizedUrlGenerator;
 use Yarhon\RouteGuardBundle\Routing\LocalizedRouteDetector;
-use Yarhon\RouteGuardBundle\Routing\RouteContext;
+use Yarhon\RouteGuardBundle\Routing\GeneratedUrlAwareRouteContext;
 use Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface;
 
 /**
@@ -43,7 +43,7 @@ class AuthorizedUrlGeneratorTest extends TestCase
     {
         $arguments = ['route1', ['page' => 1], 'POST', UrlGeneratorInterface::RELATIVE_PATH];
 
-        $expectedRouteContext = new RouteContext(...array_slice($arguments, 0, 3));
+        $expectedRouteContext = new GeneratedUrlAwareRouteContext(...array_slice($arguments, 0, 3));
         $expectedRouteContext->setReferenceType($arguments[3]);
 
         $this->authorizationChecker->expects($this->once())
@@ -105,7 +105,7 @@ class AuthorizedUrlGeneratorTest extends TestCase
         $this->localizedRouteDetector->method('getLocalizedName')
             ->willReturn('route1.en');
 
-        $expectedRouteContext = new RouteContext('route1.en');
+        $expectedRouteContext = new GeneratedUrlAwareRouteContext('route1.en');
         $expectedRouteContext->setReferenceType(UrlGeneratorInterface::ABSOLUTE_PATH);
 
         $this->authorizationChecker->expects($this->once())

@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Routing;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class RouteContext implements RouteContextInterface, GeneratedUrlAwareInterface
+class RouteContext implements RouteContextInterface
 {
     /**
      * @var string
@@ -29,16 +29,6 @@ class RouteContext implements RouteContextInterface, GeneratedUrlAwareInterface
      * @var string
      */
     private $method;
-
-    /**
-     * @var int
-     */
-    private $referenceType;
-
-    /**
-     * @var string
-     */
-    private $generatedUrl;
 
     /**
      * @param string $name
@@ -74,37 +64,5 @@ class RouteContext implements RouteContextInterface, GeneratedUrlAwareInterface
     public function getMethod()
     {
         return $this->method;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setReferenceType($referenceType)
-    {
-        $this->referenceType = $referenceType;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getReferenceType()
-    {
-        return $this->referenceType;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setGeneratedUrl($generatedUrl)
-    {
-        $this->generatedUrl = $generatedUrl;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGeneratedUrl()
-    {
-        return $this->generatedUrl;
     }
 }

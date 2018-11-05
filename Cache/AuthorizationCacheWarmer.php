@@ -78,24 +78,9 @@ class AuthorizationCacheWarmer implements CacheWarmerInterface
     {
         $this->clear();
 
-        $accessInfoGenerator = $this->dataCollector->collect($this->routeCollection);
-        $accessMap = [];
+        $data = $this->dataCollector->collect($this->routeCollection);
 
-        // Note: we collect all data into array and only then save it.
-        // This is done because CacheAdapter saves cache items automatically on destruct, even without explicit "commit" call.
-        // And we don't want to store partial cache, in case if exception inside data collector was thrown
-        // and then caught by some outer catch block (that would allow CacheAdapter destructor to run).
-
-        foreach ($accessInfoGenerator as $routeName => $accessInfo) {
-            // TODO: isn't it magic, that generator can return less items than present in initial collection,
-            // because of ignored / exception routes?
-
-            // var_dump($routeName);
-
-            list($tests, $controllerMetadata, $routeMetadata) = $accessInfo;
-
-            // !!!! saves even without commit (on destruct) !!!
-
+        foreach ($data as $routeName => list($tests, $controllerMetadata, $routeMetadata)) {
             // Note: currently empty arrays (no tests) are also added to testsCache
 
             $this->saveDeferred($this->testsCache, $routeName, $tests);
@@ -103,7 +88,8 @@ class AuthorizationCacheWarmer implements CacheWarmerInterface
             $this->saveDeferred($this->routeMetadataCache, $routeName, $routeMetadata);
         }
 
-        // $this->commit();
+        // Note: CacheAdapter saves cache items automatically on destruct, even without explicit "commit" call.
+        $this->commit();
     }
 
     private function clear()
@@ -120,6 +106,11 @@ class AuthorizationCacheWarmer implements CacheWarmerInterface
         $this->routeMetadataCache->commit();
     }
 
+    /**
+     * @param CacheItemPoolInterface $cache
+     * @param string                 $routeName
+     * @param mixed                  $item
+     */
     private function saveDeferred(CacheItemPoolInterface $cache, $routeName, $item)
     {
         $cacheKey = CacheFactory::getValidCacheKey($routeName);

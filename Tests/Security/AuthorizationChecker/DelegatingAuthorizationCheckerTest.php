@@ -55,7 +55,7 @@ class DelegatingAuthorizationCheckerTest extends TestCase
             ->with($test, $routeContext)
             ->willReturn(true);
 
-        $this->assertSame(true, $delegatingChecker->isGranted($test, $routeContext));
+        $this->assertTrue($delegatingChecker->isGranted($test, $routeContext));
     }
 
     public function testIsGrantedException()
