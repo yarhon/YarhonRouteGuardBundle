@@ -11,13 +11,13 @@
 namespace Yarhon\RouteGuardBundle\Security\Test;
 
 /**
- * IsGrantedTest is a value object class for storing arguments for AuthorizationChecker::isGranted() authorization test.
+ * SymfonySecurityTest is a value object class for storing arguments for AuthorizationChecker::isGranted() authorization test.
  *
  * @see \Symfony\Component\Security\Core\Authorization\AuthorizationChecker::isGranted
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class IsGrantedTest implements TestInterface
+class SymfonySecurityTest implements TestInterface
 {
     use ProviderAwareTrait;
 

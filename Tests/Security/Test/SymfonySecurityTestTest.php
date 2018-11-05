@@ -11,30 +11,30 @@
 namespace Yarhon\RouteGuardBundle\Tests\Security\Test;
 
 use PHPUnit\Framework\TestCase;
-use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
+use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class IsGrantedTestTest extends TestCase
+class SymfonySecurityTestTest extends TestCase
 {
     public function testAttributes()
     {
-        $test = new IsGrantedTest(['foo', 'bar']);
+        $test = new SymfonySecurityTest(['foo', 'bar']);
 
         $this->assertSame(['foo', 'bar'], $test->getAttributes());
     }
 
     public function testSubject()
     {
-        $test = new IsGrantedTest([], 'foo');
+        $test = new SymfonySecurityTest([], 'foo');
 
         $this->assertSame('foo', $test->getSubject());
     }
 
     public function testMetadata()
     {
-        $test = new IsGrantedTest([]);
+        $test = new SymfonySecurityTest([]);
 
         $self = $test->setMetadata('foo', 5);
 

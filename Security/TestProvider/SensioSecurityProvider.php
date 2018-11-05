@@ -22,7 +22,7 @@ use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
-use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
+use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
 use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
@@ -121,7 +121,7 @@ class SensioSecurityProvider implements TestProviderInterface
             }
 
             if (count($usedVariables)) {
-                $test = new IsGrantedTest($attributes, $subjectName);
+                $test = new SymfonySecurityTest($attributes, $subjectName);
 
                 $usedRequestAttributes = array_values(array_intersect($usedVariables, $requestAttributes));
 
@@ -132,7 +132,7 @@ class SensioSecurityProvider implements TestProviderInterface
                 $uniqueKey = $this->getTestAttributesUniqueKey($attributes);
 
                 if (!isset($this->tests[$uniqueKey])) {
-                    $this->tests[$uniqueKey] = new IsGrantedTest($attributes);
+                    $this->tests[$uniqueKey] = new SymfonySecurityTest($attributes);
                 }
 
                 $test = $this->tests[$uniqueKey];

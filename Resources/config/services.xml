@@ -138,7 +138,7 @@
 
         <!-- authorization checkers -->
 
-        <service id="Yarhon\RouteGuardBundle\Security\AuthorizationChecker\IsGrantedAuthorizationChecker">
+        <service id="Yarhon\RouteGuardBundle\Security\AuthorizationChecker\SymfonySecurityAuthorizationChecker">
             <argument type="service" id="security.authorization_checker" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver" />
             <tag name="yarhon_route_guard.authorization_checker" />

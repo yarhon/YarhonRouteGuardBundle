@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Tests\Security\TestResolver;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
+use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
@@ -44,7 +44,7 @@ class SensioSecurityResolverTest extends TestCase
 
     public function testSupports()
     {
-        $test = new IsGrantedTest(['ROLE_USER']);
+        $test = new SymfonySecurityTest(['ROLE_USER']);
         $test->setProviderClass(SensioSecurityProvider::class);
 
         $this->assertTrue($this->resolver->supports($test));
@@ -54,14 +54,14 @@ class SensioSecurityResolverTest extends TestCase
     {
         $routeContext = new RouteContext('index');
 
-        $resolved = $this->resolver->resolve(new IsGrantedTest(['ROLE_USER']), $routeContext);
+        $resolved = $this->resolver->resolve(new SymfonySecurityTest(['ROLE_USER']), $routeContext);
 
         $this->assertSame([['ROLE_USER'], null], $resolved);
     }
 
     public function testResolveSubjectVariable()
     {
-        $test = new IsGrantedTest(['ROLE_USER'],'foo');
+        $test = new SymfonySecurityTest(['ROLE_USER'],'foo');
 
         $routeContext = new RouteContext('index');
 
@@ -76,7 +76,7 @@ class SensioSecurityResolverTest extends TestCase
 
     public function testResolveSubjectVariableException()
     {
-        $test = new IsGrantedTest(['ROLE_USER'], 'foo');
+        $test = new SymfonySecurityTest(['ROLE_USER'], 'foo');
 
         $routeContext = new RouteContext('index');
 
@@ -94,7 +94,7 @@ class SensioSecurityResolverTest extends TestCase
     {
         $expression = new ExpressionDecorator(new Expression('foo == true'), ['foo']);
 
-        $test = new IsGrantedTest([$expression]);
+        $test = new SymfonySecurityTest([$expression]);
 
         $routeContext = new RouteContext('index');
 
@@ -112,7 +112,7 @@ class SensioSecurityResolverTest extends TestCase
     {
         $expression = new ExpressionDecorator(new Expression('foo == true'), ['foo']);
 
-        $test = new IsGrantedTest([$expression]);
+        $test = new SymfonySecurityTest([$expression]);
 
         $routeContext = new RouteContext('index');
 
@@ -128,7 +128,7 @@ class SensioSecurityResolverTest extends TestCase
 
     public function testResolveVariableFromRequestAttributes()
     {
-        $test = new IsGrantedTest(['ROLE_USER'], 'foo');
+        $test = new SymfonySecurityTest(['ROLE_USER'], 'foo');
         $test->setMetadata('request_attributes', ['foo']);
 
         $routeContext = new RouteContext('index');
@@ -144,7 +144,7 @@ class SensioSecurityResolverTest extends TestCase
 
     public function testResolveVariableFromRequestAttributesException()
     {
-        $test = new IsGrantedTest(['ROLE_USER'], 'foo');
+        $test = new SymfonySecurityTest(['ROLE_USER'], 'foo');
         $test->setMetadata('request_attributes', ['foo']);
 
         $routeContext = new RouteContext('index');

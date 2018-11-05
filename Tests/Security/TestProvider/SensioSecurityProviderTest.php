@@ -25,7 +25,7 @@ use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
-use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
+use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
@@ -112,19 +112,19 @@ class SensioSecurityProviderTest extends TestCase
                 new SecurityAnnotation(['expression' => 'request.isSecure']),
                 [],
                 [],
-                new IsGrantedTest([new ExpressionDecorator(new Expression('request.isSecure'), [])]),
+                new SymfonySecurityTest([new ExpressionDecorator(new Expression('request.isSecure'), [])]),
             ],
             [
                 new SecurityAnnotation(['expression' => 'request.isSecure']),
                 ['foo'],
                 ['foo'],
-                new IsGrantedTest([new ExpressionDecorator(new Expression('request.isSecure'), ['foo'])]),
+                new SymfonySecurityTest([new ExpressionDecorator(new Expression('request.isSecure'), ['foo'])]),
             ],
             [
                 new SecurityAnnotation(['expression' => 'request.isSecure']),
                 ['foo', 'bar'],
                 ['baz'],
-                (new IsGrantedTest([new ExpressionDecorator(new Expression('request.isSecure'), ['foo', 'bar', 'baz'])]))->setMetadata('request_attributes', ['baz']),
+                (new SymfonySecurityTest([new ExpressionDecorator(new Expression('request.isSecure'), ['foo', 'bar', 'baz'])]))->setMetadata('request_attributes', ['baz']),
             ],
         ];
     }
@@ -198,25 +198,25 @@ class SensioSecurityProviderTest extends TestCase
                 new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN']),
                 ['foo', 'bar'],
                 ['bar', 'baz'],
-                new IsGrantedTest(['ROLE_ADMIN']),
+                new SymfonySecurityTest(['ROLE_ADMIN']),
             ],
             [
                 new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN', 'subject' => 'foo']),
                 ['foo', 'bar'],
                 ['bar', 'baz'],
-                new IsGrantedTest(['ROLE_ADMIN'], 'foo'),
+                new SymfonySecurityTest(['ROLE_ADMIN'], 'foo'),
             ],
             [
                 new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN', 'subject' => 'bar']),
                 ['foo', 'bar'],
                 ['bar', 'baz'],
-                new IsGrantedTest(['ROLE_ADMIN'], 'bar'),
+                new SymfonySecurityTest(['ROLE_ADMIN'], 'bar'),
             ],
             [
                 new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN', 'subject' => 'baz']),
                 ['foo', 'bar'],
                 ['bar', 'baz'],
-                (new IsGrantedTest(['ROLE_ADMIN'], 'baz'))->setMetadata('request_attributes', ['baz']),
+                (new SymfonySecurityTest(['ROLE_ADMIN'], 'baz'))->setMetadata('request_attributes', ['baz']),
             ],
         ];
     }

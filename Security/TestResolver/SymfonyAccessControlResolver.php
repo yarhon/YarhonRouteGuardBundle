@@ -12,7 +12,7 @@ namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
-use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
+use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
 
@@ -47,7 +47,7 @@ class SymfonyAccessControlResolver implements TestResolverInterface
      */
     public function resolve(TestInterface $test, RouteContextInterface $routeContext)
     {
-        /* @var IsGrantedTest $test */
+        /* @var SymfonySecurityTest $test */
 
         return [$test->getAttributes(), $this->requestStack->getCurrentRequest()];
     }

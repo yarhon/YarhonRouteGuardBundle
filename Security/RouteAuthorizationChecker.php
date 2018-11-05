@@ -14,7 +14,6 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Yarhon\RouteGuardBundle\Security\AuthorizationChecker\AuthorizationCheckerInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
-use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -27,11 +26,6 @@ class RouteAuthorizationChecker implements RouteAuthorizationCheckerInterface, L
      * @var TestLoaderInterface
      */
     private $testLoader;
-
-    /**
-     * @var TestResolverInterface
-     */
-    private $testResolver;
 
     /**
      * @var AuthorizationCheckerInterface

@@ -13,13 +13,13 @@ namespace Yarhon\RouteGuardBundle\Security\AuthorizationChecker;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface as BaseAuthorizationCheckerInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
-use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
+use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
 use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class IsGrantedAuthorizationChecker implements AuthorizationCheckerInterface
+class SymfonySecurityAuthorizationChecker implements AuthorizationCheckerInterface
 {
     /**
      * @var BaseAuthorizationCheckerInterface
@@ -57,6 +57,6 @@ class IsGrantedAuthorizationChecker implements AuthorizationCheckerInterface
      */
     public function supports(TestInterface $test)
     {
-        return $test instanceof IsGrantedTest;
+        return $test instanceof SymfonySecurityTest;
     }
 }

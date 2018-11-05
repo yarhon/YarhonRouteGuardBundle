@@ -81,6 +81,11 @@ class AuthorizationCacheWarmer implements CacheWarmerInterface
         $accessInfoGenerator = $this->dataCollector->collect($this->routeCollection);
         $accessMap = [];
 
+        // Note: we collect all data into array and only then save it.
+        // This is done because CacheAdapter saves cache items automatically on destruct, even without explicit "commit" call.
+        // And we don't want to store partial cache, in case if exception inside data collector was thrown
+        // and then caught by some outer catch block (that would allow CacheAdapter destructor to run).
+
         foreach ($accessInfoGenerator as $routeName => $accessInfo) {
             // TODO: isn't it magic, that generator can return less items than present in initial collection,
             // because of ignored / exception routes?

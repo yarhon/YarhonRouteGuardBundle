@@ -11,7 +11,7 @@
 namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 
 use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
-use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
+use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
@@ -63,7 +63,7 @@ class SensioSecurityResolver implements TestResolverInterface
      */
     public function resolve(TestInterface $test, RouteContextInterface $routeContext)
     {
-        /* @var IsGrantedTest $test */
+        /* @var SymfonySecurityTest $test */
 
         $requestAttributes = $test->getMetadata('request_attributes') ?: [];
 

@@ -11,12 +11,12 @@
 namespace Yarhon\RouteGuardBundle\Tests\Security\TestResolver;
 
 use PHPUnit\Framework\TestCase;
-use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
-use Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest;
-use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
+use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
+use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
 use Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver;
+use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -33,7 +33,7 @@ class DelegatingTestResolverTest extends TestCase
     {
         $delegatingResolver = new DelegatingTestResolver();
 
-        $test = new IsGrantedTest(['ROLE_USER']);
+        $test = $this->createMock(TestInterface::class);
 
         $this->assertTrue($delegatingResolver->supports($test));
     }
@@ -53,7 +53,7 @@ class DelegatingTestResolverTest extends TestCase
 
         $delegatingResolver = new DelegatingTestResolver($resolvers);
 
-        $test = new IsGrantedTest(['ROLE_USER']);
+        $test = new SymfonySecurityTest(['ROLE_USER']);
         $routeContext = new RouteContext('index');
 
         $resolvers[1]->expects($this->once())
@@ -75,12 +75,12 @@ class DelegatingTestResolverTest extends TestCase
 
         $delegatingResolver = new DelegatingTestResolver($resolvers);
 
-        $test = new IsGrantedTest(['ROLE_USER']);
+        $test = new SymfonySecurityTest(['ROLE_USER']);
         $test->setProviderClass('class1');
         $routeContext = new RouteContext('index');
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('No resolver exists for test instance of "Yarhon\RouteGuardBundle\Security\Test\IsGrantedTest", provider "class1".');
+        $this->expectExceptionMessage(sprintf('No resolver exists for test instance of "%s", provider "class1".', SymfonySecurityTest::class));
 
         $delegatingResolver->resolve($test, $routeContext);
     }
