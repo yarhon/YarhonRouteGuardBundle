@@ -101,26 +101,31 @@ file (typically, `/app/config/config.yml` for Symfony < 4.0 or `/config/packages
 In the latter case you have to create this file first).
 
 Configuration options:
-* `ignore_controllers`. Array of controller names that would be ignored by RouteGuard. Controller names should be specified in
+* `data_collector`
+  * `ignore_controllers`. Array of controller names that would be ignored by RouteGuard. Controller names should be specified in
 class::method notation. You can specify:
-  * full controller name, i.e. `App\Controller\DefaultController::index`
-  * controller class name, i.e. `App\Controller\DefaultController`
-  * controller name prefix, i.e. `App\Controller\`
+    * full controller name, i.e. `App\Controller\DefaultController::index`
+    * controller class name, i.e. `App\Controller\DefaultController`
+    * controller name prefix, i.e. `App\Controller\`
   
-  Note: for "controller-as-a-service" controllers you have to specify service name, not class name.
+    Note: for "controller-as-a-service" controllers you have to specify service name, not class name.
   
-  Default value: `[]`
-* `ignore_controllers_symfony`. Array of default Symfony controllers that would be ignored by RouteGuard.
+    Default value: `[]`
+  * `ignore_controllers_symfony`. Array of default Symfony controllers that would be ignored by RouteGuard.
 
-  Default value: 
-  ```php 
-  [
-      'twig.controller.preview_error',
-      'web_profiler.controller.profiler',
-      'web_profiler.controller.router',
-      'web_profiler.controller.exception',
-  ]
-  ```
+    Default value: 
+    ```php 
+    [
+        'twig.controller.preview_error',
+        'web_profiler.controller.profiler',
+        'web_profiler.controller.router',
+        'web_profiler.controller.exception',
+    ]
+    ```
+  
+  * `ignore_exceptions`. Boolean, if true - 
+  
+    Default value: `false`  
 * `twig`
   * `tag_name`. Name of the Twig tag. Default value: `'route'`.
   * `tag_variable_name`. Name of the tag inner variable (array), that would contain route info (i.e., generated URL). Default value: `'_route'`.
