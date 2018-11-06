@@ -16,6 +16,7 @@ use Yarhon\RouteGuardBundle\Routing\AuthorizedUrlGenerator;
 use Yarhon\RouteGuardBundle\Routing\LocalizedRouteDetector;
 use Yarhon\RouteGuardBundle\Routing\GeneratedUrlAwareRouteContext;
 use Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -118,5 +119,13 @@ class AuthorizedUrlGeneratorTest extends TestCase
             ->with('route1', ['_locale' => 'en']);
 
         $this->generator->generate('route1', ['_locale' => 'en']);
+    }
+
+    public function testGenerateRouteNameNotStringException()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Route name must be a string, array given.');
+
+        $this->generator->generate([]);
     }
 }

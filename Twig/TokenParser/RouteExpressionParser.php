@@ -14,7 +14,6 @@ use Twig\Token;
 use Twig\Parser;
 use Twig\TokenStream;
 use Twig\Node\Node;
-use Twig\Node\Expression\ArrayExpression;
 use Twig_Error_Syntax as SyntaxError; // Workaround for PhpStorm to recognise type hints. Namespaced name: Twig\Error\SyntaxError
 use Yarhon\RouteGuardBundle\Twig\Node\RouteExpression;
 
@@ -50,8 +49,7 @@ class RouteExpressionParser
         $parser = $this->parser;
         $stream = $parser->getStream();
 
-        $arguments = $parser->getExpressionParser()->parseArrayExpression();
-        $arguments = $this->arrayExpressionToArguments($arguments);
+        $arguments = $this->parseArguments();
         $expression = new RouteExpression($arguments, $token->getLine());
 
         if ($stream->nextIf('as')) {
@@ -71,23 +69,6 @@ class RouteExpressionParser
         }
 
         return $expression;
-    }
-
-    /**
-     * @param ArrayExpression $arrayExpression
-     *
-     * @return Node
-     */
-    private function arrayExpressionToArguments(ArrayExpression $arrayExpression)
-    {
-        $line = $arrayExpression->getTemplateLine();
-        $arguments = new Node([], [], $line);
-
-        foreach ($arrayExpression->getKeyValuePairs() as $index => $pair) {
-            $arguments->setNode($index, $pair['value']);
-        }
-
-        return $arguments;
     }
 
     /**
@@ -123,5 +104,22 @@ class RouteExpressionParser
         $stream->next();
 
         return $token;
+    }
+
+    private function parseArguments()
+    {
+        $stream = $this->parser->getStream();
+        $line = $stream->getCurrent()->getLine();
+
+        $arguments = [];
+        while (!$stream->test(Token::BLOCK_END_TYPE) && !$stream->test('as')) {
+            if (count($arguments)) {
+                $stream->expect(Token::PUNCTUATION_TYPE, ',', 'Arguments must be separated by a comma');
+            }
+
+            $arguments[] = $this->parser->getExpressionParser()->parseExpression();
+        }
+
+        return new Node($arguments, [], $line);
     }
 }

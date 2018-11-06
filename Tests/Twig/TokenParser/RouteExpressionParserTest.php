@@ -12,6 +12,7 @@ namespace Yarhon\RouteGuardBundle\Tests\Twig\TokenParser;
 
 use Twig\Node\Node;
 use Twig\Node\Expression\ConstantExpression;
+use Twig\Node\Expression\ArrayExpression;
 use Twig\Error\SyntaxError;
 use Yarhon\RouteGuardBundle\Tests\Twig\AbstractNodeTest;
 use Yarhon\RouteGuardBundle\Twig\Node\RouteExpression;
@@ -33,7 +34,37 @@ class RouteExpressionParserTest extends AbstractNodeTest
     {
         return [
             [
-                '{% $tagName ["secure1"] as path %}{% end$tagName %}',
+                '{% $tagName "secure1" %}{% end$tagName %}',
+                new RouteExpression(
+                    new Node([
+                        new ConstantExpression('secure1', 0),
+                    ])
+                ),
+            ],
+            [
+                '{% $tagName "secure1", {page: 10} %}{% end$tagName %}',
+                new RouteExpression(
+                    new Node([
+                        new ConstantExpression('secure1', 0),
+                        new ArrayExpression([
+                            new ConstantExpression('page', 0),
+                            new ConstantExpression(10, 0),
+                        ], 0),
+                    ])
+                ),
+            ],
+            [
+                '{% $tagName "secure1", {}, "POST" %}{% end$tagName %}',
+                new RouteExpression(
+                    new Node([
+                        new ConstantExpression('secure1', 0),
+                        new ArrayExpression([], 0),
+                        new ConstantExpression('POST', 0),
+                    ])
+                ),
+            ],
+            [
+                '{% $tagName "secure1" as path %}{% end$tagName %}',
                 (new RouteExpression(
                     new Node([
                         new ConstantExpression('secure1', 0),
@@ -41,7 +72,7 @@ class RouteExpressionParserTest extends AbstractNodeTest
                 ))->setGenerateAs('path', false),
             ],
             [
-                '{% $tagName ["secure1"] as path relative %}{% end$tagName %}',
+                '{% $tagName "secure1" as path relative %}{% end$tagName %}',
                 (new RouteExpression(
                     new Node([
                         new ConstantExpression('secure1', 0),
@@ -50,7 +81,7 @@ class RouteExpressionParserTest extends AbstractNodeTest
             ],
 
             [
-                '{% $tagName ["secure1"] as path absolute %}{% end$tagName %}',
+                '{% $tagName "secure1" as path absolute %}{% end$tagName %}',
                 (new RouteExpression(
                     new Node([
                         new ConstantExpression('secure1', 0),
@@ -59,7 +90,7 @@ class RouteExpressionParserTest extends AbstractNodeTest
             ],
 
             [
-                '{% $tagName ["secure1"] as url %}{% end$tagName %}',
+                '{% $tagName "secure1" as url %}{% end$tagName %}',
                 (new RouteExpression(
                     new Node([
                         new ConstantExpression('secure1', 0),
@@ -87,19 +118,19 @@ class RouteExpressionParserTest extends AbstractNodeTest
         return [
             [
                 // with "as" and no params
-                '{% $tagName ["secure1"] as %}{% end$tagName %}',
+                '{% $tagName "secure1" as %}{% end$tagName %}',
                 [SyntaxError::class, '"name" expected with value "url" or "path"'],
             ],
 
             [
                 // with "as" and invalid function name
-                '{% $tagName ["secure1"] as blabla %}{% end$tagName %}',
+                '{% $tagName "secure1" as blabla %}{% end$tagName %}',
                 [SyntaxError::class, '"name" expected with value "url" or "path"'],
             ],
 
             [
                 // with "as" and invalid relative param
-                '{% $tagName ["secure1"] as path blabla %}{% end$tagName %}',
+                '{% $tagName "secure1" as path blabla %}{% end$tagName %}',
                 [SyntaxError::class],
             ],
         ];

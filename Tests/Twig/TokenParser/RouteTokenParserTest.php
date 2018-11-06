@@ -51,7 +51,7 @@ class RouteTokenParserTest extends AbstractNodeTest
         return [
             [
                 // body node test
-                '{% $tagName ["secure1"] %}<a href="{{ link }}">Link</a>{% end$tagName %}',
+                '{% $tagName "secure1" %}<a href="{{ link }}">Link</a>{% end$tagName %}',
                 new RouteNode(
                     null,
                     new Node([
@@ -64,7 +64,7 @@ class RouteTokenParserTest extends AbstractNodeTest
 
             [
                 // else node test
-                '{% $tagName ["secure1"] %}{% else %}else text{% end$tagName %}',
+                '{% $tagName "secure1" %}{% else %}else text{% end$tagName %}',
                 new RouteNode(
                     null,
                     new Node(),
@@ -92,7 +92,7 @@ class RouteTokenParserTest extends AbstractNodeTest
         return [
             [
                 // without end tag
-                '{% $tagName ["secure1"] %}{% end %}',
+                '{% $tagName "secure1" %}{% end %}',
                 [SyntaxError::class],
             ],
             [

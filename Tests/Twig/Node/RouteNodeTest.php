@@ -41,7 +41,7 @@ class RouteNodeTest extends AbstractNodeTest
         $dataSet = [];
 
         // general test
-        $dataSet[0][0] = '{% $tagName ["secure1"] %}body text{% end$tagName %}';
+        $dataSet[0][0] = '{% $tagName "secure1" %}body text{% end$tagName %}';
         $dataSet[0][1] = <<<'EOD'
 $context["%s"] = array();
 if (false !== ($context["%s"]["ref"] = %s)) {
@@ -51,7 +51,7 @@ unset($context["%s"]);
 
 EOD;
         // else node test
-        $dataSet[1][] = '{% $tagName ["secure1"] %}body text{% else %}else text{% end$tagName %}';
+        $dataSet[1][] = '{% $tagName "secure1" %}body text{% else %}else text{% end$tagName %}';
         $dataSet[1][] = <<<'EOD'
 $context["%s"] = array();
 if (false !== ($context["%s"]["ref"] = %s)) {

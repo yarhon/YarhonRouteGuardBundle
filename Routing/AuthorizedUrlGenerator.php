@@ -12,6 +12,7 @@ namespace Yarhon\RouteGuardBundle\Routing;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface;
+use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -55,6 +56,10 @@ class AuthorizedUrlGenerator implements AuthorizedUrlGeneratorInterface
      */
     public function generate($name, $parameters = [], $method = 'GET', $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
+        if (!is_string($name)) {
+            throw new InvalidArgumentException(sprintf('Route name must be a string, %s given.', gettype($name)));
+        }
+
         $originalName = $name;
         $originalParameters = $parameters;
 
