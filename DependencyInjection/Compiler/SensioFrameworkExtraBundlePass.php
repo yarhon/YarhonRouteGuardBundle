@@ -27,6 +27,8 @@ class SensioFrameworkExtraBundlePass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('sensio_framework_extra.controller.listener')) {
+            var_dump('remove sensio', $container->hasDefinition('test.sensio_framework_extra.controller.listener'));
+
             $container->removeDefinition(SensioSecurityProvider::class);
             $container->removeDefinition(SensioSecurityResolver::class);
             $container->removeDefinition(SensioSecurityExpressionVoter::class);
