@@ -33,7 +33,10 @@ class ClassMapBuilderTest extends TestCase
     {
         $this->container->register('test1', 'test_class1')->setPublic(true);
         $this->container->register('test2', 'test_class2')->setPublic(true);
-        $this->container->setAlias('test1_alias', 'test1')->setPublic(true);
+
+        // We don't use setAlias return value to be compatible with Symfony <3.4
+        $this->container->setAlias('test1_alias', 'test1');
+        $this->container->getAlias('test1_alias')->setPublic(true);
 
         $this->container->compile();
 
