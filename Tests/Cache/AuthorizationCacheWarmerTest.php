@@ -12,6 +12,7 @@ namespace Yarhon\RouteGuardBundle\Tests\Cache;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\RouteCollection;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
@@ -26,8 +27,6 @@ class AuthorizationCacheWarmerTest extends TestCase
 {
     private $dataCollector;
 
-    private $routeCollection;
-
     private $testsCache;
 
     private $controllerMetadataCache;
@@ -40,22 +39,69 @@ class AuthorizationCacheWarmerTest extends TestCase
     {
         $this->dataCollector = $this->createMock(RouteCollectionDataCollector::class);
 
-        $this->routeCollection = new RouteCollection();
-
         $router = $this->createMock(RouterInterface::class);
-        $router->method('getRouteCollection')
-            ->willReturn($this->routeCollection);
 
-        $this->testsCache = $this->createMock(CacheItemPoolInterface::class);
-        $this->controllerMetadataCache = $this->createMock(CacheItemPoolInterface::class);
-        $this->routeMetadataCache = $this->createMock(CacheItemPoolInterface::class);
+        $router->method('getRouteCollection')
+            ->willReturn(new RouteCollection());
+
+        $this->testsCache = new ArrayAdapter(0, false);
+        $this->controllerMetadataCache = new ArrayAdapter(0, false);
+        $this->routeMetadataCache = new ArrayAdapter(0, false);
 
         $this->cacheWarmer = new AuthorizationCacheWarmer($this->dataCollector, $router, $this->testsCache, $this->controllerMetadataCache, $this->routeMetadataCache);
+    }
+
+    public function testCachesAreFilled()
+    {
+        $routeOneData = $this->createRouteData();
+        $routeTwoData = $this->createRouteData();
+
+        $this->dataCollector->method('collect')
+            ->willReturn([
+                'route1' => $routeOneData,
+                'route2' => $routeTwoData
+            ]);
+
+        $this->cacheWarmer->warmUp('');
+
+        $this->assertSame($routeOneData[0], $this->testsCache->getItem('route1')->get());
+        $this->assertSame($routeOneData[1], $this->controllerMetadataCache->getItem('route1')->get());
+        $this->assertSame($routeOneData[2], $this->routeMetadataCache->getItem('route1')->get());
+
+        $this->assertSame($routeTwoData[0], $this->testsCache->getItem('route2')->get());
+        $this->assertSame($routeTwoData[1], $this->controllerMetadataCache->getItem('route2')->get());
+        $this->assertSame($routeTwoData[2], $this->routeMetadataCache->getItem('route2')->get());
+    }
+
+    public function testCachesAreCleared()
+    {
+        list($tests, $controllerMetadata, $routeMetadata) = $this->createRouteData();
+
+        $this->addCacheItem($this->testsCache, 'index', $tests);
+        $this->addCacheItem($this->controllerMetadataCache, 'index', $controllerMetadata);
+        $this->addCacheItem($this->routeMetadataCache, 'index', $routeMetadata);
+
+        $this->dataCollector->method('collect')
+            ->willReturn([]);
+
+        $this->cacheWarmer->warmUp('');
+
+        $this->assertFalse($this->testsCache->hasItem('index'));
+        $this->assertFalse($this->controllerMetadataCache->hasItem('index'));
+        $this->assertFalse($this->routeMetadataCache->hasItem('index'));
+
     }
 
     public function testIsOptional()
     {
         $this->assertFalse($this->cacheWarmer->isOptional());
+    }
+
+    private function addCacheItem($cache, $name, $value)
+    {
+        $cacheItem = $cache->getItem($name);
+        $cacheItem->set($value);
+        $cache->save($cacheItem);
     }
 
     private function createRouteData()

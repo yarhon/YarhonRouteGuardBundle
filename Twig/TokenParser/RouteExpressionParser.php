@@ -46,29 +46,54 @@ class RouteExpressionParser
      */
     public function parse(Token $token)
     {
-        $parser = $this->parser;
-        $stream = $parser->getStream();
+        $routeContextArguments = $this->parseRouteContextArguments();
+        $expression = new RouteExpression($routeContextArguments, $token->getLine());
 
-        $arguments = $this->parseArguments();
-        $expression = new RouteExpression($arguments, $token->getLine());
+        if ($generateAs = $this->parseGenerateAs()) {
+            $expression->setGenerateAs(...$generateAs);
+        }
+
+        return $expression;
+    }
+
+    private function parseRouteContextArguments()
+    {
+        $stream = $this->parser->getStream();
+        $line = $stream->getCurrent()->getLine();
+
+        $arguments = [];
+        while (!$stream->test(Token::BLOCK_END_TYPE) && !$stream->test('as')) {
+            if (count($arguments)) {
+                $stream->expect(Token::PUNCTUATION_TYPE, ',', 'Arguments must be separated by a comma');
+            }
+
+            $arguments[] = $this->parser->getExpressionParser()->parseExpression();
+        }
+
+        return new Node($arguments, [], $line);
+    }
+
+    private function parseGenerateAs()
+    {
+        $stream = $this->parser->getStream();
+
+        $generateAs = [];
 
         if ($stream->nextIf('as')) {
             // $functionName = $stream->expect(Token::NAME_TYPE, ['url', 'path'])->getValue();
             // Workaround for bug in Twig_TokenStream::expect() method. See self::streamExpect().
             $message = '"name" expected with value "url" or "path"';
             $referenceType = $this->streamExpect($stream, Token::NAME_TYPE, ['url', 'path'], $message)->getValue();
-            $generateAs = [$referenceType];
+            $generateAs[] = $referenceType;
 
             if ($stream->test(['absolute', 'relative'])) {
                 $relative = 'absolute' !== $stream->getCurrent()->getValue();
                 $generateAs[] = $relative;
                 $stream->next();
             }
-
-            $expression->setGenerateAs(...$generateAs);
         }
 
-        return $expression;
+        return $generateAs;
     }
 
     /**
@@ -104,22 +129,5 @@ class RouteExpressionParser
         $stream->next();
 
         return $token;
-    }
-
-    private function parseArguments()
-    {
-        $stream = $this->parser->getStream();
-        $line = $stream->getCurrent()->getLine();
-
-        $arguments = [];
-        while (!$stream->test(Token::BLOCK_END_TYPE) && !$stream->test('as')) {
-            if (count($arguments)) {
-                $stream->expect(Token::PUNCTUATION_TYPE, ',', 'Arguments must be separated by a comma');
-            }
-
-            $arguments[] = $this->parser->getExpressionParser()->parseExpression();
-        }
-
-        return new Node($arguments, [], $line);
     }
 }

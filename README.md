@@ -37,7 +37,7 @@ class BlogController extends AbstractController
 
 
 ```twig
-{% route ['blog', { page: 1} ] %}
+{% route 'blog', { page: 1} %}
     <a href="{{ _route.ref }}">Blog link</a>
 {% else %}
     No access
@@ -153,10 +153,10 @@ If no reference type is specified, "path absolute" would be used. If only first 
 
 Examples:
 ```twig
-{% route ['blog', { page: 1}, 'GET'] as path absolute %}
-{% route ['blog', { page: 1}, 'GET'] as url relative %}
-{% route ['blog'] as url %}
-{% route ['blog'] %}
+{% route 'blog', { page: 1}, 'GET' as path absolute %}
+{% route 'blog', { page: 1}, 'GET' as url relative %}
+{% route 'blog' as url %}
+{% route 'blog' %}
 ```
 
 For those, who want to try RouteGuard with minimal effort, it has "discover" mode. In this mode, RouteGuard will search
@@ -168,7 +168,7 @@ Following two examples will produce the same result:
 {% endroute %}
 ```
 ```twig
-{% route ['blog', { page: 1}, 'GET'] as url relative %}
+{% route 'blog', { page: 1}, 'GET' as url relative %}
     <a href="{{ _route.ref }}">Blog link</a>
 {% endroute %}
 ```
