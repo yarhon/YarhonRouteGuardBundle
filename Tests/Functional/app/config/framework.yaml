@@ -1,6 +1,6 @@
 framework:
     secret: 'foo'
-    test: ~
+#    test: ~
 
 #    router:
 #        resource: ../src/Controller/
