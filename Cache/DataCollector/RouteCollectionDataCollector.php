@@ -85,6 +85,7 @@ class RouteCollectionDataCollector implements LoggerAwareInterface
                 $data[$routeName] = $this->routeDataCollector->collect($routeName, $route, $controllerName);
             } catch (ExceptionInterface $e) {
                 if (!$catchExceptions) {
+                    $this->addRouteNameToException($e, $routeName);
                     throw $e;
                 }
 
@@ -116,5 +117,14 @@ class RouteCollectionDataCollector implements LoggerAwareInterface
         }
 
         return false;
+    }
+
+    private function addRouteNameToException(\Exception $e, $routeName)
+    {
+        $message = sprintf('Route "%s": %s', $routeName, $e->getMessage());
+
+        $r = new \ReflectionProperty($e,'message');
+        $r->setAccessible(true);
+        $r->setValue($e, $message);
     }
 }

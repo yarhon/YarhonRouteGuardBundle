@@ -1,0 +1,15 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+    <div id="link">
+        {%- spaceless -%}
+            {% route name, parameters, method as url %}
+                {{ _route.ref }}
+            {% else %}
+                No access
+            {% endroute %}
+        {%- endspaceless -%}
+    </div>
+
+{% endblock %}

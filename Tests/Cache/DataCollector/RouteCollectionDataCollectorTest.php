@@ -78,7 +78,7 @@ class RouteCollectionDataCollectorTest extends TestCase
         ]);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Inner exception.');
+        $this->expectExceptionMessage('Route "/path1": Inner exception.');
 
         $collector->collect($routeCollection);
     }
@@ -98,7 +98,7 @@ class RouteCollectionDataCollectorTest extends TestCase
         ]);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Inner exception.');
+        $this->expectExceptionMessage('Route "/path1": Inner exception.');
 
         $collector->collect($routeCollection);
     }

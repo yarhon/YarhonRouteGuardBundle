@@ -12,6 +12,7 @@ namespace Yarhon\RouteGuardBundle\Tests\Functional\Bundle\SensioSecurityBundle\C
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -22,12 +23,21 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 class Controller extends AbstractController
 {
     /**
-     * @Route("/", name="index")
+     * @Route("/link/{routeName}", name="link")
      */
-    public function indexAction()
+    public function linkAction(Request $request, $routeName)
     {
-        return $this->render('@SensioSecurity/index.html.twig');
+        $parameters = $request->query->get('parameters', []);
+        $method = $request->query->get('method','GET');
+
+        return $this->render('@SensioSecurity/link.html.twig', [
+            'name' => $routeName,
+            'parameters' => $parameters,
+            'method' => $method,
+        ]);
     }
+
+    //////// Tested actions
 
     /**
      * @Route("/public_action", name="public_action")

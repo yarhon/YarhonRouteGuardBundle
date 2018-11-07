@@ -21,29 +21,28 @@ use Yarhon\RouteGuardBundle\YarhonRouteGuardBundle;
  */
 abstract class WebTestCase extends BaseWebTestCase
 {
+    protected static $bundles = [];
+
+    protected static $configs = [];
+
+    protected static $users = [];
+
     protected static function getBundles()
     {
-        return [
+        return array_merge([
             FrameworkBundle::class,
             SecurityBundle::class,
             YarhonRouteGuardBundle::class,
-        ];
+        ], static::$bundles);
     }
 
     protected static function getConfigs()
     {
-        $configs = [];
-
-        if ($routerConfig = static::getRouterConfig()) {
-            $configs['framework']['router'] = $routerConfig;
-        }
+        $configs = static::$configs;
+        $configs['security']['providers']['main']['memory']['users'] = static::$users;
+        // $configs['framework']['router'] = $routerConfig;
 
         return $configs;
-    }
-
-    protected static function getRouterConfig()
-    {
-        return [];
     }
 
     public static function setUpBeforeClass()

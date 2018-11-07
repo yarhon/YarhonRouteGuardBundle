@@ -18,48 +18,67 @@ use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
  */
 class SensioSecurityTest extends WebTestCase
 {
-    protected static function getBundles()
+    protected static $bundles = [
+        TwigBundle::class,
+        SensioFrameworkExtraBundle::class,
+        Bundle\SensioSecurityBundle\SensioSecurityBundle::class,
+    ];
+
+    protected static $configs = [
+        'framework' => [
+            'router' => [
+                'resource' => '@SensioSecurityBundle/Controller/',
+                'type' => 'annotation',
+            ],
+        ],
+    ];
+
+    protected static $users = [
+        'bob' => ['password' => 'pa$$word', 'roles' => 'ROLE_USER'],
+    ];
+
+    /**
+     * @dataProvider linkDataProvider
+     */
+    public function testLink($user, $route, $expected)
     {
-        return array_merge(parent::getBundles(), [
-            TwigBundle::class,
-            SensioFrameworkExtraBundle::class,
-            Bundle\SensioSecurityBundle\SensioSecurityBundle::class,
+        if ($user) {
+            $serverOptions = ['PHP_AUTH_USER' => $user, 'PHP_AUTH_PW' => static::$users[$user]['password']];
+        } else {
+            $serverOptions = [];
+        }
+
+        $client = static::createClient([], $serverOptions);
+
+        $uri = '/link/'.$route[0];
+
+        $query = array_filter([
+            'parameters' => isset($route[1]) ? $route[1] : null,
+            'method' => isset($route[2]) ? $route[2] : null,
         ]);
+
+        if ($query) {
+            $uri .= '?'.http_build_query($query);
+        }
+
+        $crawler = $client->request('GET', $uri);
+
+        //var_dump($crawler->html());
+
+        $link = $crawler->filterXPath('//*[@id="link"]');
+        $this->assertEquals($expected, $link->html());
     }
 
-    protected static function getRouterConfig()
+    public function linkDataProvider()
     {
         return [
-            'resource' => '@SensioSecurityBundle/Controller/',
-            'type' => 'annotation',
+            [null, ['public_action'], 'http://example.com/public_action'],
+            [null, ['user_action'], 'No access'],
+            [null, ['admin_action'], 'No access'],
+
+            ['bob', ['public_action'], 'http://example.com/public_action'],
+            ['bob', ['user_action'], 'http://example.com/user_action'],
+            ['bob', ['admin_action'], 'No access'],
         ];
-    }
-
-    public function testNotSecured()
-    {
-        $client = static::createClient();
-        $crawler = $client->request('GET', '/');
-
-        $publicLink = $crawler->filterXPath('//*[@id="public_link"]');
-        $userLink = $crawler->filterXPath('//*[@id="user_link"]');
-        $adminLink = $crawler->filterXPath('//*[@id="admin_link"]');
-
-        $this->assertEquals('http://example.com/public_action', $publicLink->html());
-        $this->assertEquals('No access', $userLink->html());
-        $this->assertEquals('No access', $adminLink->html());
-    }
-
-    public function testIsGrantedAnnotation()
-    {
-        $client = static::createClient([], ['PHP_AUTH_USER' => 'bob', 'PHP_AUTH_PW' => 'pa$$word']);
-        $crawler = $client->request('GET', '/');
-
-        $publicLink = $crawler->filterXPath('//*[@id="public_link"]');
-        $userLink = $crawler->filterXPath('//*[@id="user_link"]');
-        $adminLink = $crawler->filterXPath('//*[@id="admin_link"]');
-
-        $this->assertEquals('http://example.com/public_action', $publicLink->html());
-        $this->assertEquals('http://example.com/user_action', $userLink->html());
-        $this->assertEquals('No access', $adminLink->html());
     }
 }
