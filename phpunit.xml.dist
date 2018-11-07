@@ -14,7 +14,8 @@
 
     <testsuites>
         <testsuite name="RouteGuard Bundle Test Suite">
-            <directory>./Tests</directory>
+            <!--<directory>./Tests</directory>-->
+            <file>./Tests/Security/Http/RegexParserTest.php</file>
         </testsuite>
     </testsuites>
 

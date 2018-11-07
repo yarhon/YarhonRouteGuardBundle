@@ -43,6 +43,8 @@ class RegexParser
 
         list($staticPrefix, $dynamicPart) = $this->parseStaticPrefix($expression);
 
+        var_dump($dynamicPart, $hasStringEndAssert);
+
         if (('' === $dynamicPart && !$hasStringEndAssert) || '.*' === $dynamicPart) {
             $dynamicPartIsWildcard = true;
         }
