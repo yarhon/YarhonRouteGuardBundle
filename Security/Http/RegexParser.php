@@ -43,8 +43,6 @@ class RegexParser
 
         list($staticPrefix, $dynamicPart) = $this->parseStaticPrefix($expression);
 
-        var_dump($dynamicPart, $hasStringEndAssert);
-
         if (('' === $dynamicPart && !$hasStringEndAssert) || '.*' === $dynamicPart) {
             $dynamicPartIsWildcard = true;
         }
@@ -97,7 +95,13 @@ class RegexParser
             $prefix .= $symbol;
         }
 
-        $dynamicPart = substr($expression, $i);
+        if (strlen($expression) === $i) {
+            // Before PHP 7.0, if string is equal to start characters long, FALSE was returned.
+            // @see http://php.net/manual/en/function.substr.php
+            $dynamicPart = '';
+        } else {
+            $dynamicPart = substr($expression, $i);
+        }
 
         return [$prefix, $dynamicPart];
     }
