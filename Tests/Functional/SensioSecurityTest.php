@@ -58,7 +58,7 @@ class SensioSecurityTest extends WebTestCase
 
         $crawler = $client->request('GET', $uri);
 
-        //var_dump($crawler->html());
+        var_dump($crawler->html());
 
         $link = $crawler->filterXPath('//*[@id="link"]');
         $this->assertEquals($expected, $link->html());
@@ -68,12 +68,14 @@ class SensioSecurityTest extends WebTestCase
     {
         return [
             [null, ['public_action'], 'http://example.com/public_action'],
+            /*
             [null, ['user_action'], 'No access'],
             [null, ['admin_action'], 'No access'],
 
             ['bob', ['public_action'], 'http://example.com/public_action'],
             ['bob', ['user_action'], 'http://example.com/user_action'],
             ['bob', ['admin_action'], 'No access'],
+            */
         ];
     }
 }
