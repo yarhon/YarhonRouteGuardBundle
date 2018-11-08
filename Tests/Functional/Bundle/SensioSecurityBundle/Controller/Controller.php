@@ -23,28 +23,55 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 class Controller extends AbstractController
 {
     /**
-     * @Route("/public_action", name="public_action")
+     * @Route("/public", name="public")
      */
     public function publicAction()
     {
-        return new Response('user action');
+        return new Response('');
     }
 
     /**
-     * @Route("/user_action", name="user_action")
+     * @Route("/is_granted/user_role", name="is_granted_user_role")
      * @IsGranted("ROLE_USER", subject="argument")
      */
-    public function securedByIsGrantedAction($argument = 10)
+    public function isGrantedUserRoleAction($argument = 10)
     {
-        return new Response('user action');
+        return new Response('');
     }
 
     /**
-     * @Route("/admin_action", name="admin_action")
+     * @Route("/is_granted/admin_role", name="is_granted_admin_role")
+     * @IsGranted("ROLE_ADMIN", subject="argument")
+     */
+    public function isGrantedAdminRoleAction($argument = 10)
+    {
+        return new Response('');
+    }
+
+    /**
+     * @Route("/security/user_role", name="security_user_role")
+     * @Security("is_granted('ROLE_USER')")
+     */
+    public function securityUserRoleAction()
+    {
+        return new Response('');
+    }
+
+    /**
+     * @Route("/security/admin_role", name="security_admin_role")
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function securedBySecurityAction($argument)
+    public function securityAdminRoleAction()
     {
-        return new Response('admin action');
+        return new Response('');
+    }
+
+    /**
+     * @Route("/security/controller_argument/{argument}", name="security_controller_argument")
+     * @Security("argument == 10")
+     */
+    public function securityControllerArgumentAction($argument)
+    {
+        return new Response('');
     }
 }

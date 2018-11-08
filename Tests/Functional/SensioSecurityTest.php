@@ -44,14 +44,20 @@ class SensioSecurityTest extends WebTestCase
     public function linkDataProvider()
     {
         return [
-            [null, ['public_action'], 'http://example.com/public_action'],
-            [null, ['user_action'], 'No access'],
-            [null, ['admin_action'], 'No access'],
+            [null, ['public'], 'http://example.com/public'],
+            ['bob', ['public'], 'http://example.com/public'],
 
-            ['bob', ['public_action'], 'http://example.com/public_action'],
-            ['bob', ['user_action'], 'http://example.com/user_action'],
-            ['bob', ['admin_action'], 'No access'],
+            [null, ['is_granted_user_role'], 'No access'],
+            ['bob', ['is_granted_user_role'], 'http://example.com/is_granted/user_role'],
 
+            [null, ['security_user_role'], 'No access'],
+            ['bob', ['security_user_role'], 'http://example.com/security/user_role'],
+
+            ['bob', ['is_granted_admin_role'], 'No access'],
+            ['bob', ['security_admin_role'], 'No access'],
+
+            [null, ['security_controller_argument', ['argument' => 5]], 'No access'],
+            [null, ['security_controller_argument', ['argument' => 10]], 'http://example.com/security/controller_argument/10'],
         ];
     }
 }
