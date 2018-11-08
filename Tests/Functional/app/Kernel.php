@@ -58,6 +58,11 @@ class Kernel extends BaseKernel
         return $this->testVarDir.'/logs';
     }
 
+    public function getProjectDir()
+    {
+        return __DIR__;
+    }
+
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $confDir = __DIR__.'/config';
