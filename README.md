@@ -1,3 +1,6 @@
+[![Build Status](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/badges/build.png?b=master)](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/build-status/master)
+[![Code Coverage](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/?branch=master)
 # About
 
 RouteGuardBundle is a tool to:
