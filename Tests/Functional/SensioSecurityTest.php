@@ -24,6 +24,11 @@ class SensioSecurityTest extends WebTestCase
         Bundle\SensioSecurityBundle\SensioSecurityBundle::class,
     ];
 
+    protected static $routeResources = [
+        ['@SensioSecurityBundle/Controller/', '/', 'annotation'],
+    ];
+
+    /*
     protected static $configs = [
         'framework' => [
             'router' => [
@@ -32,6 +37,7 @@ class SensioSecurityTest extends WebTestCase
             ],
         ],
     ];
+    */
 
     protected static $users = [
         'bob' => ['password' => 'pa$$word', 'roles' => 'ROLE_USER'],
