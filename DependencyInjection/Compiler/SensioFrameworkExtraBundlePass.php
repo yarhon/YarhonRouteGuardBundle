@@ -22,21 +22,22 @@ use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter
 class SensioFrameworkExtraBundlePass implements CompilerPassInterface
 {
     /**
+     * @see https://github.com/sensiolabs/SensioFrameworkExtraBundle/blob/v5.1.0/Resources/config/security.xml
+     *
      * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('sensio_framework_extra.controller.listener')) {
-            var_dump('remove sensio', $container->getServiceIds());
+        if (!$container->hasDefinition('sensio_framework_extra.security.listener') &&
+            !$container->hasDefinition('framework_extra_bundle.event.is_granted')) {
 
             $container->removeDefinition(SensioSecurityProvider::class);
             $container->removeDefinition(SensioSecurityResolver::class);
-            $container->removeDefinition(SensioSecurityExpressionVoter::class);
-
-            return;
         }
 
-        if (!$container->hasDefinition('sensio_framework_extra.security.expression_language.default')) {
+        if (!$container->hasDefinition('sensio_framework_extra.security.listener') ||
+            !$container->hasDefinition('sensio_framework_extra.security.expression_language.default')) {
+
             $container->removeDefinition(SensioSecurityExpressionVoter::class);
         }
     }

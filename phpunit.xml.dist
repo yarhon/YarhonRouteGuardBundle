@@ -14,7 +14,7 @@
 
     <testsuites>
         <testsuite name="RouteGuard Bundle Test Suite">
-            <directory>./Tests/Functional</directory>
+            <directory>./Tests</directory>
         </testsuite>
     </testsuites>
 

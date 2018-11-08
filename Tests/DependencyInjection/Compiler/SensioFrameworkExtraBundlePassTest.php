@@ -52,7 +52,7 @@ class SensioFrameworkExtraBundlePassTest extends TestCase
 
     public function testProcessWithExtraBundle()
     {
-        $this->container->register('sensio_framework_extra.controller.listener');
+        $this->container->register('sensio_framework_extra.security.listener');
         $this->container->register('sensio_framework_extra.security.expression_language.default');
 
         $this->pass->process($this->container);
@@ -64,7 +64,7 @@ class SensioFrameworkExtraBundlePassTest extends TestCase
 
     public function testProcessWithExtraBundleWithoutExpressionLanguage()
     {
-        $this->container->register('sensio_framework_extra.controller.listener');
+        $this->container->register('sensio_framework_extra.security.listener');
 
         $this->pass->process($this->container);
 
