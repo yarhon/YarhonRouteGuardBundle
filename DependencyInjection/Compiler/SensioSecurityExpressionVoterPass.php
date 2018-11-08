@@ -12,13 +12,12 @@ namespace Yarhon\RouteGuardBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
-use Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver;
+use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SensioFrameworkExtraBundlePass implements CompilerPassInterface
+class SensioSecurityExpressionVoterPass implements CompilerPassInterface
 {
     /**
      * @see https://github.com/sensiolabs/SensioFrameworkExtraBundle/blob/v5.1.0/Resources/config/security.xml
@@ -27,11 +26,10 @@ class SensioFrameworkExtraBundlePass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('sensio_framework_extra.security.listener') &&
-            !$container->hasDefinition('framework_extra_bundle.event.is_granted')) {
+        if (!$container->hasDefinition('sensio_framework_extra.security.listener') ||
+            !$container->hasDefinition('sensio_framework_extra.security.expression_language.default')) {
 
-            $container->removeDefinition(SensioSecurityProvider::class);
-            $container->removeDefinition(SensioSecurityResolver::class);
+            $container->removeDefinition(SensioSecurityExpressionVoter::class);
         }
     }
 }

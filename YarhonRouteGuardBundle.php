@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\SymfonySecurityBundlePass;
 use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\SensioFrameworkExtraBundlePass;
+use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\SensioSecurityExpressionVoterPass;
 use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\TwigBundlePass;
 use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\ContainerClassMapPass;
 use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\InjectTaggedServicesPass;
@@ -35,6 +36,9 @@ class YarhonRouteGuardBundle extends Bundle
 
         $foreignExtensionAccessor = new ForeignExtensionAccessor();
         $classMapBuilder = new ClassMapBuilder();
+
+        // We need to be able to remove SensioSecurityExpressionVoter before it is registered in "security.access.decision_manager" service
+        $container->addCompilerPass(new SensioSecurityExpressionVoterPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 1);
 
         // We use same type and priority as are used for \Symfony\Bundle\TwigBundle\DependencyInjection\Compiler\ExtensionPass
         $container->addCompilerPass(new TwigBundlePass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 0);
