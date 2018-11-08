@@ -2,6 +2,3 @@ framework:
     secret: 'foo'
     test: ~
 
-#    router:
-#        resource: ../src/Controller/
-#        type: 'annotation'
