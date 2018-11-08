@@ -1,3 +1,7 @@
+# RouteGuardBundle 
+
+Symfony routes authorization checker
+
 [![Build Status](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/badges/build.png?b=master)](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/build-status/master)
 [![Code Coverage](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/?branch=master)
@@ -6,7 +10,7 @@
 RouteGuardBundle is a tool to:
 * check if user is authorized to access a route
 * retrieve authorization rules for a route
-* conditionally display links in Twig templates depending on authorization rules, avoiding
+* conditionally display blocks in Twig templates depending on authorization rules, avoiding
 authorization checks duplication both in controller and template.
 
 RouteGuard supports authorization rules from:
@@ -46,7 +50,7 @@ class BlogController extends AbstractController
     No access
 {% endroute %}
 ```
-In this example, link will be rendered only if user is authorized to access route `blog`, contents of the `else` block rendered otherwise.
+In this example, link will be rendered only if user is authorized to access route `blog` (by any of the supported rules), contents of the `else` block rendered otherwise.
 
 The `_route.ref` variable would contain the generated URL.
 
