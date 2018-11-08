@@ -10,5 +10,3 @@ security:
     providers:
         main:
             memory:
-#                users:
-#                    bob: { password: pa$$word, roles: ROLE_USER }

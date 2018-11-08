@@ -65,7 +65,7 @@ class Kernel extends BaseKernel
 
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $confDir = __DIR__.'/config';
+        $confDir = $this->getProjectDir().'/config';
 
         $loader->load($confDir.'/*'.self::CONFIG_EXTS, 'glob');
 
@@ -89,10 +89,7 @@ class Kernel extends BaseKernel
     {
         $routes = new RouteCollectionBuilder($loader);
 
-        //$confDir = __DIR__.'/config';
-        //$routes->import($confDir.'/routes/routes.yaml');
-
-        $routes->import(__DIR__.'/src/Controller/', '', 'annotation');
+        $routes->import($this->getProjectDir().'/src/Controller/', '', 'annotation');
 
         foreach ($this->routeResources as $routeResource) {
             $routes->import(...$routeResource);

@@ -23,23 +23,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 class Controller extends AbstractController
 {
     /**
-     * @Route("/link/{routeName}", name="link")
-     */
-    public function linkAction(Request $request, $routeName)
-    {
-        $parameters = $request->query->get('parameters', []);
-        $method = $request->query->get('method','GET');
-
-        return $this->render('@SensioSecurity/link.html.twig', [
-            'name' => $routeName,
-            'parameters' => $parameters,
-            'method' => $method,
-        ]);
-    }
-
-    //////// Tested actions
-
-    /**
      * @Route("/public_action", name="public_action")
      */
     public function publicAction()

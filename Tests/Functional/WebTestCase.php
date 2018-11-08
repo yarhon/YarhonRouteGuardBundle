@@ -97,4 +97,30 @@ abstract class WebTestCase extends BaseWebTestCase
 
         return parent::createClient($options, $server);
     }
+
+    protected function requestLink($user, $route)
+    {
+        if ($user) {
+            $serverOptions = ['PHP_AUTH_USER' => $user, 'PHP_AUTH_PW' => static::$users[$user]['password']];
+        } else {
+            $serverOptions = [];
+        }
+
+        $client = static::createClient([], $serverOptions);
+
+        $uri = '/link/'.$route[0];
+
+        $query = array_filter([
+            'parameters' => isset($route[1]) ? $route[1] : null,
+            'method' => isset($route[2]) ? $route[2] : null,
+        ]);
+
+        if ($query) {
+            $uri .= '?'.http_build_query($query);
+        }
+
+        $crawler = $client->request('GET', $uri);
+
+        return $crawler->filterXPath('//*[@id="link"]');
+    }
 }

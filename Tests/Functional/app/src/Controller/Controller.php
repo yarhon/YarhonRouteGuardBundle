@@ -21,7 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
 class Controller extends AbstractController
 {
     /**
-     * @Route("/link2/{routeName}", name="link2")
+     * @Route("/link/{routeName}", name="link")
      */
     public function linkAction(Request $request, $routeName)
     {

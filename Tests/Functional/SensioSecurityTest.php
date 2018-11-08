@@ -37,28 +37,7 @@ class SensioSecurityTest extends WebTestCase
      */
     public function testLink($user, $route, $expected)
     {
-        if ($user) {
-            $serverOptions = ['PHP_AUTH_USER' => $user, 'PHP_AUTH_PW' => static::$users[$user]['password']];
-        } else {
-            $serverOptions = [];
-        }
-
-        $client = static::createClient([], $serverOptions);
-
-        $uri = '/link2/'.$route[0];
-
-        $query = array_filter([
-            'parameters' => isset($route[1]) ? $route[1] : null,
-            'method' => isset($route[2]) ? $route[2] : null,
-        ]);
-
-        if ($query) {
-            $uri .= '?'.http_build_query($query);
-        }
-
-        $crawler = $client->request('GET', $uri);
-
-        $link = $crawler->filterXPath('//*[@id="link"]');
+        $link = $this->requestLink($user, $route);
         $this->assertEquals($expected, $link->html());
     }
 
