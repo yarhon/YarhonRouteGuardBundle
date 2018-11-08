@@ -28,7 +28,7 @@ class Controller extends AbstractController
         $parameters = $request->query->get('parameters', []);
         $method = $request->query->get('method','GET');
 
-        return $this->render('@SensioSecurity/link.html.twig', [
+        return $this->render('link.html.twig', [
             'name' => $routeName,
             'parameters' => $parameters,
             'method' => $method,

@@ -28,17 +28,6 @@ class SensioSecurityTest extends WebTestCase
         ['@SensioSecurityBundle/Controller/', '/', 'annotation'],
     ];
 
-    /*
-    protected static $configs = [
-        'framework' => [
-            'router' => [
-                'resource' => '@SensioSecurityBundle/Controller/',
-                'type' => 'annotation',
-            ],
-        ],
-    ];
-    */
-
     protected static $users = [
         'bob' => ['password' => 'pa$$word', 'roles' => 'ROLE_USER'],
     ];
@@ -56,7 +45,7 @@ class SensioSecurityTest extends WebTestCase
 
         $client = static::createClient([], $serverOptions);
 
-        $uri = '/link/'.$route[0];
+        $uri = '/link2/'.$route[0];
 
         $query = array_filter([
             'parameters' => isset($route[1]) ? $route[1] : null,
