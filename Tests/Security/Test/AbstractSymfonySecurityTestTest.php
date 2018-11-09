@@ -11,23 +11,23 @@
 namespace Yarhon\RouteGuardBundle\Tests\Security\Test;
 
 use PHPUnit\Framework\TestCase;
-use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
+use Yarhon\RouteGuardBundle\Security\Test\AbstractSymfonySecurityTest;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SymfonySecurityTestTest extends TestCase
+class AbstractSymfonySecurityTestTest extends TestCase
 {
     public function testAttributes()
     {
-        $test = $this->getMockForAbstractClass(SymfonySecurityTest::class, [['foo', 'bar']]);
+        $test = $this->getMockForAbstractClass(AbstractSymfonySecurityTest::class, [['foo', 'bar']]);
 
         $this->assertSame(['foo', 'bar'], $test->getAttributes());
     }
 
     public function testSubject()
     {
-        $test = $this->getMockForAbstractClass(SymfonySecurityTest::class, [[], 'foo']);
+        $test = $this->getMockForAbstractClass(AbstractSymfonySecurityTest::class, [[], 'foo']);
 
         $this->assertSame('foo', $test->getSubject());
     }

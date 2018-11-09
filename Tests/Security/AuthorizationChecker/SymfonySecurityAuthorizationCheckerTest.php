@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface as BaseAuthorizationCheckerInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
-use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
+use Yarhon\RouteGuardBundle\Security\Test\AbstractSymfonySecurityTest;
 use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
 use Yarhon\RouteGuardBundle\Security\AuthorizationChecker\SymfonySecurityAuthorizationChecker;
 
@@ -48,7 +48,7 @@ class SymfonySecurityAuthorizationCheckerTest extends TestCase
     {
         return [
             [$this->createMock(TestInterface::class), false],
-            [$this->getMockForAbstractClass(SymfonySecurityTest::class, [['ROLE_USER']]), true],
+            [$this->getMockForAbstractClass(AbstractSymfonySecurityTest::class, [['ROLE_USER']]), true],
         ];
     }
 
@@ -57,7 +57,7 @@ class SymfonySecurityAuthorizationCheckerTest extends TestCase
      */
     public function testIsGranted($baseAuthorizationCheckerResult, $expected)
     {
-        $test = $this->getMockForAbstractClass(SymfonySecurityTest::class, [['ROLE_USER']]);
+        $test = $this->getMockForAbstractClass(AbstractSymfonySecurityTest::class, [['ROLE_USER']]);
         $routeContext = new RouteContext('index');
 
         $this->testResolver->method('resolve')

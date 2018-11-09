@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Security\AuthorizationChecker;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface as BaseAuthorizationCheckerInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
-use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
+use Yarhon\RouteGuardBundle\Security\Test\AbstractSymfonySecurityTest;
 use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
 
 /**
@@ -57,6 +57,6 @@ class SymfonySecurityAuthorizationChecker implements AuthorizationCheckerInterfa
      */
     public function supports(TestInterface $test)
     {
-        return $test instanceof SymfonySecurityTest;
+        return $test instanceof AbstractSymfonySecurityTest;
     }
 }

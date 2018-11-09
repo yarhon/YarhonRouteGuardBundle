@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SensioExtraTest extends SymfonySecurityTest
+class SensioExtraTest extends AbstractSymfonySecurityTest
 {
     /**
      * @var array

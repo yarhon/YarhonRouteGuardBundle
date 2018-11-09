@@ -11,13 +11,13 @@
 namespace Yarhon\RouteGuardBundle\Security\Test;
 
 /**
- * SymfonySecurityTest is a value object class for storing arguments for AuthorizationChecker::isGranted() authorization test.
+ * AbstractSymfonySecurityTest is a value object class for storing arguments for AuthorizationChecker::isGranted() authorization test.
  *
  * @see \Symfony\Component\Security\Core\Authorization\AuthorizationChecker::isGranted
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-abstract class SymfonySecurityTest implements TestInterface
+abstract class AbstractSymfonySecurityTest implements TestInterface
 {
     /**
      * @var array
