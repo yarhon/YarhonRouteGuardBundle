@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
-use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
+use Yarhon\RouteGuardBundle\Security\Test\SymfonyAccessControlTest;
 use Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
@@ -51,7 +51,7 @@ class DelegatingTestResolverTest extends TestCase
 
         $delegatingResolver = new DelegatingTestResolver($resolvers);
 
-        $test = new SymfonySecurityTest(['ROLE_USER']);
+        $test = new SymfonyAccessControlTest(['ROLE_USER']);
         $routeContext = new RouteContext('index');
 
         $resolvers[1]->expects($this->once())
@@ -73,12 +73,11 @@ class DelegatingTestResolverTest extends TestCase
 
         $delegatingResolver = new DelegatingTestResolver($resolvers);
 
-        $test = new SymfonySecurityTest(['ROLE_USER']);
-        $test->setProviderClass('class1');
+        $test = new SymfonyAccessControlTest(['ROLE_USER']);
         $routeContext = new RouteContext('index');
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(sprintf('No resolver exists for test instance of "%s", provider "class1".', SymfonySecurityTest::class));
+        $this->expectExceptionMessage(sprintf('No resolver exists for test instance of "%s".', SymfonyAccessControlTest::class));
 
         $delegatingResolver->resolve($test, $routeContext);
     }

@@ -17,10 +17,8 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SymfonySecurityTest implements TestInterface
+abstract class SymfonySecurityTest implements TestInterface
 {
-    use ProviderAwareTrait;
-
     /**
      * @var array
      */
@@ -30,11 +28,6 @@ class SymfonySecurityTest implements TestInterface
      * @var mixed
      */
     private $subject;
-
-    /**
-     * @var array
-     */
-    private $metadata = [];
 
     /**
      * @param array $attributes
@@ -60,28 +53,5 @@ class SymfonySecurityTest implements TestInterface
     public function getSubject()
     {
         return $this->subject;
-    }
-
-    /**
-     * @param string $name
-     * @param mixed  $value
-     *
-     * @return self
-     */
-    public function setMetadata($name, $value)
-    {
-        $this->metadata[$name] = $value;
-
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function getMetadata($name)
-    {
-        return isset($this->metadata[$name]) ? $this->metadata[$name] : null;
     }
 }

@@ -11,12 +11,11 @@
 namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 
 use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
-use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
+use Yarhon\RouteGuardBundle\Security\Test\SensioExtraTest;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator;
-use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
@@ -55,7 +54,7 @@ class SensioSecurityResolver implements TestResolverInterface
      */
     public function supports(TestInterface $test)
     {
-        return SensioSecurityProvider::class === $test->getProviderClass();
+        return $test instanceof SensioExtraTest;
     }
 
     /**
@@ -63,7 +62,7 @@ class SensioSecurityResolver implements TestResolverInterface
      */
     public function resolve(TestInterface $test, RouteContextInterface $routeContext)
     {
-        /* @var SymfonySecurityTest $test */
+        /* @var SensioExtraTest $test */
 
         $requestAttributes = $test->getMetadata('request_attributes') ?: [];
 

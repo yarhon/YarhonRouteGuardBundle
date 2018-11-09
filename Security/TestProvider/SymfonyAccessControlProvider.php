@@ -19,7 +19,7 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Yarhon\RouteGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\RouteGuardBundle\Security\Http\RouteMatcher;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
-use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
+use Yarhon\RouteGuardBundle\Security\Test\SymfonyAccessControlTest;
 use Yarhon\RouteGuardBundle\Security\Http\RequestDependentTestBag;
 use Yarhon\RouteGuardBundle\Security\Authorization\ExpressionVoter;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
@@ -85,9 +85,9 @@ class SymfonyAccessControlProvider implements TestProviderInterface
 
     /**
      * @param RequestConstraint   $constraint
-     * @param SymfonySecurityTest $test
+     * @param SymfonyAccessControlTest $test
      */
-    public function addRule(RequestConstraint $constraint, SymfonySecurityTest $test)
+    public function addRule(RequestConstraint $constraint, SymfonyAccessControlTest $test)
     {
         $this->rules[] = [$constraint, $test];
     }
@@ -114,7 +114,7 @@ class SymfonyAccessControlProvider implements TestProviderInterface
         $uniqueKey = $this->getTestAttributesUniqueKey($attributes);
 
         if (!isset($this->tests[$uniqueKey])) {
-            $this->tests[$uniqueKey] = new SymfonySecurityTest($attributes);
+            $this->tests[$uniqueKey] = new SymfonyAccessControlTest($attributes);
         }
 
         $test = $this->tests[$uniqueKey];

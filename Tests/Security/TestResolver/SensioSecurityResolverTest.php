@@ -13,12 +13,11 @@ namespace Yarhon\RouteGuardBundle\Tests\Security\TestResolver;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
+use Yarhon\RouteGuardBundle\Security\Test\SensioExtraTest;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator;
-use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
 use Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
@@ -44,8 +43,7 @@ class SensioSecurityResolverTest extends TestCase
 
     public function testSupports()
     {
-        $test = new SymfonySecurityTest(['ROLE_USER']);
-        $test->setProviderClass(SensioSecurityProvider::class);
+        $test = new SensioExtraTest(['ROLE_USER']);
 
         $this->assertTrue($this->resolver->supports($test));
     }
@@ -54,14 +52,14 @@ class SensioSecurityResolverTest extends TestCase
     {
         $routeContext = new RouteContext('index');
 
-        $resolved = $this->resolver->resolve(new SymfonySecurityTest(['ROLE_USER']), $routeContext);
+        $resolved = $this->resolver->resolve(new SensioExtraTest(['ROLE_USER']), $routeContext);
 
         $this->assertSame([['ROLE_USER'], null], $resolved);
     }
 
     public function testResolveSubjectVariable()
     {
-        $test = new SymfonySecurityTest(['ROLE_USER'], 'foo');
+        $test = new SensioExtraTest(['ROLE_USER'], 'foo');
 
         $routeContext = new RouteContext('index');
 
@@ -76,7 +74,7 @@ class SensioSecurityResolverTest extends TestCase
 
     public function testResolveSubjectVariableException()
     {
-        $test = new SymfonySecurityTest(['ROLE_USER'], 'foo');
+        $test = new SensioExtraTest(['ROLE_USER'], 'foo');
 
         $routeContext = new RouteContext('index');
 
@@ -94,7 +92,7 @@ class SensioSecurityResolverTest extends TestCase
     {
         $expression = new ExpressionDecorator(new Expression('foo == true'), ['foo']);
 
-        $test = new SymfonySecurityTest([$expression]);
+        $test = new SensioExtraTest([$expression]);
 
         $routeContext = new RouteContext('index');
 
@@ -112,7 +110,7 @@ class SensioSecurityResolverTest extends TestCase
     {
         $expression = new ExpressionDecorator(new Expression('foo == true'), ['foo']);
 
-        $test = new SymfonySecurityTest([$expression]);
+        $test = new SensioExtraTest([$expression]);
 
         $routeContext = new RouteContext('index');
 
@@ -128,7 +126,7 @@ class SensioSecurityResolverTest extends TestCase
 
     public function testResolveVariableFromRequestAttributes()
     {
-        $test = new SymfonySecurityTest(['ROLE_USER'], 'foo');
+        $test = new SensioExtraTest(['ROLE_USER'], 'foo');
         $test->setMetadata('request_attributes', ['foo']);
 
         $routeContext = new RouteContext('index');
@@ -144,7 +142,7 @@ class SensioSecurityResolverTest extends TestCase
 
     public function testResolveVariableFromRequestAttributesException()
     {
-        $test = new SymfonySecurityTest(['ROLE_USER'], 'foo');
+        $test = new SensioExtraTest(['ROLE_USER'], 'foo');
         $test->setMetadata('request_attributes', ['foo']);
 
         $routeContext = new RouteContext('index');

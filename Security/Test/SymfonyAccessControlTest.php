@@ -13,6 +13,6 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface TestInterface
+class SymfonyAccessControlTest extends SymfonySecurityTest
 {
 }

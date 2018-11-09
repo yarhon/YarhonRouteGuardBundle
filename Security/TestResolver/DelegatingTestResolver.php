@@ -51,6 +51,6 @@ class DelegatingTestResolver implements TestResolverInterface
             }
         }
 
-        throw new RuntimeException(sprintf('No resolver exists for test instance of "%s", provider "%s".', get_class($test), $test->getProviderClass()));
+        throw new RuntimeException(sprintf('No resolver exists for test instance of "%s".', get_class($test)));
     }
 }

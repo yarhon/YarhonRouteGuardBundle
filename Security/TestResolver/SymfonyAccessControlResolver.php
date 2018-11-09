@@ -12,9 +12,8 @@ namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 
 use Symfony\Component\HttpFoundation\RequestStack;
 use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
-use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
+use Yarhon\RouteGuardBundle\Security\Test\SymfonyAccessControlTest;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
-use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -39,7 +38,7 @@ class SymfonyAccessControlResolver implements TestResolverInterface
      */
     public function supports(TestInterface $test)
     {
-        return SymfonyAccessControlProvider::class === $test->getProviderClass();
+        return $test instanceof SymfonyAccessControlTest;
     }
 
     /**
@@ -47,7 +46,7 @@ class SymfonyAccessControlResolver implements TestResolverInterface
      */
     public function resolve(TestInterface $test, RouteContextInterface $routeContext)
     {
-        /* @var SymfonySecurityTest $test */
+        /* @var SymfonyAccessControlTest $test */
 
         return [$test->getAttributes(), $this->requestStack->getCurrentRequest()];
     }

@@ -20,28 +20,15 @@ class SymfonySecurityTestTest extends TestCase
 {
     public function testAttributes()
     {
-        $test = new SymfonySecurityTest(['foo', 'bar']);
+        $test = $this->getMockForAbstractClass(SymfonySecurityTest::class, [['foo', 'bar']]);
 
         $this->assertSame(['foo', 'bar'], $test->getAttributes());
     }
 
     public function testSubject()
     {
-        $test = new SymfonySecurityTest([], 'foo');
+        $test = $this->getMockForAbstractClass(SymfonySecurityTest::class, [[], 'foo']);
 
         $this->assertSame('foo', $test->getSubject());
-    }
-
-    public function testMetadata()
-    {
-        $test = new SymfonySecurityTest([]);
-
-        $self = $test->setMetadata('foo', 5);
-
-        $this->assertSame($test, $self);
-
-        $this->assertSame(5, $test->getMetadata('foo'));
-
-        $this->assertNull($test->getMetadata('bar'));
     }
 }

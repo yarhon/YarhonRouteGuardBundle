@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Tests\Security\AuthorizationChecker;
 use PHPUnit\Framework\TestCase;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
-use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
+use Yarhon\RouteGuardBundle\Security\Test\SymfonyAccessControlTest;
 use Yarhon\RouteGuardBundle\Security\AuthorizationChecker\AuthorizationCheckerInterface;
 use Yarhon\RouteGuardBundle\Security\AuthorizationChecker\DelegatingAuthorizationChecker;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
@@ -47,7 +47,7 @@ class DelegatingAuthorizationCheckerTest extends TestCase
 
         $delegatingChecker = new DelegatingAuthorizationChecker($checkers);
 
-        $test = new SymfonySecurityTest(['ROLE_USER']);
+        $test = new SymfonyAccessControlTest(['ROLE_USER']);
         $routeContext = new RouteContext('index');
 
         $checkers[1]->expects($this->once())
@@ -69,11 +69,11 @@ class DelegatingAuthorizationCheckerTest extends TestCase
 
         $delegatingChecker = new DelegatingAuthorizationChecker($checkers);
 
-        $test = new SymfonySecurityTest(['ROLE_USER']);
+        $test = new SymfonyAccessControlTest(['ROLE_USER']);
         $routeContext = new RouteContext('index');
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(sprintf('No authorization checker exists for test instance of "%s".', SymfonySecurityTest::class));
+        $this->expectExceptionMessage(sprintf('No authorization checker exists for test instance of "%s".', SymfonyAccessControlTest::class));
 
         $delegatingChecker->isGranted($test, $routeContext);
     }

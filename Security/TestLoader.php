@@ -58,10 +58,8 @@ class TestLoader implements TestLoaderInterface
         $tests = [];
         foreach ($testBags as $testBag) {
             /** @var AbstractTestBagInterface $testBag */
-            $providerClass = $testBag->getProviderClass();
             $providerTests = $this->testBagResolver->resolve($testBag, $routeContext);
             foreach ($providerTests as $test) {
-                $test->setProviderClass($providerClass);
                 $tests[] = $test;
             }
         }

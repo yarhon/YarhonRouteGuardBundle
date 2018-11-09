@@ -19,7 +19,7 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Yarhon\RouteGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\RouteGuardBundle\Security\Http\RouteMatcher;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
-use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
+use Yarhon\RouteGuardBundle\Security\Test\SymfonyAccessControlTest;
 use Yarhon\RouteGuardBundle\Security\Http\RequestDependentTestBag;
 use Yarhon\RouteGuardBundle\Security\Authorization\ExpressionVoter;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
@@ -71,16 +71,16 @@ class SymfonyAccessControlProviderTest extends TestCase
     {
         return [
             [
-                [new SymfonySecurityTest(['ROLE_ADMIN']), new SymfonySecurityTest(['ROLE_USER'])],
+                [new SymfonyAccessControlTest(['ROLE_ADMIN']), new SymfonyAccessControlTest(['ROLE_USER'])],
                 [false, true],
-                new TestBag([new SymfonySecurityTest(['ROLE_USER'])]),
+                new TestBag([new SymfonyAccessControlTest(['ROLE_USER'])]),
             ],
             [
-                [new SymfonySecurityTest(['ROLE_ADMIN']), new SymfonySecurityTest(['ROLE_USER'])],
+                [new SymfonyAccessControlTest(['ROLE_ADMIN']), new SymfonyAccessControlTest(['ROLE_USER'])],
                 [new RequestConstraint('/admin'), true],
                 new RequestDependentTestBag([
-                    [[new SymfonySecurityTest(['ROLE_ADMIN'])], new RequestConstraint('/admin')],
-                    [[new SymfonySecurityTest(['ROLE_USER'])], null],
+                    [[new SymfonyAccessControlTest(['ROLE_ADMIN'])], new RequestConstraint('/admin')],
+                    [[new SymfonyAccessControlTest(['ROLE_USER'])], null],
                 ]),
             ],
         ];
@@ -95,8 +95,8 @@ class SymfonyAccessControlProviderTest extends TestCase
             ->method('warning')
             ->with('Route "index" (path "/") requires runtime matching to access_control rule(s) #0, #1 (zero-based), this would reduce performance.');
 
-        $this->provider->addRule(new RequestConstraint(), new SymfonySecurityTest(['ROLE_ADMIN']));
-        $this->provider->addRule(new RequestConstraint(), new SymfonySecurityTest(['ROLE_USER']));
+        $this->provider->addRule(new RequestConstraint(), new SymfonyAccessControlTest(['ROLE_ADMIN']));
+        $this->provider->addRule(new RequestConstraint(), new SymfonyAccessControlTest(['ROLE_USER']));
 
         $requestConstraintForMap = new RequestConstraint();
 
@@ -119,7 +119,7 @@ class SymfonyAccessControlProviderTest extends TestCase
         $rule['allow_if'] = null;
 
         $expectedConstraint = new RequestConstraint($rule['path'], $rule['host'], $rule['methods'], $rule['ips']);
-        $expectedTest = new SymfonySecurityTest($rule['roles']);
+        $expectedTest = new SymfonyAccessControlTest($rule['roles']);
 
         $this->provider->importRules([$rule]);
 
@@ -143,7 +143,7 @@ class SymfonyAccessControlProviderTest extends TestCase
             });
 
         $expectedConstraint = new RequestConstraint($rule['path'], $rule['host'], $rule['methods'], $rule['ips']);
-        $expectedTest = new SymfonySecurityTest(array_merge($rule['roles'], [new Expression('request.isSecure')]));
+        $expectedTest = new SymfonyAccessControlTest(array_merge($rule['roles'], [new Expression('request.isSecure')]));
 
         $this->provider->importRules([$rule]);
 

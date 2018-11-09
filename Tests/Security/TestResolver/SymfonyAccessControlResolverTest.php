@@ -13,9 +13,8 @@ namespace Yarhon\RouteGuardBundle\Tests\Security\TestResolver;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Yarhon\RouteGuardBundle\Security\Test\SymfonySecurityTest;
+use Yarhon\RouteGuardBundle\Security\Test\SymfonyAccessControlTest;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
-use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
 use Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver;
 
 /**
@@ -40,15 +39,14 @@ class SymfonyAccessControlResolverTest extends TestCase
 
     public function testSupports()
     {
-        $test = new SymfonySecurityTest(['ROLE_USER']);
-        $test->setProviderClass(SymfonyAccessControlProvider::class);
+        $test = new SymfonyAccessControlTest(['ROLE_USER']);
 
         $this->assertTrue($this->resolver->supports($test));
     }
 
     public function testResolve()
     {
-        $test = new SymfonySecurityTest(['ROLE_USER']);
+        $test = new SymfonyAccessControlTest(['ROLE_USER']);
 
         $routeContext = new RouteContext('index');
 

@@ -48,7 +48,7 @@ class SymfonySecurityAuthorizationCheckerTest extends TestCase
     {
         return [
             [$this->createMock(TestInterface::class), false],
-            [new SymfonySecurityTest(['ROLE_USER']), true],
+            [$this->getMockForAbstractClass(SymfonySecurityTest::class, [['ROLE_USER']]), true]
         ];
     }
 
@@ -57,7 +57,7 @@ class SymfonySecurityAuthorizationCheckerTest extends TestCase
      */
     public function testIsGranted($baseAuthorizationCheckerResult, $expected)
     {
-        $test = new SymfonySecurityTest(['ROLE_USER']);
+        $test = $this->getMockForAbstractClass(SymfonySecurityTest::class, [['ROLE_USER']]);
         $routeContext = new RouteContext('index');
 
         $this->testResolver->method('resolve')

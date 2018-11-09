@@ -57,23 +57,9 @@ class TestLoaderTest extends TestCase
         $testBagOne = $this->createMock(AbstractTestBagInterface::class);
         $testBagTwo = $this->createMock(AbstractTestBagInterface::class);
 
-        $testBagOne->method('getProviderClass')
-            ->willReturn('providerOne');
-
-        $testBagTwo->method('getProviderClass')
-            ->willReturn('providerTwo');
-
         $this->addTestsCacheItem('index', [$testBagOne, $testBagTwo]);
 
         $routeContext = new RouteContext('index');
-
-        $testOne->expects($this->once())
-            ->method('setProviderClass')
-            ->with('providerOne');
-
-        $testTwo->expects($this->once())
-            ->method('setProviderClass')
-            ->with('providerTwo');
 
         $tests = $this->loader->load($routeContext);
 
