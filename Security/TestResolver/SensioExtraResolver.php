@@ -21,13 +21,13 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 /**
  * Sensio FrameworkExtraBundle allows to use Request attributes, in addition to the controller arguments, as variables
  * in "@Security" annotation expressions and in "@IsGranted" annotation "subject" arguments.
- * SensioSecurityResolver allows to fallback to the Request attribute, if controller doesn't have requested argument.
+ * SensioExtraResolver allows to fallback to the Request attribute, if controller doesn't have requested argument.
  *
  * @see \Sensio\Bundle\FrameworkExtraBundle\Request\ArgumentNameConverter::getControllerArguments
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SensioSecurityResolver implements TestResolverInterface
+class SensioExtraResolver implements TestResolverInterface
 {
     /**
      * @var ControllerArgumentResolverInterface

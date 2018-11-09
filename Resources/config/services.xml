@@ -49,7 +49,7 @@
         <service id="Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReader">
         </service>
 
-        <service id="Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider">
+        <service id="Yarhon\RouteGuardBundle\Security\TestProvider\SensioExtraProvider">
             <argument type="service" id="Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReader" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory" />
@@ -112,7 +112,7 @@
             <argument type="collection" /> <!-- argument value resolvers -->
         </service>
 
-        <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver">
+        <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SensioExtraResolver">
             <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
             <tag name="yarhon_route_guard.test_resolver" />

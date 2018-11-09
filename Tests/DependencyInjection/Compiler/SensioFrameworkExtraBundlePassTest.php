@@ -13,8 +13,8 @@ namespace Yarhon\RouteGuardBundle\Tests\DependencyInjection\Compiler;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\SensioFrameworkExtraBundlePass;
-use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
-use Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver;
+use Yarhon\RouteGuardBundle\Security\TestProvider\SensioExtraProvider;
+use Yarhon\RouteGuardBundle\Security\TestResolver\SensioExtraResolver;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -34,8 +34,8 @@ class SensioFrameworkExtraBundlePassTest extends TestCase
     public function setUp()
     {
         $this->container = new ContainerBuilder();
-        $this->container->register(SensioSecurityProvider::class);
-        $this->container->register(SensioSecurityResolver::class);
+        $this->container->register(SensioExtraProvider::class);
+        $this->container->register(SensioExtraResolver::class);
         $this->pass = new SensioFrameworkExtraBundlePass();
     }
 
@@ -43,8 +43,8 @@ class SensioFrameworkExtraBundlePassTest extends TestCase
     {
         $this->pass->process($this->container);
 
-        $this->assertFalse($this->container->hasDefinition(SensioSecurityProvider::class));
-        $this->assertFalse($this->container->hasDefinition(SensioSecurityResolver::class));
+        $this->assertFalse($this->container->hasDefinition(SensioExtraProvider::class));
+        $this->assertFalse($this->container->hasDefinition(SensioExtraResolver::class));
     }
 
     public function testProcessWithExtraBundleSecurityListener()
@@ -53,8 +53,8 @@ class SensioFrameworkExtraBundlePassTest extends TestCase
 
         $this->pass->process($this->container);
 
-        $this->assertTrue($this->container->hasDefinition(SensioSecurityProvider::class));
-        $this->assertTrue($this->container->hasDefinition(SensioSecurityResolver::class));
+        $this->assertTrue($this->container->hasDefinition(SensioExtraProvider::class));
+        $this->assertTrue($this->container->hasDefinition(SensioExtraResolver::class));
     }
 
     public function testProcessWithExtraBundleIsGrantedListener()
@@ -63,7 +63,7 @@ class SensioFrameworkExtraBundlePassTest extends TestCase
 
         $this->pass->process($this->container);
 
-        $this->assertTrue($this->container->hasDefinition(SensioSecurityProvider::class));
-        $this->assertTrue($this->container->hasDefinition(SensioSecurityResolver::class));
+        $this->assertTrue($this->container->hasDefinition(SensioExtraProvider::class));
+        $this->assertTrue($this->container->hasDefinition(SensioExtraResolver::class));
     }
 }

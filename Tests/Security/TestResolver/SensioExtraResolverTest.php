@@ -18,13 +18,13 @@ use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator;
-use Yarhon\RouteGuardBundle\Security\TestResolver\SensioSecurityResolver;
+use Yarhon\RouteGuardBundle\Security\TestResolver\SensioExtraResolver;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SensioSecurityResolverTest extends TestCase
+class SensioExtraResolverTest extends TestCase
 {
     private $controllerArgumentResolver;
 
@@ -38,7 +38,7 @@ class SensioSecurityResolverTest extends TestCase
 
         $this->requestAttributesFactory = $this->createMock(RequestAttributesFactoryInterface::class);
 
-        $this->resolver = new SensioSecurityResolver($this->controllerArgumentResolver, $this->requestAttributesFactory);
+        $this->resolver = new SensioExtraResolver($this->controllerArgumentResolver, $this->requestAttributesFactory);
     }
 
     public function testSupports()

@@ -28,13 +28,13 @@ use Yarhon\RouteGuardBundle\Exception\LogicException;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
- * SensioSecurityProvider processes Security & IsGranted annotations of Sensio FrameworkExtraBundle.
+ * SensioExtraProvider processes Security & IsGranted annotations of Sensio FrameworkExtraBundle.
  *
  * @see https://symfony.com/doc/5.0/bundles/SensioFrameworkExtraBundle/annotations/security.html
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SensioSecurityProvider implements TestProviderInterface
+class SensioExtraProvider implements TestProviderInterface
 {
     use LoggerAwareTrait;
 

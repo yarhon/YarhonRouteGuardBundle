@@ -28,14 +28,14 @@ use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
 use Yarhon\RouteGuardBundle\Security\Test\SensioExtraTest;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter;
-use Yarhon\RouteGuardBundle\Security\TestProvider\SensioSecurityProvider;
+use Yarhon\RouteGuardBundle\Security\TestProvider\SensioExtraProvider;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SensioSecurityProviderTest extends TestCase
+class SensioExtraProviderTest extends TestCase
 {
     private $annotationReader;
 
@@ -59,7 +59,7 @@ class SensioSecurityProviderTest extends TestCase
 
         $this->expressionLanguage = $this->createMock(ExpressionLanguage::class);
 
-        $this->provider = new SensioSecurityProvider($this->annotationReader, $this->requestAttributesFactory, $routeMetadataFactory);
+        $this->provider = new SensioExtraProvider($this->annotationReader, $this->requestAttributesFactory, $routeMetadataFactory);
 
         $this->route = new Route('/');
     }
