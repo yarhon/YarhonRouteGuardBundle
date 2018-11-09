@@ -111,6 +111,7 @@
             <argument type="service" id="request_stack" />
             <argument type="collection" /> <!-- argument value resolvers -->
         </service>
+        <service id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface" alias="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver" />
 
         <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SensioExtraResolver">
             <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver" />
