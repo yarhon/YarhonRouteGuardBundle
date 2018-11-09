@@ -26,7 +26,7 @@ class Controller extends AbstractController
     public function linkAction(Request $request, $routeName)
     {
         $parameters = $request->query->get('parameters', []);
-        $method = $request->query->get('method','GET');
+        $method = $request->query->get('method', 'GET');
 
         return $this->render('link.html.twig', [
             'name' => $routeName,

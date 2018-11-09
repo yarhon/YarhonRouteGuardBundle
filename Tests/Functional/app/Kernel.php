@@ -76,12 +76,12 @@ class Kernel extends BaseKernel
 
             $service = static::MAJOR_VERSION < 4 ? 'kernel:loadRoutes' : 'kernel::loadRoutes';
 
-            $container->loadFromExtension('framework', array(
-                'router' => array(
+            $container->loadFromExtension('framework', [
+                'router' => [
                     'resource' => $service,
                     'type' => 'service',
-                ),
-            ));
+                ],
+            ]);
         });
     }
 

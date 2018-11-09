@@ -59,7 +59,7 @@ class AuthorizationCacheWarmerTest extends TestCase
         $this->dataCollector->method('collect')
             ->willReturn([
                 'route1' => $routeOneData,
-                'route2' => $routeTwoData
+                'route2' => $routeTwoData,
             ]);
 
         $this->cacheWarmer->warmUp('');
@@ -89,7 +89,6 @@ class AuthorizationCacheWarmerTest extends TestCase
         $this->assertFalse($this->testsCache->hasItem('index'));
         $this->assertFalse($this->controllerMetadataCache->hasItem('index'));
         $this->assertFalse($this->routeMetadataCache->hasItem('index'));
-
     }
 
     public function testIsOptional()

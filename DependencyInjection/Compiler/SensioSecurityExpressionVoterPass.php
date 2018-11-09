@@ -28,7 +28,6 @@ class SensioSecurityExpressionVoterPass implements CompilerPassInterface
     {
         if (!$container->hasDefinition('sensio_framework_extra.security.listener') ||
             !$container->hasDefinition('sensio_framework_extra.security.expression_language.default')) {
-
             $container->removeDefinition(SensioSecurityExpressionVoter::class);
         }
     }

@@ -123,7 +123,7 @@ class RouteCollectionDataCollector implements LoggerAwareInterface
     {
         $message = sprintf('Route "%s": %s', $routeName, $e->getMessage());
 
-        $r = new \ReflectionProperty($e,'message');
+        $r = new \ReflectionProperty($e, 'message');
         $r->setAccessible(true);
         $r->setValue($e, $message);
     }

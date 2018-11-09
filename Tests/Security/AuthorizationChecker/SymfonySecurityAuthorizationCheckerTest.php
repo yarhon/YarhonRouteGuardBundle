@@ -48,7 +48,7 @@ class SymfonySecurityAuthorizationCheckerTest extends TestCase
     {
         return [
             [$this->createMock(TestInterface::class), false],
-            [$this->getMockForAbstractClass(SymfonySecurityTest::class, [['ROLE_USER']]), true]
+            [$this->getMockForAbstractClass(SymfonySecurityTest::class, [['ROLE_USER']]), true],
         ];
     }
 
