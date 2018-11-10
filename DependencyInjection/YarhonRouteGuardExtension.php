@@ -33,6 +33,7 @@ class YarhonRouteGuardExtension extends Extension
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('cache.xml');
+        $loader->load('routing.xml');
         $loader->load('controller.xml');
         $loader->load('security.xml');
         $loader->load('twig.xml');

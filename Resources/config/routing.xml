@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <defaults public="false" />
+
+        <!-- metadata service -->
+
+        <service id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory" />
+
+        <!-- runtime variables resolver -->
+
+        <service id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory">
+            <argument type="service" id="yarhon_route_guard.cache.route_metadata" />
+            <argument type="service" id="router.default" />
+        </service>
+
+        <!-- localized route detector -->
+
+        <service id="Yarhon\RouteGuardBundle\Routing\LocalizedRouteDetector">
+            <argument type="service" id="router.default" />
+        </service>
+
+    </services>
+</container>
