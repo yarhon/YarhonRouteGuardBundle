@@ -1,0 +1,7 @@
+app:
+    resource: ../../app/src/Controller/
+    type: annotation
+
+bundle:
+    resource: ./Controller
+    type: annotation

@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Tests\Functional\Bundle\SensioSecurityBundle\Controller;
+namespace Yarhon\RouteGuardBundle\Tests\Functional\Bundle\SensioExtraBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;

@@ -25,8 +25,6 @@ abstract class WebTestCase extends BaseWebTestCase
 
     protected static $configs = [];
 
-    protected static $routeResources = [];
-
     protected static $users = [];
 
     protected static function getBundles()
@@ -45,11 +43,6 @@ abstract class WebTestCase extends BaseWebTestCase
         // $configs['framework']['router'] = $routerConfig;
 
         return $configs;
-    }
-
-    protected static function getRouteResources()
-    {
-        return static::$routeResources;
     }
 
     public static function setUpBeforeClass()
@@ -78,7 +71,6 @@ abstract class WebTestCase extends BaseWebTestCase
             static::getTempDir(),
             static::getBundles(),
             static::getConfigs(),
-            static::getRouteResources(),
             isset($options['environment']) ? $options['environment'] : 'test',
             isset($options['debug']) ? $options['debug'] : true
         );

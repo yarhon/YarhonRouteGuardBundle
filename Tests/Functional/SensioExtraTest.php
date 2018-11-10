@@ -14,18 +14,24 @@ use Symfony\Bundle\TwigBundle\TwigBundle;
 use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
 
 /**
+ * @runTestsInSeparateProcesses
+ *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SensioSecurityTest extends WebTestCase
+class SensioExtraTest extends WebTestCase
 {
     protected static $bundles = [
         TwigBundle::class,
         SensioFrameworkExtraBundle::class,
-        Bundle\SensioSecurityBundle\SensioSecurityBundle::class,
+        Bundle\SensioExtraBundle\SensioExtraBundle::class,
     ];
 
-    protected static $routeResources = [
-        ['@SensioSecurityBundle/Controller/', '/', 'annotation'],
+    protected static $configs = [
+        'framework' => [
+            'router' => [
+                'resource' => '@SensioExtraBundle/routes.yaml',
+            ],
+        ],
     ];
 
     protected static $users = [

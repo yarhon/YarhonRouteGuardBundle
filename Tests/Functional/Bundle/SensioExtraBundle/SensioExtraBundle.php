@@ -8,13 +8,13 @@
  * file that was distributed with this source code.
  */
 
-namespace Yarhon\RouteGuardBundle\Tests\Functional\Bundle\SensioSecurityBundle;
+namespace Yarhon\RouteGuardBundle\Tests\Functional\Bundle\SensioExtraBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SensioSecurityBundle extends Bundle
+class SensioExtraBundle extends Bundle
 {
 }
