@@ -24,6 +24,16 @@
             <argument type="collection" /> <!-- map -->
         </service>
 
+        <!-- metadata services -->
+
+        <service id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory" />
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory">
+            <argument type="service" id="argument_metadata_factory" on-invalid="ignore" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" on-invalid="ignore" />
+        </service>
+
+
         <!-- runtime variables resolvers -->
 
         <service id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory">
@@ -38,15 +48,6 @@
             <argument type="collection" /> <!-- argument value resolvers -->
         </service>
         <service id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface" alias="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver" />
-
-        <!-- metadata services -->
-
-        <service id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory" />
-
-        <service id="Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory">
-            <argument type="service" id="argument_metadata_factory" on-invalid="ignore" />
-            <argument type="service" id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" on-invalid="ignore" />
-        </service>
 
         <!-- controller argument value resolvers -->
 
