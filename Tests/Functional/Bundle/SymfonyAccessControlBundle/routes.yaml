@@ -3,5 +3,5 @@ app:
     type: annotation
 
 bundle:
-    resource: ./Controller
+    resource: "@SymfonyAccessControlBundle/Controller"
     type: annotation

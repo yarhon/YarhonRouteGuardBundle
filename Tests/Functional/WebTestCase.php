@@ -14,6 +14,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\SecurityBundle\SecurityBundle;
+use Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle;
+use Symfony\Component\HttpKernel\Kernel;
 use Yarhon\RouteGuardBundle\YarhonRouteGuardBundle;
 
 /**
@@ -29,11 +31,18 @@ abstract class WebTestCase extends BaseWebTestCase
 
     protected static function getBundles()
     {
+        $bundles = static::$bundles;
+
+        // In Symfony 3.3 @Route annotations are loaded by SensioFrameworkExtraBundle
+        if (Kernel::VERSION_ID < 30400 && !in_array(SensioFrameworkExtraBundle::class, $bundles, true)) {
+            $bundles[] = SensioFrameworkExtraBundle::class;
+        }
+
         return array_merge([
             FrameworkBundle::class,
             SecurityBundle::class,
             YarhonRouteGuardBundle::class,
-        ], static::$bundles);
+        ], $bundles);
     }
 
     protected static function getConfigs()
