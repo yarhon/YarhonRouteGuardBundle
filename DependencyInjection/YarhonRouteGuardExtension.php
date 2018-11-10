@@ -32,8 +32,10 @@ class YarhonRouteGuardExtension extends Extension
     public function load(array $configs, ContainerBuilder $container)
     {
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.xml');
         $loader->load('cache.xml');
+        $loader->load('controller.xml');
+        $loader->load('security.xml');
+        $loader->load('twig.xml');
 
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);

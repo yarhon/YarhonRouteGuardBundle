@@ -1,0 +1,79 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <defaults public="false" />
+
+        <!-- controller name resolver services -->
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ControllerNameResolver">
+            <argument type="service" id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" />
+            <call method="setConverter">
+                <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerNameConverter" />
+            </call>
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ControllerNameConverter">
+            <argument type="service" id="kernel" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" public="true"> <!-- set as public only to be available for TYPE_AFTER_REMOVING compiler pass -->
+            <argument type="collection" /> <!-- map -->
+        </service>
+
+        <!-- runtime variables resolvers -->
+
+        <service id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory">
+            <argument type="service" id="yarhon_route_guard.cache.route_metadata" />
+            <argument type="service" id="router.default" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver">
+            <argument type="service" id="yarhon_route_guard.cache.controller_metadata" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
+            <argument type="service" id="request_stack" />
+            <argument type="collection" /> <!-- argument value resolvers -->
+        </service>
+        <service id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface" alias="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver" />
+
+        <!-- metadata services -->
+
+        <service id="Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory" />
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory">
+            <argument type="service" id="argument_metadata_factory" on-invalid="ignore" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\DependencyInjection\Container\ClassMap" on-invalid="ignore" />
+        </service>
+
+        <!-- controller argument value resolvers -->
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ArgumentResolver\RequestAttributeValueResolver">
+            <tag name="yarhon_route_guard.argument_value_resolver" priority="100" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ArgumentResolver\RequestValueResolver">
+            <tag name="yarhon_route_guard.argument_value_resolver" priority="50" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ArgumentResolver\SessionValueResolver">
+            <tag name="yarhon_route_guard.argument_value_resolver" priority="50" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ServiceValueResolver">
+            <argument type="service" id="service_container"/>
+            <tag name="yarhon_route_guard.argument_value_resolver" priority="-50" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ArgumentResolver\DefaultValueResolver">
+            <tag name="yarhon_route_guard.argument_value_resolver" priority="-100" />
+        </service>
+
+        <service id="Yarhon\RouteGuardBundle\Controller\ArgumentResolver\VariadicValueResolver">
+            <tag name="yarhon_route_guard.argument_value_resolver" priority="-150" />
+        </service>
+
+    </services>
+</container>

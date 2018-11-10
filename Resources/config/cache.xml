@@ -24,5 +24,16 @@
             <argument>controller-metadata</argument> <!-- namespace -->
         </service>
 
+        <!-- cache warmer service -->
+
+        <service id="Yarhon\RouteGuardBundle\Cache\AuthorizationCacheWarmer">
+            <argument type="service" id="Yarhon\RouteGuardBundle\Cache\DataCollector\RouteCollectionDataCollector" />
+            <argument type="service" id="router.default" />
+            <argument type="service" id="yarhon_route_guard.cache.tests" />
+            <argument type="service" id="yarhon_route_guard.cache.controller_metadata" />
+            <argument type="service" id="yarhon_route_guard.cache.route_metadata" />
+            <tag name="kernel.cache_warmer" priority="100" />
+        </service>
+
     </services>
 </container>
