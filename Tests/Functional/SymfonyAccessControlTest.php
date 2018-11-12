@@ -66,7 +66,6 @@ class SymfonyAccessControlTest extends WebTestCase
             [null, ['dynamic_path', ['page' => 'user']], 'No access'],
             ['bob', ['dynamic_path', ['page' => 'user']], 'http://example.com/dynamic_path/user'],
             ['bob', ['dynamic_path', ['page' => 'admin']], 'No access'],
-
         ];
     }
 }

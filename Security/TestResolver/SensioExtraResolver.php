@@ -40,8 +40,8 @@ class SensioExtraResolver implements SymfonySecurityResolverInterface
     private $requestAttributesFactory;
 
     /**
-     * @param ArgumentResolverInterface $controllerArgumentResolver
-     * @param RequestAttributesFactoryInterface   $requestAttributesFactory
+     * @param ArgumentResolverInterface         $controllerArgumentResolver
+     * @param RequestAttributesFactoryInterface $requestAttributesFactory
      */
     public function __construct(ArgumentResolverInterface $controllerArgumentResolver, RequestAttributesFactoryInterface $requestAttributesFactory)
     {

@@ -37,7 +37,7 @@ class RouteDataCollector
     private $routeMetadataFactory;
 
     /**
-     * @param ProviderAggregate     $testProvider
+     * @param ProviderAggregate         $testProvider
      * @param ControllerMetadataFactory $controllerMetadataFactory
      * @param RouteMetadataFactory      $routeMetadataFactory
      */
