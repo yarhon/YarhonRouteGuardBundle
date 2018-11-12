@@ -16,7 +16,7 @@ use Yarhon\RouteGuardBundle\DependencyInjection\YarhonRouteGuardExtension;
 use Yarhon\RouteGuardBundle\Cache\DataCollector\RouteCollectionDataCollector;
 use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
 use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
-use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
+use Yarhon\RouteGuardBundle\Security\TestResolver\SymfonySecurityResolverInterface;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentValueResolverInterface;
 use Yarhon\RouteGuardBundle\Security\AuthorizationChecker\AuthorizationCheckerInterface;
 use Yarhon\RouteGuardBundle\YarhonRouteGuardBundle;
@@ -92,7 +92,7 @@ class YarhonRouteGuardExtensionTest extends TestCase
     {
         return [
             [TestProviderInterface::class, 'yarhon_route_guard.test_provider'],
-            [TestResolverInterface::class, 'yarhon_route_guard.test_resolver'],
+            [SymfonySecurityResolverInterface::class, 'yarhon_route_guard.test_resolver.symfony_security'],
             [ArgumentValueResolverInterface::class, 'yarhon_route_guard.argument_value_resolver'],
             [AuthorizationCheckerInterface::class, 'yarhon_route_guard.authorization_checker'],
         ];

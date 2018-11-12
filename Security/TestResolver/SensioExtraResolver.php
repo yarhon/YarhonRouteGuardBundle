@@ -27,7 +27,7 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SensioExtraResolver implements TestResolverInterface
+class SensioExtraResolver implements SymfonySecurityResolverInterface
 {
     /**
      * @var ControllerArgumentResolverInterface

@@ -72,19 +72,19 @@
 
         <!-- test resolvers -->
 
-        <service id="Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver">
+        <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SymfonySecurityResolver">
             <argument type="collection" /> <!-- test resolvers -->
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SensioExtraResolver">
             <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
-            <tag name="yarhon_route_guard.test_resolver" />
+            <tag name="yarhon_route_guard.test_resolver.symfony_security" />
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SymfonyAccessControlResolver">
             <argument type="service" id="request_stack" />
-            <tag name="yarhon_route_guard.test_resolver" />
+            <tag name="yarhon_route_guard.test_resolver.symfony_security" />
         </service>
 
         <!-- authorization checkers -->
@@ -95,7 +95,7 @@
 
         <service id="Yarhon\RouteGuardBundle\Security\AuthorizationChecker\SymfonySecurityAuthorizationChecker">
             <argument type="service" id="security.authorization_checker" />
-            <argument type="service" id="Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Security\TestResolver\SymfonySecurityResolver" />
             <tag name="yarhon_route_guard.authorization_checker" />
         </service>
 

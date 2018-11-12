@@ -17,15 +17,15 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class DelegatingTestResolver implements TestResolverInterface
+class SymfonySecurityResolver implements SymfonySecurityResolverInterface
 {
     /**
-     * @var \Traversable|TestResolverInterface[]
+     * @var \Traversable|SymfonySecurityResolverInterface[]
      */
     private $resolvers;
 
     /**
-     * @param \Traversable|TestResolverInterface[] $resolvers
+     * @param \Traversable|SymfonySecurityResolverInterface[] $resolvers
      */
     public function __construct($resolvers = [])
     {

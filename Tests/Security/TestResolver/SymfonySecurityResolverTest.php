@@ -12,16 +12,16 @@ namespace Yarhon\RouteGuardBundle\Tests\Security\TestResolver;
 
 use PHPUnit\Framework\TestCase;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
-use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
+use Yarhon\RouteGuardBundle\Security\TestResolver\SymfonySecurityResolverInterface;
 use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
 use Yarhon\RouteGuardBundle\Security\Test\SymfonyAccessControlTest;
-use Yarhon\RouteGuardBundle\Security\TestResolver\DelegatingTestResolver;
+use Yarhon\RouteGuardBundle\Security\TestResolver\SymfonySecurityResolver;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class DelegatingTestResolverTest extends TestCase
+class SymfonySecurityResolverTest extends TestCase
 {
     public function setUp()
     {
@@ -29,7 +29,7 @@ class DelegatingTestResolverTest extends TestCase
 
     public function testSupports()
     {
-        $delegatingResolver = new DelegatingTestResolver();
+        $delegatingResolver = new SymfonySecurityResolver();
 
         $test = $this->createMock(TestInterface::class);
 
@@ -39,8 +39,8 @@ class DelegatingTestResolverTest extends TestCase
     public function testResolve()
     {
         $resolvers = [
-            $this->createMock(TestResolverInterface::class),
-            $this->createMock(TestResolverInterface::class),
+            $this->createMock(SymfonySecurityResolverInterface::class),
+            $this->createMock(SymfonySecurityResolverInterface::class),
         ];
 
         $resolvers[0]->method('supports')
@@ -49,7 +49,7 @@ class DelegatingTestResolverTest extends TestCase
         $resolvers[1]->method('supports')
             ->willReturn(true);
 
-        $delegatingResolver = new DelegatingTestResolver($resolvers);
+        $delegatingResolver = new SymfonySecurityResolver($resolvers);
 
         $test = new SymfonyAccessControlTest(['ROLE_USER']);
         $routeContext = new RouteContext('index');
@@ -65,13 +65,13 @@ class DelegatingTestResolverTest extends TestCase
     public function testResolveException()
     {
         $resolvers = [
-            $this->createMock(TestResolverInterface::class),
+            $this->createMock(SymfonySecurityResolverInterface::class),
         ];
 
         $resolvers[0]->method('supports')
             ->willReturn(false);
 
-        $delegatingResolver = new DelegatingTestResolver($resolvers);
+        $delegatingResolver = new SymfonySecurityResolver($resolvers);
 
         $test = new SymfonyAccessControlTest(['ROLE_USER']);
         $routeContext = new RouteContext('index');

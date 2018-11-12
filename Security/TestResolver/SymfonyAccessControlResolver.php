@@ -18,7 +18,7 @@ use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SymfonyAccessControlResolver implements TestResolverInterface
+class SymfonyAccessControlResolver implements SymfonySecurityResolverInterface
 {
     /**
      * @var RequestStack

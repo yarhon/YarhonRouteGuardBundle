@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface 
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
 use Yarhon\RouteGuardBundle\Security\Test\AbstractSymfonySecurityTest;
-use Yarhon\RouteGuardBundle\Security\TestResolver\TestResolverInterface;
+use Yarhon\RouteGuardBundle\Security\TestResolver\SymfonySecurityResolverInterface;
 use Yarhon\RouteGuardBundle\Security\AuthorizationChecker\SymfonySecurityAuthorizationChecker;
 
 /**
@@ -32,7 +32,7 @@ class SymfonySecurityAuthorizationCheckerTest extends TestCase
     public function setUp()
     {
         $this->baseAuthorizationChecker = $this->createMock(BaseAuthorizationCheckerInterface::class);
-        $this->testResolver = $this->createMock(TestResolverInterface::class);
+        $this->testResolver = $this->createMock(SymfonySecurityResolverInterface::class);
         $this->checker = new SymfonySecurityAuthorizationChecker($this->baseAuthorizationChecker, $this->testResolver);
     }
 
