@@ -45,7 +45,5 @@ class ConfigurationTest extends TestCase
         ];
 
         $this->assertEquals($defaults, $config);
-
-        $this->markTestIncomplete('Watch for config changes.');
     }
 }

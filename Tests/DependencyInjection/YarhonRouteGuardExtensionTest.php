@@ -65,8 +65,6 @@ class YarhonRouteGuardExtensionTest extends TestCase
         $argument = $this->container->getDefinition(RoutingExtension::class)->getArgument(0);
         $this->assertInternalType('array', $argument);
         $this->assertArraySubset(['tag_name' => 'test'], $argument);
-
-        $this->markTestIncomplete('Watch for config changes.');
     }
 
     /**
