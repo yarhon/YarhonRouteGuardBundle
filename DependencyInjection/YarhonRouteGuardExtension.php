@@ -16,7 +16,7 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\Config\FileLocator;
 use Yarhon\RouteGuardBundle\Cache\DataCollector\RouteCollectionDataCollector;
 use Yarhon\RouteGuardBundle\Twig\Extension\RoutingExtension;
-use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
+use Yarhon\RouteGuardBundle\Security\TestProvider\ProviderInterface;
 use Yarhon\RouteGuardBundle\Security\TestResolver\SymfonySecurityResolverInterface;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentValueResolverInterface;
 use Yarhon\RouteGuardBundle\Security\AuthorizationChecker\AuthorizationCheckerInterface;
@@ -60,7 +60,7 @@ class YarhonRouteGuardExtension extends Extension
 
     private function registerAutoConfiguration(ContainerBuilder $container)
     {
-        $container->registerForAutoconfiguration(TestProviderInterface::class)->addTag('yarhon_route_guard.test_provider');
+        $container->registerForAutoconfiguration(ProviderInterface::class)->addTag('yarhon_route_guard.test_provider');
         $container->registerForAutoconfiguration(SymfonySecurityResolverInterface::class)->addTag('yarhon_route_guard.test_resolver.symfony_security');
         $container->registerForAutoconfiguration(ArgumentValueResolverInterface::class)->addTag('yarhon_route_guard.argument_value_resolver');
         $container->registerForAutoconfiguration(AuthorizationCheckerInterface::class)->addTag('yarhon_route_guard.authorization_checker');

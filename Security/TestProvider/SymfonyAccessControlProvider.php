@@ -32,7 +32,7 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SymfonyAccessControlProvider implements TestProviderInterface
+class SymfonyAccessControlProvider implements ProviderInterface
 {
     use LoggerAwareTrait;
 

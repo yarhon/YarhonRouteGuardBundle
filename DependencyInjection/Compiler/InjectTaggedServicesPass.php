@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\DependencyInjection\Compiler;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
-use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderAggregate;
+use Yarhon\RouteGuardBundle\Security\TestProvider\ProviderAggregate;
 use Yarhon\RouteGuardBundle\Security\TestResolver\SymfonySecurityResolver;
 use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
 use Yarhon\RouteGuardBundle\Security\AuthorizationChecker\DelegatingAuthorizationChecker;
@@ -36,7 +36,7 @@ class InjectTaggedServicesPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        $this->injectAsArgument($container, [TestProviderAggregate::class, 0], 'yarhon_route_guard.test_provider');
+        $this->injectAsArgument($container, [ProviderAggregate::class, 0], 'yarhon_route_guard.test_provider');
         $this->injectAsArgument($container, [SymfonySecurityResolver::class, 0], 'yarhon_route_guard.test_resolver.symfony_security');
         $this->injectAsArgument($container, [ControllerArgumentResolver::class, 3], 'yarhon_route_guard.argument_value_resolver');
         $this->injectAsArgument($container, [DelegatingAuthorizationChecker::class, 0], 'yarhon_route_guard.authorization_checker');

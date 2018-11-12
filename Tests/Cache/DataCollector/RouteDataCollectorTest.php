@@ -16,7 +16,7 @@ use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
-use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderAggregate;
+use Yarhon\RouteGuardBundle\Security\TestProvider\ProviderAggregate;
 use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 use Yarhon\RouteGuardBundle\Cache\DataCollector\RouteDataCollector;
 
@@ -35,7 +35,7 @@ class RouteDataCollectorTest extends TestCase
 
     public function setUp()
     {
-        $this->testProvider = $this->createMock(TestProviderAggregate::class);
+        $this->testProvider = $this->createMock(ProviderAggregate::class);
         $this->controllerMetadataFactory = $this->createMock(ControllerMetadataFactory::class);
         $this->routeMetadataFactory = $this->createMock(RouteMetadataFactory::class);
 

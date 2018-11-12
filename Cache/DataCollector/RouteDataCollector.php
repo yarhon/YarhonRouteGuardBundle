@@ -13,7 +13,7 @@ namespace Yarhon\RouteGuardBundle\Cache\DataCollector;
 use Symfony\Component\Routing\Route;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadataFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
-use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderAggregate;
+use Yarhon\RouteGuardBundle\Security\TestProvider\ProviderAggregate;
 use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
 
 /**
@@ -22,7 +22,7 @@ use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
 class RouteDataCollector
 {
     /**
-     * @var TestProviderAggregate
+     * @var ProviderAggregate
      */
     private $testProvider;
 
@@ -37,11 +37,11 @@ class RouteDataCollector
     private $routeMetadataFactory;
 
     /**
-     * @param TestProviderAggregate     $testProvider
+     * @param ProviderAggregate     $testProvider
      * @param ControllerMetadataFactory $controllerMetadataFactory
      * @param RouteMetadataFactory      $routeMetadataFactory
      */
-    public function __construct(TestProviderAggregate $testProvider, ControllerMetadataFactory $controllerMetadataFactory, RouteMetadataFactory $routeMetadataFactory)
+    public function __construct(ProviderAggregate $testProvider, ControllerMetadataFactory $controllerMetadataFactory, RouteMetadataFactory $routeMetadataFactory)
     {
         $this->testProvider = $testProvider;
         $this->controllerMetadataFactory = $controllerMetadataFactory;

@@ -34,7 +34,7 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SensioExtraProvider implements TestProviderInterface
+class SensioExtraProvider implements ProviderInterface
 {
     use LoggerAwareTrait;
 

@@ -19,7 +19,7 @@ use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface TestProviderInterface extends LoggerAwareInterface
+interface ProviderInterface extends LoggerAwareInterface
 {
     /**
      * @param string                  $routeName

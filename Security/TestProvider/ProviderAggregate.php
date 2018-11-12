@@ -20,10 +20,10 @@ use Yarhon\RouteGuardBundle\Exception\LogicException;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class TestProviderAggregate implements LoggerAwareInterface
+class ProviderAggregate implements LoggerAwareInterface
 {
     /**
-     * @var TestProviderInterface[]
+     * @var ProviderInterface[]
      */
     private $testProviders;
 
@@ -33,7 +33,7 @@ class TestProviderAggregate implements LoggerAwareInterface
     private $logger;
 
     /**
-     * @param \Traversable|TestProviderInterface[] $testProviders
+     * @param \Traversable|ProviderInterface[] $testProviders
      */
     public function __construct($testProviders = [])
     {

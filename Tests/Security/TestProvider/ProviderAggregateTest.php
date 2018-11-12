@@ -13,16 +13,16 @@ namespace Yarhon\RouteGuardBundle\Tests\Security\TestProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Route;
-use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderAggregate;
+use Yarhon\RouteGuardBundle\Security\TestProvider\ProviderAggregate;
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
-use Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface;
+use Yarhon\RouteGuardBundle\Security\TestProvider\ProviderInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class TestProviderAggregateTest extends TestCase
+class ProviderAggregateTest extends TestCase
 {
     private $providers;
 
@@ -31,8 +31,8 @@ class TestProviderAggregateTest extends TestCase
     public function setUp()
     {
         $this->providers = [
-            $this->createMock(TestProviderInterface::class),
-            $this->createMock(TestProviderInterface::class),
+            $this->createMock(ProviderInterface::class),
+            $this->createMock(ProviderInterface::class),
         ];
 
         $this->logger = $this->createMock(LoggerInterface::class);
@@ -40,7 +40,7 @@ class TestProviderAggregateTest extends TestCase
 
     public function testSetLogger()
     {
-        $providerAggregate = new TestProviderAggregate($this->providers);
+        $providerAggregate = new ProviderAggregate($this->providers);
 
         $this->providers[0]->expects($this->once())
             ->method('setLogger')
@@ -55,7 +55,7 @@ class TestProviderAggregateTest extends TestCase
 
     public function testBuildWithoutTestProvidersException()
     {
-        $providerAggregate = new TestProviderAggregate();
+        $providerAggregate = new ProviderAggregate();
 
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Test providers collection is empty.');
@@ -65,7 +65,7 @@ class TestProviderAggregateTest extends TestCase
 
     public function testGetTests()
     {
-        $providerAggregate = new TestProviderAggregate($this->providers);
+        $providerAggregate = new ProviderAggregate($this->providers);
 
         $route = new Route('/');
         $routeName = 'index';
