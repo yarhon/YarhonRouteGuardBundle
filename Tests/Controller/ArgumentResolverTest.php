@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
-use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
+use Yarhon\RouteGuardBundle\Controller\ArgumentResolver;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentValueResolverInterface;
 use Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentResolverContext;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
@@ -28,7 +28,7 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class ControllerArgumentResolverTest extends TestCase
+class ArgumentResolverTest extends TestCase
 {
     private $metadataCache;
 
@@ -58,7 +58,7 @@ class ControllerArgumentResolverTest extends TestCase
             $this->createMock(ArgumentValueResolverInterface::class),
         ];
 
-        $this->resolver = new ControllerArgumentResolver($this->metadataCache, $this->requestAttributesFactory, $requestStack, $this->valueResolvers);
+        $this->resolver = new ArgumentResolver($this->metadataCache, $this->requestAttributesFactory, $requestStack, $this->valueResolvers);
     }
 
     public function testGetArgument()

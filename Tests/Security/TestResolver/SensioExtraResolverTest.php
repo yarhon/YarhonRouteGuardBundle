@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Yarhon\RouteGuardBundle\Security\Test\SensioExtraTest;
 use Yarhon\RouteGuardBundle\Routing\RouteContext;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
-use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
+use Yarhon\RouteGuardBundle\Controller\ArgumentResolverInterface;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator;
 use Yarhon\RouteGuardBundle\Security\TestResolver\SensioExtraResolver;
 use Yarhon\RouteGuardBundle\Exception\RuntimeException;
@@ -34,7 +34,7 @@ class SensioExtraResolverTest extends TestCase
 
     public function setUp()
     {
-        $this->controllerArgumentResolver = $this->createMock(ControllerArgumentResolverInterface::class);
+        $this->controllerArgumentResolver = $this->createMock(ArgumentResolverInterface::class);
 
         $this->requestAttributesFactory = $this->createMock(RequestAttributesFactoryInterface::class);
 

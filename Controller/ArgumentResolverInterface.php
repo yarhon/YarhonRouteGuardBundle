@@ -16,7 +16,7 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface ControllerArgumentResolverInterface
+interface ArgumentResolverInterface
 {
     /**
      * @param RouteContextInterface $routeContext

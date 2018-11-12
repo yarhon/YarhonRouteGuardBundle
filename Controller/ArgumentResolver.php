@@ -24,7 +24,7 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class ControllerArgumentResolver implements ControllerArgumentResolverInterface
+class ArgumentResolver implements ArgumentResolverInterface
 {
     /**
      * @var CacheItemPoolInterface

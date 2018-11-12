@@ -77,7 +77,7 @@
         </service>
 
         <service id="Yarhon\RouteGuardBundle\Security\TestResolver\SensioExtraResolver">
-            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver" />
+            <argument type="service" id="Yarhon\RouteGuardBundle\Controller\ArgumentResolver" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
             <tag name="yarhon_route_guard.test_resolver.symfony_security" />
         </service>

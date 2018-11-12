@@ -15,7 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Yarhon\RouteGuardBundle\DependencyInjection\Compiler\InjectTaggedServicesPass;
 use Yarhon\RouteGuardBundle\Security\TestProvider\ProviderAggregate;
 use Yarhon\RouteGuardBundle\Security\TestResolver\SymfonySecurityResolver;
-use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver;
+use Yarhon\RouteGuardBundle\Controller\ArgumentResolver;
 use Yarhon\RouteGuardBundle\Security\AuthorizationChecker\DelegatingAuthorizationChecker;
 
 /**
@@ -41,7 +41,7 @@ class InjectTaggedServicesPassTest extends TestCase
 
         $this->container->register(SymfonySecurityResolver::class)->addArgument([]);
 
-        $this->container->register(ControllerArgumentResolver::class)->setArguments([null, null, null, []]);
+        $this->container->register(ArgumentResolver::class)->setArguments([null, null, null, []]);
 
         $this->container->register(DelegatingAuthorizationChecker::class)->addArgument([]);
 
@@ -76,7 +76,7 @@ class InjectTaggedServicesPassTest extends TestCase
                 'yarhon_route_guard.test_provider',
             ],
             [
-                [ControllerArgumentResolver::class, 3],
+                [ArgumentResolver::class, 3],
                 'yarhon_route_guard.argument_value_resolver',
             ],
             [

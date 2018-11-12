@@ -33,13 +33,13 @@
 
         <!-- runtime variables resolver -->
 
-        <service id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver">
+        <service id="Yarhon\RouteGuardBundle\Controller\ArgumentResolver">
             <argument type="service" id="yarhon_route_guard.cache.controller_metadata" />
             <argument type="service" id="Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory" />
             <argument type="service" id="request_stack" />
             <argument type="collection" /> <!-- argument value resolvers -->
         </service>
-        <service id="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface" alias="Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolver" />
+        <service id="ArgumentResolverInterface" alias="ArgumentResolver" />
 
         <!-- controller argument value resolvers -->
 

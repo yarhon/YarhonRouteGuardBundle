@@ -12,7 +12,7 @@ namespace Yarhon\RouteGuardBundle\Security\TestResolver;
 
 use Yarhon\RouteGuardBundle\Security\Test\TestInterface;
 use Yarhon\RouteGuardBundle\Security\Test\SensioExtraTest;
-use Yarhon\RouteGuardBundle\Controller\ControllerArgumentResolverInterface;
+use Yarhon\RouteGuardBundle\Controller\ArgumentResolverInterface;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactoryInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator;
@@ -30,7 +30,7 @@ use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 class SensioExtraResolver implements SymfonySecurityResolverInterface
 {
     /**
-     * @var ControllerArgumentResolverInterface
+     * @var ArgumentResolverInterface
      */
     private $controllerArgumentResolver;
 
@@ -40,10 +40,10 @@ class SensioExtraResolver implements SymfonySecurityResolverInterface
     private $requestAttributesFactory;
 
     /**
-     * @param ControllerArgumentResolverInterface $controllerArgumentResolver
+     * @param ArgumentResolverInterface $controllerArgumentResolver
      * @param RequestAttributesFactoryInterface   $requestAttributesFactory
      */
-    public function __construct(ControllerArgumentResolverInterface $controllerArgumentResolver, RequestAttributesFactoryInterface $requestAttributesFactory)
+    public function __construct(ArgumentResolverInterface $controllerArgumentResolver, RequestAttributesFactoryInterface $requestAttributesFactory)
     {
         $this->controllerArgumentResolver = $controllerArgumentResolver;
         $this->requestAttributesFactory = $requestAttributesFactory;
