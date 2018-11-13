@@ -83,7 +83,7 @@ class RequestContextFactory
             if (UrlGeneratorInterface::RELATIVE_PATH !== $routeContext->getReferenceType()) {
                 $routeContext->setGeneratedUrl($generated);
             }
-            
+
             return $generated;
         };
 

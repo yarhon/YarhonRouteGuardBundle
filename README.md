@@ -9,15 +9,15 @@ Symfony routes authorization checker
 
 RouteGuardBundle is a tool to:
 * check if user is authorized to access a route
-* retrieve authorization rules for a route
-* conditionally display blocks in Twig templates depending on authorization rules, avoiding
+* retrieve authorization tests for a route
+* conditionally display blocks in Twig templates depending on authorization tests, avoiding
 authorization checks duplication both in controller and template.
 
-RouteGuard supports authorization rules from:
+RouteGuard supports authorization tests from the following providers:
 * Symfony SecurityBundle (`access_control` rules). Read [details](#symfony-securitybundle-details). 
 * Sensio FrameworkExtraBundle (`@IsGranted` and `@Security` annotations). Read [details](#sensio-frameworkextrabundle-details).
 
-And allows to add your own authorization rules providers. Read [more](#adding-your-own-authorization-rules).
+And allows to add your own authorization test providers. Read [more](#adding-your-own-authorization-test-provider).
 
 RouteGuard has a few limitations for rare use cases. Read [more](#limitations).
 
@@ -25,32 +25,15 @@ Let the code speak:
 
 A) Template rendering
 
-```php
-namespace App\Controller;
-
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
-
-class BlogController extends AbstractController
-{
-    /**
-     * @Route("/blog/{page}", name="blog")
-     */
-    public function index($page)
-    {
-        return $this->render('default/blog.html.twig', []);
-    }
-```
-
-
 ```twig
-{% route 'blog', { page: 1} %}
+{% route 'blog', {'page': 1} %}
     <a href="{{ _route.ref }}">Blog link</a>
 {% else %}
     No access
 {% endroute %}
 ```
-In this example, link will be rendered only if user is authorized to access route `blog` (by any of the supported rules), contents of the `else` block rendered otherwise.
+In the example above, link will be rendered only if none of the authorization tests for the `blog` route denied access, 
+contents of the `else` block rendered otherwise.
 
 The `_route.ref` variable would contain the generated URL.
 
@@ -82,6 +65,7 @@ class SomeService
         
         return $this->authorizationChecker->isGranted($routeContext);
     }
+}    
 ```
 
 Read more in [Public services](#public-services) section.
@@ -108,17 +92,21 @@ file (typically, `/app/config/config.yml` for Symfony < 4.0 or `/config/packages
 In the latter case you have to create this file first).
 
 Configuration options:
-* `data_collector`
-  * `ignore_controllers`. Array of controller names that would be ignored by RouteGuard. Controller names should be specified in
-class::method notation. You can specify:
+* `data_collector`. Options for RouteGuard authorization data collector.
+  * `ignore_controllers`. Array of controller names that would be ignored by data collector 
+  (i.e., routes bound to these controllers would not require authorization). 
+  Controller names should be specified in class::method (service::method) notation. You can specify:
     * full controller name, i.e. `App\Controller\DefaultController::index`
-    * controller class name, i.e. `App\Controller\DefaultController`
-    * controller name prefix, i.e. `App\Controller\`
+    * controller name prefix, i.e. `App\Controller\DefaultController` or `App\Controller\`
   
     Note: for "controller-as-a-service" controllers you have to specify service name, not class name.
   
     Default value: `[]`
-  * `ignore_controllers_symfony`. Array of default Symfony controllers that would be ignored by RouteGuard.
+    
+    This option could be useful to speed up cache warmup (and reduce cache size) or to exclude some particular
+    route(s) that trigger an exception.
+    
+  * `ignore_controllers_symfony`. Array of default Symfony controllers that would be ignored by data collector.
 
     Default value: 
     ```php 
@@ -130,10 +118,18 @@ class::method notation. You can specify:
     ]
     ```
   
-  * `ignore_exceptions`. Boolean, if true - 
+  * `ignore_exceptions`. Boolean, if true - data collector would ignore routes that trigger an exception     
+     (instance of `Yarhon\RouteGuardBundle\Exception\ExceptionInterface`) while collecting authorization data.
+          
+     Logger error message would be written in this case.
+     
+     Note: if exception was triggered for a route by one of the test providers, route would be ignored completely, 
+     not taking into account tests from other providers, if they exist.
   
-    Default value: `false`  
-* `twig`
+    Default value: `false`
+    
+    This option could be useful when you first try RouteGuard and facing some of it's limitations / bugs.
+* `twig`. Options for RouteGuard Twig extension.
   * `tag_name`. Name of the Twig tag. Default value: `'route'`.
   * `tag_variable_name`. Name of the tag inner variable (array), that would contain route info (i.e., generated URL). Default value: `'_route'`.
   * `discover_routing_functions`. Boolean, specifies whether to use "discover" mode in twig tag. Default value: `true`.
@@ -144,10 +140,10 @@ class::method notation. You can specify:
 
 ### Twig tag ("route") syntax
 
-Twig tag arguments are split into two parts: first one is route context array, second one, after the `as` keyword, 
+Twig tag arguments are split into two parts: first one is route context arguments, second one, after the `as` keyword, 
 specifies required reference type in literal form. 
 
-Route context array has the following arguments:
+Route context arguments are:
 * routeName (string, required)
 * parameters (array, optional, default value: [])
 * method (string, optional, default value: 'GET').
@@ -160,22 +156,22 @@ If no reference type is specified, "path absolute" would be used. If only first 
 
 Examples:
 ```twig
-{% route 'blog', { page: 1}, 'GET' as path absolute %}
-{% route 'blog', { page: 1}, 'GET' as url relative %}
+{% route 'blog', {'page': 1}, 'GET' as path absolute %}
+{% route 'blog', {'page': 1}, 'GET' as url relative %}
 {% route 'blog' as url %}
 {% route 'blog' %}
 ```
 
-For those, who want to try RouteGuard with minimal effort, it has "discover" mode. In this mode, RouteGuard will search
+For those, who want to try RouteGuard with minimal effort, it provides "discover" mode. In this mode, RouteGuard will search
 for `path()` or `url()` function call inside "route" tag, and then use function arguments as tag arguments.
 Following two examples will produce the same result:
 ```twig
 {% route discover %}
-    <a href="{{ url('blog', { page: 1}, true) }}">Blog link</a>
+    <a href="{{ url('blog', {'page': 1}, true) }}">Blog link</a>
 {% endroute %}
 ```
 ```twig
-{% route 'blog', { page: 1}, 'GET' as url relative %}
+{% route 'blog', {'page': 1}, 'GET' as url relative %}
     <a href="{{ _route.ref }}">Blog link</a>
 {% endroute %}
 ```
@@ -226,41 +222,8 @@ class SomeService
         
         return $this->authorizationChecker->isGranted($routeContext);
     }
+}
 ```
-
-### RouteTestResolver
-
-Allows to retrieve all authorization tests for a route.
-
-Service id: `yarhon_route_guard.route_test_resolver`
-
-Interface: `Yarhon\RouteGuardBundle\Security\RouteTestResolverInterface`
-
-Example:
-```php
-namespace App\Service;
-
-use Yarhon\RouteGuardBundle\Security\RouteTestResolverInterface;
-use Yarhon\RouteGuardBundle\Routing\RouteContext;
-
-class SomeService
-{
-    private $testResolver;
-    
-    public function __construct(RouteTestResolverInterface $testResolver)
-    {
-        $this->testResolver = $testResolver;
-    }
-    
-    public function getTests()
-    {
-        $routeContext = new RouteContext('blog', ['page' => 10], 'GET');
-        
-        return $this->testResolver->getTests($routeContext);
-    }
-```
-
-The `RouteTestResolverInterface::getTests()` method will return an array of `Yarhon\RouteGuardBundle\Security\Test\TestArguments` instances.
 
 ### AuthorizedUrlGenerator
 
@@ -290,9 +253,46 @@ class SomeService
     {
         return $this->urlGenerator->generate('blog', ['page' => 10], 'GET', UrlGeneratorInterface::ABSOLUTE_PATH);
     }
+}    
 ```
 The `AuthorizedUrlGeneratorInterface::generate` method signature is similar to Symfony's `UrlGeneratorInterface::generate`, except
 it adds `$method` as a 3rd parameter, moving `$referenceType` to 4th place.
+It would return the generated URL, if none of the authorization tests denied access, or boolean `false` otherwise.
+
+### TestLoader
+
+Allows to retrieve all authorization tests for a route.
+
+Service id: `yarhon_route_guard.test_loader`
+
+Interface: `Yarhon\RouteGuardBundle\Security\TestLoaderInterface`
+
+Example:
+```php
+namespace App\Service;
+
+use Yarhon\RouteGuardBundle\Security\TestLoaderInterface;
+use Yarhon\RouteGuardBundle\Routing\RouteContext;
+
+class SomeService
+{
+    private $testLoader;
+    
+    public function __construct(TestLoaderInterface $testLoader)
+    {
+        $this->testLoader = $testLoader;
+    }
+    
+    public function getTests()
+    {
+        $routeContext = new RouteContext('blog', ['page' => 10], 'GET');
+        
+        return $this->testLoader->load($routeContext);
+    }
+}    
+```
+
+The `TestLoaderInterface::load()` method will return an array of `Yarhon\RouteGuardBundle\Security\Test\TestInterface` instances.
 
 # Limitations
 
@@ -435,7 +435,7 @@ To be consistent in its flow, RouteGuard wraps those expressions into `Yarhon\Ro
 instances, and registers security voter `Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter` to handle them.
 
 
-# Adding your own authorization rules
+# Adding your own authorization test provider
 
 At first, read the [Under the hood](#under-the-hood) section.
 
