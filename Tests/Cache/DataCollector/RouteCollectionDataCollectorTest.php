@@ -17,6 +17,7 @@ use Symfony\Component\Routing\Route;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Controller\ControllerNameResolverInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadata;
+use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
 use Yarhon\RouteGuardBundle\Cache\DataCollector\RouteDataCollector;
 use Yarhon\RouteGuardBundle\Cache\DataCollector\RouteCollectionDataCollector;
@@ -223,6 +224,8 @@ class RouteCollectionDataCollectorTest extends TestCase
 
     private function createRouteData()
     {
-        return [[], $this->createMock(ControllerMetadata::class), $this->createMock(RouteMetadata::class)];
+        $testBags = [$this->createMock(AbstractTestBagInterface::class)];
+
+        return [$testBags, $this->createMock(ControllerMetadata::class), $this->createMock(RouteMetadata::class)];
     }
 }

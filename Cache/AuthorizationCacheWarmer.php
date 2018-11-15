@@ -81,7 +81,6 @@ class AuthorizationCacheWarmer implements CacheWarmerInterface
         $data = $this->dataCollector->collect($this->routeCollection);
 
         foreach ($data as $routeName => list($tests, $controllerMetadata, $routeMetadata)) {
-            // Note: currently empty arrays (no tests) are also added to testsCache
             $this->saveDeferred($this->testsCache, $routeName, $tests);
             $this->saveDeferred($this->controllerMetadataCache, $routeName, $controllerMetadata);
             $this->saveDeferred($this->routeMetadataCache, $routeName, $routeMetadata);

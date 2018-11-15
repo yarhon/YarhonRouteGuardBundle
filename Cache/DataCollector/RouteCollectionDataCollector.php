@@ -82,7 +82,13 @@ class RouteCollectionDataCollector implements LoggerAwareInterface
                     continue;
                 }
 
-                $data[$routeName] = $this->routeDataCollector->collect($routeName, $route, $controllerName);
+                $routeData = $this->routeDataCollector->collect($routeName, $route, $controllerName);
+
+                // We don't need any data for routes without authorization tests
+                if (count($routeData[0])) {
+                    $data[$routeName] = $routeData;
+                }
+
             } catch (ExceptionInterface $e) {
                 if (!$catchExceptions) {
                     $this->addRouteNameToException($e, $routeName);
