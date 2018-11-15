@@ -21,6 +21,7 @@ use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator;
+use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionAnalyzer;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\SensioExtraTest;
 use Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter;
@@ -47,6 +48,11 @@ class SensioExtraProvider implements ProviderInterface
      * @var ExpressionLanguage
      */
     private $expressionLanguage;
+
+    /**
+     * @var ExpressionAnalyzer
+     */
+    private $expressionAnalyzer;
 
     /**
      * @var RequestAttributesFactory
@@ -81,6 +87,14 @@ class SensioExtraProvider implements ProviderInterface
     public function setExpressionLanguage(ExpressionLanguage $expressionLanguage)
     {
         $this->expressionLanguage = $expressionLanguage;
+    }
+
+    /**
+     * @param ExpressionAnalyzer $expressionAnalyzer
+     */
+    public function setExpressionAnalyzer($expressionAnalyzer)
+    {
+        $this->expressionAnalyzer = $expressionAnalyzer;
     }
 
     /**
@@ -158,14 +172,7 @@ class SensioExtraProvider implements ProviderInterface
 
         $expression = $annotation->getExpression();
 
-        try {
-            // At first try to create expression without any variable names to save time during expression resolving
-            $expression = $this->createExpression($expression);
-        } catch (InvalidArgumentException $e) {
-            $expression = $this->createExpression($expression, $allowedVariables);
-        }
-
-        return $expression;
+        return $this->createExpression($expression, $allowedVariables);
     }
 
     /**
@@ -202,26 +209,39 @@ class SensioExtraProvider implements ProviderInterface
 
     /**
      * @param string $expression
-     * @param array  $variableNames
+     * @param array  $allowedVariables
      *
      * @return ExpressionDecorator
      *
      * @throws InvalidArgumentException
      */
-    private function createExpression($expression, array $variableNames = [])
+    private function createExpression($expression, array $allowedVariables)
     {
         $voterVariableNames = SensioSecurityExpressionVoter::getVariableNames();
-        $namesToParse = array_merge($voterVariableNames, $variableNames);
+        $namesToParse = array_merge($voterVariableNames, $allowedVariables);
 
-        // TODO: warning if some variable names overlaps with SensioSecurityExpressionVoter variables
+        // TODO: warning if some variable names from $allowedVariables overlaps with SensioSecurityExpressionVoter variables
 
         try {
-            $parsed = $this->expressionLanguage->parse($expression, $namesToParse);
+            if (!$this->expressionAnalyzer) {
+                try {
+                    // At first try to create expression without any variable names to save time during expression resolving
+                    $parsed = $this->expressionLanguage->parse($expression, $voterVariableNames);
+                    $usedVariables = [];
+                } catch (SyntaxError $e) {
+                    $parsed = $this->expressionLanguage->parse($expression, $namesToParse);
+                    $usedVariables = $allowedVariables;
+                }
+            } else {
+                $parsed = $this->expressionLanguage->parse($expression, $namesToParse);
+                $usedVariables = $this->expressionAnalyzer->getUsedVariables($parsed);
+                $usedVariables = array_values(array_diff($usedVariables, $voterVariableNames));
+            }
         } catch (SyntaxError $e) {
             throw new InvalidArgumentException(sprintf('Cannot parse expression "%s" with following variables: "%s".', $expression, implode('", "', $namesToParse)), 0, $e);
         }
 
-        return new ExpressionDecorator($parsed, $variableNames);
+        return new ExpressionDecorator($parsed, $usedVariables);
     }
 
     /**

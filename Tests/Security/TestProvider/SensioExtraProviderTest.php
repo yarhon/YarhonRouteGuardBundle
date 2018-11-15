@@ -13,14 +13,17 @@ namespace Yarhon\RouteGuardBundle\Tests\Security\TestProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\ExpressionLanguage\Expression;
+use Symfony\Component\ExpressionLanguage\ParsedExpression;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
+use Symfony\Component\ExpressionLanguage\Node\Node;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security as SecurityAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted as IsGrantedAnnotation;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter as ParamConverterAnnotation;
 use Yarhon\RouteGuardBundle\Annotations\ClassMethodAnnotationReaderInterface;
 use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator;
+use Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionAnalyzer;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory;
 use Yarhon\RouteGuardBundle\Routing\RouteMetadataFactory;
@@ -43,6 +46,8 @@ class SensioExtraProviderTest extends TestCase
 
     private $expressionLanguage;
 
+    private $expressionAnalyzer;
+
     private $provider;
 
     private $route;
@@ -59,6 +64,8 @@ class SensioExtraProviderTest extends TestCase
 
         $this->expressionLanguage = $this->createMock(ExpressionLanguage::class);
 
+        $this->expressionAnalyzer = $this->createMock(ExpressionAnalyzer::class);
+
         $this->provider = new SensioExtraProvider($this->annotationReader, $this->requestAttributesFactory, $routeMetadataFactory);
 
         $this->route = new Route('/');
@@ -67,7 +74,7 @@ class SensioExtraProviderTest extends TestCase
     /**
      * @dataProvider securityAnnotationDataProvider
      */
-    public function testSecurityAnnotation($annotation, $controllerArguments, $requestAttributes, $expected)
+    public function testSecurityAnnotation($annotation, $controllerArguments, $requestAttributes, $parseOnFirstCall, $expected)
     {
         $allowedVariables = array_unique(array_merge($controllerArguments, $requestAttributes));
 
@@ -81,19 +88,28 @@ class SensioExtraProviderTest extends TestCase
 
         $namesToParse = SensioSecurityExpressionVoter::getVariableNames();
 
-        $this->expressionLanguage->expects($this->at(0))
-            ->method('parse')
-            ->with($annotation->getExpression(), $namesToParse)
-            ->willThrowException(new SyntaxError('syntax'));
+        if ($parseOnFirstCall) {
+            $this->expressionLanguage->expects($this->at(0))
+                ->method('parse')
+                ->with($annotation->getExpression(), $namesToParse)
+                ->willReturnCallback(function ($expressionString) {
+                    return new Expression($expressionString);
+                });
+        } else {
+            $this->expressionLanguage->expects($this->at(0))
+                ->method('parse')
+                ->with($annotation->getExpression(), $namesToParse)
+                ->willThrowException(new SyntaxError('syntax'));
 
-        $namesToParse = array_merge($namesToParse, $allowedVariables);
+            $namesToParse = array_merge($namesToParse, $allowedVariables);
 
-        $this->expressionLanguage->expects($this->at(1))
-            ->method('parse')
-            ->with($annotation->getExpression(), $namesToParse)
-            ->willReturnCallback(function ($expressionString) {
-                return new Expression($expressionString);
-            });
+            $this->expressionLanguage->expects($this->at(1))
+                ->method('parse')
+                ->with($annotation->getExpression(), $namesToParse)
+                ->willReturnCallback(function ($expressionString) {
+                    return new Expression($expressionString);
+                });
+        }
 
         $controllerMetadata = $this->createControllerMetadata('class::method', $controllerArguments);
 
@@ -112,19 +128,77 @@ class SensioExtraProviderTest extends TestCase
                 new SecurityAnnotation(['expression' => 'request.isSecure']),
                 [],
                 [],
+                false,
                 new SensioExtraTest([new ExpressionDecorator(new Expression('request.isSecure'), [])]),
             ],
             [
                 new SecurityAnnotation(['expression' => 'request.isSecure']),
                 ['foo'],
                 ['foo'],
+                false,
                 new SensioExtraTest([new ExpressionDecorator(new Expression('request.isSecure'), ['foo'])]),
             ],
             [
                 new SecurityAnnotation(['expression' => 'request.isSecure']),
                 ['foo', 'bar'],
                 ['baz'],
+                false,
                 (new SensioExtraTest([new ExpressionDecorator(new Expression('request.isSecure'), ['foo', 'bar', 'baz'])]))->setMetadata('request_attributes', ['baz']),
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider securityAnnotationWithExpressionAnalyzerDataProvider
+     */
+    public function testSecurityAnnotationWithExpressionAnalyzer($annotation, $allowedVariables, $usedVariables, $expected)
+    {
+        $this->provider->setExpressionLanguage($this->expressionLanguage);
+        $this->provider->setExpressionAnalyzer($this->expressionAnalyzer);
+
+        $this->annotationReader->method('read')
+            ->willReturn([$annotation]);
+
+        $this->requestAttributesFactory->method('getAttributeNames')
+            ->willReturn([]);
+
+        $namesToParse = SensioSecurityExpressionVoter::getVariableNames();
+        $namesToParse = array_merge($namesToParse, $allowedVariables);
+
+        $this->expressionLanguage->expects($this->once())
+            ->method('parse')
+            ->with($annotation->getExpression(), $namesToParse)
+            ->willReturnCallback(function ($expressionString) {
+                return $this->createParsedExpression($expressionString);
+            });
+
+        $this->expressionAnalyzer->method('getUsedVariables')
+            ->willReturn($usedVariables);
+
+        $controllerMetadata = $this->createControllerMetadata('class::method', $allowedVariables);
+
+        $testBag = $this->provider->getTests('index', $this->route, $controllerMetadata);
+
+        $this->assertInstanceOf(TestBag::class, $testBag);
+        $test = $testBag->getTests()[0];
+
+        $this->assertEquals($expected, $test);
+    }
+
+    public function securityAnnotationWithExpressionAnalyzerDataProvider()
+    {
+        return [
+            [
+                new SecurityAnnotation(['expression' => 'request.isSecure']),
+                [],
+                [],
+                new SensioExtraTest([new ExpressionDecorator($this->createParsedExpression('request.isSecure'), [])]),
+            ],
+            [
+                new SecurityAnnotation(['expression' => 'request.isSecure']),
+                ['foo'],
+                ['request', 'foo'],
+                new SensioExtraTest([new ExpressionDecorator($this->createParsedExpression('request.isSecure'), ['foo'])]),
             ],
         ];
     }
@@ -350,5 +424,10 @@ class SensioExtraProviderTest extends TestCase
         }
 
         return new ControllerMetadata($controllerName, 'class', 'method', $arguments);
+    }
+
+    private function createParsedExpression($expression)
+    {
+        return new ParsedExpression($expression, $this->createMock(Node::class));
     }
 }
