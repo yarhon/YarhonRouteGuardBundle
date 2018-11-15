@@ -15,7 +15,7 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class TestBag implements TestBagInterface
+class TestBag implements TestBagInterface, ProviderAwareInterface
 {
     use ProviderAwareTrait;
 

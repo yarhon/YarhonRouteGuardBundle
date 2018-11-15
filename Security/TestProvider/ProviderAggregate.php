@@ -15,6 +15,7 @@ use Psr\Log\LoggerAwareInterface;
 use Symfony\Component\Routing\Route;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
+use Yarhon\RouteGuardBundle\Security\Test\ProviderAwareInterface;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 
 /**
@@ -73,7 +74,9 @@ class ProviderAggregate implements LoggerAwareInterface
             $testBag = $provider->getTests($routeName, $route, $controllerMetadata);
 
             if (null !== $testBag) {
-                $testBag->setProviderClass(get_class($provider));
+                if ($testBag instanceof ProviderAwareInterface) {
+                    $testBag->setProviderClass(get_class($provider));
+                }
                 $testBags[] = $testBag;
             }
         }
