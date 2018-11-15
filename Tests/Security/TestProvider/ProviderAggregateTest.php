@@ -54,16 +54,6 @@ class ProviderAggregateTest extends TestCase
         $providerAggregate->setLogger($this->logger);
     }
 
-    public function testBuildWithoutTestProvidersException()
-    {
-        $providerAggregate = new ProviderAggregate();
-
-        $this->expectException(LogicException::class);
-        $this->expectExceptionMessage('Test providers collection is empty.');
-
-        $providerAggregate->getTests('index', new Route('/'));
-    }
-
     public function testGetTests()
     {
         $providerAggregate = new ProviderAggregate($this->providers);

@@ -16,7 +16,7 @@ use Symfony\Component\Routing\Route;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Security\Test\ProviderAwareInterface;
-use Yarhon\RouteGuardBundle\Exception\LogicException;
+use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -60,14 +60,10 @@ class ProviderAggregate implements LoggerAwareInterface
      *
      * @return AbstractTestBagInterface[]
      *
-     * @throws LogicException
+     * @throws ExceptionInterface
      */
     public function getTests($routeName, Route $route, ControllerMetadata $controllerMetadata = null)
     {
-        if (0 === count($this->testProviders)) {
-            throw new LogicException('Test providers collection is empty.');
-        }
-
         $testBags = [];
 
         foreach ($this->testProviders as $provider) {
