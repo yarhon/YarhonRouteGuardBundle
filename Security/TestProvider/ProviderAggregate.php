@@ -49,7 +49,9 @@ class ProviderAggregate implements LoggerAwareInterface
         $this->logger = $logger;
 
         foreach ($this->testProviders as $provider) {
-            $provider->setLogger($this->logger);
+            if ($provider instanceof LoggerAwareInterface) {
+                $provider->setLogger($this->logger);
+            }
         }
     }
 

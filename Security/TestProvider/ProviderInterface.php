@@ -11,7 +11,6 @@
 namespace Yarhon\RouteGuardBundle\Security\TestProvider;
 
 use Symfony\Component\Routing\Route;
-use Psr\Log\LoggerAwareInterface;
 use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
 use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
@@ -19,7 +18,7 @@ use Yarhon\RouteGuardBundle\Exception\ExceptionInterface;
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-interface ProviderInterface extends LoggerAwareInterface
+interface ProviderInterface
 {
     /**
      * @param string                  $routeName

@@ -12,6 +12,7 @@ namespace Yarhon\RouteGuardBundle\Tests\Security\TestProvider;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
 use Symfony\Component\Routing\Route;
 use Yarhon\RouteGuardBundle\Security\TestProvider\ProviderAggregate;
 use Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface;
@@ -41,13 +42,13 @@ class ProviderAggregateTest extends TestCase
 
     public function testSetLogger()
     {
-        $providerAggregate = new ProviderAggregate($this->providers);
+        $providers = [
+            $this->createMock([ProviderInterface::class, LoggerAwareInterface::class]),
+        ];
 
-        $this->providers[0]->expects($this->once())
-            ->method('setLogger')
-            ->with($this->logger);
+        $providerAggregate = new ProviderAggregate($providers);
 
-        $this->providers[1]->expects($this->once())
+        $providers[0]->expects($this->once())
             ->method('setLogger')
             ->with($this->logger);
 

@@ -10,6 +10,7 @@
 
 namespace Yarhon\RouteGuardBundle\Security\TestProvider;
 
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -35,7 +36,7 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SensioExtraProvider implements ProviderInterface
+class SensioExtraProvider implements ProviderInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

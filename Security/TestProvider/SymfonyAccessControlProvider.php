@@ -10,12 +10,13 @@
 
 namespace Yarhon\RouteGuardBundle\Security\TestProvider;
 
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\Expression;
-use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
+use Yarhon\RouteGuardBundle\Controller\ControllerMetadata;
 use Yarhon\RouteGuardBundle\Security\Http\RequestConstraint;
 use Yarhon\RouteGuardBundle\Security\Http\RouteMatcher;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
@@ -32,7 +33,7 @@ use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class SymfonyAccessControlProvider implements ProviderInterface
+class SymfonyAccessControlProvider implements ProviderInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
