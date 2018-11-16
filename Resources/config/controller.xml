@@ -39,7 +39,7 @@
             <argument type="service" id="request_stack" />
             <argument type="collection" /> <!-- argument value resolvers -->
         </service>
-        <service id="ArgumentResolverInterface" alias="ArgumentResolver" />
+        <service id="Yarhon\RouteGuardBundle\Controller\ArgumentResolverInterface" alias="Yarhon\RouteGuardBundle\Controller\ArgumentResolver" />
 
         <!-- controller argument value resolvers -->
 
