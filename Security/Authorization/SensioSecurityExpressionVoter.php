@@ -131,7 +131,7 @@ class SensioSecurityExpressionVoter extends Voter
             'roles' => array_map(function ($role) { return $role->getRole(); }, $roles),
             'trust_resolver' => $this->trustResolver,
             // "auth_checker" variable is used by Sensio security expressions (see \Sensio\Bundle\FrameworkExtraBundle\EventListener\SecurityListener::getVariables),
-            // and would be available by default since Symfony 4.2 (see \Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter::getVariables).
+            // and would be available by default since Symfony 4.2 (see \Symfony\Component\Security\Core\Authorization\Voter\SymfonySecurityExpressionVoter::getVariables).
             'auth_checker' => $this->authChecker,
         ];
 

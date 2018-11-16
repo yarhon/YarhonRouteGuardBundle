@@ -11,12 +11,12 @@
 namespace Yarhon\RouteGuardBundle\Tests\Security\Authorization;
 
 use PHPUnit\Framework\TestCase;
-use Yarhon\RouteGuardBundle\Security\Authorization\ExpressionVoter;
+use Yarhon\RouteGuardBundle\Security\Authorization\SymfonySecurityExpressionVoter;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class ExpressionVoterTest extends TestCase
+class SymfonySecurityExpressionVoterTest extends TestCase
 {
     public function testGetVariableNames()
     {
@@ -30,22 +30,22 @@ class ExpressionVoterTest extends TestCase
             'request',
         ];
 
-        $this->assertSame($expected, ExpressionVoter::getVariableNames());
+        $this->assertSame($expected, SymfonySecurityExpressionVoter::getVariableNames());
     }
 
     public function testSetVariableNames()
     {
-        $default = ExpressionVoter::getVariableNames();
+        $default = SymfonySecurityExpressionVoter::getVariableNames();
 
         $new = [
             'foo',
             'bar',
         ];
 
-        ExpressionVoter::setVariableNames($new);
+        SymfonySecurityExpressionVoter::setVariableNames($new);
 
-        $this->assertSame($new, ExpressionVoter::getVariableNames());
+        $this->assertSame($new, SymfonySecurityExpressionVoter::getVariableNames());
 
-        ExpressionVoter::setVariableNames($default);
+        SymfonySecurityExpressionVoter::setVariableNames($default);
     }
 }

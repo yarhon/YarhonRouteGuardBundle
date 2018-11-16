@@ -21,7 +21,7 @@ use Yarhon\RouteGuardBundle\Security\Http\RouteMatcher;
 use Yarhon\RouteGuardBundle\Security\Test\TestBag;
 use Yarhon\RouteGuardBundle\Security\Test\SymfonyAccessControlTest;
 use Yarhon\RouteGuardBundle\Security\Http\RequestDependentTestBag;
-use Yarhon\RouteGuardBundle\Security\Authorization\ExpressionVoter;
+use Yarhon\RouteGuardBundle\Security\Authorization\SymfonySecurityExpressionVoter;
 use Yarhon\RouteGuardBundle\Security\TestProvider\SymfonyAccessControlProvider;
 use Yarhon\RouteGuardBundle\Exception\LogicException;
 use Yarhon\RouteGuardBundle\Exception\InvalidArgumentException;
@@ -131,7 +131,7 @@ class SymfonyAccessControlProviderTest extends TestCase
     {
         $rule = $this->createRuleArray(['allow_if' => 'request.isSecure']);
 
-        $names = ExpressionVoter::getVariableNames();
+        $names = SymfonySecurityExpressionVoter::getVariableNames();
 
         $this->provider->setExpressionLanguage($this->expressionLanguage);
 

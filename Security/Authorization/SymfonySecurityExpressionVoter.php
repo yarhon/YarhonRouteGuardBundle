@@ -10,12 +10,12 @@
 namespace Yarhon\RouteGuardBundle\Security\Authorization;
 
 /**
- * ExpressionVoter is responsible for storing information about variables used by
+ * SymfonySecurityExpressionVoter is responsible for storing information about variables used by
  * \Symfony\Component\Security\Core\Authorization\Voter\ExpressionVoter (there's no way to retrieve it from the original class).
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-class ExpressionVoter
+class SymfonySecurityExpressionVoter
 {
     protected static $variableNames = [
         'token',

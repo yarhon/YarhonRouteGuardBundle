@@ -88,7 +88,6 @@ class RouteCollectionDataCollector implements LoggerAwareInterface
                 if (count($routeData[0])) {
                     $data[$routeName] = $routeData;
                 }
-
             } catch (ExceptionInterface $e) {
                 if (!$catchExceptions) {
                     $this->addRouteNameToException($e, $routeName);
