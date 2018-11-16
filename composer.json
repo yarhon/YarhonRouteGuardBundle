@@ -1,6 +1,6 @@
 {
     "name": "yarhon/route-guard-bundle",
-    "description": "RouteGuard allows to check if user is authorized to access a route; retrieve authorization rules for a route; conditionally display links in Twig templates depending on authorization rules.",
+    "description": "Symfony route authorization checker",
     "keywords": ["security", "authorization", "routing", "twig"],
     "type": "symfony-bundle",
     "license": "MIT",

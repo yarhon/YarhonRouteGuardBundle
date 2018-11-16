@@ -14,8 +14,8 @@ RouteGuardBundle is a tool to:
 authorization checks duplication both in controller and template.
 
 RouteGuard supports authorization tests from the following providers:
-* Symfony SecurityBundle (`access_control` rules). Read [details](#symfony-securitybundle-details). 
-* Sensio FrameworkExtraBundle (`@IsGranted` and `@Security` annotations). Read [details](#sensio-frameworkextrabundle-details).
+* Symfony SecurityBundle (`access_control` rules)
+* Sensio FrameworkExtraBundle (`@IsGranted` and `@Security` annotations).
 
 And allows to add your own authorization test providers. Read [more](#adding-your-own-authorization-test-provider).
 
@@ -118,8 +118,8 @@ Configuration options:
     ]
     ```
   
-  * `ignore_exceptions`. Boolean, if true - data collector would ignore routes that trigger an exception     
-     (instance of `Yarhon\RouteGuardBundle\Exception\ExceptionInterface`) while collecting authorization data.            
+  * `ignore_exceptions`. Boolean, if `true` - data collector would ignore routes that trigger an exception     
+     while collecting authorization data.            
      Logger error message would be written in this case.       
      Note: if exception was triggered for a route by one of the test providers, route would be ignored completely, 
      not taking into account tests from other providers, if they exist.
@@ -143,14 +143,14 @@ specifies required reference type in literal form.
 
 Route context arguments are:
 * routeName (string, required)
-* parameters (array, optional, default value: [])
-* method (string, optional, default value: 'GET').
+* parameters (array, optional, default value: `[]`)
+* method (string, optional, default value: `'GET'`).
 
 Reference type is specified in the following forms:
 * path [absolute|relative]. Equal to generating URL with `path()` function.
 * url [absolute|relative]. Equal to generating URL with `url()` function.
-If no reference type is specified, "path absolute" would be used. If only first part ("path" or "url") is specified,
-"absolute" would be used as a second part.
+If no reference type is specified, `"path absolute"` would be used. If only first part ("path" or "url") is specified,
+`"absolute"` would be used as a second part.
 
 Examples:
 ```twig
@@ -196,8 +196,6 @@ Allows to check if user is authorized to access a route.
 
 Service id: `yarhon_route_guard.route_authorization_checker`
 
-Interface: `Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface`
-
 Example:
 ```php
 namespace App\Service;
@@ -229,8 +227,6 @@ Allows to generate URLs outside of Twig context.
 
 Service id: `yarhon_route_guard.authorized_url_generator`
 
-Interface: `Yarhon\RouteGuardBundle\Routing\AuthorizedUrlGeneratorInterface`
-
 Example:
 ```php
 namespace App\Service;
@@ -253,8 +249,8 @@ class SomeService
     }
 }    
 ```
-The `AuthorizedUrlGeneratorInterface::generate` method signature is similar to Symfony's `UrlGeneratorInterface::generate`, except
-it adds `$method` as a 3rd parameter, moving `$referenceType` to 4th place.
+The [`AuthorizedUrlGeneratorInterface::generate`] method signature is similar to Symfony's [`Symfony\...\UrlGeneratorInterface::generate`], 
+except it adds `$method` as a 3rd parameter, moving `$referenceType` to 4th place.
 It would return the generated URL, if none of the authorization tests denied access, or boolean `false` otherwise.
 
 ### TestLoader
@@ -262,8 +258,6 @@ It would return the generated URL, if none of the authorization tests denied acc
 Allows to retrieve all authorization tests for a route.
 
 Service id: `yarhon_route_guard.test_loader`
-
-Interface: `Yarhon\RouteGuardBundle\Security\TestLoaderInterface`
 
 Example:
 ```php
@@ -290,17 +284,18 @@ class SomeService
 }    
 ```
 
-The `TestLoaderInterface::load()` method will return an array of `Yarhon\RouteGuardBundle\Security\Test\TestInterface` instances.
+The [`TestLoaderInterface::load`] method returns an array of [`TestInterface`] instances.
 
 # Limitations
 
 ## Request object limitations
 
-RouteGuard doesn't modify current `Request` object when it passes it to the security voters and `ExpressionLanguage` expressions
-for the particular route.
+RouteGuard doesn't modify current [`Request`] object 
+when it passes it to the Symfony's authorization checker for the particular route.
 
-That means methods of `Request` object, that return url / host / method related parameters, being used inside
-voters / expressions, would return values irrelevant to the route being checked.
+That means methods of [`Request`] object that return url / host / method related parameters, being used inside
+security voters ([`Symfony\...\VoterInterface`]) or expressions ([`Symfony\...\Expression`]), 
+would return values irrelevant to the route being checked.
 
 In this case results of RouteGuard authorization checks are "Undefined behaviour". 
 These methods include:
@@ -323,81 +318,78 @@ RouteGuard would not be able to resolve them and will throw an exception.
 ### In details
 
 Test providers may provide authorization test that require runtime variables (basically, controller arguments).  
-To resolve these variables, RouteGuard introduces `Yarhon\RouteGuardBundle\Controller\ArgumentResolver`.  
-It mimics Symfony's `Symfony\Component\HttpKernel\Controller\ArgumentResolver`, but resolves controller arguments
-from the route context (`Yarhon\RouteGuardBundle\Routing\RouteContextInterface` instance).
+To resolve these variables, RouteGuard introduces [`ArgumentResolver`].  
+It mimics Symfony's  [`Symfony\...\ArgumentResolver`], but resolves controller arguments from the [`RouteContextInterface`] instance
+using [`ControllerMetadata`] cache.
 
-Like Symfony's `ArgumentResolver`, it uses an array of `Yarhon\RouteGuardBundle\Controller\ArgumentResolver\ArgumentValueResolverInterface`
-instances to delegate resolving to the specific resolver. They all work just like their Symfony's prototypes except 
-handling of Request attributes.
+Like Symfony's [`Symfony\...\ArgumentResolver`], it uses an array of [`ArgumentValueResolverInterface`] instances to delegate resolving 
+to the specific resolver. They all work just like their Symfony's prototypes except handling of Request attributes.
 
-In Symfony, Request attributes are initially set from the route parameters (route variables + defaults). 
-See `Symfony\Component\HttpKernel\EventListener\RouterListener::onKernelRequest`.  
+In Symfony, Request attributes are initially set from the route parameters (route variables + defaults).  
+See [`Symfony\...\RouterListener::onKernelRequest`].  
 But besides, in Symfony, Request attributes are used more widely as just route parameters - they are used as implicit 
 "information exchange point" between different components.
 
-In turn, RouteGard can't use any Request attributes, other than those that came from parameters of the route being checked.
-Using other attributes of the current Request could be irrelevant to that route.  
-
-In RouteGuard, Request attributes for particular route are created by `Yarhon\RouteGuardBundle\Routing\RequestAttributesFactory`.
+In RouteGuard, Request attributes for particular route are created by [`RequestAttributesFactory`].
 It returns resolved route parameters (route variables + defaults).  
-Also, unlike standard flow, `RequestAttributesFactory` doesn't add special "_route" attribute and removes "_controller" parameter
+
+In turn, RouteGard can't use any Request attributes, other than those that came from parameters of the route being checked.
+Using other attributes of the current [`Request`] could be irrelevant to that route.
+
+Also, unlike standard flow, [`RequestAttributesFactory`] doesn't add special `'_route'` attribute and removes `'_controller'` parameter
 from route parameters - so they can't be used as runtime variables too.
-
-Finally, RouteGuard doesn't support controller arguments conversion provided by  
-@ParamConverter annotation of Sensio FrameworkExtraBundle - it would use unconverted argument value, 
-that could lead to unexpected results. 
-
-Note, that ParamConverter can be involved implicitly, if `auto_convert` option
-of FrameworkExtraBundle is set to `true` and controller argument is type hinted by one of the ParamConverter supported types
-(by default, they are `DateTimeInterface` and Doctrine entity classes).
 
 ## Sensio FrameworkExtraBundle limitations
 
-Sensio FrameworkExtraBundle allows to use user-defined runtime variables in authorization tests
-("subject" argument of @IsGranted annotation or variables in @Security annotation expression).
+FrameworkExtraBundle allows to use user-defined runtime variables in authorization tests
+("subject" argument of `@IsGranted` annotation or variables in `@Security` annotation expression).
 
 Thus, limitations described in [Runtime variables limitations](#runtime-variables-limitations)
-are applicable to authorization tests from Sensio FrameworkExtraBundle.
+are applicable to authorization tests from FrameworkExtraBundle.
+
+### ParamConverter is not supported
+
+Currently, RouteGuard doesn't support controller arguments conversion provided by `@ParamConverter` annotation of FrameworkExtraBundle - 
+it would use unconverted argument value, that could lead to unexpected results. 
+
+Note, that ParamConverter can be involved implicitly, if `auto_convert` option of FrameworkExtraBundle is set to `true` 
+and controller argument is type hinted by one of the ParamConverter supported types
+(by default, they are `DateTimeInterface` and Doctrine entity classes).
 
 # Under the hood
 
 ## Collecting data
 
 RouteGuard collects all authorization tests and required metadata (route metadata and controller metadata) 
-in compile time, at cache warmup. 
-Entry point: `Yarhon\RouteGuardBundle\Cache\AuthorizationCacheWarmer`.
+in compile time, at cache warmup. Entry point: [`AuthorizationCacheWarmer`].
 
 Authorization tests and metadata are stored in PSR-6 caches.
 
-Authorization tests for particular route are collected by `Yarhon\RouteGuardBundle\Security\TestProvider\ProviderAggregate`,
-which iterates through all registered test providers (instances of `Yarhon\RouteGuardBundle\Security\TestProvider\ProviderInterface`).
+Authorization tests for particular route are collected by [`ProviderAggregate`],
+which iterates through all registered test providers (instances of [`ProviderInterface`]).
 
-`ProviderInterface::getTests()` method returns test bag (instance of `Yarhon\RouteGuardBundle\Security\Test\AbstractTestBagInterface`),
-that contains tests (instances of `Yarhon\RouteGuardBundle\Security\Test\TestInterface`).
+`ProviderInterface::getTests()` method returns test bag (instance of [`AbstractTestBagInterface`]),
+that contains tests (instances of [`TestInterface`]).
 
 Built-in test providers:
-* SymfonyAccessControlProvider. Reads `access_control` rules of Symfony SecurityBundle. 
-  Returns test bag with instances of `Yarhon\RouteGuardBundle\Security\Test\SymfonyAccessControlTest`.
-* SensioExtraProvider. Reads `@IsGranted` and `@Security` annotations of Sensio FrameworkExtraBundle.
-  Returns test bag with instances of `Yarhon\RouteGuardBundle\Security\Test\SensioExtraTest`.
+* [`SymfonyAccessControlProvider`]. Reads `access_control` rules of Symfony SecurityBundle. 
+  Returns test bag with instances of [`SymfonyAccessControlTest`].
+* [`SensioExtraProvider`]. Reads `@IsGranted` and `@Security` annotations of Sensio FrameworkExtraBundle.
+  Returns test bag with instances of [`SensioExtraTest`].
 
 ## Route authorization
 
-Route authorization is performed by `Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker` service.
-It loads tests for a route, and then passes them to `Yarhon\RouteGuardBundle\Security\AuthorizationChecker\DelegatingAuthorizationChecker`.
-
-`DelegatingAuthorizationChecker` passes tests to supporting authorization checkers, depending on test instance class.
+Route authorization is performed by [`RouteAuthorizationChecker`] service.
+It loads tests for a route and calls [`DelegatingAuthorizationChecker`] that passes tests to supporting authorization checker, 
+depending on test instance class.
 
 Built-in authorization checkers:
-* SymfonySecurityAuthorizationChecker. Handles tests for Symfony's authorization checker 
-  (`Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface`).
-  Tests should be instances of `Yarhon\RouteGuardBundle\Security\Test\AbstractSymfonySecurityTest`.
+* [`SymfonySecurityAuthorizationChecker`]. Handles tests for Symfony's authorization checker ([`Symfony\...\AuthorizationCheckerInterface`]).
+  Supports tests instances of [`AbstractSymfonySecurityTest`].
 
-SymfonySecurityAuthorizationChecker utilizes `Yarhon\RouteGuardBundle\Security\TestResolver\SymfonySecurityResolver` to
-resolve runtime variables.
+  [`SymfonySecurityAuthorizationChecker`] utilizes [`SymfonySecurityResolver`] to resolve runtime variables.
 
-## Symfony SecurityBundle details
+## SymfonyAccessControlProvider details
 
 The complexity with access_control rules is they are not directly mapped to particular routes.
 
@@ -407,14 +399,13 @@ access_control rules may have 4 possible constraints:
 * methods (array)
 * ips (array)
 
-RouteGuard's `SymfonyAccessControlProvider` filters matching rules for every route at compile time, comparing rule constraints and route parameters.
+[`SymfonyAccessControlProvider`] filters matching rules for every route at compile time, comparing rule constraints and route parameters.
 
 The best case for performance is when it's possible to determine a rule that would always match the route at runtime -
-then `SymfonyAccessControlProvider` will return simple test bag (`Yarhon\RouteGuardBundle\Security\Test\TestBag`).
+then it will return simple [`TestBag`].
 
-In other cases (one or many potentially matching rules, dependently on runtime Request), 
-RouteGuard will create a request-dependent test bag (`Yarhon\RouteGuardBundle\Security\Http\RequestDependentTestBag`), 
-that would be resolved at runtime.
+In other cases (one or many potentially matching rules, dependently on runtime [`Request`]), 
+it will return a [`RequestDependentTestBag`], that would be resolved at runtime.
 
 For every route that needs a request-dependent test bag, RouteGuard will produce a log warning message during cache warmup, i.e.
 ```console
@@ -423,7 +414,7 @@ For every route that needs a request-dependent test bag, RouteGuard will produce
 
 #### Matching access_control rules to a route at compile time
 
-See `Yarhon\RouteGuardBundle\Security\Http\RouteMatcher`.
+See [`RouteMatcher`].
 
 Matching ips can't be done at compile time, matching methods is a simple arrays intersection.
 The trickiest thing is matching path and host constraints. They are done in the same way, so we'll continue with path only.
@@ -451,38 +442,87 @@ it means regexp would always match dynamic routes with path static prefix `"/foo
 This would result in an always matching access_control rule for a route (if there were no potentially matching rules found before) 
 that would allow direct mapping of a rule to a route, without need to use a request-dependent test bag.
 
-## Sensio FrameworkExtraBundle details
+## SensioExtraProvider details
 
 Sensio FrameworkExtraBundle executes expressions from `@Security` annotation in-place, bypassing standard flow 
-(passing authorization test arguments to security voters via "isGranted" call). 
-See `Sensio\Bundle\FrameworkExtraBundle\EventListener\SecurityListener`.
+(passing authorization test arguments to [`Symfony\...\AuthorizationCheckerInterface`]). 
+See [`Sensio\...\SecurityListener`].
 
-To be consistent in its flow, RouteGuard wraps those expressions into `Yarhon\RouteGuardBundle\ExpressionLanguage\ExpressionDecorator`
-instances, and registers security voter `Yarhon\RouteGuardBundle\Security\Authorization\SensioSecurityExpressionVoter` to handle them.
+To be consistent in its flow, RouteGuard wraps those expressions into [`ExpressionDecorator`]
+instances, and registers [`SensioSecurityExpressionVoter`] to handle them.
 
 # Adding your own authorization test provider
 
 At first, read the [Under the hood](#under-the-hood) section.
 
-To create your own provider, you have to create a provider class that implements `Yarhon\RouteGuardBundle\Security\TestProvider\TestProviderInterface`
+To create your own provider, you have to create a provider class that implements [`ProviderInterface`]
 and register it as a service.
 
 Next step depends on yours tests targets:
 
-* Tests are intended for Symfony's authorization checker (`Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface`):
-  * Create your test class, that extends `Yarhon\RouteGuardBundle\Security\Test\AbstractSymfonySecurityTest`.
-  * Create your test resolver class, that implements `Yarhon\RouteGuardBundle\Security\TestResolver\SymfonySecurityResolverInterface` 
-    and register it as a service.
+* Tests are intended for Symfony's authorization checker ([`Symfony\...\AuthorizationCheckerInterface`]):
+  * Create your test class, that extends [`AbstractSymfonySecurityTest`].
+  * Create your test resolver class, that implements [`SymfonySecurityResolverInterface`] and register it as a service.
   
 * Test are intended to a different authorization checker:
-  * Create your test class, that implements `Yarhon\RouteGuardBundle\Security\Test\TestInterface`.
-  * Create your authorization checker class, that implements `Yarhon\RouteGuardBundle\Security\AuthorizationChecker\AuthorizationCheckerInterface`
-    and register it as a service.
+  * Create your test class, that implements [`TestInterface`].
+  * Create your authorization checker class, that implements [`AuthorizationCheckerInterface`] and register it as a service.
 
 If you are not using services autoconfiguration, you would also need to manually add tags:
 * for your test provider service - `yarhon_route_guard.test_provider`
 * for your authorization checker service - `yarhon_route_guard.authorization_checker`
 * for your symfony security test resolver service - `yarhon_route_guard.test_resolver.symfony_security`.
+
+If your tests require runtime controller arguments, you may consider using RouteGuard's [`ArgumentResolver`].
+
+[`Request`]: https://github.com/symfony/http-foundation/blob/master/Request.php
+[`Symfony\...\UrlGeneratorInterface::generate`]: https://github.com/symfony/routing/blob/master/Generator/UrlGeneratorInterface.php
+[`Symfony\...\RouterListener::onKernelRequest`]: https://github.com/symfony/http-kernel/blob/master/EventListener/RouterListener.php
+[`Symfony\...\ArgumentResolver`]: https://github.com/symfony/http-kernel/blob/master/Controller/ArgumentResolver.php
+[`Symfony\...\AuthorizationCheckerInterface`]: https://github.com/symfony/security/blob/master/Core/Authorization/AuthorizationCheckerInterface.php
+[`Sensio\...\SecurityListener`]: https://github.com/sensiolabs/SensioFrameworkExtraBundle/blob/master/EventListener/SecurityListener.php
+[`Symfony\...\VoterInterface`]: https://github.com/symfony/security/blob/master/Core/Authorization/Voter/VoterInterface.php
+[`Symfony\...\Expression`]: https://github.com/symfony/expression-language/blob/master/Expression.php
+
+[`ControllerMetadata`]: Controller/ControllerMetadata.php
+[`ArgumentResolver`]: Controller/ArgumentResolver.php
+[`ArgumentValueResolverInterface`]: Controller/ArgumentResolver/ArgumentValueResolverInterface.php
+
+[`RouteContextInterface`]: Routing/RouteContextInterface.php
+[`RequestAttributesFactory`]: Routing/RequestAttributesFactory.php
+[`AuthorizedUrlGeneratorInterface::generate`]: Routing/AuthorizedUrlGeneratorInterface.php
+
+[`TestInterface`]: Security/Test/TestInterface.php
+[`AbstractSymfonySecurityTest`]: Security/Test/AbstractSymfonySecurityTest.php
+[`SymfonyAccessControlTest`]: Security/Test/SymfonyAccessControlTest.php
+[`SensioExtraTest`]: Security/Test/SensioExtraTest.php
+
+[`AbstractTestBagInterface`]: Security/Test/AbstractTestBagInterface.php
+[`TestBag`]: Security/Test/TestBag.php
+[`RequestDependentTestBag`]: Security/Http/RequestDependentTestBag.php
+
+[`ProviderInterface`]: Security/TestProvider/ProviderInterface.php
+[`ProviderAggregate`]: Security/TestProvider/ProviderAggregate.php
+[`SymfonyAccessControlProvider`]: Security/TestProvider/SymfonyAccessControlProvider.php
+[`SensioExtraProvider`]: Security/TestProvider/SensioExtraProvider.php
+
+[`TestLoaderInterface::load`]: Security/TestLoaderInterface.php
+[`RouteAuthorizationChecker`]: Security/RouteAuthorizationChecker.php
+[`DelegatingAuthorizationChecker`]: Security/AuthorizationChecker/DelegatingAuthorizationChecker.php
+[`AuthorizationCheckerInterface`]: Security/AuthorizationChecker/AuthorizationCheckerInterface.php
+[`SymfonySecurityAuthorizationChecker`]: Security/AuthorizationChecker/SymfonySecurityAuthorizationChecker.php
+[`SymfonySecurityResolverInterface`]: Security/TestResolver/SymfonySecurityResolverInterface.php 
+[`SymfonySecurityResolver`]: Security/TestResolver/SymfonySecurityResolver.php
+
+[`AuthorizationCacheWarmer`]: Cache/AuthorizationCacheWarmer.php
+
+[`ExceptionInterface`]: Exception/ExceptionInterface.php
+
+[`RouteMatcher`]: Security/Http/RouteMatcher.php
+
+[`ExpressionDecorator`]: ExpressionLanguage/ExpressionDecorator.php
+[`SensioSecurityExpressionVoter`]: Security/Authorization/SensioSecurityExpressionVoter.php
+
 
 
 
