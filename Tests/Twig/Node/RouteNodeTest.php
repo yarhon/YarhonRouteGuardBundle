@@ -77,10 +77,9 @@ EOD;
 
     public function testSetVariableName()
     {
-        $testName = uniqid();
-        RouteNode::setVariableName($testName);
+        RouteNode::setVariableName('foo');
 
-        $this->assertAttributeEquals($testName, 'variableName', RouteNode::class);
+        $this->assertAttributeEquals('foo', 'variableName', RouteNode::class);
     }
 
     public function testSetVariableNameException()

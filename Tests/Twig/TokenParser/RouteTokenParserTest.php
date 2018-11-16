@@ -25,8 +25,7 @@ class RouteTokenParserTest extends AbstractNodeTest
     {
         $tokenParser = new RouteTokenParser('foo');
 
-        $this->assertAttributeEquals('foo', 'tagName', $tokenParser);
-        $this->assertAttributeEquals('endfoo', 'endTagName', $tokenParser);
+        $this->assertEquals('foo', $tokenParser->getTag());
     }
 
     public function testGetTag()
