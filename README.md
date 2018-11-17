@@ -1,13 +1,13 @@
-# RouteGuardBundle 
+# YarhonRouteGuardBundle 
 
-Symfony routes authorization checker
+Symfony route authorization checker
 
 [![Build Status](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/badges/build.png?b=master)](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/build-status/master)
 [![Code Coverage](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/?branch=master)
 # About
 
-RouteGuardBundle is a tool to:
+YarhonRouteGuardBundle (RouteGuard) is a tool to:
 * check if user is authorized to access a route
 * retrieve authorization tests for a route
 * conditionally display blocks in Twig templates depending on authorization tests, avoiding
