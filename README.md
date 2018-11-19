@@ -26,6 +26,18 @@ Let the code speak:
 
 A) Template rendering
 
+When you need to conditionally display some content (basically, links) in Twig templates, depending on authorization tests,
+you would typically write code like this:
+```twig
+{% if is_granted('ROLE_USER') %}
+    <a href="{{ path('blog', {'page': 1}) }}">Blog link</a>
+{% else %}
+    No access
+{% endif %}
+```
+
+RouteGuard allows you to get rid of authorization checks in templates, using those defined for route or route controller
+by supported test providers:  
 ```twig
 {% route 'blog', {'page': 1} %}
     <a href="{{ _route.ref }}">Blog link</a>
