@@ -16,7 +16,7 @@ authorization checks duplication both in controller and template.
 RouteGuard supports authorization tests from the following providers:
 * Symfony SecurityBundle (`access_control` rules)
 * Sensio FrameworkExtraBundle (`@IsGranted` and `@Security` annotations).
-* [Planned in the next release] Dynamic tests (arbitrary code in controller). [details](#what's-planned).
+* [Planned in the next release] Dynamic tests (arbitrary code in controller). [Details](#what's-planned).
 
 And allows to add your own authorization test providers. Read [more](#adding-your-own-authorization-test-provider).
 
@@ -369,7 +369,7 @@ Authorization tests and metadata are stored in PSR-6 caches.
 Authorization tests for particular route are collected by [`ProviderAggregate`],
 which iterates through all registered test providers (instances of [`ProviderInterface`]).
 
-`ProviderInterface::getTests` method returns test bag (instance of [`AbstractTestBagInterface`]),
+[`ProviderInterface::getTests`] method returns test bag (instance of [`AbstractTestBagInterface`]),
 that contains tests (instances of [`TestInterface`]).
 
 Built-in test providers:
