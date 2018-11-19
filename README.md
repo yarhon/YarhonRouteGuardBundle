@@ -16,6 +16,7 @@ authorization checks duplication both in controller and template.
 RouteGuard supports authorization tests from the following providers:
 * Symfony SecurityBundle (`access_control` rules)
 * Sensio FrameworkExtraBundle (`@IsGranted` and `@Security` annotations).
+* [Planned in the next release] Dynamic tests (arbitrary code in controller). [details](#what's-planned).
 
 And allows to add your own authorization test providers. Read [more](#adding-your-own-authorization-test-provider).
 
@@ -368,7 +369,7 @@ Authorization tests and metadata are stored in PSR-6 caches.
 Authorization tests for particular route are collected by [`ProviderAggregate`],
 which iterates through all registered test providers (instances of [`ProviderInterface`]).
 
-`ProviderInterface::getTests()` method returns test bag (instance of [`AbstractTestBagInterface`]),
+`ProviderInterface::getTests` method returns test bag (instance of [`AbstractTestBagInterface`]),
 that contains tests (instances of [`TestInterface`]).
 
 Built-in test providers:
@@ -464,7 +465,7 @@ Next step depends on yours tests targets:
   * Create your test class, that extends [`AbstractSymfonySecurityTest`].
   * Create your test resolver class, that implements [`SymfonySecurityResolverInterface`] and register it as a service.
   
-* Test are intended to a different authorization checker:
+* Tests are intended to a different authorization checker:
   * Create your test class, that implements [`TestInterface`].
   * Create your authorization checker class, that implements [`AuthorizationCheckerInterface`] and register it as a service.
 
@@ -474,6 +475,43 @@ If you are not using services autoconfiguration, you would also need to manually
 * for your symfony security test resolver service - `yarhon_route_guard.test_resolver.symfony_security`.
 
 If your tests require runtime controller arguments, you may consider using RouteGuard's [`ArgumentResolver`].
+
+# What's planned
+
+* Support of ParamConverter for controller arguments.
+* Debug CLI command(s) to view data stored in authorization cache.
+* Support of dynamic authorization tests:
+  ```php
+  namespace App\Controller;
+
+  use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+  use Yarhon\RouteGuardBundle\Annotation\MethodCallAuthorizationTest;
+
+  class Controller extends AbstractController
+  {    
+      public function testAdminIsGranted()
+      {  
+          // some logic
+        
+          $this->denyAccessUnlessGranted('ROLE_ADMIN');
+      }
+    
+      /**
+      * @MethodCallAuthorizationTest("testAdminIsGranted")
+      */
+      public function admin()
+      {
+          $this->testAdminIsGranted();
+        
+          // ............
+      }
+  }    
+  ```
+  In the example above, authorization logic is extracted into a separate method.
+  Using this technique, the same authorization code could be used when action is accessed (in this case it is called explicitly),
+  and when the route authorization is checked (thanks to `@MethodCallAuthorizationTest` annotation), i.e. when displaying a link for a route.
+
+
 
 [`Request`]: https://github.com/symfony/http-foundation/blob/master/Request.php
 [`Symfony\...\UrlGeneratorInterface::generate`]: https://github.com/symfony/routing/blob/master/Generator/UrlGeneratorInterface.php
@@ -502,6 +540,7 @@ If your tests require runtime controller arguments, you may consider using Route
 [`RequestDependentTestBag`]: Security/Http/RequestDependentTestBag.php
 
 [`ProviderInterface`]: Security/TestProvider/ProviderInterface.php
+[`ProviderInterface::getTests`]: Security/TestProvider/ProviderInterface.php
 [`ProviderAggregate`]: Security/TestProvider/ProviderAggregate.php
 [`SymfonyAccessControlProvider`]: Security/TestProvider/SymfonyAccessControlProvider.php
 [`SensioExtraProvider`]: Security/TestProvider/SensioExtraProvider.php
