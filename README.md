@@ -16,7 +16,7 @@ authorization checks duplication both in controller and template.
 RouteGuard supports authorization tests from the following providers:
 * Symfony SecurityBundle (`access_control` rules)
 * Sensio FrameworkExtraBundle (`@IsGranted` and `@Security` annotations).
-* [Planned in the next release] Dynamic tests (arbitrary code in controller). [Details](#what's-planned).
+* [Planned in the next release] Dynamic tests (arbitrary code in controller). [Details](#whats-planned).
 
 And allows to add your own authorization test providers. Read [more](#adding-your-own-authorization-test-provider).
 
