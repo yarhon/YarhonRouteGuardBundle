@@ -1,7 +1,7 @@
 {
     "name": "yarhon/route-guard-bundle",
     "description": "Symfony route authorization checker",
-    "keywords": ["security", "authorization", "routing", "twig"],
+    "keywords": ["symfony", "security", "authorization", "routing", "twig"],
     "type": "symfony-bundle",
     "license": "MIT",
     "authors": [
