@@ -2,9 +2,10 @@
 
 Symfony route authorization checker
 
-[![Build Status](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/badges/build.png?b=master)](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/build-status/master)
+[![Build Status](https://travis-ci.org/yarhon/YarhonRouteGuardBundle.svg?branch=master)](https://travis-ci.org/yarhon/YarhonRouteGuardBundle)
 [![Code Coverage](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/yarhon/RouteGuardBundle/?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/yarhon/route-guard-bundle/v/stable)](https://packagist.org/packages/yarhon/route-guard-bundle)
 # About
 
 YarhonRouteGuardBundle (RouteGuard) is a tool to:
