@@ -42,4 +42,17 @@ class SensioExtraTest extends AbstractSymfonySecurityTest
     {
         return isset($this->metadata[$name]) ? $this->metadata[$name] : null;
     }
+
+    public function serialize()
+    {
+        return serialize([$this->attributes, $this->subject, $this->metadata]);
+    }
+
+    public function unserialize($data)
+    {
+        list($attributes, $subject, $metadata) = unserialize($data);
+        $this->attributes = $attributes;
+        $this->subject = $subject;
+        $this->metadata = $metadata;
+    }
 }

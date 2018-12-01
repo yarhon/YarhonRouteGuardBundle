@@ -13,21 +13,25 @@ namespace Yarhon\RouteGuardBundle\Security\Test;
 /**
  * AbstractSymfonySecurityTest is a value object class for storing arguments for AuthorizationChecker::isGranted() authorization test.
  *
+ * Note: we are using \Serializable interface here, because symfony/var-exporter does not
+ * properly handles objects that have properties inherited from parent abstract class.
+ * And since Symfony 4.2 symfony/cache uses symfony/var-exporter to store / retrieve values.
+ *
  * @see \Symfony\Component\Security\Core\Authorization\AuthorizationChecker::isGranted
  *
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
-abstract class AbstractSymfonySecurityTest implements TestInterface
+abstract class AbstractSymfonySecurityTest implements TestInterface, \Serializable
 {
     /**
      * @var array
      */
-    private $attributes;
+    protected $attributes;
 
     /**
      * @var mixed
      */
-    private $subject;
+    protected $subject;
 
     /**
      * @param array $attributes
@@ -53,5 +57,17 @@ abstract class AbstractSymfonySecurityTest implements TestInterface
     public function getSubject()
     {
         return $this->subject;
+    }
+
+    public function serialize()
+    {
+        return serialize([$this->attributes, $this->subject]);
+    }
+
+    public function unserialize($data)
+    {
+        list($attributes, $subject) = unserialize($data);
+        $this->attributes = $attributes;
+        $this->subject = $subject;
     }
 }
