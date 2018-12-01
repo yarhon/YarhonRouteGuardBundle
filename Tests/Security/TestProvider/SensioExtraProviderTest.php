@@ -384,19 +384,6 @@ class SensioExtraProviderTest extends TestCase
                 [new SecurityAnnotation(['expression' => 'request.isSecure']), [], []],
                 true,
             ],
-            // TODO: uncomment this tests when Expression parser would be ready
-            /*
-            [
-                [ new SecurityAnnotation(['expression' => 'request.isSecure']), ['arg1'], [] ],
-                [ new SecurityAnnotation(['expression' => 'request.isSecure']), [], [] ],
-                false,
-            ],
-            [
-                [ new SecurityAnnotation(['expression' => 'request.isSecure']), [], ['attr1'] ],
-                [ new SecurityAnnotation(['expression' => 'request.isSecure']), [], [] ],
-                false,
-            ],
-            */
             [
                 [new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN']), ['arg1'], ['attr1']],
                 [new IsGrantedAnnotation(['attributes' => 'ROLE_ADMIN']), ['arg1'], ['attr1']],

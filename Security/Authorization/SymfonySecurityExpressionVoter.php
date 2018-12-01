@@ -24,7 +24,7 @@ class SymfonySecurityExpressionVoter
         'subject',
         'roles',
         'trust_resolver',
-        'request', // TODO: this variable is conditionally passed to evaluate
+        'request',
     ];
 
     /**

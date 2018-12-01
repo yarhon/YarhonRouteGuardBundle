@@ -65,8 +65,6 @@ class RouteNode extends Node
      */
     public function compile(Compiler $compiler)
     {
-        // TODO: check if $variableName is not already defined in context
-
         $compiler->addDebugInfo($this);
 
         if (!$this->hasNode('condition')) {

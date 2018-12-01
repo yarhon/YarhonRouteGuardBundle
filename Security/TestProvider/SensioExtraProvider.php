@@ -221,8 +221,6 @@ class SensioExtraProvider implements ProviderInterface, LoggerAwareInterface
         $voterVariableNames = SensioSecurityExpressionVoter::getVariableNames();
         $namesToParse = array_merge($voterVariableNames, $allowedVariables);
 
-        // TODO: warning if some variable names from $allowedVariables overlaps with SensioSecurityExpressionVoter variables
-
         try {
             if (!$this->expressionAnalyzer) {
                 try {

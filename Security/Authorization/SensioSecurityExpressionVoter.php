@@ -38,7 +38,7 @@ class SensioSecurityExpressionVoter extends Voter
         'roles',
         'trust_resolver',
         'auth_checker',
-        'request', // TODO: this variable is conditionally passed to evaluate
+        'request',
     ];
 
     /**

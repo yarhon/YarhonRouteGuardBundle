@@ -57,7 +57,6 @@ class RequestDependentTestBag implements RequestDependentTestBagInterface, Provi
      */
     private function add(array $tests, RequestConstraintInterface $constraint = null)
     {
-        // TODO: check $test array elements
         $this->map[] = [$tests, $constraint];
     }
 }

@@ -99,8 +99,6 @@ class RouteCollectionDataCollector implements LoggerAwareInterface
             }
         }
 
-        // TODO: add exception routes to ignored log message?
-
         if ($this->logger && count($ignoredRoutes)) {
             $this->logger->info('Ignored routes', ['count' => count($ignoredRoutes), 'list' => $ignoredRoutes]);
         }

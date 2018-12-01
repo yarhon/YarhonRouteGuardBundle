@@ -26,7 +26,7 @@ interface TestBagResolverInterface
      *
      * @return TestInterface[]
      *
-     * @throws RuntimeException TODO: check this
+     * @throws RuntimeException
      */
     public function resolve(AbstractTestBagInterface $testBag, RouteContextInterface $routeContext);
 }

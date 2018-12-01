@@ -47,7 +47,6 @@ class SymfonySecurityAuthorizationChecker implements AuthorizationCheckerInterfa
     public function isGranted(TestInterface $test, RouteContextInterface $routeContext)
     {
         $arguments = $this->testResolver->resolve($test, $routeContext);
-        // TODO: validate arguments ?
 
         return $this->authorizationChecker->isGranted(...$arguments);
     }

@@ -19,8 +19,6 @@ use Yarhon\RouteGuardBundle\Twig\Node\RouteExpression;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
- *
- * TODO: implement \Twig\TokenParser\TokenParserInterface ?
  */
 class RouteExpressionParser
 {

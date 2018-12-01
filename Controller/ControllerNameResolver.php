@@ -61,8 +61,6 @@ class ControllerNameResolver implements ControllerNameResolverInterface
                 return $controller.'::__invoke';
             }
 
-            // TODO: check if controller has exactly two parts here?
-
             return $controller;
         }
 

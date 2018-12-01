@@ -15,6 +15,7 @@ use Yarhon\RouteGuardBundle\Security\Test\TestBagInterface;
 use Yarhon\RouteGuardBundle\Routing\RouteContextInterface;
 use Yarhon\RouteGuardBundle\Security\Http\RequestContextFactory;
 use Yarhon\RouteGuardBundle\Security\Http\RequestDependentTestBagInterface;
+use Yarhon\RouteGuardBundle\Exception\RuntimeException;
 
 /**
  * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
@@ -47,6 +48,6 @@ class TestBagResolver implements TestBagResolverInterface
             return $testBag->getTests($requestContext);
         }
 
-        // TODO: throw exception if not supported $testBag passed
+        throw new RuntimeException(sprintf('No resolver exists for test bag instance of "%s".', get_class($testBag)));
     }
 }

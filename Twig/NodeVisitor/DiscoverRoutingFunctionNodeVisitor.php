@@ -21,13 +21,11 @@ use Yarhon\RouteGuardBundle\Twig\Node\RouteNode;
 use Yarhon\RouteGuardBundle\Twig\Node\RouteExpression;
 
 /**
- * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
- *
  * Note: we extend from AbstractNodeVisitor just for compatibility with Twig 1.x NodeVisitorInterface.
  * When this compatibility would no longer be needed, we could drop usage of AbstractNodeVisitor
  * and implement NodeVisitorInterface directly.
  *
- * TODO: find a way to set source context for thrown exceptions (see \Twig_Parser::parse)
+ * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
  */
 class DiscoverRoutingFunctionNodeVisitor extends AbstractNodeVisitor
 {

@@ -30,8 +30,6 @@ class RouteExpression extends FunctionExpression
      */
     public function __construct(Node $arguments, $line = 0)
     {
-        // TODO: validate arguments types?
-
         if ($arguments->count() < 1) {
             throw new SyntaxError('At least one argument (name) is required.', $line);
         }
@@ -51,7 +49,6 @@ class RouteExpression extends FunctionExpression
     }
 
     /**
-     * TODO: allow to specify $referenceType as a constant (one of UrlGeneratorInterface constants).
      * Note that $relative can be an instance of AbstractExpression, and it's execution result can be non-calculable at compile time.
      *
      * @param string                  $referenceType

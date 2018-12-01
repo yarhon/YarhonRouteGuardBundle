@@ -12,6 +12,9 @@ namespace Yarhon\RouteGuardBundle\Twig\NodeVisitor;
 
 use Twig\Node\Node;
 
+/**
+ * @author Yaroslav Honcharuk <yaroslav.xs@gmail.com>
+ */
 class DiscoveredFunctions
 {
     /**
