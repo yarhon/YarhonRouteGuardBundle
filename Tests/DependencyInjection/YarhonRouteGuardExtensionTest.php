@@ -96,32 +96,10 @@ class YarhonRouteGuardExtensionTest extends TestCase
         ];
     }
 
-    public function testPrivateServices()
-    {
-        $services = [
-            'Yarhon\RouteGuardBundle\Security\RouteAuthorizationChecker',
-        ];
-
-        $aliases = [
-            'Yarhon\RouteGuardBundle\Security\RouteAuthorizationCheckerInterface',
-        ];
-
-        $this->container->getCompilerPassConfig()->setOptimizationPasses([]);
-        $this->container->getCompilerPassConfig()->setRemovingPasses([]);
-        $this->container->compile();
-
-        foreach ($services as $id) {
-            $this->assertTrue($this->container->hasDefinition($id), $id);
-        }
-
-        foreach ($aliases as $id) {
-            $this->assertTrue($this->container->hasAlias($id), $id);
-        }
-
-        $this->markTestIncomplete('Watch for service changes.');
-    }
-
-    public function testPublicServices()
+    /**
+     * @dataProvider publicServicesDataProvider
+     */
+    public function testPublicServices($serviceId)
     {
         $this->container->setParameter('kernel.cache_dir', 'test_cache_dir');
 
@@ -129,46 +107,17 @@ class YarhonRouteGuardExtensionTest extends TestCase
         $this->container->register('router.default')->setSynthetic(true);
         $this->container->register('security.authorization_checker')->setSynthetic(true);
 
-        $services = [
-            'yarhon_route_guard.authorized_url_generator',
-            'yarhon_route_guard.route_authorization_checker',
-            'yarhon_route_guard.test_loader',
-        ];
-
-        //$this->container->getCompilerPassConfig()->setOptimizationPasses([]);
-        //$this->container->getCompilerPassConfig()->setRemovingPasses([]);
         $this->container->compile();
 
-        foreach ($services as $id) {
-            $this->assertTrue($this->container->has($id), $id);
-        }
-
-        $this->markTestIncomplete('Watch for service changes.');
+        $this->assertTrue($this->container->has($serviceId));
     }
 
-    private function getDefinitions()
+    public function publicServicesDataProvider()
     {
-        $defined = array_keys($this->container->getDefinitions());
-        $defined = array_diff($defined, ['service_container', 'kernel', 'security.authorization_checker']);
-        sort($defined);
-
-        return $defined;
-    }
-
-    private function getAliases()
-    {
-        $defined = array_keys($this->container->getAliases());
-        $defined = array_diff($defined, ['Psr\Container\ContainerInterface', 'Symfony\Component\DependencyInjection\ContainerInterface']);
-        sort($defined);
-
-        return $defined;
-    }
-
-    private function getParameters()
-    {
-        $defined = $this->container->getParameterBag()->all();
-        ksort($defined);
-
-        return $defined;
+        return [
+            ['yarhon_route_guard.authorized_url_generator'],
+            ['yarhon_route_guard.route_authorization_checker'],
+            ['yarhon_route_guard.test_loader'],
+        ];
     }
 }
