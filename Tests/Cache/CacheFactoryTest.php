@@ -45,7 +45,7 @@ class CacheFactoryTest extends TestCase
      */
     public function testOpcache()
     {
-        if (!ini_get('opcache.enable')) {
+        if (!ini_get('opcache.enable') || !ini_get('opcache.enable_cli')) {
             $this->markTestSkipped();
         }
 
