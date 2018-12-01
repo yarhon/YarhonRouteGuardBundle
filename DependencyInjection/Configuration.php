@@ -12,6 +12,7 @@ namespace Yarhon\RouteGuardBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * RouteGuardBundle configuration structure.
@@ -32,9 +33,13 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-
-        $rootNode = $treeBuilder->root('root');
+        if (Kernel::VERSION_ID < 40200) {
+            $treeBuilder = new TreeBuilder();
+            $rootNode = $treeBuilder->root('route_guard');
+        } else {
+            $treeBuilder = new TreeBuilder('route_guard');
+            $rootNode = $treeBuilder->getRootNode();
+        }
 
         $rootNode
             ->validate()
