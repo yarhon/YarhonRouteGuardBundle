@@ -10,6 +10,9 @@
         <service id="yarhon_route_guard.cache" class="Symfony\Component\Cache\Adapter\AdapterInterface" abstract="true">
             <factory class="Yarhon\RouteGuardBundle\Cache\CacheFactory" method="createCache" />
             <argument>%kernel.cache_dir%/route-guard</argument> <!-- directory -->
+            <call method="setLogger">
+                <argument type="service" id="logger" on-invalid="ignore" />
+            </call>
         </service>
 
         <service id="yarhon_route_guard.cache.tests" parent="yarhon_route_guard.cache" public="false">
