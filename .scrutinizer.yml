@@ -1,5 +1,11 @@
 build:
 
+    environment:
+        php:
+            ini:
+                'opcache.enable': 1
+                'opcache.enable_cli': 1
+
     dependencies:
         after:
             - composer require phpunit/phpunit:"^7.0||^6.0||^5.2"
